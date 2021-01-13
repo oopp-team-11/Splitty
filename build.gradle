@@ -1,0 +1,74 @@
+allprojects {
+
+    repositories {
+        mavenCentral()
+    }
+
+    group = 'nl.tudelft.oopp'
+    version = '0.0.1-SNAPSHOT'
+
+}
+
+subprojects {
+
+    apply plugin: 'java'
+    apply plugin: 'jacoco'
+    apply plugin: 'checkstyle'
+    apply plugin: 'application'
+
+    ext {
+        set('snippetsDir', file("build/generated-snippets"))
+    }
+
+    sourceCompatibility = 13
+
+    jacoco {
+        toolVersion = "0.8.5"
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled false
+            csv.enabled false
+            html.destination file("${buildDir}/reports/jacoco/html")
+        }
+    }
+
+    jacocoTestCoverageVerification {
+        violationRules {
+            rule {
+                enabled = true
+                element = 'CLASS'
+                includes = ['nl.tudelft.*']
+
+                limit {
+                    counter = 'LINE'
+                    value = 'COVEREDRATIO'
+                    minimum = 0.4
+                }
+            }
+        }
+    }
+
+    checkstyle {
+        toolVersion "8.25"
+        configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+
+        ignoreFailures = false
+        maxErrors = 0
+        maxWarnings = 0
+    }
+
+
+    test {
+        outputs.dir snippetsDir
+        useJUnitPlatform()
+
+        jacoco {
+            enabled = true
+            includes = ['nl.tudelft.*']
+            excludes = []
+        }
+
+    }
+}

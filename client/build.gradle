@@ -1,0 +1,15 @@
+plugins {
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+
+mainClassName = "nl.tudelft.oopp.demo.MainApp"
+
+dependencies {
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.6.0")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.6.0")
+}
+
+javafx {
+    version = "13"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
