@@ -1,4 +1,4 @@
-package nl.tudelft.oopp.demo.communication;
+package nl.tudelft.cse.oopp.demo.communication;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

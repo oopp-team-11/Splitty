@@ -4,7 +4,7 @@ allprojects {
         mavenCentral()
     }
 
-    group = 'nl.tudelft.oopp'
+    group = 'nl.tudelft.cse.oopp'
     version = '0.0.1-SNAPSHOT'
 
 }
@@ -20,10 +20,10 @@ subprojects {
         set('snippetsDir', file("build/generated-snippets"))
     }
 
-    sourceCompatibility = 13
+    sourceCompatibility = 17
 
     jacoco {
-        toolVersion = "0.8.5"
+        toolVersion = "0.8.7"
     }
 
     jacocoTestReport {
@@ -51,14 +51,12 @@ subprojects {
     }
 
     checkstyle {
-        toolVersion "8.25"
-        configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+        toolVersion "9.2.1"
 
         ignoreFailures = false
         maxErrors = 0
         maxWarnings = 0
     }
-
 
     test {
         outputs.dir snippetsDir
@@ -66,7 +64,7 @@ subprojects {
 
         jacoco {
             enabled = true
-            includes = ['nl.tudelft.*']
+            includes = ['nl.tudelft.cse.oopp.*']
             excludes = []
         }
 

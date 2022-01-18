@@ -1,8 +1,11 @@
-package nl.tudelft.oopp.demo;
+package nl.tudelft.cse.oopp.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * Main class that will boot the application.
+ */
 @SpringBootApplication
 public class DemoApplication {
 

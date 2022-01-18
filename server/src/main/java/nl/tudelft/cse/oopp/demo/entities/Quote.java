@@ -1,10 +1,13 @@
-package nl.tudelft.oopp.demo.entities;
+package nl.tudelft.cse.oopp.demo.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * Class for the Quote model.
+ */
 @Entity
 @Table(name = "quotes")
 public class Quote {
