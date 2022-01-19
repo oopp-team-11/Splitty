@@ -35,5 +35,5 @@ client-test:
   stage: test
   script:
     - ./gradlew :client:test :client:jacocoTestReport
-    - cat client/build/reports/jacoco/html/index.html | grep -Po "Total.*?([0-9]{1,3})%"
+    - cat client/build/reports/jacoco/html/index.html | grep -o -e "Total.*?([0-9]{1,3})%"
   coverage: /([0-9]{1,3})%/
