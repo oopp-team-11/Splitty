@@ -1,8 +1,8 @@
 plugins {
+	id 'java'
 	id 'org.springframework.boot' version '2.6.2'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'org.asciidoctor.convert' version '1.5.8'
-	id 'java'
 }
 
 mainClassName = 'nl.tudelft.cse.oopp.demo.DemoApplication'
