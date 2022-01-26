@@ -35,9 +35,7 @@ server-test:
   stage: test
   script:
     - ./gradlew :server:test :server:jacocoTestReport
-#    - echo $CI_PROJECT_DIR
-#    - ls -l server/build/
-#    - cat server/build/reports/tests/test/index.html | grep -o -e "Total.*?([0-9]{1,3})%"
+    - cat server/build/reports/tests/test/index.html | grep -o -e "Total.*?([0-9]{1,3})%"
   artifacts:
     paths:
       - build/reports/jacoco/
