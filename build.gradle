@@ -54,19 +54,19 @@ subprojects {
         }
     }
 
-    jacocoTestCoverageVerification {
-        violationRules {
-            rule {
-                enabled = true
-                element = 'CLASS'
-                includes = ['nl.tudelft.cse.oopp.*']
-
-                limit {
-                    counter = 'LINE'
-                    value = 'COVEREDRATIO'
-                    minimum = 0.0
-                }
-            }
-        }
-    }
+//    jacocoTestCoverageVerification {
+//        violationRules {
+//            rule {
+//                enabled = true
+//                element = 'CLASS'
+//                includes = ['nl.tudelft.cse.oopp.*']
+//
+//                limit {
+//                    counter = 'LINE'
+//                    value = 'COVEREDRATIO'
+//                    minimum = 0.0
+//                }
+//            }
+//        }
+//    }
 }
