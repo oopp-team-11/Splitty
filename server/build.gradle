@@ -1,10 +1,11 @@
 plugins {
-	id 'org.springframework.boot' version '2.2.4.RELEASE'
-	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+	id 'org.springframework.boot' version '2.6.2'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'org.asciidoctor.convert' version '1.5.8'
 }
 
-mainClassName = 'nl.tudelft.oopp.demo.DemoApplication'
+mainClassName = 'nl.tudelft.cse.oopp.demo.DemoApplication'
 
 configurations {
 	developmentOnly
@@ -14,23 +15,22 @@ configurations {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.2'
+	implementation 'org.springframework.boot:spring-boot-starter-security:2.6.2'
+	implementation 'org.springframework.boot:spring-boot-starter-web:2.6.2'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools:2.6.2'
 	// Local test database (in-memory)
-	implementation 'com.h2database:h2'
-	developmentOnly 'org.hibernate:hibernate-entitymanager'
+	runtimeOnly 'com.h2database:h2:2.0.206'
+	developmentOnly 'org.hibernate:hibernate-entitymanager:5.6.3.Final'
 
-	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+	testImplementation('org.springframework.boot:spring-boot-starter-test:2.6.2') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
-	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc:2.0.5.RELEASE'
+	testImplementation 'org.springframework.security:spring-security-test:5.5.1'
 }
 
 asciidoctor {
 	inputs.dir snippetsDir
 	dependsOn test
 }
-

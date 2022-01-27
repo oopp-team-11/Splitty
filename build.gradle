@@ -4,71 +4,69 @@ allprojects {
         mavenCentral()
     }
 
-    group = 'nl.tudelft.oopp'
+    group = 'nl.tudelft.cse.oopp'
     version = '0.0.1-SNAPSHOT'
 
 }
 
 subprojects {
-
     apply plugin: 'java'
     apply plugin: 'jacoco'
     apply plugin: 'checkstyle'
     apply plugin: 'application'
 
+    sourceCompatibility = 17
+
     ext {
         set('snippetsDir', file("build/generated-snippets"))
     }
 
-    sourceCompatibility = 13
-
-    jacoco {
-        toolVersion = "0.8.5"
-    }
-
-    jacocoTestReport {
-        reports {
-            xml.enabled false
-            csv.enabled false
-            html.destination file("${buildDir}/reports/jacoco/html")
-        }
-    }
-
-    jacocoTestCoverageVerification {
-        violationRules {
-            rule {
-                enabled = true
-                element = 'CLASS'
-                includes = ['nl.tudelft.*']
-
-                limit {
-                    counter = 'LINE'
-                    value = 'COVEREDRATIO'
-                    minimum = 0.4
-                }
-            }
-        }
-    }
-
     checkstyle {
-        toolVersion "8.25"
-        configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+        toolVersion "9.2.1"
 
         ignoreFailures = false
         maxErrors = 0
         maxWarnings = 0
     }
 
-
     test {
         outputs.dir snippetsDir
         useJUnitPlatform()
 
+        test.finalizedBy jacocoTestReport
         jacoco {
             enabled = true
-            includes = ['nl.tudelft.*']
+            includes = ['nl.tudelft.cse.oopp.*']
             excludes = []
         }
 
     }
+
+    jacoco {
+        toolVersion = "0.8.7"
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            csv.enabled false
+            html.enabled false
+        }
+    }
+
+//    jacocoTestCoverageVerification {
+//        violationRules {
+//            rule {
+//                enabled = true
+//                element = 'CLASS'
+//                includes = ['nl.tudelft.cse.oopp.*']
+//
+//                limit {
+//                    counter = 'LINE'
+//                    value = 'COVEREDRATIO'
+//                    minimum = 0.0
+//                }
+//            }
+//        }
+//    }
 }

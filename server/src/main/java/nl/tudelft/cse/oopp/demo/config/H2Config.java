@@ -1,4 +1,4 @@
-package nl.tudelft.oopp.demo.config;
+package nl.tudelft.cse.oopp.demo.config;
 
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,9 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
+/**
+ * Provide the configuration for the in-memory (H2) database.
+ */
 @Configuration
 @EnableJpaRepositories
 @PropertySource("application-dev.properties")

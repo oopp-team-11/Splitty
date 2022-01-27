@@ -1,9 +1,9 @@
-package nl.tudelft.oopp.demo;
+package nl.tudelft.cse.oopp.demo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import nl.tudelft.oopp.demo.entities.Quote;
-import nl.tudelft.oopp.demo.repositories.QuoteRepository;
+import nl.tudelft.cse.oopp.demo.entities.Quote;
+import nl.tudelft.cse.oopp.demo.repositories.QuoteRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -20,7 +20,7 @@ public class QuoteTest {
         Quote quote = new Quote(1, quoteText, quoteAuthor);
         quoteRepository.save(quote);
 
-        Quote quote2 = quoteRepository.getOne((long) 1);
+        Quote quote2 = quoteRepository.getById((long) 1);
         assertEquals(quote, quote2);
     }
 }

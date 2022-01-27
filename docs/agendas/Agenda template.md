@@ -10,7 +10,7 @@ Main focus:     {Insert Here}\
 Chair:          {Insert Here}\
 Note taker:     {Insert Here}
 
-In italics you will find some additional explanations of the agenda points. You will find mostly the same points in the next agendas.
+In italics, you will find some additional explanations of the agenda points. You will find mostly the same points in the next agendas.
 
 # Opening
 *Here you check that everybody is present.*

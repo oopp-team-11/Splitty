@@ -1,9 +1,12 @@
-package nl.tudelft.oopp.demo.controllers;
+package nl.tudelft.cse.oopp.demo.controllers;
 
 import javafx.scene.control.Alert;
-import nl.tudelft.oopp.demo.communication.ServerCommunication;
+import javafx.scene.control.Button;
+import nl.tudelft.cse.oopp.demo.communication.ServerCommunication;
 
 public class MainSceneController {
+
+    public Button button;
 
     /**
      * Handles clicking the button.

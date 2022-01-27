@@ -1,13 +1,15 @@
-package nl.tudelft.oopp.demo.controllers;
+package nl.tudelft.cse.oopp.demo.controllers;
 
 import java.util.ArrayList;
 import java.util.Random;
-
-import nl.tudelft.oopp.demo.entities.Quote;
+import nl.tudelft.cse.oopp.demo.entities.Quote;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * Controller for fetching Quote models.
+ */
 @Controller
 public class QuoteController {
     /**
