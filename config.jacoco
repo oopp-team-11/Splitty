@@ -1,0 +1,11 @@
+config {
+    coverage {
+        jacoco {
+            enabled
+            aggregateReportHtmlFile
+            aggregateReportXmlFile
+            additionalSourceDirs
+            additionalClassDirs
+        }
+    }
+}

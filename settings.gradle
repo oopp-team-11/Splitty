@@ -1,2 +1,5 @@
-rootProject.name = 'repository-template'
-include 'client', 'server'
+rootProject.name = 'quizzzz'
+
+include 'client'
+include 'server'
+include 'commons'

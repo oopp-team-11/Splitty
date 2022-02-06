@@ -1,3 +1,18 @@
-include:
- - server/.gitlab-ci.yml
- - client/.gitlab-ci.yml
+image: gradle:7.3.3-jdk11-alpine
+
+variables:
+  # Disable the Gradle daemon to ensure isolated runs of the CI pipeline.
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
+build:
+  script:
+    - gradle build
+    - gradle AggregateJacocoReport
+    # preserve coverage information in an easy-to-reach folder
+    - mv build/reports/jacoco/aggregate/html ./coverage
+    - mv build/reports/jacoco/aggregate/jacocoTestReport.xml ./coverage/report.xml
+    - echo `cat coverage/index.html | grep -o -E "Total[^%]+?%" | sed -E "s/<.*>//" | sed -E "s/Total/TestCoverage:/"`
+  artifacts:
+    paths:
+      - ./coverage
+  coverage: /TestCoverage:(\d+)%/

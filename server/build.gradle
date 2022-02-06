@@ -1,36 +1,12 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '2.6.2'
+	id 'org.springframework.boot' version '2.6.3'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'org.asciidoctor.convert' version '1.5.8'
-}
-
-mainClassName = 'nl.tudelft.cse.oopp.demo.DemoApplication'
-
-configurations {
-	developmentOnly
-	runtimeClasspath {
-		extendsFrom developmentOnly
-	}
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.2'
-	implementation 'org.springframework.boot:spring-boot-starter-security:2.6.2'
-	implementation 'org.springframework.boot:spring-boot-starter-web:2.6.2'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools:2.6.2'
-	// Local test database (in-memory)
-	runtimeOnly 'com.h2database:h2:2.0.206'
-	developmentOnly 'org.hibernate:hibernate-entitymanager:5.6.3.Final'
-
-	testImplementation('org.springframework.boot:spring-boot-starter-test:2.6.2') {
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-	}
-	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc:2.0.5.RELEASE'
-	testImplementation 'org.springframework.security:spring-security-test:5.5.1'
-}
-
-asciidoctor {
-	inputs.dir snippetsDir
-	dependsOn test
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	runtimeOnly 'com.h2database:h2'
+	implementation project(":commons")
 }

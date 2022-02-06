@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="146.0" prefWidth="470.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AddQuoteCtrl">
+   <children>
+      <Button layoutX="419.0" layoutY="105.0" mnemonicParsing="false" onAction="#ok" text="Ok" />
+      <Button layoutX="350.0" layoutY="105.0" mnemonicParsing="false" onAction="#cancel" text="Cancel" />
+      <TextField fx:id="firstName" layoutX="109.0" layoutY="24.0" prefHeight="26.0" prefWidth="79.0" />
+      <TextField fx:id="lastName" layoutX="286.0" layoutY="24.0" />
+      <TextField fx:id="quote" layoutX="109.0" layoutY="61.0" prefHeight="26.0" prefWidth="345.0" />
+      <Label layoutX="216.0" layoutY="29.0" text="Last Name" />
+      <Label layoutX="28.0" layoutY="29.0" text="First Name" />
+      <Label layoutX="28.0" layoutY="66.0" text="Quote" />
+   </children>
+</AnchorPane>

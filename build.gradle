@@ -1,56 +1,48 @@
+plugins {
+    id 'org.kordamp.gradle.jacoco' version '0.43.0'
+}
+
 allprojects {
-
-    repositories {
-        mavenCentral()
-    }
-
-    group = 'nl.tudelft.cse.oopp'
-    version = '0.0.1-SNAPSHOT'
-
+	repositories {
+		mavenCentral()
+	}
 }
 
 subprojects {
-    apply plugin: 'java'
-    apply plugin: 'jacoco'
-    apply plugin: 'checkstyle'
-    apply plugin: 'application'
+	apply plugin: 'java'
+	apply plugin: 'checkstyle'
+	apply plugin: 'jacoco'
+	
+	
+	group = 'oopp'
+	version = '0.0.1-SNAPSHOT'
+	sourceCompatibility = '11'
+	checkstyle {
+		toolVersion "9.2.1"
 
-    sourceCompatibility = 17
+		ignoreFailures = false
+		maxErrors = 0
+		maxWarnings = 0
+		configFile = '../checkstyle.xml' as File
+	}
 
-    ext {
-        set('snippetsDir', file("build/generated-snippets"))
-    }
-
-    checkstyle {
-        toolVersion "9.2.1"
-
-        ignoreFailures = false
-        maxErrors = 0
-        maxWarnings = 0
-    }
-
-    test {
-        outputs.dir snippetsDir
-        useJUnitPlatform()
-
-        test.finalizedBy jacocoTestReport
-        jacoco {
-            enabled = true
-            includes = ['nl.tudelft.cse.oopp.*']
-            excludes = []
-        }
-
-    }
-
-    jacoco {
-        toolVersion = "0.8.7"
-    }
-
-    jacocoTestReport {
-        reports {
-            xml.enabled true
-            csv.enabled false
-            html.enabled true
-        }
-    }
+	tasks.named('test') {
+		useJUnitPlatform()
+		finalizedBy jacocoTestReport 
+	}
+	jacocoTestReport {
+		reports {
+			xml.required = false
+			csv.required = false
+			html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+			}
+	}
+	
+	dependencies {
+		implementation 'org.apache.commons:commons-lang3:3.12.0'
+		
+		testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+		testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+		testImplementation 'org.mockito:mockito-core:4.1.0'
+	}
 }
