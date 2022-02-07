@@ -1,4 +1,4 @@
-image: gradle:7.3.3-jdk11-alpine
+image: gradle:7.3.3-jdk17-alpine
 
 variables:
   # Disable the Gradle daemon to ensure isolated runs of the CI pipeline.
