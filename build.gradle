@@ -1,5 +1,5 @@
 plugins {
-    id 'org.kordamp.gradle.jacoco' version '0.43.0'
+    id 'org.kordamp.gradle.jacoco' version '0.49.0'
 }
 
 allprojects {
@@ -35,7 +35,7 @@ subprojects {
 			xml.required = false
 			csv.required = false
 			html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
-			}
+		}
 	}
 	
 	dependencies {
