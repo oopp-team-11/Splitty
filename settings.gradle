@@ -1,4 +1,4 @@
-rootProject.name = 'quizzzz'
+rootProject.name = 'app'
 
 include 'client'
 include 'server'
