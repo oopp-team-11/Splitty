@@ -1,5 +1,5 @@
 plugins {
-    id 'org.kordamp.gradle.jacoco' version '0.49.0'
+    id 'org.kordamp.gradle.jacoco' version '0.54.0'
 }
 
 allprojects {

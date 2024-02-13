@@ -110,6 +110,12 @@ public class TestQuoteRepository implements QuoteRepository {
         return find(id).get();
     }
 
+    @Override
+    public Quote getReferenceById(Long id) {
+        call("getReferenceById");
+        return find(id).get();
+    }
+
     private Optional<Quote> find(Long id) {
         return quotes.stream().filter(q -> q.id == id).findFirst();
     }
