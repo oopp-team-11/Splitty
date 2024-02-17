@@ -78,6 +78,11 @@ Add more topics to research/talk about*
     - Eclipse
     - IntelliJ
 
+### GitLab Policy
+- Merge Requests' rules
+    - Learn how to setup approval's rules in GitLab
+    - Think how many people should review merge request in different cases
+
 ### Action points for next week (Scrum board) (3 min)
 
  - Who, what when?
