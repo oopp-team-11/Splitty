@@ -5,7 +5,7 @@
 Date:           20.02.2024\
 Time:           15:45-16:30\
 Location:     T.B.D.\
-Main focus:     T.B.D.\
+Main focus:     Discuss teamwork in our group\
 Chair:          Adam Szymaniak\
 Minute taker:     Boaz Bakhuijzen\
 Attendees:     T.B.D.
@@ -14,7 +14,7 @@ Attendees:     T.B.D.
 
 ### Opening by chair (1 min)
 
-### Check-in: How is everyone doing? (1-2 min)
+### Check-in: How is everyone doing? (2 min)
 
  - Check the attendance
 
@@ -26,22 +26,17 @@ Attendees:     T.B.D.
 
 ## Points of action:
 
-### Git assignment (3-5 min)
+### Git assignment (3 min)
 
  - Make sure that everyone is on the right track towards completing that assignment.
  - Discuss basics of git.
 
-### Template project (2-3 min)
+### Template project (3 min)
 
  - Everyone should have cloned the template project and successfully built it.
  - Discuss resolving potential issues with building the project.
 
 ## Towards code of conduct
-
-*We can focus on code of conduct and add more points to talk about.
-Lecture on 19.02 should introduce the concepts of teamwork, scrum,
-ACM formatting (used for code of conduct).
-Distribute work (who writes what).*
 
 ### 1. Discuss behaviour (5 min)
 
@@ -49,21 +44,28 @@ Distribute work (who writes what).*
  - It is our job that everyone contributes (equally)
      - If there is a problem it is our job to notify the TA
 
-### 2. Discuss planning (15 min)
+### 2. Discuss planning (6 min)
 
+ - Scrum
+    - How are you going to use scrum in the team?
  - Create a planning and put it on GitLab
     - Implement all items on the todo list
- - Scrum (see lecture 1)
-   - How are you going to use scrum in the team?
 
-### 3. Discuss communication (5 min)
+### 3. Discuss communication and outside collaboration (8 min)
 
  - Which channels of communication do we want to use for what?
+ - Discussing ways of collaborating besides the mandatory meetings
 
-## Distribute topics to research (5 min)
+### 4. GitLab Policy (5 min)
 
-*We can focus on the product development.
-Discuss our vision of the product. 
+- Merge Requests' rules
+    - Learn how to set up approval's rules in GitLab
+    - Think how many people should review merge request in different cases
+
+## Distribute topics to research (4 min)
+
+*Discuss our vision of the product. 
+**Potentially distribute work for the Code of conduct.**
 Add more topics to research/talk about*
 
 - Gradle (see lecture 4)
@@ -78,12 +80,7 @@ Add more topics to research/talk about*
     - Eclipse
     - IntelliJ
 
-### GitLab Policy
-- Merge Requests' rules
-    - Learn how to setup approval's rules in GitLab
-    - Think how many people should review merge request in different cases
-
-### Action points for next week (Scrum board) (3 min)
+### Action points for next week (Scrum board) (4 min)
 
  - Who, what when?
  - *Every week you fill the Scrum board with new action points for that week. See the to do list for the items you should implement.*
@@ -94,8 +91,6 @@ Add more topics to research/talk about*
   - Planned meeting duration != actual duration? 
   - Where/why did you mis -estimate?
 
-### Question round (3 min)
-
-*If there are any questions, now is the time to ask them.*
+### Question round (2-3 min)
 
 ### Closing (1 min)
