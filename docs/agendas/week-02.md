@@ -38,13 +38,13 @@ Attendees:     T.B.D.
 
 ## Towards code of conduct
 
-### 1. Discuss behaviour (8 min)
+### 1. Discuss behaviour (6 min)
 
  - Discuss a cake rule: If you are late or not there at all, you have to bring cake (or something similar)
  - It is our job that everyone contributes (equally)
      - If there is a problem it is our job to notify the TA
 
-### 2. Discuss planning (5 min)
+### 2. Discuss planning (8 min)
 
  - Scrum
     - How are you going to use scrum in the team?
