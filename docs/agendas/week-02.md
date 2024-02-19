@@ -4,7 +4,7 @@
 
 Date:           20.02.2024\
 Time:           15:45-16:30\
-Location:     https://meet.google.com/kzh-vmdy-nrm \
+Location:     Hybrid - DW Cubicle 3 and https://meet.google.com/kzh-vmdy-nrm \
 Main focus:     Discuss teamwork in our group\
 Chair:          Adam Szymaniak\
 Minute taker:     Boaz Bakhuijzen\
@@ -44,10 +44,7 @@ Attendees:     T.B.D.
  - It is our job that everyone contributes (equally)
      - If there is a problem it is our job to notify the TA
 
-### 2. Discuss planning (8 min)
-
- - Scrum
-    - How are you going to use scrum in the team?
+### 2. Discuss planning and decision-making (8 min)
 
 ### 3. Discuss communication and outside collaboration (6 min)
 
