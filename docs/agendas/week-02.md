@@ -4,7 +4,7 @@
 
 Date:           20.02.2024\
 Time:           15:45-16:30\
-Location:     T.B.D.\
+Location:     https://meet.google.com/kzh-vmdy-nrm \
 Main focus:     Discuss teamwork in our group\
 Chair:          Adam Szymaniak\
 Minute taker:     Boaz Bakhuijzen\
