@@ -19,8 +19,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-
-import java.io.File;
+import client.utils.FileSystemUtils;
 
 public class MainCtrl {
 
@@ -38,7 +37,7 @@ public class MainCtrl {
         this.firstStartupCtrl = firstStartup.getKey();
         this.firstStartup = new Scene(firstStartup.getValue());
 
-        if(!checkIfClientJsonExists()) {
+        if(!FileSystemUtils.checkIfClientJsonExists()) {
             showFirstStartup();
             primaryStage.show();
         }
@@ -50,8 +49,4 @@ public class MainCtrl {
         firstStartup.setOnKeyPressed(e -> firstStartupCtrl.keyPressed(e));
     }
 
-    // Method that checks if the client.json file exists
-    public boolean checkIfClientJsonExists() {
-        return new File("client.json").exists();
-    }
 }
