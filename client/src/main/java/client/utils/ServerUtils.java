@@ -24,6 +24,7 @@ import javax.json.JsonObject;
 
 public class ServerUtils {
 
+	//private static final String SERVER = "http://localhost:8080/";
 	private static final String SERVER = "https://test.requestcatcher.com/";
 
 	// Method that sends client's json data to server on endpoint /init_client
