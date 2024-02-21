@@ -3,7 +3,6 @@ package client.scenes;
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
@@ -14,9 +13,6 @@ import javax.json.*;
 import java.io.IOException;
 
 public class FirstStartupCtrl {
-
-    private final ServerUtils server;
-    private final FileSystemUtils fileSystem;
     private final MainCtrl mainCtrl;
 
     @FXML
@@ -41,16 +37,14 @@ public class FirstStartupCtrl {
     private TextField bic;
 
     @Inject
-    public FirstStartupCtrl(ServerUtils server, FileSystemUtils fileSystem, MainCtrl mainCtrl) {
-        this.fileSystem = fileSystem;
+    public FirstStartupCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
-        this.server = server;
     }
 
     public void ok() {
 
         try {
-            fileSystem.saveJsonClient(getjsonclient());
+            FileSystemUtils.saveJsonClient(getjsonclient());
         } catch (IOException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
@@ -61,7 +55,7 @@ public class FirstStartupCtrl {
 
 
         try {
-            server.sendJsonClient(getjsonclient());
+            ServerUtils.sendJsonClient(getjsonclient());
         } catch (IOException | InterruptedException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
