@@ -39,3 +39,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Custom ###
+client/client.json

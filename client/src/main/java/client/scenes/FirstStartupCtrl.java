@@ -62,16 +62,12 @@ public class FirstStartupCtrl {
 
         try {
             server.sendJsonClient(getjsonclient());
-        } catch (WebApplicationException e) {
+        } catch (IOException | InterruptedException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setContentText(e.getMessage());
             alert.showAndWait();
             return;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
         }
 
         // TODO: Continue to next stage
