@@ -14,6 +14,7 @@ public class FileSystemUtils {
         FileWriter file = new FileWriter(CLIENT_JSON_PATH);
         file.write(json.toString());
         file.flush();
+        file.close();
     }
 
     // Method that checks if the client.json file exists
