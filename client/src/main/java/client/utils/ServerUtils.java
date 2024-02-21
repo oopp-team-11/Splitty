@@ -29,7 +29,7 @@ public class ServerUtils {
 
 	// Method that sends client's json data to server on endpoint /init_client
 
-	public void sendJsonClient(JsonObject json) throws IOException, InterruptedException {
+	public static void sendJsonClient(JsonObject json) throws IOException, InterruptedException {
 
 		HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create(SERVER + "init_client"))
