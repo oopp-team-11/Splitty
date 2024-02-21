@@ -22,6 +22,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.List;
 
 import org.glassfish.jersey.client.ClientConfig;
@@ -31,9 +34,27 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
 
+import javax.json.JsonObject;
+
 public class ServerUtils {
 
-	private static final String SERVER = "http://localhost:8080/";
+	private static final String SERVER = "https://test.requestcatcher.com/";
+
+	// Method that sends client's json data to server on endpoint /init_client
+
+	public void sendJsonClient(JsonObject json) throws IOException, InterruptedException {
+
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(SERVER + "init_client"))
+				.header("Content-Type", "application/json")
+				.POST(HttpRequest.BodyPublishers.ofString(json.toString()))
+				.build();
+
+		// Send the request and get the response
+
+		HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+		System.out.println(response.statusCode());
+	}
 
 //	public void getQuotesTheHardWay() throws IOException, URISyntaxException {
 //		var url = new URI("http://localhost:8080/api/quotes").toURL();
