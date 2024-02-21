@@ -20,6 +20,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
+import java.io.File;
+
 public class MainCtrl {
 
     private Stage primaryStage;
@@ -36,14 +38,20 @@ public class MainCtrl {
         this.firstStartupCtrl = firstStartup.getKey();
         this.firstStartup = new Scene(firstStartup.getValue());
 
-        // TODO: wrap with code that checks if client.json is already defined
-        showFirstStartup();
-        primaryStage.show();
+        if(!checkIfClientJsonExists()) {
+            showFirstStartup();
+            primaryStage.show();
+        }
     }
 
     public void showFirstStartup() {
         primaryStage.setTitle("First Startup");
         primaryStage.setScene(firstStartup);
         firstStartup.setOnKeyPressed(e -> firstStartupCtrl.keyPressed(e));
+    }
+
+    // Method that checks if the client.json file exists
+    public boolean checkIfClientJsonExists() {
+        return new File("client.json").exists();
     }
 }
