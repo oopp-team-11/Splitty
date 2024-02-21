@@ -51,7 +51,7 @@ public class FirstStartupCtrl {
 
         try {
             fileSystem.saveJsonClient(getjsonclient());
-        } catch (WebApplicationException e) {
+        } catch (IOException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setContentText(e.getMessage());

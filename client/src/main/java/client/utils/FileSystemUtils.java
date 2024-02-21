@@ -9,15 +9,9 @@ public class FileSystemUtils {
 
 
     //Method that stores the client data in a json file
-    public void saveJsonClient(JsonObject json) {
-        try (FileWriter file = new FileWriter(CLIENT_JSON_PATH)) {
-
-            file.write(json.toString());
-            file.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+    public void saveJsonClient(JsonObject json) throws IOException {
+        FileWriter file = new FileWriter(CLIENT_JSON_PATH);
+        file.write(json.toString());
+        file.flush();
     }
 }
