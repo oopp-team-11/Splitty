@@ -1,20 +1,26 @@
 package client.scenes;
 
+import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Modality;
+
 import javax.json.*;
+import java.io.IOException;
 
 public class FirstStartupCtrl {
 
     private final ServerUtils server;
-    //private final FileSystemUtils fileSystem;
+    private final FileSystemUtils fileSystem;
     private final MainCtrl mainCtrl;
 
     @FXML
-    private TextField inviteCode;
+    private TextField invitationCode;
 
     @FXML
     private TextField firstName;
@@ -35,41 +41,47 @@ public class FirstStartupCtrl {
     private TextField bic;
 
     @Inject
-    public FirstStartupCtrl(ServerUtils server, MainCtrl mainCtrl) {
+    public FirstStartupCtrl(ServerUtils server, FileSystemUtils fileSystem, MainCtrl mainCtrl) {
+        this.fileSystem = fileSystem;
         this.mainCtrl = mainCtrl;
         this.server = server;
     }
 
     public void ok() {
-        // TODO: Uncomment when Marios finishes his code for saving client.json
-//        try {
-//            fileSystem.saveJsonClient(getJsonClient());
-//        } catch (WebApplicationException e) {
-//            var alert = new Alert(Alert.AlertType.ERROR);
-//            alert.initModality(Modality.APPLICATION_MODAL);
-//            alert.setContentText(e.getMessage());
-//            alert.showAndWait();
-//            return;
-//        }
 
-        // TODO: Uncomment when Marios finishes his code for sending to the server
-//        try {
-//            server.sendJsonClient(getJsonClient());
-//        } catch (WebApplicationException e) {
-//            var alert = new Alert(Alert.AlertType.ERROR);
-//            alert.initModality(Modality.APPLICATION_MODAL);
-//            alert.setContentText(e.getMessage());
-//            alert.showAndWait();
-//            return;
-//        }
+        try {
+            fileSystem.saveJsonClient(getjsonclient());
+        } catch (WebApplicationException e) {
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+            return;
+        }
+
+
+        try {
+            server.sendJsonClient(getjsonclient());
+        } catch (WebApplicationException e) {
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+            return;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         // TODO: Continue to next stage
         // MainCtrl.nextStage();
     }
 
+
     private JsonObject getjsonclient() {
         return Json.createObjectBuilder()
-                .add("code", inviteCode.getText())
+                .add("code", invitationCode.getText())
                 .add("first_name", firstName.getText())
                 .add("last_name", lastName.getText())
                 .add("email", email.getText())
