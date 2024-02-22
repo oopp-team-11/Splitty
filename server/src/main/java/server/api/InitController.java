@@ -25,7 +25,15 @@ public class InitController {
     }
     @PostMapping("/init_client")
     public ResponseEntity<Client> add(@RequestBody Client client) {
-
-        return null;
+        if (isNullOrEmpty(client.getFirstName()) ||
+                isNullOrEmpty(client.getLastName()) ||
+                isNullOrEmpty(client.getBic()) ||
+                isNullOrEmpty(client.getEmail()) ||
+                isNullOrEmpty(client.getInvitationCode()) ||
+                isNullOrEmpty(client.getIban())) {
+            return ResponseEntity.badRequest().build();
+        }
+        Client saved = repo.save(client);
+        return ResponseEntity.ok(saved);
     }
 }
