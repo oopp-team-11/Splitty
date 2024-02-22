@@ -1,10 +1,16 @@
 image: gradle:8.5.0-jdk21-alpine
 
+stages:
+  - test
+  - checkstyle
+  - build
+
 variables:
   # Disable the Gradle daemon to ensure isolated runs of the CI pipeline.
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
 build:
+  stage: build
   script:
     - ./gradlew build
     - ./gradlew AggregateJacocoReport
@@ -16,3 +22,13 @@ build:
     paths:
       - ./coverage
   coverage: /TestCoverage:(\d+)%/
+
+test:
+  stage: test
+  script:
+    - ./gradlew test
+
+checkstyle:
+  stage: checkstyle
+  script:
+    - ./gradlew checkstyleMain
