@@ -27,3 +27,8 @@ test:
   stage: test
   script:
     - ./gradlew test
+
+checkstyle:
+  stage: checkstyle
+  script:
+    - ./gradlew checkstyleMain
