@@ -104,7 +104,9 @@ public class TestClientRepository implements ClientRepository {
 
     @Override
     public <S extends Client> S save(S entity) {
-        return null;
+        call("save");
+        clients.add(entity);
+        return entity;
     }
 
     @Override
