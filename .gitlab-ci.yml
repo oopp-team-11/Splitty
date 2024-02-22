@@ -16,3 +16,7 @@ build:
     paths:
       - ./coverage
   coverage: /TestCoverage:(\d+)%/
+
+test:
+  script:
+    - ./gradlew test
