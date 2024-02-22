@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import commons.Client;
-import server.database.InitRepository;
+import server.database.ClientRepository;
 @RestController
 @RequestMapping("/init_client")
-public class InitController {
-    private final InitRepository repo;
+public class ClientController {
+    private final ClientRepository repo;
 
-    public InitController(InitRepository repo) {
+    public ClientController(ClientRepository repo) {
         this.repo = repo;
     }
     private static boolean isNullOrEmpty(String s) {
