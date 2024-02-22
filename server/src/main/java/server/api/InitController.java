@@ -20,4 +20,12 @@ public class InitController {
     public InitController(InitRepository repo) {
         this.repo = repo;
     }
+    private static boolean isNullOrEmpty(String s) {
+        return s == null || s.isEmpty();
+    }
+    @PostMapping("/init_client")
+    public ResponseEntity<Client> add(@RequestBody Client client) {
+
+        return null;
+    }
 }
