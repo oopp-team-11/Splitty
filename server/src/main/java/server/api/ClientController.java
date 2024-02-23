@@ -2,10 +2,7 @@ package server.api;
 
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import commons.Client;
 import server.database.ClientRepository;
@@ -20,7 +17,7 @@ public class ClientController {
     private static boolean isNullOrEmpty(String s) {
         return s == null || s.isEmpty();
     }
-    @PostMapping("/init_client")
+    @PutMapping (path = {"", "/"})
     public ResponseEntity<Client> add(@RequestBody Client client) {
         if (isNullOrEmpty(client.getFirstName()) ||
                 isNullOrEmpty(client.getLastName()) ||
