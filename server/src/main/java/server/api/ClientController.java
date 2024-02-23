@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import commons.Client;
 import server.database.ClientRepository;
 @RestController
-@RequestMapping("/init_client")
+@RequestMapping("/clients")
 public class ClientController {
     private final ClientRepository repo;
 
