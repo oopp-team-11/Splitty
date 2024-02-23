@@ -122,4 +122,40 @@ public class ExpenseTest {
         expenseType.add("Groceries");
         assertEquals(expense.getExpenseType(), expenseType);
     }
+    @Test
+    void setPaidByTest() {
+        expense.setPaidBy(4545454545L);
+        assertEquals(expense.getPaidBy(), 4545454545L);
+    }
+    @Test
+    void setTitleTest() {
+        expense.setTitle("Fishes");
+        assertEquals(expense.getTitle(), "Fishes");
+    }
+    @Test
+    void setCostTest() {
+        expense.setCost(420.69);
+        assertEquals(expense.getCost(), 420.69);
+    }
+    @Test
+    void setDateTest() {
+        expense.setDate(LocalDate.of(2023, 8, 4));
+        assertEquals(expense.getDate(), LocalDate.of(2023, 8, 4));
+    }
+    @Test
+    void setToBePaidByTest() {
+        ArrayList<Long> toBePaidBy = new ArrayList<>();
+        toBePaidBy.add(6969696969L);
+
+        expense.setToBePaidBy(toBePaidBy);
+        assertEquals(expense.getToBePaidBy(), toBePaidBy);
+    }
+    @Test
+    void setExpenseTypeTest() {
+        ArrayList<String> expenseType = new ArrayList<>();
+        expenseType.add("Fishing");
+
+        expense.setExpenseType(expenseType);
+        assertEquals(expense.getExpenseType(), expenseType);
+    }
 }

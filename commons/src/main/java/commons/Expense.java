@@ -50,10 +50,6 @@ public class Expense {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public long getPaidBy() {
         return paidBy;
     }
