@@ -28,25 +28,23 @@ public class MainCtrl {
 //    private QuoteOverviewCtrl overviewCtrl;
 //    private Scene overview;
 
-    private FirstStartupCtrl firstStartupCtrl;
-    private Scene firstStartup;
+    private StartScreenCtrl startScreenCtrl;
+    private Scene startScreenScene;
 
-    public void initialize(Stage primaryStage, Pair<FirstStartupCtrl, Parent> firstStartup) {
+    public void initialize(Stage primaryStage, Pair<StartScreenCtrl, Parent> firstStartup) {
         this.primaryStage = primaryStage;
 
-        this.firstStartupCtrl = firstStartup.getKey();
-        this.firstStartup = new Scene(firstStartup.getValue());
+        this.startScreenCtrl = firstStartup.getKey();
+        this.startScreenScene = new Scene(firstStartup.getValue());
 
-        if(!FileSystemUtils.checkIfClientJsonExists()) {
-            showFirstStartup();
-            primaryStage.show();
-        }
+        showStartScreen();
+        primaryStage.show();
     }
 
-    public void showFirstStartup() {
-        primaryStage.setTitle("First Startup");
-        primaryStage.setScene(firstStartup);
-        firstStartup.setOnKeyPressed(e -> firstStartupCtrl.keyPressed(e));
+    public void showStartScreen() {
+        primaryStage.setTitle("Start Screen");
+        primaryStage.setScene(startScreenScene);
+        primaryStage.setResizable(false);
     }
 
 }

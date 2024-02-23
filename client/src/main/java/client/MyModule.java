@@ -20,13 +20,13 @@ import com.google.inject.Module;
 import com.google.inject.Scopes;
 
 import client.scenes.MainCtrl;
-import client.scenes.FirstStartupCtrl;
+import client.scenes.StartScreenCtrl;
 
 public class MyModule implements Module {
 
     @Override
     public void configure(Binder binder) {
         binder.bind(MainCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(FirstStartupCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(StartScreenCtrl.class).in(Scopes.SINGLETON);
     }
 }
