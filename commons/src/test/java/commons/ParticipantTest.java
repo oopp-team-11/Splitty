@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ClientTest {
-    private Client client;
+class ParticipantTest {
+    private Participant participant;
     @BeforeEach
     void initClient() {
-        client = new Client("ABC-123-456",
+        participant = new Participant("ABC-123-456",
                 "John",
                 "Doe",
                 "j.doe@domain.com",
@@ -19,51 +19,51 @@ class ClientTest {
 
     @Test
     void testEquals() {
-        Client client2 = new Client("ABC-123-456",
+        Participant participant2 = new Participant("ABC-123-456",
                 "John",
                 "Doe",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123");
-        assertEquals(client, client2);
+        assertEquals(participant, participant2);
     }
 
     @Test
     void testNotEquals() {
-        Client client2 = new Client("ABC-123-456",
+        Participant participant2 = new Participant("ABC-123-456",
                 "John",
                 "Burger",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123");
-        assertNotEquals(client, client2);
+        assertNotEquals(participant, participant2);
     }
 
     @Test
     void testHashCode() {
-        Client client2 = new Client("ABC-123-456",
+        Participant participant2 = new Participant("ABC-123-456",
                 "John",
                 "Doe",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123");
-        assertEquals(client.hashCode(), client2.hashCode());
+        assertEquals(participant.hashCode(), participant2.hashCode());
     }
 
     @Test
     void testNotEqualsHashCode() {
-        Client client2 = new Client("ABC-123-456",
+        Participant participant2 = new Participant("ABC-123-456",
                 "John",
                 "Burger",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123");
-        assertNotEquals(client.hashCode(), client2.hashCode());
+        assertNotEquals(participant.hashCode(), participant2.hashCode());
     }
 
     @Test
     void testHasToString() {
-        String clientToString = client.toString();
+        String clientToString = participant.toString();
         assertTrue(clientToString.contains("firstName"));
         assertTrue(clientToString.contains("lastName"));
         assertTrue(clientToString.contains("email"));
@@ -73,66 +73,66 @@ class ClientTest {
 
     @Test
     void getId() {
-        assertTrue(client.getId() >= 0);
+        assertTrue(participant.getId() >= 0);
     }
 
     @Test
     void getInvitationCode() {
-        assertEquals("ABC-123-456", client.getInvitationCode());
+        assertEquals("ABC-123-456", participant.getInvitationCode());
     }
 
     @Test
     void getFirstName() {
-        assertEquals("John", client.getFirstName());
+        assertEquals("John", participant.getFirstName());
     }
 
     @Test
     void getLastName() {
-        assertEquals("Doe", client.getLastName());
+        assertEquals("Doe", participant.getLastName());
     }
 
     @Test
     void getEmail() {
-        assertEquals("j.doe@domain.com", client.getEmail());
+        assertEquals("j.doe@domain.com", participant.getEmail());
     }
 
     @Test
     void getIban() {
-        assertEquals("NL91 ABNA 0417 1643 00", client.getIban());
+        assertEquals("NL91 ABNA 0417 1643 00", participant.getIban());
     }
 
     @Test
     void getBic() {
-        assertEquals("ABNANL2A123", client.getBic());
+        assertEquals("ABNANL2A123", participant.getBic());
     }
 
     @Test
     void setFirstName() {
-        client.setFirstName("Joe");
-        assertEquals("Joe", client.getFirstName());
+        participant.setFirstName("Joe");
+        assertEquals("Joe", participant.getFirstName());
     }
 
     @Test
     void setLastName() {
-        client.setLastName("Average");
-        assertEquals("Average", client.getLastName());
+        participant.setLastName("Average");
+        assertEquals("Average", participant.getLastName());
     }
 
     @Test
     void setEmail() {
-        client.setEmail("j.average@gmail.com");
-        assertEquals("j.average@gmail.com", client.getEmail());
+        participant.setEmail("j.average@gmail.com");
+        assertEquals("j.average@gmail.com", participant.getEmail());
     }
 
     @Test
     void setIban() {
-        client.setIban("NL91 ABNA 1234 5678 90");
-        assertEquals("NL91 ABNA 1234 5678 90", client.getIban());
+        participant.setIban("NL91 ABNA 1234 5678 90");
+        assertEquals("NL91 ABNA 1234 5678 90", participant.getIban());
     }
 
     @Test
     void setBic() {
-        client.setBic("ABNANL2A567");
-        assertEquals("ABNANL2A567", client.getBic());
+        participant.setBic("ABNANL2A567");
+        assertEquals("ABNANL2A567", participant.getBic());
     }
 }

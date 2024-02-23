@@ -10,7 +10,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
-public class Client {
+public class Participant {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -21,11 +21,11 @@ public class Client {
     private String iban;
     private String bic;
 
-    public Client() {
+    public Participant() {
 
     }
 
-    public Client(String invitationCode, String firstName, String lastName, String email, String iban, String bic) {
+    public Participant(String invitationCode, String firstName, String lastName, String email, String iban, String bic) {
         this.invitationCode = invitationCode;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -88,9 +88,9 @@ public class Client {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        Client client = (Client) o;
+        Participant participant = (Participant) o;
 
-        return new EqualsBuilder().append(id, client.id).append(invitationCode, client.invitationCode).append(firstName, client.firstName).append(lastName, client.lastName).append(email, client.email).append(iban, client.iban).append(bic, client.bic).isEquals();
+        return new EqualsBuilder().append(id, participant.id).append(invitationCode, participant.invitationCode).append(firstName, participant.firstName).append(lastName, participant.lastName).append(email, participant.email).append(iban, participant.iban).append(bic, participant.bic).isEquals();
     }
 
     @Override
