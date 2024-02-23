@@ -13,32 +13,31 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 
-import commons.Client;
-import server.database.ClientRepository;
-public class TestClientRepository implements ClientRepository {
-    public final List<Client> clients = new ArrayList<>();
+import commons.Participant;
+import server.database.EventRepository;
+public class TestEventRepository implements EventRepository {
+    public final List<Participant> participants = new ArrayList<>();
 
     public final List<String> calledMethods = new ArrayList<>();
+
+
     @Override
     public void flush() {
 
     }
-    private void call(String name) {
-        calledMethods.add(name);
-    }
 
     @Override
-    public <S extends Client> S saveAndFlush(S entity) {
+    public <S extends Participant> S saveAndFlush(S entity) {
         return null;
     }
 
     @Override
-    public <S extends Client> List<S> saveAllAndFlush(Iterable<S> entities) {
+    public <S extends Participant> List<S> saveAllAndFlush(Iterable<S> entities) {
         return null;
     }
 
     @Override
-    public void deleteAllInBatch(Iterable<Client> entities) {
+    public void deleteAllInBatch(Iterable<Participant> entities) {
 
     }
 
@@ -53,69 +52,69 @@ public class TestClientRepository implements ClientRepository {
     }
 
     @Override
-    public Client getOne(Long aLong) {
+    public Participant getOne(Long aLong) {
         return null;
     }
 
     @Override
-    public Client getById(Long aLong) {
+    public Participant getById(Long aLong) {
         return null;
     }
 
     @Override
-    public Client getReferenceById(Long aLong) {
+    public Participant getReferenceById(Long aLong) {
         return null;
     }
 
     @Override
-    public <S extends Client> Optional<S> findOne(Example<S> example) {
+    public <S extends Participant> Optional<S> findOne(Example<S> example) {
         return Optional.empty();
     }
 
     @Override
-    public <S extends Client> List<S> findAll(Example<S> example) {
+    public <S extends Participant> List<S> findAll(Example<S> example) {
         return null;
     }
 
     @Override
-    public <S extends Client> List<S> findAll(Example<S> example, Sort sort) {
+    public <S extends Participant> List<S> findAll(Example<S> example, Sort sort) {
         return null;
     }
 
     @Override
-    public <S extends Client> Page<S> findAll(Example<S> example, Pageable pageable) {
+    public <S extends Participant> Page<S> findAll(Example<S> example, Pageable pageable) {
         return null;
     }
 
     @Override
-    public <S extends Client> long count(Example<S> example) {
+    public <S extends Participant> long count(Example<S> example) {
         return 0;
     }
 
     @Override
-    public <S extends Client> boolean exists(Example<S> example) {
+    public <S extends Participant> boolean exists(Example<S> example) {
         return false;
     }
 
     @Override
-    public <S extends Client, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
+    public <S extends Participant, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
         return null;
     }
 
     @Override
-    public <S extends Client> S save(S entity) {
-        call("save");
-        clients.add(entity);
+    public <S extends Participant> S save(S entity) {
+        calledMethods.add("save");
+        participants.add(entity);
         return entity;
     }
 
     @Override
-    public <S extends Client> List<S> saveAll(Iterable<S> entities) {
+    public <S extends Participant> List<S> saveAll(Iterable<S> entities) {
         return null;
     }
 
     @Override
-    public Optional<Client> findById(Long aLong) {
+    public Optional<Participant> findById(Long aLong) {
         return Optional.empty();
     }
 
@@ -125,12 +124,12 @@ public class TestClientRepository implements ClientRepository {
     }
 
     @Override
-    public List<Client> findAll() {
+    public List<Participant> findAll() {
         return null;
     }
 
     @Override
-    public List<Client> findAllById(Iterable<Long> longs) {
+    public List<Participant> findAllById(Iterable<Long> longs) {
         return null;
     }
 
@@ -145,7 +144,7 @@ public class TestClientRepository implements ClientRepository {
     }
 
     @Override
-    public void delete(Client entity) {
+    public void delete(Participant entity) {
 
     }
 
@@ -155,7 +154,7 @@ public class TestClientRepository implements ClientRepository {
     }
 
     @Override
-    public void deleteAll(Iterable<? extends Client> entities) {
+    public void deleteAll(Iterable<? extends Participant> entities) {
 
     }
 
@@ -165,12 +164,12 @@ public class TestClientRepository implements ClientRepository {
     }
 
     @Override
-    public List<Client> findAll(Sort sort) {
+    public List<Participant> findAll(Sort sort) {
         return null;
     }
 
     @Override
-    public Page<Client> findAll(Pageable pageable) {
+    public Page<Participant> findAll(Pageable pageable) {
         return null;
     }
 }
