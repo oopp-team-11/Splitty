@@ -47,6 +47,6 @@ public class EventTest {
                 LocalDate.of(2024,2,12),
                 LocalDate.of(2024,2,14),
                 participants,
-                participants);
+                expenses);
     }
 }

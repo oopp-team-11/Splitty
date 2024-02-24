@@ -25,10 +25,10 @@ public class Event {
     private List<Participant> participants;
 
     @OneToMany
-    private List<Participant> expenses;
+    private List<Expense> expenses;
 
     public Event(long id, String title, LocalDate creationDate, LocalDate lastActivity,
-                 List<Participant> participants, List<Participant> expenses) {
+                 List<Participant> participants, List<Expense> expenses) {
         this.id = id;
         this.title = title;
         this.creationDate = creationDate;
@@ -52,11 +52,11 @@ public class Event {
         this.participants = participants;
     }
 
-    public List<Participant> getExpenses() {
+    public List<Expense> getExpenses() {
         return expenses;
     }
 
-    public void setExpenses(List<Participant> expenses) {
+    public void setExpenses(List<Expense> expenses) {
         this.expenses = expenses;
     }
 
