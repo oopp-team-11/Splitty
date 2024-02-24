@@ -3,9 +3,9 @@ package commons;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.List;
-import java.util.Objects;
 
 import java.time.LocalDate;
 
@@ -99,5 +99,17 @@ public class Event {
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(id).append(title)
                 .append(creationDate).append(lastActivity).append(participants).append(expenses).toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("title", title)
+                .append("creationDate", creationDate)
+                .append("lastActivity", lastActivity)
+                .append("participants", participants)
+                .append("expenses", expenses)
+                .toString();
     }
 }
