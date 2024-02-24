@@ -108,8 +108,8 @@ public class Event {
                 .append("title", title)
                 .append("creationDate", creationDate)
                 .append("lastActivity", lastActivity)
-                .append("participants", participants)
-                .append("expenses", expenses)
+                .append("participants", participants.toString())
+                .append("expenses", expenses.toString())
                 .toString();
     }
 }
