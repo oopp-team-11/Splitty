@@ -2,7 +2,14 @@ package server.database;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import commons.Participant;
+import commons.Event;
+import org.springframework.data.jpa.repository.Query;
 
-public interface EventRepository extends JpaRepository<Participant, Long> {}
+import java.util.List;
+
+public interface EventRepository extends JpaRepository<Event, Long> {
+    @Query("select e from Event e where e.invitationCode = ?1")
+    List<Event> findOneByInvitationCode(String invitationCode);
+}
+
 

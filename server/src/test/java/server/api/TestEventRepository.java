@@ -4,22 +4,36 @@ package server.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
+import commons.Event;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 
-import commons.Participant;
+import commons.Event;
 import server.database.EventRepository;
 public class TestEventRepository implements EventRepository {
-    public final List<Participant> participants = new ArrayList<>();
+    public final List<Event> events = new ArrayList<>();
 
     public final List<String> calledMethods = new ArrayList<>();
 
+
+    @Override
+    public List<Event> findOneByInvitationCode(String invitationCode) {
+        for (var e : events) {
+            if (e.getInvitationCode().equals(invitationCode)) {
+                var res = new ArrayList<Event>();
+                res.add(e);
+                return res;
+            }
+        }
+        return null;
+    }
 
     @Override
     public void flush() {
@@ -27,17 +41,17 @@ public class TestEventRepository implements EventRepository {
     }
 
     @Override
-    public <S extends Participant> S saveAndFlush(S entity) {
+    public <S extends Event> S saveAndFlush(S entity) {
         return null;
     }
 
     @Override
-    public <S extends Participant> List<S> saveAllAndFlush(Iterable<S> entities) {
+    public <S extends Event> List<S> saveAllAndFlush(Iterable<S> entities) {
         return null;
     }
 
     @Override
-    public void deleteAllInBatch(Iterable<Participant> entities) {
+    public void deleteAllInBatch(Iterable<Event> entities) {
 
     }
 
@@ -52,69 +66,79 @@ public class TestEventRepository implements EventRepository {
     }
 
     @Override
-    public Participant getOne(Long aLong) {
+    public Event getOne(Long aLong) {
         return null;
     }
 
     @Override
-    public Participant getById(Long aLong) {
+    public Event getById(Long aLong) {
         return null;
     }
 
     @Override
-    public Participant getReferenceById(Long aLong) {
+    public Event getReferenceById(Long aLong) {
+        for (var e : events) {
+            if (Objects.equals(e.getId(), aLong)) {
+                return e;
+            }
+        }
         return null;
     }
 
     @Override
-    public <S extends Participant> Optional<S> findOne(Example<S> example) {
+    public <S extends Event> Optional<S> findOne(Example<S> example) {
         return Optional.empty();
     }
 
     @Override
-    public <S extends Participant> List<S> findAll(Example<S> example) {
+    public <S extends Event> List<S> findAll(Example<S> example) {
         return null;
     }
 
     @Override
-    public <S extends Participant> List<S> findAll(Example<S> example, Sort sort) {
+    public <S extends Event> List<S> findAll(Example<S> example, Sort sort) {
         return null;
     }
 
     @Override
-    public <S extends Participant> Page<S> findAll(Example<S> example, Pageable pageable) {
+    public <S extends Event> Page<S> findAll(Example<S> example, Pageable pageable) {
         return null;
     }
 
     @Override
-    public <S extends Participant> long count(Example<S> example) {
+    public <S extends Event> long count(Example<S> example) {
         return 0;
     }
 
     @Override
-    public <S extends Participant> boolean exists(Example<S> example) {
+    public <S extends Event> boolean exists(Example<S> example) {
         return false;
     }
 
     @Override
-    public <S extends Participant, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
+    public <S extends Event, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
         return null;
     }
 
     @Override
-    public <S extends Participant> S save(S entity) {
+    public <S extends Event> S save(S entity) {
         calledMethods.add("save");
-        participants.add(entity);
+        for (var e : events) {
+            if (Objects.equals(entity.getId(), e.getId())) {
+                return entity;
+            }
+        }
+        events.add(entity);
         return entity;
     }
 
     @Override
-    public <S extends Participant> List<S> saveAll(Iterable<S> entities) {
+    public <S extends Event> List<S> saveAll(Iterable<S> entities) {
         return null;
     }
 
     @Override
-    public Optional<Participant> findById(Long aLong) {
+    public Optional<Event> findById(Long aLong) {
         return Optional.empty();
     }
 
@@ -124,12 +148,12 @@ public class TestEventRepository implements EventRepository {
     }
 
     @Override
-    public List<Participant> findAll() {
+    public List<Event> findAll() {
         return null;
     }
 
     @Override
-    public List<Participant> findAllById(Iterable<Long> longs) {
+    public List<Event> findAllById(Iterable<Long> longs) {
         return null;
     }
 
@@ -144,7 +168,7 @@ public class TestEventRepository implements EventRepository {
     }
 
     @Override
-    public void delete(Participant entity) {
+    public void delete(Event entity) {
 
     }
 
@@ -154,7 +178,7 @@ public class TestEventRepository implements EventRepository {
     }
 
     @Override
-    public void deleteAll(Iterable<? extends Participant> entities) {
+    public void deleteAll(Iterable<? extends Event> entities) {
 
     }
 
@@ -164,12 +188,12 @@ public class TestEventRepository implements EventRepository {
     }
 
     @Override
-    public List<Participant> findAll(Sort sort) {
+    public List<Event> findAll(Sort sort) {
         return null;
     }
 
     @Override
-    public Page<Participant> findAll(Pageable pageable) {
+    public Page<Event> findAll(Pageable pageable) {
         return null;
     }
 }
