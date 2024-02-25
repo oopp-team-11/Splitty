@@ -19,6 +19,6 @@ public class FileSystemUtils {
 
     // Method that checks if the client.json file exists
     public static boolean checkIfClientJsonExists() {
-        return new File("client.json").exists();
+        return new File(CLIENT_JSON_PATH).exists();
     }
 }

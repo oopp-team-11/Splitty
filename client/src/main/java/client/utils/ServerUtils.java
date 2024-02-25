@@ -32,9 +32,9 @@ public class ServerUtils {
 	public static void sendJsonClient(JsonObject json) throws IOException, InterruptedException {
 
 		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(SERVER + "init_client"))
+				.uri(URI.create(SERVER + "client"))
 				.header("Content-Type", "application/json")
-				.POST(HttpRequest.BodyPublishers.ofString(json.toString()))
+				.PUT(HttpRequest.BodyPublishers.ofString(json.toString()))
 				.build();
 
 		// Send the request and get the response
