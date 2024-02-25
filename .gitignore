@@ -42,3 +42,6 @@ out/
 
 ### Custom ###
 participant/participant.json
+
+### Database trace ###
+h2-database.trace.db
