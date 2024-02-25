@@ -47,6 +47,7 @@ public class EventTest {
         );
 
         event = new Event(6662137,
+                "ABC-123-456",
                 "The Event we need to pay for",
                 LocalDate.of(2024, 2, 12),
                 LocalDate.of(2024, 2, 14),
@@ -63,6 +64,7 @@ public class EventTest {
 
         Event event2 = new Event(
                 6662137,
+                "ABC-123-456",
                 "The Event we need to pay for",
                 LocalDate.of(2024, 2, 12),
                 LocalDate.of(2024, 2, 14),
@@ -99,6 +101,7 @@ public class EventTest {
 
         Event event2 = new Event(
                 4202112,
+                "ABC-666-789",
                 "The Event we need to pay for",
                 LocalDate.of(2024, 1, 16),
                 LocalDate.of(2024, 2, 19),
@@ -135,6 +138,7 @@ public class EventTest {
 
         Event event2 = new Event(
                 6662137,
+                "ABC-123-456",
                 "The Event we need to pay for",
                 LocalDate.of(2024, 2, 12),
                 LocalDate.of(2024, 2, 14),
@@ -171,6 +175,7 @@ public class EventTest {
 
         Event event2 = new Event(
                 4202112,
+                "ABC-666-789",
                 "The Event we need to pay for",
                 LocalDate.of(2024, 1, 16),
                 LocalDate.of(2024, 2, 19),
@@ -286,5 +291,16 @@ public class EventTest {
     void setLastActivityTest() {
         event.setLastActivity(LocalDate.of(2024,1,14));
         assertEquals(event.getLastActivity(), LocalDate.of(2024,1,14));
+    }
+
+    @Test
+    void getInvitationCodeTest() {
+        assertEquals(event.getInvitationCode(),"ABC-123-456");
+    }
+
+    @Test
+    void setInvitationCodeTest() {
+        event.setInvitationCode("ABC-666-789");
+        assertEquals(event.getInvitationCode(), "ABC-666-789");
     }
 }

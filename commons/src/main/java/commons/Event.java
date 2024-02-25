@@ -15,6 +15,8 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    private String invitationCode;
+
     private String title;
 
     private LocalDate creationDate;
@@ -27,9 +29,10 @@ public class Event {
     @OneToMany
     private List<Expense> expenses;
 
-    public Event(long id, String title, LocalDate creationDate, LocalDate lastActivity,
-                 List<Participant> participants, List<Expense> expenses) {
+    public Event(long id, String invitationCode, String title, LocalDate creationDate,
+                 LocalDate lastActivity, List<Participant> participants, List<Expense> expenses) {
         this.id = id;
+        this.invitationCode = invitationCode;
         this.title = title;
         this.creationDate = creationDate;
         this.lastActivity = lastActivity;
@@ -42,6 +45,14 @@ public class Event {
 
     public Long getId() {
         return id;
+    }
+
+    public String getInvitationCode() {
+        return invitationCode;
+    }
+
+    public void setInvitationCode(String invitationCode) {
+        this.invitationCode = invitationCode;
     }
 
     public List<Participant> getParticipants() {
