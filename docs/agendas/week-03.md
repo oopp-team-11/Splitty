@@ -25,14 +25,19 @@ Did anyone read the agenda before the meeting and do they have suggestions?
 * Identify possible problems in our current workflow.
 
 
-# Any other business
-*If anybody has something that should be discussed but came up with that after the agenda was finalized (in point 2), he/she should bring that up now so that it can be discussed after all.*
+## Any other business
+* If anybody has something that should be discussed but came up with that after the agenda was finalized (in point 2), he/she should bring that up now so that it can be discussed after all.*
 
-# Questions for the TA
-    - How much do you check in on our progress during the week?
+## Questions for the TA
+* How much do you check in on our progress during the week?
+* Could you give us more insight into how 'lines of java source code' are counted.
+  * Do empty lines between attributes or statements count?
+  * Do imports count?
+  * Do trivial methods (getters, setters etc) count? What if they are generated?
 
-# Question round
+## Question round
 If there are any questions, now is the time to ask them.
 
-# Closing
-See anyone would like to start work after the meeting
+## Closing
+* See if anyone would like to start work after the meeting.
+* Ask the TA if she's got anything to add.
