@@ -26,6 +26,7 @@ Did anyone read the agenda before the meeting and do they have suggestions?
 
 
 ## Any other business
+* Assign someone as 'responsible' for the code of conduct. I.e task like turning it in in brightspace, checking grammar, word-count and structure etc.
 * If anybody has something that should be discussed but came up with that after the agenda was finalized (in point 2), he/she should bring that up now so that it can be discussed after all.*
 
 ## Questions for the TA
