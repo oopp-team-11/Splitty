@@ -79,7 +79,7 @@ public class Expense {
                 .append("id", id)
                 .append("paidBy", paidBy)
                 .append("title", title)
-                .append("cost", amount)
+                .append("amount", amount)
                 .toString();
     }
 }
