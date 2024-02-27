@@ -24,7 +24,7 @@
                   <HBox prefHeight="27.0" prefWidth="476.0" style="-fx-padding: 10;">
                      <children>
                         <TextField id="newEventName" prefHeight="76.0" prefWidth="134.0" promptText="Event name" />
-                        <Button id="createBtn" mnemonicParsing="false" text="Create" onAction="#onCreate" />
+                        <Button id="createBtn" mnemonicParsing="false" onAction="#onCreate" text="Create" />
                      </children>
                   </HBox>
                   <Label style="-fx-padding: 10;" text="Join event by invite">
@@ -34,8 +34,8 @@
                   </Label>
                   <HBox prefHeight="40.0" prefWidth="476.0" style="-fx-padding: 10;">
                      <children>
-                        <TextField id="joinInvitationCode" prefHeight="26.0" prefWidth="134.0" promptText="Invitation code" />
-                        <Button id="joinBtn" mnemonicParsing="false" prefHeight="26.0" prefWidth="55.0" text="Join" onAction="#onJoin" />
+                        <TextField id="joinInvitationCode" fx:id="joinInvitationCode" prefHeight="26.0" prefWidth="134.0" promptText="Invitation code" />
+                        <Button id="joinBtn" mnemonicParsing="false" onAction="#onJoin" prefHeight="26.0" prefWidth="55.0" text="Join" />
                      </children>
                   </HBox>
                </children>
