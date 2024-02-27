@@ -104,7 +104,7 @@ public class ExpenseTest {
     }
     @Test
     void getCostTest() {
-        assertEquals(expense.getCost(), 69.69);
+        assertEquals(expense.getAmount(), 69.69);
     }
     @Test
     void getDateTest() {
@@ -134,8 +134,8 @@ public class ExpenseTest {
     }
     @Test
     void setCostTest() {
-        expense.setCost(420.69);
-        assertEquals(expense.getCost(), 420.69);
+        expense.setAmount(420.69);
+        assertEquals(expense.getAmount(), 420.69);
     }
     @Test
     void setDateTest() {
