@@ -41,4 +41,7 @@ out/
 .vscode/
 
 ### Custom ###
-client/client.json
+participant/participant.json
+
+### Database trace ###
+h2-database.trace.db
