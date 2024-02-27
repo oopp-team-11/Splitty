@@ -19,7 +19,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-import client.utils.FileSystemUtils;
 
 public class MainCtrl {
 
@@ -28,25 +27,33 @@ public class MainCtrl {
 //    private QuoteOverviewCtrl overviewCtrl;
 //    private Scene overview;
 
-    private FirstStartupCtrl firstStartupCtrl;
-    private Scene firstStartup;
+    private StartScreenCtrl startScreenCtrl;
+    private Scene startScreenScene;
 
-    public void initialize(Stage primaryStage, Pair<FirstStartupCtrl, Parent> firstStartup) {
+    private CreateParticipantCtrl createParticipantCtrl;
+    private Scene createParticipantScene;
+
+    public void initialize(Stage primaryStage, Pair<StartScreenCtrl, Parent> startScreen, Pair<CreateParticipantCtrl, Parent> createParticipant) {
         this.primaryStage = primaryStage;
 
-        this.firstStartupCtrl = firstStartup.getKey();
-        this.firstStartup = new Scene(firstStartup.getValue());
+        this.startScreenCtrl = startScreen.getKey();
+        this.startScreenScene = new Scene(startScreen.getValue());
 
-        if(!FileSystemUtils.checkIfClientJsonExists()) {
-            showFirstStartup();
-            primaryStage.show();
-        }
+        this.createParticipantCtrl = createParticipant.getKey();
+        this.createParticipantScene = new Scene(createParticipant.getValue());
+
+        showStartScreen();
+        primaryStage.show();
     }
 
-    public void showFirstStartup() {
-        primaryStage.setTitle("First Startup");
-        primaryStage.setScene(firstStartup);
-        firstStartup.setOnKeyPressed(e -> firstStartupCtrl.keyPressed(e));
+    public void showStartScreen() {
+        primaryStage.setTitle("Start Screen");
+        primaryStage.setScene(startScreenScene);
+        primaryStage.setResizable(false);
+    }
+
+    public void showCreateParticipant(String invitationCode) {
+
     }
 
 }
