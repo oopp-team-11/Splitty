@@ -15,32 +15,69 @@
  */
 package client.utils;
 
+import javax.json.Json;
+import javax.json.JsonObject;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import javax.json.JsonObject;
+import org.json.*;
 
 public class ServerUtils {
 
 	//private static final String SERVER = "http://localhost:8080/";
-	private static final String SERVER = "https://test.requestcatcher.com/";
+	//private static final String SERVER = "https://test.requestcatcher.com/";
 
-	// Method that sends client's json data to server on endpoint /init_client
 
-	public static void sendJsonClient(JsonObject json) throws IOException, InterruptedException {
-
+	/**
+	 * Method that sends a join event get request to the server
+	 * @param invitationCode invitation code of the event
+	 * @param server server url
+	 * @throws IOException if something goes wrong
+	 * @throws InterruptedException if something goes wrong with the request
+	 */
+	public void sendJoinRequest(String invitationCode, String server)
+		throws IOException, InterruptedException {
 		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(SERVER + "client"))
-				.header("Content-Type", "application/json")
-				.PUT(HttpRequest.BodyPublishers.ofString(json.toString()))
+				.uri(URI.create(server + "/events/" + invitationCode))
+				.GET()
 				.build();
 
-		// Send the request and get the response
-
-		HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+		HttpClient client = HttpClient.newHttpClient();
+		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 		System.out.println(response.statusCode());
+		System.out.println(response.body());
+	}
+
+	/**
+	 * Method that sends a create event post request to the server
+	 * @param eventName name of the event
+	 * @param server server url
+	 * @throws IOException if something goes wrong
+	 * @throws InterruptedException if something goes wrong with the request
+	 */
+	public void sendCreateRequest(String eventName, String server)
+		throws IOException, InterruptedException {
+		JsonObject json = Json.createObjectBuilder()
+			.add("eventName", eventName)
+				.build();
+
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(server + "/events"))
+				.header("Content-Type", "application/json")
+				.header("Accept", "application/json")
+				.POST(HttpRequest.BodyPublishers.ofString(json.toString()))
+				.build();
+
+		HttpClient client = HttpClient.newHttpClient();
+		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+		String responseJson = response.body();
+		JSONObject jsonObject = new JSONObject(responseJson);
+		String invitationCode = jsonObject.get("invitationCode").toString();
+
+		sendJoinRequest(invitationCode, server);
 	}
 
 //	public void getQuotesTheHardWay() throws IOException, URISyntaxException {

@@ -11,8 +11,13 @@ import java.util.List;
 public class FileSystemUtils {
     //private static final String CLIENT_JSON_PATH = "client.json";
 
-    // Method that reads invitation codes from config file
-    public static List<String> readInvitationCodes(String path) throws FileNotFoundException {
+    /**
+     * Method that reads the invitation codes from the config file
+     * @param path path of the file
+     * @return lust of invitation codes
+     * @throws FileNotFoundException if the file is not found
+     */
+    public List<String> readInvitationCodes(String path) throws FileNotFoundException {
         if(!checkIfFileExists(path)) {
             throw new FileNotFoundException("File not found");
         }
@@ -28,8 +33,13 @@ public class FileSystemUtils {
 
     }
 
-    // Method that saves list of invitation codes as json to config file
-    public static void saveInvitationCodesToConfigFile(String invitationCode, String path)
+    /**
+     * Method that saves the invitation codes to the config file
+     * @param invitationCode invitation code to be saved
+     * @param path path of the file
+     * @throws IOException if something goes wrong
+     */
+    public void saveInvitationCodesToConfigFile(String invitationCode, String path)
         throws IOException {
         if(!checkIfFileExists(path)) {
             List<String> codes = new ArrayList<>();
@@ -48,8 +58,6 @@ public class FileSystemUtils {
         List<String> codes = new ArrayList<>(readInvitationCodes(path));
         codes.add(invitationCode);
 
-        //System.out.println(codes);
-
         JsonObject json = Json.createObjectBuilder()
                 .add("invitationCodes", Json.createArrayBuilder(codes))
                 .build();
@@ -60,8 +68,12 @@ public class FileSystemUtils {
         file.close();
     }
 
-    // Method that checks if the client.json file exists
-    public static boolean checkIfFileExists(String path) {
+    /**
+     * Method that checks if a file exists
+     * @param path path of the file
+     * @return true if the file exists, false otherwise
+     */
+    public boolean checkIfFileExists(String path) {
         return new File(path).exists();
     }
 }
