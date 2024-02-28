@@ -23,7 +23,7 @@
                   </Label>
                   <HBox prefHeight="27.0" prefWidth="476.0" style="-fx-padding: 10;">
                      <children>
-                        <TextField id="newEventName" prefHeight="76.0" prefWidth="134.0" promptText="Event name" />
+                        <TextField id="newEventName" fx:id="newEventName" prefHeight="76.0" prefWidth="134.0" promptText="Event name" />
                         <Button id="createBtn" mnemonicParsing="false" onAction="#onCreate" text="Create" />
                      </children>
                   </HBox>

@@ -17,18 +17,39 @@ public class StartScreenCtrl {
     @FXML
     private TextField joinInvitationCode;
 
+    private FileSystemUtils fileSystemUtils;
+    private ServerUtils serverUtils;
+
     @Inject
     public StartScreenCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
+        fileSystemUtils = new FileSystemUtils();
+        serverUtils = new ServerUtils();
     }
 
-    public void onCreate() {
+    /**
+     * Method that is called when the create button is clicked
+     * @throws IOException if something goes wrong
+     * @throws InterruptedException if something goes wrong with the request
+     */
+    public void onCreate() throws IOException, InterruptedException {
         // todo: send create request (PUT) to /events
         System.out.println("ONCREATE");
+        String eventName = newEventName.getText();
+
+        fileSystemUtils.saveInvitationCodesToConfigFile(eventName,
+            "config.json");
+        serverUtils.sendCreateRequest(eventName, "http://localhost:8080");
+        //System.out.println(eventName);
 
 
     }
 
+    /**
+     * Method that is called when the join button is clicked
+     * @throws IOException if something goes wrong
+     * @throws InterruptedException if something goes wrong with the request
+     */
     public void onJoin() throws IOException, InterruptedException {
         // todo: send get request to /events with invitation code
         // if status == 200
@@ -39,10 +60,8 @@ public class StartScreenCtrl {
         System.out.println("ONJOIN");
         String invitationCode = joinInvitationCode.getText();
 
-        FileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
+        fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
             "config.json");
-        ServerUtils.sendJoinRequest(invitationCode, "https://test.requestcatcher.com");
-
-        //System.out.println(FileSystemUtils.readInvitationCodes("config.json"));
+        serverUtils.sendJoinRequest(invitationCode, "http://localhost:8080");
     }
 }
