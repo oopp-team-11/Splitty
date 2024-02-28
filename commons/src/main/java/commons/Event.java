@@ -27,8 +27,7 @@ public class Event {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime lastActivity;
 
-    //@OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<Participant> participants;
 
     public Event(long id, String invitationCode, String title, LocalDateTime creationDate,

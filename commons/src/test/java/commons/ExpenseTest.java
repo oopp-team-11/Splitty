@@ -9,7 +9,7 @@ public class ExpenseTest {
     private Expense expense;
     @BeforeEach
     void setup(){
-        Participant paidBy = new Participant("ABC-123-456",
+        Participant paidBy = new Participant(
                 "John",
                 "Doe",
                 "j.doe@domain.com",
@@ -20,7 +20,7 @@ public class ExpenseTest {
 
     @Test
     void testEquals() {
-        Participant paidBy = new Participant("ABC-123-456",
+        Participant paidBy = new Participant(
                 "John",
                 "Doe",
                 "j.doe@domain.com",
@@ -32,7 +32,7 @@ public class ExpenseTest {
 
     @Test
     void testNotEquals() {
-        Participant participant2 = new Participant("ABC-123-456",
+        Participant participant2 = new Participant(
                 "John",
                 "Burger",
                 "j.doe@domain.com",
@@ -44,7 +44,7 @@ public class ExpenseTest {
 
     @Test
     void testHashCodeEquals() {
-        Participant paidBy = new Participant("ABC-123-456",
+        Participant paidBy = new Participant(
                 "John",
                 "Doe",
                 "j.doe@domain.com",
@@ -56,7 +56,7 @@ public class ExpenseTest {
 
     @Test
     void testHashCodeNotEquals() {
-        Participant paidBy = new Participant("ABC-123-456",
+        Participant paidBy = new Participant(
                 "John",
                 "Doe",
                 "j.doe@domain.com",
@@ -81,7 +81,7 @@ public class ExpenseTest {
     }
     @Test
     void getPaidByTest() {
-        Participant paidBy = new Participant("ABC-123-456",
+        Participant paidBy = new Participant(
                 "John",
                 "Doe",
                 "j.doe@domain.com",
@@ -99,7 +99,7 @@ public class ExpenseTest {
     }
     @Test
     void setPaidByTest() {
-        Participant participant2 = new Participant("ABC-123-456",
+        Participant participant2 = new Participant(
                 "John",
                 "Burger",
                 "j.doe@domain.com",

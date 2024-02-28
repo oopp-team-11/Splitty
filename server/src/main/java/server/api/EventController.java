@@ -28,7 +28,6 @@ public class EventController {
                 isNullOrEmpty(participant.getLastName()) ||
                 isNullOrEmpty(participant.getBic()) ||
                 isNullOrEmpty(participant.getEmail()) ||
-                isNullOrEmpty(participant.getInvitationCode()) ||
                 isNullOrEmpty(participant.getIban())) {
             return ResponseEntity.badRequest().build();
         }

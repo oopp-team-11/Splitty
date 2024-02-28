@@ -35,21 +35,13 @@ public class EventControllerTest {
 
     @Test
     public void databaseIsUsed() {
-        sut.add("defunct", new Participant("A", "B", "C", "D", "E", "F"));
+        sut.add("defunct", new Participant( "B", "C", "D", "E", "F"));
         assertTrue(repo.calledMethods.contains("save"));
     }
 
     @Test
-    public void checkParticipantsDetailsA() {
-        sut.add("defunct", new Participant("A", "B", "C", "D", "E", "F"));
-        ArrayList<Participant> participants = (ArrayList<Participant>) repo.events.getFirst().getParticipants();
-        var client = participants.getFirst();
-        assertEquals("A", client.getInvitationCode());
-    }
-
-    @Test
     public void checkParticipantsDetailsB() {
-        sut.add("defunct", new Participant("A", "B", "C", "D", "E", "F"));
+        sut.add("defunct", new Participant( "B", "C", "D", "E", "F"));
         ArrayList<Participant> participants = (ArrayList<Participant>) repo.events.getFirst().getParticipants();
         var client = participants.getFirst();
         assertEquals("B", client.getFirstName());
@@ -57,7 +49,7 @@ public class EventControllerTest {
 
     @Test
     public void checkParticipantsDetailsC() {
-        sut.add("defunct", new Participant("A", "B", "C", "D", "E", "F"));
+        sut.add("defunct", new Participant( "B", "C", "D", "E", "F"));
         ArrayList<Participant> participants = (ArrayList<Participant>) repo.events.getFirst().getParticipants();
         var client = participants.getFirst();
         assertEquals("C", client.getLastName());
@@ -65,7 +57,7 @@ public class EventControllerTest {
 
     @Test
     public void checkParticipantsDetailsD() {
-        sut.add("defunct", new Participant("A", "B", "C", "D", "E", "F"));
+        sut.add("defunct", new Participant( "B", "C", "D", "E", "F"));
         ArrayList<Participant> participants = (ArrayList<Participant>) repo.events.getFirst().getParticipants();
         var client = participants.getFirst();
         assertEquals("D", client.getEmail());
@@ -73,7 +65,7 @@ public class EventControllerTest {
 
     @Test
     public void checkParticipantsDetailsE() {
-        sut.add("defunct", new Participant("A", "B", "C", "D", "E", "F"));
+        sut.add("defunct", new Participant( "B", "C", "D", "E", "F"));
         ArrayList<Participant> participants = (ArrayList<Participant>) repo.events.getFirst().getParticipants();
         var client = participants.getFirst();
         assertEquals("E", client.getIban());
@@ -81,7 +73,7 @@ public class EventControllerTest {
 
     @Test
     public void checkParticipantsDetailsF() {
-        sut.add("defunct", new Participant("A", "B", "C", "D", "E", "F"));
+        sut.add("defunct", new Participant( "B", "C", "D", "E", "F"));
         ArrayList<Participant> participants = (ArrayList<Participant>) repo.events.getFirst().getParticipants();
         var client = participants.getFirst();
         assertEquals("F", client.getBic());
@@ -89,25 +81,25 @@ public class EventControllerTest {
 
     @Test
     public void checkStatusCode() {
-        var actual = sut.add("defunct", new Participant("A", "B", "C", "D", "E", "F"));
+        var actual = sut.add("defunct", new Participant( "B", "C", "D", "E", "F"));
         assertEquals(OK, actual.getStatusCode());
     }
 
     @Test
     public void checkNullInvitationCode() {
-        var actual = sut.add(null, new Participant("A", "B", "C", "D", "E", "F"));
+        var actual = sut.add(null, new Participant( "B", "C", "D", "E", "F"));
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void checkEmptyInvitationCode() {
-        var actual = sut.add("", new Participant("A", "B", "C", "D", "E", "F"));
+        var actual = sut.add("", new Participant( "B", "C", "D", "E", "F"));
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void noSuchEventCreated() {
-        var actual = sut.add("Trap", new Participant("A", "B", "C", "D", "E", "F"));
+        var actual = sut.add("Trap", new Participant( "B", "C", "D", "E", "F"));
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 }

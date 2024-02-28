@@ -18,13 +18,13 @@ public class EventTest {
     @BeforeEach
     void setUp() {
         participants = new ArrayList<>();
-        participants.add( new Participant("ABC-123-456",
+        participants.add( new Participant(
                 "John",
                 "Doe",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123"));
-        participants.add (new Participant("XYZ-123-456",
+        participants.add (new Participant(
                 "Lorem",
                 "Ipsum",
                 "l.ipsum@domain.com",
@@ -48,13 +48,13 @@ public class EventTest {
                 LocalDateTime.of(2024, 2, 12, 12, 0, 0),
                 LocalDateTime.of(2024, 2, 14, 12, 0, 0),
                 Arrays.asList(
-                        new Participant("ABC-123-456",
+                        new Participant(
                                 "John",
                                 "Doe",
                                 "j.doe@domain.com",
                                 "NL91 ABNA 0417 1643 00",
                                 "ABNANL2A123"),
-                        new Participant("XYZ-123-456",
+                        new Participant(
                                 "Lorem",
                                 "Ipsum",
                                 "l.ipsum@domain.com",
@@ -75,13 +75,13 @@ public class EventTest {
                 LocalDateTime.of(2024, 1, 16, 12, 0, 0),
                 LocalDateTime.of(2024, 2, 19, 12, 0, 0),
                 Arrays.asList(
-                        new Participant("ABC-123-456",
+                        new Participant(
                                 "John",
                                 "Doe",
                                 "j.doe@domain.com",
                                 "NL91 ABNA 0417 1643 00",
                                 "ABNANL2A123"),
-                        new Participant("XYZ-123-456",
+                        new Participant(
                                 "Lorem",
                                 "Ipsum",
                                 "l.ipsum@domain.com",
@@ -102,13 +102,13 @@ public class EventTest {
                 LocalDateTime.of(2024, 2, 12, 12, 0, 0),
                 LocalDateTime.of(2024, 2, 14, 12, 0, 0),
                 Arrays.asList(
-                        new Participant("ABC-123-456",
+                        new Participant(
                                 "John",
                                 "Doe",
                                 "j.doe@domain.com",
                                 "NL91 ABNA 0417 1643 00",
                                 "ABNANL2A123"),
-                        new Participant("XYZ-123-456",
+                        new Participant(
                                 "Lorem",
                                 "Ipsum",
                                 "l.ipsum@domain.com",
@@ -129,13 +129,13 @@ public class EventTest {
                 LocalDateTime.of(2024, 1, 16, 12, 0, 0),
                 LocalDateTime.of(2024, 2, 19, 12, 0, 0),
                 Arrays.asList(
-                        new Participant("ABC-123-456",
+                        new Participant(
                                 "John",
                                 "Doe",
                                 "j.doe@domain.com",
                                 "NL91 ABNA 0417 1643 00",
                                 "ABNANL2A123"),
-                        new Participant("XYZ-123-456",
+                        new Participant(
                                 "Lorem",
                                 "Ipsum",
                                 "l.ipsum@domain.com",
@@ -169,13 +169,13 @@ public class EventTest {
 
     @Test
     void setParticipantsTest() {
-        event.setParticipants(List.of(new Participant("ABC-123-456",
+        event.setParticipants(List.of(new Participant(
                 "John",
                 "Doe",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123")));
-        assertEquals(event.getParticipants(), List.of(new Participant("ABC-123-456",
+        assertEquals(event.getParticipants(), List.of(new Participant(
                 "John",
                 "Doe",
                 "j.doe@domain.com",
@@ -187,7 +187,7 @@ public class EventTest {
     void addParticipant() {
         List<Participant> newParticipants = new ArrayList<>();
         newParticipants.add(
-                new Participant("ABC-123-456",
+                new Participant(
                         "John",
                         "Doe",
                         "j.doe@domain.com",
@@ -195,7 +195,7 @@ public class EventTest {
                         "ABNANL2A123")
         );
         newParticipants.add(
-                new Participant("XYZ-123-456",
+                new Participant(
                         "Lorem",
                         "Ipsum",
                         "l.ipsum@domain.com",
@@ -203,14 +203,14 @@ public class EventTest {
                         "CDNANL2A666")
         );
         newParticipants.add(
-                new Participant("XYZ-123-456",
+                new Participant(
                         "Average",
                         "Joe",
                         "ajoe@domain.com",
                         "NL69 AJOE 4269 2137 00",
                         "CDNANL2A666")
         );
-        event.addParticipant(new Participant("XYZ-123-456",
+        event.addParticipant(new Participant(
                 "Average",
                 "Joe",
                 "ajoe@domain.com",
@@ -223,14 +223,14 @@ public class EventTest {
     public void removeParticipant() {
         List<Participant> newParticipants = new ArrayList<> ();
         newParticipants.add(
-                new Participant("ABC-123-456",
+                new Participant(
                         "John",
                         "Doe",
                         "j.doe@domain.com",
                         "NL91 ABNA 0417 1643 00",
                         "ABNANL2A123")
         );
-        event.removeParticipant(new Participant("XYZ-123-456",
+        event.removeParticipant(new Participant(
                 "Lorem",
                 "Ipsum",
                 "l.ipsum@domain.com",
