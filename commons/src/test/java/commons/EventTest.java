@@ -32,7 +32,6 @@ public class EventTest {
                 "CDNANL2A666"));
 
         event = new Event(6662137,
-                "ABC-123-456",
                 "The Event we need to pay for",
                 LocalDateTime.of(2024, 2, 12, 12, 0, 0),
                 LocalDateTime.of(2024, 2, 14, 12, 0, 0),
@@ -43,7 +42,6 @@ public class EventTest {
     void testEquals() {
         Event event2 = new Event(
                 6662137,
-                "ABC-123-456",
                 "The Event we need to pay for",
                 LocalDateTime.of(2024, 2, 12, 12, 0, 0),
                 LocalDateTime.of(2024, 2, 14, 12, 0, 0),
@@ -70,7 +68,6 @@ public class EventTest {
     void testNotEquals() {
         Event event2 = new Event(
                 4202112,
-                "ABC-666-789",
                 "The Event we need to pay for",
                 LocalDateTime.of(2024, 1, 16, 12, 0, 0),
                 LocalDateTime.of(2024, 2, 19, 12, 0, 0),
@@ -97,7 +94,6 @@ public class EventTest {
     void testHashCode() {
         Event event2 = new Event(
                 6662137,
-                "ABC-123-456",
                 "The Event we need to pay for",
                 LocalDateTime.of(2024, 2, 12, 12, 0, 0),
                 LocalDateTime.of(2024, 2, 14, 12, 0, 0),
@@ -124,7 +120,6 @@ public class EventTest {
     void testHashCodeNotEquals() {
         Event event2 = new Event(
                 4202112,
-                "ABC-666-789",
                 "The Event we need to pay for",
                 LocalDateTime.of(2024, 1, 16, 12, 0, 0),
                 LocalDateTime.of(2024, 2, 19, 12, 0, 0),
@@ -272,14 +267,4 @@ public class EventTest {
         assertEquals(event.getLastActivity(), LocalDateTime.of(2024, 2, 12, 12, 0, 0));
     }
 
-    @Test
-    void getInvitationCodeTest() {
-        assertEquals(event.getInvitationCode(),"ABC-123-456");
-    }
-
-    @Test
-    void setInvitationCodeTest() {
-        event.setInvitationCode("ABC-666-789");
-        assertEquals(event.getInvitationCode(), "ABC-666-789");
-    }
 }

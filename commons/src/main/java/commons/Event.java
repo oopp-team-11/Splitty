@@ -15,9 +15,6 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(nullable = false, unique = true)
-    private String invitationCode;
-
     @Column(nullable = false)
     private String title;
 
@@ -30,10 +27,9 @@ public class Event {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<Participant> participants;
 
-    public Event(long id, String invitationCode, String title, LocalDateTime creationDate,
+    public Event(long id, String title, LocalDateTime creationDate,
                  LocalDateTime lastActivity, Collection<Participant> participants) {
         this.id = id;
-        this.invitationCode = invitationCode;
         this.title = title;
         this.creationDate = creationDate;
         this.lastActivity = lastActivity;
@@ -45,14 +41,6 @@ public class Event {
 
     public Long getId() {
         return id;
-    }
-
-    public String getInvitationCode() {
-        return invitationCode;
-    }
-
-    public void setInvitationCode(String invitationCode) {
-        this.invitationCode = invitationCode;
     }
 
     public Collection<Participant> getParticipants() {
