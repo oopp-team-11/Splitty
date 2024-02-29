@@ -36,10 +36,14 @@ public class StartScreenCtrl {
         // todo: send create request (PUT) to /events
         System.out.println("ONCREATE");
         String eventName = newEventName.getText();
+        int invitationCode;
 
-        fileSystemUtils.saveInvitationCodesToConfigFile(eventName,
+
+        invitationCode = serverUtils.sendCreateRequest(eventName, "http://localhost:8080");
+        fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
             "config.json");
-        serverUtils.sendCreateRequest(eventName, "http://localhost:8080");
+
+        serverUtils.sendJoinRequest(invitationCode, "http://localhost:8080");
         //System.out.println(eventName);
 
 
@@ -58,7 +62,7 @@ public class StartScreenCtrl {
         // else
         //      MainCtrl.showUserCreationScreen(invitationCode)
         System.out.println("ONJOIN");
-        String invitationCode = joinInvitationCode.getText();
+        int invitationCode = Integer.parseInt(joinInvitationCode.getText());
 
         fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
             "config.json");

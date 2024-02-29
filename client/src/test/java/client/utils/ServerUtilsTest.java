@@ -4,10 +4,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import java.io.IOException;
+import java.util.UUID;
 
 class ServerUtilsTest {
 
@@ -28,15 +30,17 @@ class ServerUtilsTest {
     @Test
     void sendJoinRequestThrowsInterruptedException() throws IOException, InterruptedException {
         ServerUtils serverUtils = Mockito.spy(ServerUtils.class);
-        Mockito.doThrow(new InterruptedException()).when(serverUtils).sendJoinRequest("invitationCode", "http://localhost:8080");
-        assertThrows(InterruptedException.class, () -> serverUtils.sendJoinRequest("invitationCode", "http://localhost:8080"));
+        int randomCode = UUID.randomUUID().hashCode();
+        Mockito.doThrow(new InterruptedException()).when(serverUtils).sendJoinRequest(randomCode, "http://localhost:8080");
+        assertThrows(InterruptedException.class, () -> serverUtils.sendJoinRequest(randomCode, "http://localhost:8080"));
     }
 
     @Test
     void sendJoinRequestThrowsIOException() throws IOException, InterruptedException {
         ServerUtils serverUtils = Mockito.spy(ServerUtils.class);
-        Mockito.doThrow(new IOException()).when(serverUtils).sendJoinRequest("invitationCode", "http://localhost:8080");
-        assertThrows(IOException.class, () -> serverUtils.sendJoinRequest("invitationCode", "http://localhost:8080"));
+        int randomCode = UUID.randomUUID().hashCode();
+        Mockito.doThrow(new IOException()).when(serverUtils).sendJoinRequest(randomCode, "http://localhost:8080");
+        assertThrows(IOException.class, () -> serverUtils.sendJoinRequest(randomCode, "http://localhost:8080"));
     }
 
     @Test
@@ -46,7 +50,7 @@ class ServerUtilsTest {
             .port(9090));
         wireMockServer.start();
 
-        String randomCode = "ABC123";
+        int randomCode = UUID.randomUUID().hashCode();
         ServerUtils serverUtils = new ServerUtils();
         wireMockServer.stubFor(get(urlEqualTo("/events/" + randomCode))
                 .willReturn(aResponse()
@@ -67,22 +71,28 @@ class ServerUtilsTest {
         wireMockServer.start();
 
         String randomName = "testEvent";
+        int responseCode = UUID.randomUUID().hashCode();
         ServerUtils serverUtils = new ServerUtils();
         wireMockServer.stubFor(post(urlEqualTo("/events"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
-                        .withBody("{'invitationCode': 'ABC123'}")));
+                        .withBody("{'invitationCode': " + responseCode + "}")));
 
-        String randomCode = "ABC123";
-        wireMockServer.stubFor(get(urlEqualTo("/events/" + randomCode))
+        serverUtils.sendCreateRequest(randomName, "http://localhost:9091");
+        JSONObject jsonObject = new JSONObject(wireMockServer.getAllServeEvents().get(0).getResponse().getBodyAsString());
+
+
+        wireMockServer.stubFor(get(urlEqualTo("/events/" + responseCode))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBody("")));
 
         serverUtils.sendCreateRequest(randomName, "http://localhost:9091");
-        assertEquals(200, wireMockServer.getAllServeEvents().get(0).getResponse().getStatus());
+
+        assertEquals(responseCode, jsonObject.getInt("invitationCode"));
+        assertEquals(200, wireMockServer.getAllServeEvents().get(1).getResponse().getStatus());
         wireMockServer.stop();
     }
 }

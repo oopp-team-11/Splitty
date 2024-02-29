@@ -37,7 +37,7 @@ public class ServerUtils {
 	 * @throws IOException if something goes wrong
 	 * @throws InterruptedException if something goes wrong with the request
 	 */
-	public void sendJoinRequest(String invitationCode, String server)
+	public void sendJoinRequest(int invitationCode, String server)
 		throws IOException, InterruptedException {
 		HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create(server + "/events/" + invitationCode))
@@ -57,7 +57,7 @@ public class ServerUtils {
 	 * @throws IOException if something goes wrong
 	 * @throws InterruptedException if something goes wrong with the request
 	 */
-	public void sendCreateRequest(String eventName, String server)
+	public int sendCreateRequest(String eventName, String server)
 		throws IOException, InterruptedException {
 		JsonObject json = Json.createObjectBuilder()
 			.add("eventName", eventName)
@@ -75,9 +75,9 @@ public class ServerUtils {
 
 		String responseJson = response.body();
 		JSONObject jsonObject = new JSONObject(responseJson);
-		String invitationCode = jsonObject.get("invitationCode").toString();
+		int invitationCode = Integer.parseInt(jsonObject.get("invitationCode").toString());
 
-		sendJoinRequest(invitationCode, server);
+		return invitationCode;
 	}
 
 //	public void getQuotesTheHardWay() throws IOException, URISyntaxException {
