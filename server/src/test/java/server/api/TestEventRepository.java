@@ -23,17 +23,7 @@ public class TestEventRepository implements EventRepository {
     public final List<String> calledMethods = new ArrayList<>();
 
 
-    @Override
-    public List<Event> findOneByInvitationCode(String invitationCode) {
-        for (var e : events) {
-            if (e.getInvitationCode().equals(invitationCode)) {
-                var res = new ArrayList<Event>();
-                res.add(e);
-                return res;
-            }
-        }
-        return null;
-    }
+
 
     @Override
     public void flush() {
