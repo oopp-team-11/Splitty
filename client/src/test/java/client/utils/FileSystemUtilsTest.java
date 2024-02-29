@@ -54,8 +54,8 @@ class FileSystemUtilsTest {
             new File(randomFileName).delete();
         }
 
-        List<Integer> codes = new ArrayList<>();
-        int randomCode = UUID.randomUUID().hashCode();
+        List<Long> codes = new ArrayList<>();
+        long randomCode = UUID.randomUUID().hashCode();
         codes.add(randomCode);
         JsonObject json = Json.createObjectBuilder()
             .add("invitationCodes", Json.createArrayBuilder(codes))
@@ -79,7 +79,7 @@ class FileSystemUtilsTest {
             new File(randomFileName).delete();
         }
 
-        int randomCode = UUID.randomUUID().hashCode();
+        long randomCode = UUID.randomUUID().hashCode();
         fileSystemUtils.saveInvitationCodesToConfigFile(randomCode, randomFileName);
         assertTrue(new File(randomFileName).exists());
         assertEquals(randomCode, fileSystemUtils.readInvitationCodes(randomFileName).get(0));
@@ -95,8 +95,8 @@ class FileSystemUtilsTest {
             new File(randomFileName).delete();
         }
 
-        List<Integer> codes = new ArrayList<>();
-        int randomCode = UUID.randomUUID().hashCode();
+        List<Long> codes = new ArrayList<>();
+        long randomCode = UUID.randomUUID().hashCode();
         codes.add(randomCode);
         JsonObject json = Json.createObjectBuilder()
             .add("invitationCodes", Json.createArrayBuilder(codes))
@@ -107,7 +107,7 @@ class FileSystemUtilsTest {
         file.flush();
         file.close();
 
-        int randomCode2 = UUID.randomUUID().hashCode();
+        long randomCode2 = UUID.randomUUID().hashCode();
         fileSystemUtils.saveInvitationCodesToConfigFile(randomCode2, randomFileName);
         codes.add(randomCode2);
         assertTrue(new File(randomFileName).exists());

@@ -14,7 +14,7 @@ public class FileSystemUtils {
      * @return lust of invitation codes
      * @throws FileNotFoundException if the file is not found
      */
-    public List<Integer> readInvitationCodes(String path) throws FileNotFoundException {
+    public List<Long> readInvitationCodes(String path) throws FileNotFoundException {
         if(!checkIfFileExists(path)) {
             throw new FileNotFoundException("File not found");
         }
@@ -23,8 +23,8 @@ public class FileSystemUtils {
         JsonObject json = reader.readObject();
         reader.close();
 
-        List<Integer> codes = new ArrayList<>();
-        json.getJsonArray("invitationCodes").forEach(code -> codes.add(Integer.parseInt(code.toString())));
+        List<Long> codes = new ArrayList<>();
+        json.getJsonArray("invitationCodes").forEach(code -> codes.add(Long.parseLong(code.toString())));
 
         return codes;
 
@@ -36,10 +36,10 @@ public class FileSystemUtils {
      * @param path path of the file
      * @throws IOException if something goes wrong
      */
-    public void saveInvitationCodesToConfigFile(int invitationCode, String path)
+    public void saveInvitationCodesToConfigFile(long invitationCode, String path)
         throws IOException {
         if(!checkIfFileExists(path)) {
-            List<Integer> codes = new ArrayList<>();
+            List<Long> codes = new ArrayList<>();
             codes.add(invitationCode);
             JsonObject json = Json.createObjectBuilder()
                 .add("invitationCodes", Json.createArrayBuilder(codes))
@@ -52,7 +52,7 @@ public class FileSystemUtils {
             return;
         }
 
-        List<Integer> codes = new ArrayList<>(readInvitationCodes(path));
+        List<Long> codes = new ArrayList<>(readInvitationCodes(path));
         codes.add(invitationCode);
 
         JsonObject json = Json.createObjectBuilder()

@@ -30,7 +30,7 @@ class ServerUtilsTest {
     @Test
     void sendJoinRequestThrowsInterruptedException() throws IOException, InterruptedException {
         ServerUtils serverUtils = Mockito.spy(ServerUtils.class);
-        int randomCode = UUID.randomUUID().hashCode();
+        long randomCode = UUID.randomUUID().hashCode();
         Mockito.doThrow(new InterruptedException()).when(serverUtils).sendJoinRequest(randomCode, "http://localhost:8080");
         assertThrows(InterruptedException.class, () -> serverUtils.sendJoinRequest(randomCode, "http://localhost:8080"));
     }
@@ -38,7 +38,7 @@ class ServerUtilsTest {
     @Test
     void sendJoinRequestThrowsIOException() throws IOException, InterruptedException {
         ServerUtils serverUtils = Mockito.spy(ServerUtils.class);
-        int randomCode = UUID.randomUUID().hashCode();
+        long randomCode = UUID.randomUUID().hashCode();
         Mockito.doThrow(new IOException()).when(serverUtils).sendJoinRequest(randomCode, "http://localhost:8080");
         assertThrows(IOException.class, () -> serverUtils.sendJoinRequest(randomCode, "http://localhost:8080"));
     }
@@ -50,7 +50,7 @@ class ServerUtilsTest {
             .port(9090));
         wireMockServer.start();
 
-        int randomCode = UUID.randomUUID().hashCode();
+        long randomCode = UUID.randomUUID().hashCode();
         ServerUtils serverUtils = new ServerUtils();
         wireMockServer.stubFor(get(urlEqualTo("/events/" + randomCode))
                 .willReturn(aResponse()
