@@ -1,6 +1,7 @@
 package server.api;
 
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,5 +40,23 @@ public class EventController {
         event_to_update.getParticipants().add(participant);
         Event saved = repo.save(event_to_update);
         return ResponseEntity.ok(saved);
+    }
+
+
+
+    public class Views {
+        public static class Public {
+
+        }
+
+        public static class StartScreenView extends Public {
+
+        }
+    }
+    @JsonView(Views.StartScreenView.class)
+    @GetMapping (path = {"/startScreen", "/startScreen/"})
+    public ResponseEntity<Event> sendStartScreen() {
+
+        return null;
     }
 }
