@@ -1,83 +1,118 @@
 package client.utils;
+
 import org.junit.jupiter.api.Test;
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonReader;
+import static org.junit.jupiter.api.Assertions.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
-import static org.junit.jupiter.api.Assertions.*;
 
 class FileSystemUtilsTest {
-
     @Test
-    void saveJsonClient() throws FileNotFoundException {
-        // Create a new JsonObject
-        JsonObject json = Json.createObjectBuilder()
-                .add("testKey1", UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16))
-                .add("testKey2", UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16))
-                .build();
-
-        // Write File
-        try {
-            FileSystemUtils.saveJsonClient(json);
-        } catch (Exception e) {
-            fail("Exception thrown: " + e.getMessage());
-        }
-
-        // Read file to check if it was written correctly
-        JsonReader reader = Json.createReader(new FileReader("client.json"));
-
-        assertEquals(json, reader.readObject());
-
-        reader.close();
-
-        // Delete created file
-        File file = new File("client.json");
-        if (file.exists()) {
-            file.delete();
-        }
+    void checkIfFileExistsFalse() {
+        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        String randomFileName = UUID.randomUUID().toString() + ".txt";
+        assertFalse(fileSystemUtils.checkIfFileExists(randomFileName));
     }
 
     @Test
-    void checkIfClientJsonExistsTrue() {
-        // Create a new JsonObject
+    void checkIfFileExistsTrue() {
+        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        String randomFileName = UUID.randomUUID().toString() + ".txt";
+        try {
+            new File(randomFileName).createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assertTrue(fileSystemUtils.checkIfFileExists(randomFileName));
+        new File(randomFileName).delete();
+    }
+
+    @Test
+    void readInvitationCodesFileMotFound() {
+        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        String randomFileName = UUID.randomUUID().toString() + ".txt";
+
+        if(new File(randomFileName).exists()) {
+            new File(randomFileName).delete();
+        }
+
+        assertThrows(FileNotFoundException.class, () -> fileSystemUtils.readInvitationCodes(randomFileName));
+    }
+
+    @Test
+    void readInvitationCodesFileFound() throws IOException {
+        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        String randomFileName = UUID.randomUUID().toString() + ".json";
+
+        if(new File(randomFileName).exists()) {
+            new File(randomFileName).delete();
+        }
+
+        List<Long> codes = new ArrayList<>();
+        long randomCode = UUID.randomUUID().hashCode();
+        codes.add(randomCode);
         JsonObject json = Json.createObjectBuilder()
-            .add("testKey1", UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16))
-            .add("testKey2", UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16))
+            .add("invitationCodes", Json.createArrayBuilder(codes))
             .build();
 
-        // Write File
-        try {
-            FileSystemUtils.saveJsonClient(json);
-        } catch (Exception e) {
-            fail("Exception thrown: " + e.getMessage());
-        }
+        FileWriter file = new FileWriter(randomFileName);
+        file.write(json.toString());
+        file.flush();
+        file.close();
 
-        // Check if file exists
-        assertTrue(FileSystemUtils.checkIfClientJsonExists());
-
-
-        // Delete created file
-        File file = new File("client.json");
-
-        if (file.exists()) {
-            file.delete();
-        }
+        assertEquals(codes, fileSystemUtils.readInvitationCodes(randomFileName));
+        new File(randomFileName).delete();
     }
 
     @Test
-    void checkIfClientJsonExistsFalse() {
-        // Delete file if it exists
+    void saveInvitationCodesToConfigFileFileNotFound() throws IOException {
+        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        String randomFileName = UUID.randomUUID().toString() + ".json";
 
-        File file = new File("client.json");
-
-        if (file.exists()) {
-            file.delete();
+        if(new File(randomFileName).exists()) {
+            new File(randomFileName).delete();
         }
 
-        // Check if file exists
-        assertFalse(FileSystemUtils.checkIfClientJsonExists());
+        long randomCode = UUID.randomUUID().hashCode();
+        fileSystemUtils.saveInvitationCodesToConfigFile(randomCode, randomFileName);
+        assertTrue(new File(randomFileName).exists());
+        assertEquals(randomCode, fileSystemUtils.readInvitationCodes(randomFileName).get(0));
+        new File(randomFileName).delete();
     }
+
+    @Test
+    void saveInvitationCodesToConfigFileFileFound() throws IOException {
+        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        String randomFileName = UUID.randomUUID().toString() + ".json";
+
+        if(new File(randomFileName).exists()) {
+            new File(randomFileName).delete();
+        }
+
+        List<Long> codes = new ArrayList<>();
+        long randomCode = UUID.randomUUID().hashCode();
+        codes.add(randomCode);
+        JsonObject json = Json.createObjectBuilder()
+            .add("invitationCodes", Json.createArrayBuilder(codes))
+            .build();
+
+        FileWriter file = new FileWriter(randomFileName);
+        file.write(json.toString());
+        file.flush();
+        file.close();
+
+        long randomCode2 = UUID.randomUUID().hashCode();
+        fileSystemUtils.saveInvitationCodesToConfigFile(randomCode2, randomFileName);
+        codes.add(randomCode2);
+        assertTrue(new File(randomFileName).exists());
+        assertEquals(codes, fileSystemUtils.readInvitationCodes(randomFileName));
+        new File(randomFileName).delete();
+    }
+
 }
