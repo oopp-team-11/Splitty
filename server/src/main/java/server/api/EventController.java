@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import commons.Participant;
 import commons.Event;
 import server.database.EventRepository;
+
+import java.util.Collection;
+
 @RestController
 @RequestMapping("/events")
 public class EventController {
@@ -47,8 +50,8 @@ public class EventController {
 
     @JsonView(Event.Views.StartScreenView.class)
     @GetMapping (path = {"/startScreen", "/startScreen/"})
-    public ResponseEntity<Event> sendStartScreen() {
-
-        return null;
+    public ResponseEntity<Collection<Event>> sendStartScreen() {
+        var toReturn = repo.findAll();
+        return ResponseEntity.ok(toReturn);
     }
 }
