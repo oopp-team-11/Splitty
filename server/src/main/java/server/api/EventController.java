@@ -44,16 +44,8 @@ public class EventController {
 
 
 
-    public class Views {
-        public static class Public {
 
-        }
-
-        public static class StartScreenView extends Public {
-
-        }
-    }
-    @JsonView(Views.StartScreenView.class)
+    @JsonView(Event.Views.StartScreenView.class)
     @GetMapping (path = {"/startScreen", "/startScreen/"})
     public ResponseEntity<Event> sendStartScreen() {
 
