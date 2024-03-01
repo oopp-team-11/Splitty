@@ -1,16 +1,9 @@
 package commons;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ElementCollection;
+import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
 
 @Entity
 public class Expense {
@@ -18,31 +11,19 @@ public class Expense {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    // Paid by is a long, because it will be the id of that participant.
-    // You cannot have a Participant as attribute
-    private long paidBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PARTICIPANT_ID")
+    private Participant paidBy;
+    @Column(nullable = false)
     private String title;
-    private double cost;
-    private LocalDate date;
-
-    // Same as paidBy, this uses the id's of the participants.
-    // It is a simple arraylist containing all id's of whom need to pay
-    @ElementCollection
-    private ArrayList<Long> toBePaidBy;
-
-    // This is maybe used later, when we are implementing tags
-    @ElementCollection
-    private ArrayList<String> expenseType;
+    @Column(nullable = false)
+    private double amount;
 
     public Expense(){}
-    public Expense(long paidBy, String title, double cost, LocalDate date,
-                   ArrayList<Long> toBePaidBy, ArrayList<String> expenseType) {
+    public Expense(Participant paidBy, String title, double amount) {
         this.paidBy = paidBy;
         this.title = title;
-        this.cost = cost;
-        this.date = date;
-        this.toBePaidBy = toBePaidBy;
-        this.expenseType = expenseType;
+        this.amount = amount;
     }
 
     // Getters and setters for all the attributes
@@ -50,11 +31,11 @@ public class Expense {
         return id;
     }
 
-    public long getPaidBy() {
+    public Participant getPaidBy() {
         return paidBy;
     }
 
-    public void setPaidBy(long paidBy) {
+    public void setPaidBy(Participant paidBy) {
         this.paidBy = paidBy;
     }
 
@@ -66,39 +47,13 @@ public class Expense {
         this.title = title;
     }
 
-    public double getCost() {
-        return cost;
+    public double getAmount() {
+        return amount;
     }
 
-    public void setCost(double cost) {
-        this.cost = cost;
+    public void setAmount(double cost) {
+        this.amount = cost;
     }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public ArrayList<Long> getToBePaidBy() {
-        return toBePaidBy;
-    }
-
-    public void setToBePaidBy(ArrayList<Long> toBePaidBy) {
-        this.toBePaidBy = toBePaidBy;
-    }
-
-    public ArrayList<String> getExpenseType() {
-        return expenseType;
-    }
-
-    public void setExpenseType(ArrayList<String> expenseType) {
-        this.expenseType = expenseType;
-    }
-
-
 
     @Override
     public boolean equals(Object o) {
@@ -109,15 +64,13 @@ public class Expense {
         Expense expense = (Expense) o;
 
         return new EqualsBuilder().append(id, expense.id).append(paidBy, expense.paidBy)
-                .append(title, expense.title).append(cost, expense.cost).append(date, expense.date)
-                .append(toBePaidBy, expense.toBePaidBy).append(expenseType, expense.expenseType).isEquals();
+                .append(title, expense.title).append(amount, expense.amount).isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(id).append(paidBy)
-                .append(title).append(cost).append(date)
-                .append(toBePaidBy).append(expenseType).toHashCode();
+                .append(title).append(amount).toHashCode();
     }
 
     @Override
@@ -126,10 +79,7 @@ public class Expense {
                 .append("id", id)
                 .append("paidBy", paidBy)
                 .append("title", title)
-                .append("cost", cost)
-                .append("date", date)
-                .append("toBePaidBy", toBePaidBy)
-                .append("expenseType", expenseType)
+                .append("amount", amount)
                 .toString();
     }
 }

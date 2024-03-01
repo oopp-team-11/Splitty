@@ -4,77 +4,65 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import java.time.LocalDate;
-import java.util.ArrayList;
 
 public class ExpenseTest {
     private Expense expense;
     @BeforeEach
     void setup(){
-        ArrayList<Long> toBePaidBy = new ArrayList<>();
-        toBePaidBy.add(123456789L);
-
-        ArrayList<String> expenseType = new ArrayList<>();
-        expenseType.add("Groceries");
-
-        expense = new Expense(123456789, "Cookies", 69.69
-                , LocalDate.of(2024, 2, 14)
-                , toBePaidBy, expenseType);
+        Participant paidBy = new Participant(
+                "John",
+                "Doe",
+                "j.doe@domain.com",
+                "NL91 ABNA 0417 1643 00",
+                "ABNANL2A123");
+        expense = new Expense(paidBy, "Cookies", 69.69);
     }
 
     @Test
     void testEquals() {
-        ArrayList<Long> toBePaidBy = new ArrayList<>();
-        toBePaidBy.add(123456789L);
-
-        ArrayList<String> expenseType = new ArrayList<>();
-        expenseType.add("Groceries");
-
-        Expense expense2 = new Expense(123456789, "Cookies", 69.69
-                , LocalDate.of(2024, 2, 14)
-                , toBePaidBy, expenseType);
+        Participant paidBy = new Participant(
+                "John",
+                "Doe",
+                "j.doe@domain.com",
+                "NL91 ABNA 0417 1643 00",
+                "ABNANL2A123");
+        Expense expense2 = new Expense(paidBy, "Cookies", 69.69);
         assertEquals(expense, expense2);
     }
 
     @Test
     void testNotEquals() {
-        ArrayList<Long> toBePaidBy = new ArrayList<>();
-        toBePaidBy.add(111111111L);
-
-        ArrayList<String> expenseType = new ArrayList<>();
-        expenseType.add("Pets");
-
-        Expense expense2 = new Expense(1212121212, "Dog food", 2.4
-                , LocalDate.of(2019, 2, 1)
-                , toBePaidBy, expenseType);
+        Participant participant2 = new Participant(
+                "John",
+                "Burger",
+                "j.doe@domain.com",
+                "NL91 ABNA 0417 1643 00",
+                "ABNANL2A123");
+        Expense expense2 = new Expense(participant2, "Dog food", 2.4);
         assertNotEquals(expense, expense2);
     }
 
     @Test
     void testHashCodeEquals() {
-        ArrayList<Long> toBePaidBy = new ArrayList<>();
-        toBePaidBy.add(123456789L);
-
-        ArrayList<String> expenseType = new ArrayList<>();
-        expenseType.add("Groceries");
-
-        Expense expense2 = new Expense(123456789, "Cookies", 69.69
-                , LocalDate.of(2024, 2, 14)
-                , toBePaidBy, expenseType);
+        Participant paidBy = new Participant(
+                "John",
+                "Doe",
+                "j.doe@domain.com",
+                "NL91 ABNA 0417 1643 00",
+                "ABNANL2A123");
+        Expense expense2 = new Expense(paidBy, "Cookies", 69.69);
         assertEquals(expense.hashCode(), expense2.hashCode());
     }
 
     @Test
     void testHashCodeNotEquals() {
-        ArrayList<Long> toBePaidBy = new ArrayList<>();
-        toBePaidBy.add(111111111L);
-
-        ArrayList<String> expenseType = new ArrayList<>();
-        expenseType.add("Pets");
-
-        Expense expense2 = new Expense(1212121212, "Dog food", 2.4
-                , LocalDate.of(2019, 2, 1)
-                , toBePaidBy, expenseType);
+        Participant paidBy = new Participant(
+                "John",
+                "Doe",
+                "j.doe@domain.com",
+                "NL91 ABNA 0417 1643 00",
+                "ABNANL2A123");
+        Expense expense2 = new Expense(paidBy, "Dog food", 2.4);
         assertNotEquals(expense.hashCode(), expense2.hashCode());
     }
 
@@ -82,12 +70,9 @@ public class ExpenseTest {
     void testToString() {
         String expenseToString = expense.toString();
         assertTrue(expenseToString.contains("id="));
-        assertTrue(expenseToString.contains("paidBy=123456789"));
-        assertTrue(expenseToString.contains("title=Cookies"));
-        assertTrue(expenseToString.contains("cost=69.69"));
-        assertTrue(expenseToString.contains("date=2024-02-14"));
-        assertTrue(expenseToString.contains("toBePaidBy=[123456789]"));
-        assertTrue(expenseToString.contains("expenseType=[Groceries]"));
+        assertTrue(expenseToString.contains("paidBy="));
+        assertTrue(expenseToString.contains("title="));
+        assertTrue(expenseToString.contains("amount="));
     }
 
     @Test
@@ -96,36 +81,32 @@ public class ExpenseTest {
     }
     @Test
     void getPaidByTest() {
-        assertEquals(expense.getPaidBy(), 123456789L);
+        Participant paidBy = new Participant(
+                "John",
+                "Doe",
+                "j.doe@domain.com",
+                "NL91 ABNA 0417 1643 00",
+                "ABNANL2A123");
+        assertEquals(expense.getPaidBy(), paidBy);
     }
     @Test
     void getTitleTest() {
         assertEquals(expense.getTitle(), "Cookies");
     }
     @Test
-    void getCostTest() {
-        assertEquals(expense.getCost(), 69.69);
-    }
-    @Test
-    void getDateTest() {
-        assertEquals(expense.getDate(), LocalDate.of(2024, 2, 14));
-    }
-    @Test
-    void getToBePaidByTest() {
-        ArrayList<Long> toBePaidBy = new ArrayList<>();
-        toBePaidBy.add(123456789L);
-        assertEquals(expense.getToBePaidBy(), toBePaidBy);
-    }
-    @Test
-    void getExpenseTypeTest() {
-        ArrayList<String> expenseType = new ArrayList<>();
-        expenseType.add("Groceries");
-        assertEquals(expense.getExpenseType(), expenseType);
+    void getAmountTest() {
+        assertEquals(expense.getAmount(), 69.69);
     }
     @Test
     void setPaidByTest() {
-        expense.setPaidBy(4545454545L);
-        assertEquals(expense.getPaidBy(), 4545454545L);
+        Participant participant2 = new Participant(
+                "John",
+                "Burger",
+                "j.doe@domain.com",
+                "NL91 ABNA 0417 1643 00",
+                "ABNANL2A123");
+        expense.setPaidBy(participant2);
+        assertEquals(expense.getPaidBy(), participant2);
     }
     @Test
     void setTitleTest() {
@@ -133,29 +114,8 @@ public class ExpenseTest {
         assertEquals(expense.getTitle(), "Fishes");
     }
     @Test
-    void setCostTest() {
-        expense.setCost(420.69);
-        assertEquals(expense.getCost(), 420.69);
-    }
-    @Test
-    void setDateTest() {
-        expense.setDate(LocalDate.of(2023, 8, 4));
-        assertEquals(expense.getDate(), LocalDate.of(2023, 8, 4));
-    }
-    @Test
-    void setToBePaidByTest() {
-        ArrayList<Long> toBePaidBy = new ArrayList<>();
-        toBePaidBy.add(6969696969L);
-
-        expense.setToBePaidBy(toBePaidBy);
-        assertEquals(expense.getToBePaidBy(), toBePaidBy);
-    }
-    @Test
-    void setExpenseTypeTest() {
-        ArrayList<String> expenseType = new ArrayList<>();
-        expenseType.add("Fishing");
-
-        expense.setExpenseType(expenseType);
-        assertEquals(expense.getExpenseType(), expenseType);
+    void setAmountTest() {
+        expense.setAmount(420.69);
+        assertEquals(expense.getAmount(), 420.69);
     }
 }

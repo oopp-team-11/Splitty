@@ -40,6 +40,9 @@ out/
 ### VS Code ###
 .vscode/
 
+### LaTeX ###
+auxil/
+
 ### Custom ###
 participant/participant.json
 

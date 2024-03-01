@@ -3,7 +3,7 @@ package commons;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,78 +14,50 @@ public class EventTest {
 
     private Event event;
     List<Participant> participants;
-    List<Expense> expenses;
-
 
     @BeforeEach
     void setUp() {
-        participants = Arrays.asList(
-                new Participant("ABC-123-456",
-                        "John",
-                        "Doe",
-                        "j.doe@domain.com",
-                        "NL91 ABNA 0417 1643 00",
-                        "ABNANL2A123"),
-                new Participant("XYZ-123-456",
-                        "Lorem",
-                        "Ipsum",
-                        "l.ipsum@domain.com",
-                        "NL69 XING 4269 2137 00",
-                        "CDNANL2A666")
-        );
-
-        ArrayList<Long> toBePaidBy = new ArrayList<>();
-        toBePaidBy.add(123456789L);
-
-        ArrayList<String> expenseType = new ArrayList<>();
-        expenseType.add("Groceries");
-
-        expenses = Arrays.asList(
-                new Expense(123456789, "Cookies", 69.69
-                        , LocalDate.of(2024, 2, 14)
-                        , toBePaidBy, expenseType)
-        );
+        participants = new ArrayList<>();
+        participants.add( new Participant(
+                "John",
+                "Doe",
+                "j.doe@domain.com",
+                "NL91 ABNA 0417 1643 00",
+                "ABNANL2A123"));
+        participants.add (new Participant(
+                "Lorem",
+                "Ipsum",
+                "l.ipsum@domain.com",
+                "NL69 XING 4269 2137 00",
+                "CDNANL2A666"));
 
         event = new Event(6662137,
-                "ABC-123-456",
                 "The Event we need to pay for",
-                LocalDate.of(2024, 2, 12),
-                LocalDate.of(2024, 2, 14),
-                participants,
-                expenses);
+                LocalDateTime.of(2024, 2, 12, 12, 0, 0),
+                LocalDateTime.of(2024, 2, 14, 12, 0, 0),
+                participants);
     }
 
     @Test
     void testEquals() {
-        ArrayList<Long> toBePaidBy = new ArrayList<>();
-        toBePaidBy.add(123456789L);
-        ArrayList<String> expenseType = new ArrayList<>();
-        expenseType.add("Groceries");
-
         Event event2 = new Event(
                 6662137,
-                "ABC-123-456",
                 "The Event we need to pay for",
-                LocalDate.of(2024, 2, 12),
-                LocalDate.of(2024, 2, 14),
+                LocalDateTime.of(2024, 2, 12, 12, 0, 0),
+                LocalDateTime.of(2024, 2, 14, 12, 0, 0),
                 Arrays.asList(
-                        new Participant("ABC-123-456",
+                        new Participant(
                                 "John",
                                 "Doe",
                                 "j.doe@domain.com",
                                 "NL91 ABNA 0417 1643 00",
                                 "ABNANL2A123"),
-                        new Participant("XYZ-123-456",
+                        new Participant(
                                 "Lorem",
                                 "Ipsum",
                                 "l.ipsum@domain.com",
                                 "NL69 XING 4269 2137 00",
                                 "CDNANL2A666")
-                ),
-                Arrays.asList(
-                        new Expense(123456789, "Cookies", 69.69
-                                , LocalDate.of(2024, 2, 14)
-                                , toBePaidBy, expenseType)
                 )
         );
 
@@ -94,35 +66,24 @@ public class EventTest {
 
     @Test
     void testNotEquals() {
-        ArrayList<Long> toBePaidBy = new ArrayList<>();
-        toBePaidBy.add(123456780L);
-        ArrayList<String> expenseType = new ArrayList<>();
-        expenseType.add("Travel");
-
         Event event2 = new Event(
                 4202112,
-                "ABC-666-789",
                 "The Event we need to pay for",
-                LocalDate.of(2024, 1, 16),
-                LocalDate.of(2024, 2, 19),
+                LocalDateTime.of(2024, 1, 16, 12, 0, 0),
+                LocalDateTime.of(2024, 2, 19, 12, 0, 0),
                 Arrays.asList(
-                        new Participant("ABC-123-456",
+                        new Participant(
                                 "John",
                                 "Doe",
                                 "j.doe@domain.com",
                                 "NL91 ABNA 0417 1643 00",
                                 "ABNANL2A123"),
-                        new Participant("XYZ-123-456",
+                        new Participant(
                                 "Lorem",
                                 "Ipsum",
                                 "l.ipsum@domain.com",
                                 "NL69 XING 4269 2137 00",
                                 "CDNANL2A666")
-                ),
-                Arrays.asList(
-                        new Expense(987654321, "Taxi", 420.69
-                                , LocalDate.of(2024, 2, 19)
-                                , toBePaidBy, expenseType)
                 )
         );
 
@@ -131,35 +92,24 @@ public class EventTest {
 
     @Test
     void testHashCode() {
-        ArrayList<Long> toBePaidBy = new ArrayList<>();
-        toBePaidBy.add(123456789L);
-        ArrayList<String> expenseType = new ArrayList<>();
-        expenseType.add("Groceries");
-
         Event event2 = new Event(
                 6662137,
-                "ABC-123-456",
                 "The Event we need to pay for",
-                LocalDate.of(2024, 2, 12),
-                LocalDate.of(2024, 2, 14),
+                LocalDateTime.of(2024, 2, 12, 12, 0, 0),
+                LocalDateTime.of(2024, 2, 14, 12, 0, 0),
                 Arrays.asList(
-                        new Participant("ABC-123-456",
+                        new Participant(
                                 "John",
                                 "Doe",
                                 "j.doe@domain.com",
                                 "NL91 ABNA 0417 1643 00",
                                 "ABNANL2A123"),
-                        new Participant("XYZ-123-456",
+                        new Participant(
                                 "Lorem",
                                 "Ipsum",
                                 "l.ipsum@domain.com",
                                 "NL69 XING 4269 2137 00",
                                 "CDNANL2A666")
-                ),
-                Arrays.asList(
-                        new Expense(123456789, "Cookies", 69.69
-                                , LocalDate.of(2024, 2, 14)
-                                , toBePaidBy, expenseType)
                 )
         );
 
@@ -168,35 +118,24 @@ public class EventTest {
 
     @Test
     void testHashCodeNotEquals() {
-        ArrayList<Long> toBePaidBy = new ArrayList<>();
-        toBePaidBy.add(123456780L);
-        ArrayList<String> expenseType = new ArrayList<>();
-        expenseType.add("Travel");
-
         Event event2 = new Event(
                 4202112,
-                "ABC-666-789",
                 "The Event we need to pay for",
-                LocalDate.of(2024, 1, 16),
-                LocalDate.of(2024, 2, 19),
+                LocalDateTime.of(2024, 1, 16, 12, 0, 0),
+                LocalDateTime.of(2024, 2, 19, 12, 0, 0),
                 Arrays.asList(
-                        new Participant("ABC-123-456",
+                        new Participant(
                                 "John",
                                 "Doe",
                                 "j.doe@domain.com",
                                 "NL91 ABNA 0417 1643 00",
                                 "ABNANL2A123"),
-                        new Participant("XYZ-123-456",
+                        new Participant(
                                 "Lorem",
                                 "Ipsum",
                                 "l.ipsum@domain.com",
                                 "NL69 XING 4269 2137 00",
                                 "CDNANL2A666")
-                ),
-                Arrays.asList(
-                        new Expense(987654321, "Taxi", 420.69
-                                , LocalDate.of(2024, 2, 19)
-                                , toBePaidBy, expenseType)
                 )
         );
 
@@ -211,7 +150,6 @@ public class EventTest {
         assertTrue(eventToString.contains("creationDate=2024-02-12"));
         assertTrue(eventToString.contains("lastActivity=2024-02-14"));
         assertTrue(eventToString.contains("participants=" + participants.toString()));
-        assertTrue(eventToString.contains("expenses=" + expenses.toString()));
     }
 
     @Test
@@ -226,13 +164,13 @@ public class EventTest {
 
     @Test
     void setParticipantsTest() {
-        event.setParticipants(Arrays.asList(new Participant("ABC-123-456",
+        event.setParticipants(List.of(new Participant(
                 "John",
                 "Doe",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123")));
-        assertEquals(event.getParticipants(), Arrays.asList(new Participant("ABC-123-456",
+        assertEquals(event.getParticipants(), List.of(new Participant(
                 "John",
                 "Doe",
                 "j.doe@domain.com",
@@ -241,23 +179,59 @@ public class EventTest {
     }
 
     @Test
-    void getExpensesTest() {
-        assertEquals(event.getExpenses(), expenses);
+    void addParticipant() {
+        List<Participant> newParticipants = new ArrayList<>();
+        newParticipants.add(
+                new Participant(
+                        "John",
+                        "Doe",
+                        "j.doe@domain.com",
+                        "NL91 ABNA 0417 1643 00",
+                        "ABNANL2A123")
+        );
+        newParticipants.add(
+                new Participant(
+                        "Lorem",
+                        "Ipsum",
+                        "l.ipsum@domain.com",
+                        "NL69 XING 4269 2137 00",
+                        "CDNANL2A666")
+        );
+        newParticipants.add(
+                new Participant(
+                        "Average",
+                        "Joe",
+                        "ajoe@domain.com",
+                        "NL69 AJOE 4269 2137 00",
+                        "CDNANL2A666")
+        );
+        event.addParticipant(new Participant(
+                "Average",
+                "Joe",
+                "ajoe@domain.com",
+                "NL69 AJOE 4269 2137 00",
+                "CDNANL2A666"));
+        assertEquals(newParticipants, event.getParticipants());
     }
 
     @Test
-    void setExpensesTest() {
-        ArrayList<Long> toBePaidBy = new ArrayList<>();
-        toBePaidBy.add(123456789L);
-        ArrayList<String> expenseType = new ArrayList<>();
-        expenseType.add("Weaponry");
-
-        event.setExpenses(Arrays.asList(new Expense(123456789, "Nukes", 69.69
-                , LocalDate.of(2024, 2, 14)
-                , toBePaidBy, expenseType)));
-        assertEquals(event.getExpenses(), Arrays.asList(new Expense(123456789, "Nukes", 69.69
-                , LocalDate.of(2024, 2, 14)
-                , toBePaidBy, expenseType)));
+    public void removeParticipant() {
+        List<Participant> newParticipants = new ArrayList<> ();
+        newParticipants.add(
+                new Participant(
+                        "John",
+                        "Doe",
+                        "j.doe@domain.com",
+                        "NL91 ABNA 0417 1643 00",
+                        "ABNANL2A123")
+        );
+        event.removeParticipant(new Participant(
+                "Lorem",
+                "Ipsum",
+                "l.ipsum@domain.com",
+                "NL69 XING 4269 2137 00",
+                "CDNANL2A666"));
+        assertEquals(newParticipants, event.getParticipants());
     }
 
     @Test
@@ -273,34 +247,24 @@ public class EventTest {
 
     @Test
     void getCreationDateTest() {
-        assertEquals(event.getCreationDate(), LocalDate.of(2024, 2, 12));
+        assertEquals(event.getCreationDate(), LocalDateTime.of(2024, 2, 12, 12, 0, 0));
     }
 
     @Test
     void setCreationDateTest() {
-        event.setCreationDate(LocalDate.of(2024,1,12));
-        assertEquals(event.getCreationDate(), LocalDate.of(2024, 1, 12));
+        event.setCreationDate(LocalDateTime.of(2024, 2, 12, 12, 0, 0));
+        assertEquals(event.getCreationDate(), LocalDateTime.of(2024, 2, 12, 12, 0, 0));
     }
 
     @Test
     void getLastActivityTest() {
-        assertEquals(event.getLastActivity(), LocalDate.of(2024,2,14));
+        assertEquals(event.getLastActivity(), LocalDateTime.of(2024, 2, 14, 12, 0, 0));
     }
 
     @Test
     void setLastActivityTest() {
-        event.setLastActivity(LocalDate.of(2024,1,14));
-        assertEquals(event.getLastActivity(), LocalDate.of(2024,1,14));
+        event.setLastActivity(LocalDateTime.of(2024, 2, 12, 12, 0, 0));
+        assertEquals(event.getLastActivity(), LocalDateTime.of(2024, 2, 12, 12, 0, 0));
     }
 
-    @Test
-    void getInvitationCodeTest() {
-        assertEquals(event.getInvitationCode(),"ABC-123-456");
-    }
-
-    @Test
-    void setInvitationCodeTest() {
-        event.setInvitationCode("ABC-666-789");
-        assertEquals(event.getInvitationCode(), "ABC-666-789");
-    }
 }

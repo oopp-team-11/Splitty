@@ -9,7 +9,7 @@ class ParticipantTest {
     private Participant participant;
     @BeforeEach
     void initClient() {
-        participant = new Participant("ABC-123-456",
+        participant = new Participant(
                 "John",
                 "Doe",
                 "j.doe@domain.com",
@@ -19,7 +19,7 @@ class ParticipantTest {
 
     @Test
     void testEquals() {
-        Participant participant2 = new Participant("ABC-123-456",
+        Participant participant2 = new Participant(
                 "John",
                 "Doe",
                 "j.doe@domain.com",
@@ -30,7 +30,7 @@ class ParticipantTest {
 
     @Test
     void testNotEquals() {
-        Participant participant2 = new Participant("ABC-123-456",
+        Participant participant2 = new Participant(
                 "John",
                 "Burger",
                 "j.doe@domain.com",
@@ -41,7 +41,7 @@ class ParticipantTest {
 
     @Test
     void testHashCode() {
-        Participant participant2 = new Participant("ABC-123-456",
+        Participant participant2 = new Participant(
                 "John",
                 "Doe",
                 "j.doe@domain.com",
@@ -52,7 +52,7 @@ class ParticipantTest {
 
     @Test
     void testNotEqualsHashCode() {
-        Participant participant2 = new Participant("ABC-123-456",
+        Participant participant2 = new Participant(
                 "John",
                 "Burger",
                 "j.doe@domain.com",
@@ -76,10 +76,7 @@ class ParticipantTest {
         assertTrue(participant.getId() >= 0);
     }
 
-    @Test
-    void getInvitationCode() {
-        assertEquals("ABC-123-456", participant.getInvitationCode());
-    }
+
 
     @Test
     void getFirstName() {

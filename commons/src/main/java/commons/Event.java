@@ -5,9 +5,9 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Collection;
 
-import java.time.LocalDate;
 
 @Entity
 public class Event {
@@ -15,29 +15,25 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    private String invitationCode;
-
+    @Column(nullable = false)
     private String title;
 
-    private LocalDate creationDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime creationDate;
 
-    private LocalDate lastActivity;
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime lastActivity;
 
-    @OneToMany
-    private List<Participant> participants;
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Collection<Participant> participants;
 
-    @OneToMany
-    private List<Expense> expenses;
-
-    public Event(long id, String invitationCode, String title, LocalDate creationDate,
-                 LocalDate lastActivity, List<Participant> participants, List<Expense> expenses) {
+    public Event(long id, String title, LocalDateTime creationDate,
+                 LocalDateTime lastActivity, Collection<Participant> participants) {
         this.id = id;
-        this.invitationCode = invitationCode;
         this.title = title;
         this.creationDate = creationDate;
         this.lastActivity = lastActivity;
         this.participants = participants;
-        this.expenses = expenses;
     }
 
     public Event() {
@@ -47,28 +43,20 @@ public class Event {
         return id;
     }
 
-    public String getInvitationCode() {
-        return invitationCode;
-    }
-
-    public void setInvitationCode(String invitationCode) {
-        this.invitationCode = invitationCode;
-    }
-
-    public List<Participant> getParticipants() {
+    public Collection<Participant> getParticipants() {
         return participants;
     }
 
-    public void setParticipants(List<Participant> participants) {
+    public void setParticipants(Collection<Participant> participants) {
         this.participants = participants;
     }
 
-    public List<Expense> getExpenses() {
-        return expenses;
+    public void addParticipant(Participant participant) {
+        participants.add(participant);
     }
 
-    public void setExpenses(List<Expense> expenses) {
-        this.expenses = expenses;
+    public void removeParticipant(Participant participant) {
+        participants.remove(participant);
     }
 
     public String getTitle() {
@@ -79,19 +67,19 @@ public class Event {
         this.title = title;
     }
 
-    public LocalDate getCreationDate() {
+    public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDate creationDate) {
+    public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
 
-    public LocalDate getLastActivity() {
+    public LocalDateTime getLastActivity() {
         return lastActivity;
     }
 
-    public void setLastActivity(LocalDate lastActivity) {
+    public void setLastActivity(LocalDateTime lastActivity) {
         this.lastActivity = lastActivity;
     }
 
@@ -103,13 +91,13 @@ public class Event {
 
         return new EqualsBuilder().append(id, event.id).append(title, event.title)
                 .append(creationDate, event.creationDate).append(lastActivity, event.lastActivity)
-                .append(participants, event.participants).append(expenses, event.expenses).isEquals();
+                .append(participants, event.participants).isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(id).append(title)
-                .append(creationDate).append(lastActivity).append(participants).append(expenses).toHashCode();
+                .append(creationDate).append(lastActivity).append(participants).toHashCode();
     }
 
     @Override
@@ -120,7 +108,6 @@ public class Event {
                 .append("creationDate", creationDate)
                 .append("lastActivity", lastActivity)
                 .append("participants", participants.toString())
-                .append("expenses", expenses.toString())
                 .toString();
     }
 }
