@@ -46,5 +46,8 @@ auxil/
 ### Custom ###
 participant/participant.json
 
+### Mac OS shenanigans ###
+*DS_Store
+
 ### Database trace ###
 h2-database.trace.db
