@@ -33,16 +33,18 @@ public class MainCtrl {
     private CreateParticipantCtrl createParticipantCtrl;
     private Scene createParticipantScene;
 
-    public void initialize(Stage primaryStage, Pair<StartScreenCtrl, Parent> startScreen) {
+    public void initialize(Stage primaryStage, Pair<StartScreenCtrl, Parent> startScreen,
+                           Pair<CreateParticipantCtrl, Parent> createParticipant) {
         this.primaryStage = primaryStage;
 
         this.startScreenCtrl = startScreen.getKey();
         this.startScreenScene = new Scene(startScreen.getValue());
 
-//        this.createParticipantCtrl = createParticipant.getKey();
-//        this.createParticipantScene = new Scene(createParticipant.getValue());
+        this.createParticipantCtrl = createParticipant.getKey();
+        this.createParticipantScene = new Scene(createParticipant.getValue());
 
-        showStartScreen();
+        //showStartScreen();
+        showCreateParticipant(null);
         primaryStage.show();
     }
 
@@ -53,7 +55,9 @@ public class MainCtrl {
     }
 
     public void showCreateParticipant(String invitationCode) {
-
+        primaryStage.setTitle("Add participant ui");
+        primaryStage.setScene(createParticipantScene);
+        primaryStage.setResizable(false);
     }
 
 }
