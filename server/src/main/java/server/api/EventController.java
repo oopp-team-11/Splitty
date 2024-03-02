@@ -1,7 +1,7 @@
 package server.api;
 
 
-import com.fasterxml.jackson.annotation.JsonView;
+//import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,7 +9,7 @@ import commons.Participant;
 import commons.Event;
 import server.database.EventRepository;
 
-import java.util.Collection;
+//import java.util.Collection;
 
 @RestController
 @RequestMapping("/events")
