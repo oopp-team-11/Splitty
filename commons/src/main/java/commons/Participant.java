@@ -38,13 +38,15 @@ public class Participant {
 
     }
 
-    public Participant(Event event, String firstName, String lastName, String email, String iban, String bic) {
+    public Participant(Event event, String firstName, String lastName, String email, String iban, String bic,
+                       Collection<Expense> madeExpenses) {
         this.event = event;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.iban = iban;
         this.bic = bic;
+        this.madeExpenses = madeExpenses;
     }
 
     public long getId() {
