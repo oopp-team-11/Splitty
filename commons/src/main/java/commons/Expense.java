@@ -35,10 +35,6 @@ public class Expense {
         return paidBy;
     }
 
-    public void setPaidBy(Participant paidBy) {
-        this.paidBy = paidBy;
-    }
-
     public String getTitle() {
         return title;
     }
