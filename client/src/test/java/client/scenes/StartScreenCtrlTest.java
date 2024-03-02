@@ -1,15 +1,14 @@
 package client.scenes;
 
 import client.Main;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
+import org.testfx.api.FxToolkit;
 import org.testfx.assertions.api.Assertions;
-import org.testfx.assertions.api.TableViewAssert;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 
@@ -17,8 +16,9 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(ApplicationExtension.class)
 class StartScreenCtrlTest {
@@ -63,6 +63,10 @@ class StartScreenCtrlTest {
                 .hasChild("#eventNameColumn");
     }
 
+    /**
+     * Tests if the text field for join event by invitation code works
+     * @param robot - Will be injected by the test runner.
+     */
     @Test
     void shouldContainJoinEventTextField(FxRobot robot) {
         robot.clickOn("#joinInvitationCode", MouseButton.PRIMARY);
@@ -71,11 +75,25 @@ class StartScreenCtrlTest {
                 .hasText("123456789");
     }
 
+    /**
+     * Tests if the text field for create a new event by name works
+     * @param robot - Will be injected by the test runner.
+     */
     @Test
     void shouldContainCreateEventTextField(FxRobot robot) {
         robot.clickOn("#newEventName", MouseButton.PRIMARY);
         robot.write("Breakfast");
         Assertions.assertThat(robot.lookup("#newEventName").queryAs(TextField.class))
                 .hasText("Breakfast");
+    }
+
+    /**
+     * Tests if the window is resizeable, which it should not do
+     * @throws TimeoutException may throw this, if getting the stage takes to long
+     */
+    @Test
+    void shouldBeResizeable() throws TimeoutException {
+        var stage = FxToolkit.registerPrimaryStage();
+        assertFalse(stage.isResizable());
     }
 }
