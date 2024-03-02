@@ -27,15 +27,15 @@ public class CreateParticipantCtrl {
     @FXML
     private TextField bic;
 
-    private String invitationCode;
+    private long invitationCode;
 
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
 
     @Inject
-    public CreateParticipantCtrl(MainCtrl mainCtrl, String invitationCode) {
+    public CreateParticipantCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
-        this.invitationCode = invitationCode;
+        //this.invitationCode = invitationCode;
         this.fileSystemUtils = new FileSystemUtils();
         this.serverUtils = new ServerUtils();
     }
@@ -43,7 +43,6 @@ public class CreateParticipantCtrl {
     public void onCreate() {
         // todo: send create request (PUT) to /events
         System.out.println("ONCREATE");
-
 
     }
 
