@@ -1,13 +1,16 @@
 package client.utils;
 
+import static org.junit.jupiter.api.Assertions.*;
+import commons.Event;
+import commons.Participant;
 import org.junit.jupiter.api.Test;
 import javax.json.Json;
 import javax.json.JsonObject;
-import static org.junit.jupiter.api.Assertions.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -113,6 +116,102 @@ class FileSystemUtilsTest {
         assertTrue(new File(randomFileName).exists());
         assertEquals(codes, fileSystemUtils.readInvitationCodes(randomFileName));
         new File(randomFileName).delete();
+    }
+
+    @Test
+    void checkIfCodeExistsTrue() {
+        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        List<Long> codes = new ArrayList<>();
+        long randomCode = UUID.randomUUID().hashCode();
+        codes.add(randomCode);
+        assertTrue(fileSystemUtils.checkIfCodeExists(randomCode, codes));
+    }
+
+    @Test
+    void checkIfCodeExistsFalse() {
+        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        List<Long> codes = new ArrayList<>();
+        long randomCode = UUID.randomUUID().hashCode();
+        assertFalse(fileSystemUtils.checkIfCodeExists(randomCode, codes));
+    }
+
+    @Test
+    void checkIfCodeExistsEmptyList() {
+        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        List<Long> codes = new ArrayList<>();
+        long randomCode = UUID.randomUUID().hashCode();
+        assertFalse(fileSystemUtils.checkIfCodeExists(randomCode, codes));
+    }
+
+    @Test
+    void updateConfigFileTest() throws IOException {
+        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        String randomFileName = UUID.randomUUID().toString() + ".json";
+
+        if(new File(randomFileName).exists()) {
+            new File(randomFileName).delete();
+        }
+
+        List<Long> codes = new ArrayList<>();
+        long randomCode = UUID.randomUUID().hashCode();
+        codes.add(randomCode);
+        JsonObject json = Json.createObjectBuilder()
+            .add("invitationCodes", Json.createArrayBuilder(codes))
+            .build();
+
+        FileWriter file = new FileWriter(randomFileName);
+        file.write(json.toString());
+        file.flush();
+        file.close();
+
+        long randomCode2 = UUID.randomUUID().hashCode();
+        codes.add(randomCode2);
+        fileSystemUtils.updateConfigFile(randomFileName, codes);
+        assertTrue(new File(randomFileName).exists());
+        assertEquals(codes, fileSystemUtils.readInvitationCodes(randomFileName));
+        new File(randomFileName).delete();
+    }
+
+    @Test
+    void extractInvitationCodesFromEventListTest() {
+        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        List<Participant> participants = new ArrayList<>();
+        List<Event> events = new ArrayList<>();
+        List<Long> codes = new ArrayList<>();
+
+        participants.add( new Participant(
+                "John",
+                "Doe",
+                "j.doe@domain.com",
+                "NL91 ABNA 0417 1643 00",
+                "ABNANL2A123"));
+        participants.add (new Participant(
+                "Lorem",
+                "Ipsum",
+                "l.ipsum@domain.com",
+                "NL69 XING 4269 2137 00",
+                "CDNANL2A666"));
+
+        Event event1 = new Event(12345L,
+                "The Event we need to pay for",
+                LocalDateTime.of(2024, 2, 12, 12, 0, 0),
+                LocalDateTime.of(2024, 2, 14, 12, 0, 0),
+                participants);
+
+        Event event2 = new Event(54321L,
+                "The Event we need to pay for",
+                LocalDateTime.of(2024, 2, 12, 12, 0, 0),
+                LocalDateTime.of(2024, 2, 14, 12, 0, 0),
+                participants);
+
+        events.add(event1);
+        events.add(event2);
+
+        codes.add(event1.getId());
+        codes.add(event2.getId());
+
+
+        assertEquals(codes, fileSystemUtils.extractInvitationCodesFromEventList(events));
     }
 
 }

@@ -1,5 +1,6 @@
 package commons;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -11,10 +12,12 @@ import java.util.Collection;
 
 @Entity
 public class Event {
+
+    @JsonView(Views.StartScreenView.class)
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-
+    @JsonView(Views.StartScreenView.class)
     @Column(nullable = false)
     private String title;
 
