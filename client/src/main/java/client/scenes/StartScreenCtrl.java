@@ -62,7 +62,7 @@ public class StartScreenCtrl {
         // else
         //      MainCtrl.showUserCreationScreen(invitationCode)
         System.out.println("ONJOIN");
-        long invitationCode = Integer.parseInt(joinInvitationCode.getText());
+        long invitationCode = Long.parseLong(joinInvitationCode.getText());
 
         fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
             "config.json");
