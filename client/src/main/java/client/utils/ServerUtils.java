@@ -111,15 +111,17 @@ public class ServerUtils {
 		JSONArray jsonArray = new JSONArray(jsonObject.getJSONArray("events").toString());
 
 		List<Event> events = new ArrayList<>();
-		for(Object object: jsonArray) {
-			events.add(new Event(
-					Long.parseLong(((JSONObject) object).get("invitationCode").toString()),
-					((JSONObject) object).get("eventName").toString(),
-					null,
-					null,
-					null)
-			);
-		}
+		//TODO: Here Event objects with only invitationCode and eventName will be parsed using @JsonView(Views.StartScreenView.class)
+		//Use https://www.baeldung.com/jackson-json-view-annotation for reference
+//		for(Object object: jsonArray) {
+//			events.add(new Event(
+//					Long.parseLong(((JSONObject) object).get("invitationCode").toString()),
+//					((JSONObject) object).get("eventName").toString(),
+//					null,
+//					null,
+//					null)
+//			);
+//		}
 
 		if(response.statusCode() == 205)
 			fileSystemUtils.updateConfigFile("config.json", fileSystemUtils.extractInvitationCodesFromEventList(events));
