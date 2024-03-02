@@ -24,9 +24,13 @@ public class EventControllerTest {
     public void setup() {
         repo = new TestEventRepository();
         sut = new EventController(repo);
-        repo.save(new Event(1, "B", LocalDateTime.now(), LocalDateTime.now(), new ArrayList<>()));
+        repo.save(new Event(1, "Trap", LocalDateTime.now(), LocalDateTime.now(), new ArrayList<>()));
     }
 
+
+
+
+    // Adding participants test
     @Test
     public void cannotAddNullParticipant() {
         var actual = sut.add(0L, new Participant());
