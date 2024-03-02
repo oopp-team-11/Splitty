@@ -1,7 +1,7 @@
 package server.api;
 
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+/*import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import commons.Participant;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.ArrayList;*/
 
 public class EventControllerTest {
     private TestEventRepository repo;
