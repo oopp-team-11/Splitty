@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -97,7 +98,7 @@ public class Event {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("id", id)
                 .append("title", title)
                 .append("creationDate", creationDate)
