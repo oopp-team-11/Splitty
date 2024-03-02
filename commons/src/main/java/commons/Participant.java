@@ -109,12 +109,12 @@ public class Participant {
 
         Participant that = (Participant) o;
 
-        return new EqualsBuilder().append(id, that.id).append(firstName, that.firstName).append(lastName, that.lastName).append(email, that.email).append(iban, that.iban).append(bic, that.bic).append(event, that.event).append(madeExpenses, that.madeExpenses).isEquals();
+        return new EqualsBuilder().append(id, that.id).append(firstName, that.firstName).append(lastName, that.lastName).append(email, that.email).append(iban, that.iban).append(bic, that.bic).append(event.getId(), that.event.getId()).append(madeExpenses, that.madeExpenses).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(id).append(firstName).append(lastName).append(email).append(iban).append(bic).append(event).append(madeExpenses).toHashCode();
+        return new HashCodeBuilder(17, 37).append(id).append(firstName).append(lastName).append(email).append(iban).append(bic).append(event.getId()).append(madeExpenses).toHashCode();
     }
 
     @Override
@@ -126,7 +126,7 @@ public class Participant {
                 .append("email", email)
                 .append("iban", iban)
                 .append("bic", bic)
-                .append("event", event)
+                .append("invitationCode", event.getId())
                 .append("madeExpenses", madeExpenses)
                 .toString();
     }

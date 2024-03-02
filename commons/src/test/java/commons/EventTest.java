@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,133 +12,93 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EventTest {
 
     private Event event;
-    List<Participant> participants;
+    private Event eventEqual;
+    private Event eventNotEqual;
+    private List<Participant> participants;
+    private List<Participant> participantsEqual;
 
     @BeforeEach
     void setUp() {
         participants = new ArrayList<>();
-        participants.add( new Participant(
+        event = new Event("The Event we need to pay for", participants);
+        event.setCreationDate(LocalDateTime.of(2024, 2, 12, 12, 0));
+        event.setLastActivity(LocalDateTime.of(2024, 2, 14, 12, 0));
+        participants.add(new Participant(
+                event,
                 "John",
                 "Doe",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
-                "ABNANL2A123"));
-        participants.add (new Participant(
+                "ABNANL2A123",
+                new ArrayList<>()));
+        participants.add(new Participant(
+                event,
                 "Lorem",
                 "Ipsum",
                 "l.ipsum@domain.com",
                 "NL69 XING 4269 2137 00",
-                "CDNANL2A666"));
-
-        event = new Event(6662137,
-                "The Event we need to pay for",
-                LocalDateTime.of(2024, 2, 12, 12, 0, 0),
-                LocalDateTime.of(2024, 2, 14, 12, 0, 0),
-                participants);
+                "CDNANL2A666",
+                new ArrayList<>()));
+        participantsEqual = new ArrayList<>();
+        eventEqual = new Event("The Event we need to pay for", participantsEqual);
+        eventEqual.setCreationDate(LocalDateTime.of(2024, 2, 12, 12, 0));
+        eventEqual.setLastActivity(LocalDateTime.of(2024, 2, 14, 12, 0));
+        participantsEqual.add(new Participant(
+                eventEqual,
+                "John",
+                "Doe",
+                "j.doe@domain.com",
+                "NL91 ABNA 0417 1643 00",
+                "ABNANL2A123",
+                new ArrayList<>()));
+        participantsEqual.add(new Participant(
+                eventEqual,
+                "Lorem",
+                "Ipsum",
+                "l.ipsum@domain.com",
+                "NL69 XING 4269 2137 00",
+                "CDNANL2A666",
+                new ArrayList<>()));
+        List<Participant> participantsNotEqual = new ArrayList<>();
+        eventNotEqual = new Event("The Event we do not need to pay for", participantsNotEqual);
+        eventNotEqual.setCreationDate(LocalDateTime.of(2024, 2, 12, 12, 0));
+        eventNotEqual.setLastActivity(LocalDateTime.of(2024, 2, 14, 12, 0));
+        participantsNotEqual.add(new Participant(
+                eventNotEqual,
+                "John",
+                "Doe",
+                "j.doe@domain.com",
+                "NL91 ABNA 0417 1643 00",
+                "ABNANL2A124",
+                new ArrayList<>()));
+        participantsNotEqual.add(new Participant(
+                eventNotEqual,
+                "Lorem",
+                "Ipsum",
+                "l.ipsum@domain.com",
+                "NL69 XING 4269 2157 00",
+                "CDNANL2A666",
+                new ArrayList<>()));
     }
 
     @Test
     void testEquals() {
-        Event event2 = new Event(
-                6662137,
-                "The Event we need to pay for",
-                LocalDateTime.of(2024, 2, 12, 12, 0, 0),
-                LocalDateTime.of(2024, 2, 14, 12, 0, 0),
-                Arrays.asList(
-                        new Participant(
-                                "John",
-                                "Doe",
-                                "j.doe@domain.com",
-                                "NL91 ABNA 0417 1643 00",
-                                "ABNANL2A123"),
-                        new Participant(
-                                "Lorem",
-                                "Ipsum",
-                                "l.ipsum@domain.com",
-                                "NL69 XING 4269 2137 00",
-                                "CDNANL2A666")
-                )
-        );
-
-        assertEquals(event, event2);
+        assertEquals(event, eventEqual);
     }
 
     @Test
     void testNotEquals() {
-        Event event2 = new Event(
-                4202112,
-                "The Event we need to pay for",
-                LocalDateTime.of(2024, 1, 16, 12, 0, 0),
-                LocalDateTime.of(2024, 2, 19, 12, 0, 0),
-                Arrays.asList(
-                        new Participant(
-                                "John",
-                                "Doe",
-                                "j.doe@domain.com",
-                                "NL91 ABNA 0417 1643 00",
-                                "ABNANL2A123"),
-                        new Participant(
-                                "Lorem",
-                                "Ipsum",
-                                "l.ipsum@domain.com",
-                                "NL69 XING 4269 2137 00",
-                                "CDNANL2A666")
-                )
-        );
-
-        assertNotEquals(event, event2);
+        assertNotEquals(event, eventNotEqual);
     }
 
     @Test
     void testHashCode() {
-        Event event2 = new Event(
-                6662137,
-                "The Event we need to pay for",
-                LocalDateTime.of(2024, 2, 12, 12, 0, 0),
-                LocalDateTime.of(2024, 2, 14, 12, 0, 0),
-                Arrays.asList(
-                        new Participant(
-                                "John",
-                                "Doe",
-                                "j.doe@domain.com",
-                                "NL91 ABNA 0417 1643 00",
-                                "ABNANL2A123"),
-                        new Participant(
-                                "Lorem",
-                                "Ipsum",
-                                "l.ipsum@domain.com",
-                                "NL69 XING 4269 2137 00",
-                                "CDNANL2A666")
-                )
-        );
-
-        assertEquals(event.hashCode(), event2.hashCode());
+        assertEquals(event.hashCode(), eventEqual.hashCode());
     }
 
     @Test
     void testHashCodeNotEquals() {
-        Event event2 = new Event(
-                4202112,
-                "The Event we need to pay for",
-                LocalDateTime.of(2024, 1, 16, 12, 0, 0),
-                LocalDateTime.of(2024, 2, 19, 12, 0, 0),
-                Arrays.asList(
-                        new Participant(
-                                "John",
-                                "Doe",
-                                "j.doe@domain.com",
-                                "NL91 ABNA 0417 1643 00",
-                                "ABNANL2A123"),
-                        new Participant(
-                                "Lorem",
-                                "Ipsum",
-                                "l.ipsum@domain.com",
-                                "NL69 XING 4269 2137 00",
-                                "CDNANL2A666")
-                )
-        );
-
-        assertNotEquals(event.hashCode(), event2.hashCode());
+        assertNotEquals(event.hashCode(), eventNotEqual.hashCode());
     }
 
     @Test
@@ -163,75 +122,50 @@ public class EventTest {
     }
 
     @Test
-    void setParticipantsTest() {
-        event.setParticipants(List.of(new Participant(
-                "John",
-                "Doe",
-                "j.doe@domain.com",
-                "NL91 ABNA 0417 1643 00",
-                "ABNANL2A123")));
-        assertEquals(event.getParticipants(), List.of(new Participant(
-                "John",
-                "Doe",
-                "j.doe@domain.com",
-                "NL91 ABNA 0417 1643 00",
-                "ABNANL2A123")));
-    }
-
-    @Test
     void addParticipant() {
-        List<Participant> newParticipants = new ArrayList<>();
-        newParticipants.add(
+        participantsEqual.add(
                 new Participant(
-                        "John",
-                        "Doe",
-                        "j.doe@domain.com",
-                        "NL91 ABNA 0417 1643 00",
-                        "ABNANL2A123")
-        );
-        newParticipants.add(
-                new Participant(
-                        "Lorem",
-                        "Ipsum",
-                        "l.ipsum@domain.com",
-                        "NL69 XING 4269 2137 00",
-                        "CDNANL2A666")
-        );
-        newParticipants.add(
-                new Participant(
+                        event,
                         "Average",
                         "Joe",
                         "ajoe@domain.com",
                         "NL69 AJOE 4269 2137 00",
-                        "CDNANL2A666")
+                        "CDNANL2A666",
+                        new ArrayList<>())
         );
         event.addParticipant(new Participant(
+                event,
                 "Average",
                 "Joe",
                 "ajoe@domain.com",
                 "NL69 AJOE 4269 2137 00",
-                "CDNANL2A666"));
-        assertEquals(newParticipants, event.getParticipants());
+                "CDNANL2A666",
+                new ArrayList<>())
+        );
+        assertEquals(participantsEqual, event.getParticipants());
     }
 
     @Test
     public void removeParticipant() {
-        List<Participant> newParticipants = new ArrayList<> ();
-        newParticipants.add(
-                new Participant(
-                        "John",
-                        "Doe",
-                        "j.doe@domain.com",
-                        "NL91 ABNA 0417 1643 00",
-                        "ABNANL2A123")
-        );
-        event.removeParticipant(new Participant(
+        participantsEqual.remove(new Participant(
+                event,
                 "Lorem",
                 "Ipsum",
                 "l.ipsum@domain.com",
                 "NL69 XING 4269 2137 00",
-                "CDNANL2A666"));
-        assertEquals(newParticipants, event.getParticipants());
+                "CDNANL2A666",
+                new ArrayList<>())
+        );
+        event.removeParticipant(new Participant(
+                event,
+                "Lorem",
+                "Ipsum",
+                "l.ipsum@domain.com",
+                "NL69 XING 4269 2137 00",
+                "CDNANL2A666",
+                new ArrayList<>())
+        );
+        assertEquals(participantsEqual, event.getParticipants());
     }
 
     @Test
@@ -247,24 +181,27 @@ public class EventTest {
 
     @Test
     void getCreationDateTest() {
-        assertEquals(event.getCreationDate(), LocalDateTime.of(2024, 2, 12, 12, 0, 0));
+        assertEquals(event.getCreationDate(), LocalDateTime.of(2024, 2,
+                12, 12, 0, 0));
     }
 
     @Test
     void setCreationDateTest() {
         event.setCreationDate(LocalDateTime.of(2024, 2, 12, 12, 0, 0));
-        assertEquals(event.getCreationDate(), LocalDateTime.of(2024, 2, 12, 12, 0, 0));
+        assertEquals(event.getCreationDate(), LocalDateTime.of(2024, 2, 12, 12,
+                0, 0));
     }
 
     @Test
     void getLastActivityTest() {
-        assertEquals(event.getLastActivity(), LocalDateTime.of(2024, 2, 14, 12, 0, 0));
+        assertEquals(event.getLastActivity(), LocalDateTime.of(2024, 2,
+                14, 12, 0, 0));
     }
 
     @Test
     void setLastActivityTest() {
         event.setLastActivity(LocalDateTime.of(2024, 2, 12, 12, 0, 0));
-        assertEquals(event.getLastActivity(), LocalDateTime.of(2024, 2, 12, 12, 0, 0));
+        assertEquals(event.getLastActivity(), LocalDateTime.of(2024, 2, 12, 12, 0
+                , 0));
     }
-
 }

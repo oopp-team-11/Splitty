@@ -3,72 +3,83 @@ package commons;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ParticipantTest {
     private Participant participant;
+    private Participant participantEqual;
+    private Participant participantNotEqual;
+    private Event event;
     @BeforeEach
     void initClient() {
+        List<Participant> participants = new ArrayList<>();
+        event = new Event("Event", participants);
         participant = new Participant(
+                event,
                 "John",
                 "Doe",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
-                "ABNANL2A123");
+                "ABNANL2A123",
+                new ArrayList<>()
+        );
+        participantEqual = new Participant(
+                event,
+                "John",
+                "Doe",
+                "j.doe@domain.com",
+                "NL91 ABNA 0417 1643 00",
+                "ABNANL2A123",
+                new ArrayList<>()
+        );
+        participantNotEqual = new Participant(
+                event,
+                "John",
+                "Burger",
+                "j.doe@domain.com",
+                "NL91 ABNA 0417 1643 00",
+                "ABNANL2A123",
+                new ArrayList<>()
+        );
+        participants.add(participant);
+        participants.add(participantEqual);
+        participants.add(participantNotEqual);
     }
 
     @Test
     void testEquals() {
-        Participant participant2 = new Participant(
-                "John",
-                "Doe",
-                "j.doe@domain.com",
-                "NL91 ABNA 0417 1643 00",
-                "ABNANL2A123");
-        assertEquals(participant, participant2);
+        assertEquals(participant, participantEqual);
     }
 
     @Test
     void testNotEquals() {
-        Participant participant2 = new Participant(
-                "John",
-                "Burger",
-                "j.doe@domain.com",
-                "NL91 ABNA 0417 1643 00",
-                "ABNANL2A123");
-        assertNotEquals(participant, participant2);
+        assertNotEquals(participant, participantNotEqual);
     }
 
     @Test
     void testHashCode() {
-        Participant participant2 = new Participant(
-                "John",
-                "Doe",
-                "j.doe@domain.com",
-                "NL91 ABNA 0417 1643 00",
-                "ABNANL2A123");
-        assertEquals(participant.hashCode(), participant2.hashCode());
+        assertEquals(participant.hashCode(), participantEqual.hashCode());
     }
 
     @Test
     void testNotEqualsHashCode() {
-        Participant participant2 = new Participant(
-                "John",
-                "Burger",
-                "j.doe@domain.com",
-                "NL91 ABNA 0417 1643 00",
-                "ABNANL2A123");
-        assertNotEquals(participant.hashCode(), participant2.hashCode());
+        assertNotEquals(participant.hashCode(), participantNotEqual.hashCode());
     }
 
     @Test
     void testHasToString() {
         String clientToString = participant.toString();
+        assertTrue(clientToString.contains("id"));
         assertTrue(clientToString.contains("firstName"));
         assertTrue(clientToString.contains("lastName"));
         assertTrue(clientToString.contains("email"));
         assertTrue(clientToString.contains("iban"));
         assertTrue(clientToString.contains("bic"));
+        assertTrue(clientToString.contains("invitationCode"));
+        assertTrue(clientToString.contains("madeExpenses"));
     }
 
     @Test
@@ -131,5 +142,37 @@ class ParticipantTest {
     void setBic() {
         participant.setBic("ABNANL2A567");
         assertEquals("ABNANL2A567", participant.getBic());
+    }
+
+    @Test
+    void addExpense() {
+        Expense expense = new Expense(participant, "Expense", 69.);
+        int prevSize = participant.getMadeExpenses().size();
+        participant.addExpense(expense);
+        assertEquals(prevSize + 1, participant.getMadeExpenses().size());
+    }
+
+    @Test
+    void removeExpense() {
+        Expense expense = new Expense(participant, "Expense", 69.);
+        int prevSize = participant.getMadeExpenses().size();
+        participant.addExpense(expense);
+        assertEquals(prevSize + 1, participant.getMadeExpenses().size());
+        participant.removeExpense(expense);
+        assertEquals(prevSize, participant.getMadeExpenses().size());
+    }
+
+    @Test
+    void getEvent() {
+        assertEquals(participant.getEvent(), event);
+    }
+
+    @Test
+    void getMadeExpenses() {
+        List<Expense> madeExpenses = new ArrayList<>();
+        Expense expense = new Expense(participant, "Expense", 69.);
+        madeExpenses.add(expense);
+        participant.addExpense(expense);
+        assertEquals(madeExpenses, participant.getMadeExpenses());
     }
 }

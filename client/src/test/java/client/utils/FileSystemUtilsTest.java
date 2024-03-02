@@ -175,34 +175,50 @@ class FileSystemUtilsTest {
     @Test
     void extractInvitationCodesFromEventListTest() {
         FileSystemUtils fileSystemUtils = new FileSystemUtils();
-        List<Participant> participants = new ArrayList<>();
+        List<Participant> participants1 = new ArrayList<>();
+        List<Participant> participants2 = new ArrayList<>();
         List<Event> events = new ArrayList<>();
         List<Long> codes = new ArrayList<>();
 
-        participants.add( new Participant(
+        Event event1 = new Event("The Event we need to pay for", participants1);
+        Event event2 = new Event("The Event we do not need to pay for", participants2);
+
+        participants1.add( new Participant(
+                event1,
                 "John",
                 "Doe",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
-                "ABNANL2A123"));
-        participants.add (new Participant(
+                "ABNANL2A123",
+                new ArrayList<>())
+        );
+        participants1.add (new Participant(
+                event1,
                 "Lorem",
                 "Ipsum",
                 "l.ipsum@domain.com",
                 "NL69 XING 4269 2137 00",
-                "CDNANL2A666"));
-
-        Event event1 = new Event(12345L,
-                "The Event we need to pay for",
-                LocalDateTime.of(2024, 2, 12, 12, 0, 0),
-                LocalDateTime.of(2024, 2, 14, 12, 0, 0),
-                participants);
-
-        Event event2 = new Event(54321L,
-                "The Event we need to pay for",
-                LocalDateTime.of(2024, 2, 12, 12, 0, 0),
-                LocalDateTime.of(2024, 2, 14, 12, 0, 0),
-                participants);
+                "CDNANL2A666",
+                new ArrayList<>())
+        );
+        participants2.add( new Participant(
+                event2,
+                "John",
+                "Doe",
+                "j.doe@domain.com",
+                "NL91 ABNA 0417 1643 00",
+                "ABNANL2A123",
+                new ArrayList<>())
+        );
+        participants2.add (new Participant(
+                event2,
+                "Lorem",
+                "Ipsum",
+                "l.ipsum@domain.com",
+                "NL69 XING 4269 2137 00",
+                "CDNANL2A666",
+                new ArrayList<>())
+        );
 
         events.add(event1);
         events.add(event2);

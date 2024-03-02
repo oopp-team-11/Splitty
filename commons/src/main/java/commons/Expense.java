@@ -59,13 +59,13 @@ public class Expense {
 
         Expense expense = (Expense) o;
 
-        return new EqualsBuilder().append(id, expense.id).append(paidBy, expense.paidBy)
+        return new EqualsBuilder().append(id, expense.id).append(paidBy.getId(), expense.paidBy.getId())
                 .append(title, expense.title).append(amount, expense.amount).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(id).append(paidBy)
+        return new HashCodeBuilder(17, 37).append(id).append(paidBy.getId())
                 .append(title).append(amount).toHashCode();
     }
 
@@ -73,7 +73,7 @@ public class Expense {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("id", id)
-                .append("paidBy", paidBy)
+                .append("paidByID", paidBy.getId())
                 .append("title", title)
                 .append("amount", amount)
                 .toString();
