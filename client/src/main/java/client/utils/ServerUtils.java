@@ -37,7 +37,7 @@ public class ServerUtils {
 	 * @throws IOException if something goes wrong
 	 * @throws InterruptedException if something goes wrong with the request
 	 */
-	public void sendJoinRequest(long invitationCode, String server)
+	public void getEvent(long invitationCode, String server)
 		throws IOException, InterruptedException {
 		HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create(server + "/events/" + invitationCode))
@@ -57,7 +57,7 @@ public class ServerUtils {
 	 * @throws IOException if something goes wrong
 	 * @throws InterruptedException if something goes wrong with the request
 	 */
-	public long sendCreateRequest(String eventName, String server)
+	public long createEvent(String eventName, String server)
 		throws IOException, InterruptedException {
 		JsonObject json = Json.createObjectBuilder()
 			.add("eventName", eventName)

@@ -14,37 +14,36 @@ import java.util.UUID;
 class ServerUtilsTest {
 
     @Test
-    void sendCreateRequestThrowsInterruptedException() throws IOException, InterruptedException {
+    void createEventThrowsInterruptedException() throws IOException, InterruptedException {
         ServerUtils serverUtils = Mockito.spy(ServerUtils.class);
-        Mockito.doThrow(new InterruptedException()).when(serverUtils).sendCreateRequest("eventName", "http://localhost:8080");
-        assertThrows(InterruptedException.class, () -> serverUtils.sendCreateRequest("eventName", "http://localhost:8080"));
+        Mockito.doThrow(new InterruptedException()).when(serverUtils).createEvent("eventName", "http://localhost:8080");
+        assertThrows(InterruptedException.class, () -> serverUtils.createEvent("eventName", "http://localhost:8080"));
     }
 
     @Test
-    void sendCreateRequestThrowsIOException() throws IOException, InterruptedException {
+    void createEventThrowsIOException() throws IOException, InterruptedException {
         ServerUtils serverUtils = Mockito.spy(ServerUtils.class);
-        Mockito.doThrow(new IOException()).when(serverUtils).sendCreateRequest("eventName", "http://localhost:8080");
-        assertThrows(IOException.class, () -> serverUtils.sendCreateRequest("eventName", "http://localhost:8080"));
+        Mockito.doThrow(new IOException()).when(serverUtils).createEvent("eventName", "http://localhost:8080");
+        assertThrows(IOException.class, () -> serverUtils.createEvent("eventName", "http://localhost:8080"));
     }
 
     @Test
-    void sendJoinRequestThrowsInterruptedException() throws IOException, InterruptedException {
-        ServerUtils serverUtils = Mockito.spy(ServerUtils.class);
-        long randomCode = UUID.randomUUID().hashCode();
-        Mockito.doThrow(new InterruptedException()).when(serverUtils).sendJoinRequest(randomCode, "http://localhost:8080");
-        assertThrows(InterruptedException.class, () -> serverUtils.sendJoinRequest(randomCode, "http://localhost:8080"));
-    }
-
-    @Test
-    void sendJoinRequestThrowsIOException() throws IOException, InterruptedException {
+    void getEventThrowsInterruptedException() throws IOException, InterruptedException {
         ServerUtils serverUtils = Mockito.spy(ServerUtils.class);
         long randomCode = UUID.randomUUID().hashCode();
-        Mockito.doThrow(new IOException()).when(serverUtils).sendJoinRequest(randomCode, "http://localhost:8080");
-        assertThrows(IOException.class, () -> serverUtils.sendJoinRequest(randomCode, "http://localhost:8080"));
+        Mockito.doThrow(new InterruptedException()).when(serverUtils).getEvent(randomCode, "http://localhost:8080");
     }
 
     @Test
-    void sendJoinRequestWireMock() throws IOException, InterruptedException {
+    void getEventThrowsIOException() throws IOException, InterruptedException {
+        ServerUtils serverUtils = Mockito.spy(ServerUtils.class);
+        long randomCode = UUID.randomUUID().hashCode();
+        Mockito.doThrow(new IOException()).when(serverUtils).getEvent(randomCode, "http://localhost:8080");
+        assertThrows(IOException.class, () -> serverUtils.getEvent(randomCode, "http://localhost:8080"));
+    }
+
+    @Test
+    void getEventWireMock() throws IOException, InterruptedException {
         WireMockServer wireMockServer = new WireMockServer(WireMockConfiguration
             .options()
             .port(9090));
@@ -58,13 +57,13 @@ class ServerUtilsTest {
                         .withHeader("Content-Type", "application/json")
                         .withBody("")));
 
-        serverUtils.sendJoinRequest(randomCode, "http://localhost:9090");
+        serverUtils.getEvent(randomCode, "http://localhost:9090");
         assertEquals(200, wireMockServer.getAllServeEvents().get(0).getResponse().getStatus());
         wireMockServer.stop();
     }
 
     @Test
-    void sendCreateRequestWireMock() throws IOException, InterruptedException {
+    void createEventWireMock() throws IOException, InterruptedException {
         WireMockServer wireMockServer = new WireMockServer(WireMockConfiguration
             .options()
             .port(9091));
@@ -79,7 +78,7 @@ class ServerUtilsTest {
                         .withHeader("Content-Type", "application/json")
                         .withBody("{'invitationCode': " + responseCode + "}")));
 
-        serverUtils.sendCreateRequest(randomName, "http://localhost:9091");
+        serverUtils.createEvent(randomName, "http://localhost:9091");
         JSONObject jsonObject = new JSONObject(wireMockServer.getAllServeEvents().get(0).getResponse().getBodyAsString());
 
 
@@ -89,7 +88,7 @@ class ServerUtilsTest {
                 .withHeader("Content-Type", "application/json")
                 .withBody("")));
 
-        serverUtils.sendCreateRequest(randomName, "http://localhost:9091");
+        serverUtils.createEvent(randomName, "http://localhost:9091");
 
         assertEquals(responseCode, jsonObject.getInt("invitationCode"));
         assertEquals(200, wireMockServer.getAllServeEvents().get(1).getResponse().getStatus());
