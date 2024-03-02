@@ -1,25 +1,22 @@
 package client.scenes;
 
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.util.ResourceBundle;
-import java.util.ArrayList;
-
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Event;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.*;
+import javafx.stage.Modality;
 
 import java.io.IOException;
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 public class StartScreenCtrl implements Initializable {
     private final MainCtrl mainCtrl;
@@ -41,8 +38,8 @@ public class StartScreenCtrl implements Initializable {
     @FXML
     private TableColumn<Event, String> invitationCodeColumn;
 
-    private FileSystemUtils fileSystemUtils;
-    private ServerUtils serverUtils;
+    private final FileSystemUtils fileSystemUtils;
+    private final ServerUtils serverUtils;
 
     @Inject
     public StartScreenCtrl(MainCtrl mainCtrl) {
@@ -55,10 +52,10 @@ public class StartScreenCtrl implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         eventNameColumn.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().getTitle()));
         invitationCodeColumn.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().getId().toString()));
-        eventTable.setRowFactory( tv -> {
+        eventTable.setRowFactory(tv -> {
             TableRow<Event> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     Event rowData = row.getItem();
                     joinInvitationCode.setText(rowData.getId().toString());
                     onJoin();
@@ -93,32 +90,30 @@ public class StartScreenCtrl implements Initializable {
      * Method that is called when the create button is clicked
      */
     public void onCreate() {
-        // todo: send create request (PUT) to /events
         System.out.println("ONCREATE");
         String eventName = newEventName.getText();
-        long invitationCode;
 
+        // TODO: validate eventName first
+        long invitationCode;
         try {
             invitationCode = serverUtils.createEvent(eventName, "http://localhost:8080");
-        }
-        catch (IOException | InterruptedException e) {
-            System.err.println("Error while sending create request to server");
+        } catch (IOException | InterruptedException e) {
+            serverErrorAlert(e);
             return;
         }
 
         try {
             fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
-                "config.json");
-        }
-        catch (IOException e) {
-            System.err.println("Error while saving invitation code to config file");
+                    "config.json");
+        } catch (IOException e) {
+            fileSaveErrorAlert(e);
+            return;
         }
 
         try {
             serverUtils.getEvent(invitationCode, "http://localhost:8080");
-        }
-        catch (IOException | InterruptedException e) {
-            System.err.println("Error while sending get request to server");
+        } catch (IOException | InterruptedException e) {
+            serverErrorAlert(e);
         }
     }
 
@@ -133,21 +128,46 @@ public class StartScreenCtrl implements Initializable {
         // else
         //      MainCtrl.showUserCreationScreen(invitationCode)
         System.out.println("ONJOIN: " + joinInvitationCode.getText());
-        long invitationCode = Integer.parseInt(joinInvitationCode.getText());
-
-        try{
-            fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
-                "config.json");
+        long invitationCode;
+        try {
+            invitationCode = Integer.parseInt(joinInvitationCode.getText());
+        } catch (NumberFormatException e) {
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Invalid invitation code, try again." +
+                    "\nError: " + (e.getMessage() != null ? e.getMessage() : "No error message available."));
+            alert.showAndWait();
+            return;
         }
-        catch (IOException e) {
-            System.err.println("Error while saving invitation code to config file");
+
+        try {
+            fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
+                    "config.json");
+        } catch (IOException e) {
+            fileSaveErrorAlert(e);
+            return;
         }
 
         try {
             serverUtils.getEvent(invitationCode, "http://localhost:8080");
+        } catch (IOException | InterruptedException e) {
+            serverErrorAlert(e);
         }
-        catch (IOException | InterruptedException e) {
-            System.err.println("Error while sending get request to server");
-        }
+    }
+
+    private static void serverErrorAlert(Exception e) {
+        var alert = new Alert(Alert.AlertType.ERROR);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setContentText("Something went wrong while trying to connect to server." +
+                "\nError: " + (e.getMessage() != null ? e.getMessage() : "No error message available."));
+        alert.showAndWait();
+    }
+
+    private static void fileSaveErrorAlert(Exception e) {
+        var alert = new Alert(Alert.AlertType.ERROR);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setContentText("Something went wrong while saving invitation code to disk." +
+                "\nError: " + (e.getMessage() != null ? e.getMessage() : "No error message available."));
+        alert.showAndWait();
     }
 }
