@@ -12,15 +12,7 @@ import java.util.Collection;
 
 @Entity
 public class Event {
-    public class Views {
-        public static class Public {
 
-        }
-
-        public static class StartScreenView extends Public {
-
-        }
-    }
     @JsonView(Views.StartScreenView.class)
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
