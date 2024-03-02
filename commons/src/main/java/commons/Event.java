@@ -30,12 +30,8 @@ public class Event {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<Participant> participants;
 
-    public Event(long id, String title, LocalDateTime creationDate,
-                 LocalDateTime lastActivity, Collection<Participant> participants) {
-        this.id = id;
+    public Event(String title, Collection<Participant> participants) {
         this.title = title;
-        this.creationDate = creationDate;
-        this.lastActivity = lastActivity;
         this.participants = participants;
     }
 
@@ -48,10 +44,6 @@ public class Event {
 
     public Collection<Participant> getParticipants() {
         return participants;
-    }
-
-    public void setParticipants(Collection<Participant> participants) {
-        this.participants = participants;
     }
 
     public void addParticipant(Participant participant) {
