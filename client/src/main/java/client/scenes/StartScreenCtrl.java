@@ -13,6 +13,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -54,6 +55,17 @@ public class StartScreenCtrl implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         eventNameColumn.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().getTitle()));
         invitationCodeColumn.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().getId().toString()));
+        eventTable.setRowFactory( tv -> {
+            TableRow<Event> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                    Event rowData = row.getItem();
+                    joinInvitationCode.setText(rowData.getId().toString());
+                    onJoin();
+                }
+            });
+            return row;
+        });
     }
 
     /**
@@ -120,7 +132,7 @@ public class StartScreenCtrl implements Initializable {
         //      MainCtrl.showEventScreen(event)
         // else
         //      MainCtrl.showUserCreationScreen(invitationCode)
-        System.out.println("ONJOIN");
+        System.out.println("ONJOIN: " + joinInvitationCode.getText());
         long invitationCode = Integer.parseInt(joinInvitationCode.getText());
 
         try{
