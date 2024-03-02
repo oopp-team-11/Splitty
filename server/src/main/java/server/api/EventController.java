@@ -46,12 +46,12 @@ public class EventController {
     }
 
 
-
-
+    /*
     @JsonView(Event.Views.StartScreenView.class)
     @GetMapping (path = {"/startScreen", "/startScreen/"})
     public ResponseEntity<Collection<Event>> sendStartScreen() {
         var toReturn = repo.findAll();
         return ResponseEntity.ok(toReturn);
     }
+    */
 }

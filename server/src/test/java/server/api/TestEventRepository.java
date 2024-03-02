@@ -139,7 +139,7 @@ public class TestEventRepository implements EventRepository {
 
     @Override
     public List<Event> findAll() {
-        return null;
+        return events;
     }
 
     @Override
