@@ -49,8 +49,8 @@ public class CreateParticipantCtrl {
 
     /**
      * When button gets clicked, send POST request to participants
-     * @throws IOException
-     * @throws InterruptedException
+     * @throws IOException when error occurred while sending the request to server
+     * @throws InterruptedException when error occurred while sending the request to server
      */
     public void onCreate() throws IOException, InterruptedException {
         System.out.println("ONCREATE");
@@ -58,7 +58,7 @@ public class CreateParticipantCtrl {
         String firstNameString = firstName.getText();
         String lastNameString = lastName.getText();
         String ibanString = iban.getText();
-        String bicString = iban.getText();
+        String bicString = bic.getText();
         String emailString = email.getText();
 
         if(firstNameString.isEmpty() || lastNameString.isEmpty())
@@ -67,17 +67,16 @@ public class CreateParticipantCtrl {
             return;
         }
 
-        /*
-        // todo: Uncomment / implement properly when there are endpoints for participant
+
         try {
-            serverUtils.createParticipant(event, firstNameString, lastNameString, emailString, ibanString, bicString,
-             "http://localhost:8080");
+            serverUtils.createParticipant(event.getId(), firstNameString, lastNameString, emailString,
+                    ibanString, bicString, "http://localhost:8080");
         }
         catch (IOException | InterruptedException e)
         {
             System.err.println("Error while sending create request to server");
             return;
-        }*/
+        }
 
         mainCtrl.showStartScreen(); // todo: Change that to event screen when there is one
 

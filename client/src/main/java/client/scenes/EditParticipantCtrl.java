@@ -49,8 +49,8 @@ public class EditParticipantCtrl {
 
     /**
      * When button gets clicked, send PUT request to participants
-     * @throws IOException
-     * @throws InterruptedException
+     * @throws IOException when error occurred while sending the request to server
+     * @throws InterruptedException when error occurred while sending the request to server
      */
     public void onEdit() throws IOException, InterruptedException {
         System.out.println("ONEDIT");
@@ -58,19 +58,19 @@ public class EditParticipantCtrl {
         String firstNameString = firstName.getText();
         String lastNameString = lastName.getText();
         String ibanString = iban.getText();
-        String bicString = iban.getText();
+        String bicString = bic.getText();
         String emailString = email.getText();
 
-        /*
-        // todo: Uncomment / implement properly when there are endpoints for participant
+
         try {
-            serverUtils.editParticipant(participant, firstName, lastName, email, iban, bic, "http://localhost:8080");
+            serverUtils.editParticipant(participant.getId(), firstNameString, lastNameString,
+                    emailString, ibanString, bicString, "http://localhost:8080");
         }
         catch (IOException | InterruptedException e)
         {
             System.err.println("Error while sending edit request to server");
             return;
-        }*/
+        }
 
         mainCtrl.showStartScreen(); // todo: Change that to event screen when there is one
 
