@@ -40,7 +40,7 @@ public class EventController {
     }
 
     @PostMapping (path = {"", "/"})
-    public ResponseEntity<Event> createEventWithTitle(String title) {
+    public ResponseEntity<Event> createEventWithTitle(@RequestBody String title) {
         if (isNullOrEmpty(title)) {
             return ResponseEntity.badRequest().build();
         }
