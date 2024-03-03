@@ -8,7 +8,6 @@ import server.database.EventRepository;
 import server.database.ParticipantRepository;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/participants")
