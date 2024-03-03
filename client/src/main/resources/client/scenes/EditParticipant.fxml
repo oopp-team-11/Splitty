@@ -31,7 +31,7 @@
                         <TextField promptText="Email" />
                         <TextField promptText="Last name" />
                         <TextField promptText="BIC" />
-                        <Button id="CreateParticipant" mnemonicParsing="false" prefHeight="25.0" prefWidth="305.0" text="Edit" />
+                        <Button id="EditParticipant" mnemonicParsing="false" prefHeight="25.0" prefWidth="305.0" text="Edit" />
                      </children>
                   </VBox>
                </children>

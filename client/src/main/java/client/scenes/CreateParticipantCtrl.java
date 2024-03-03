@@ -3,6 +3,7 @@ package client.scenes;
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import commons.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
@@ -29,13 +30,14 @@ public class CreateParticipantCtrl {
     @FXML
     private TextField bic;
 
+    private Event event;
+
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
 
     @Inject
     public CreateParticipantCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
-        //this.invitationCode = invitationCode;
         this.fileSystemUtils = new FileSystemUtils();
         this.serverUtils = new ServerUtils();
     }
@@ -52,7 +54,7 @@ public class CreateParticipantCtrl {
 
         /*
         try {
-            serverUtils.createParticipant(invitationCode, "http://localhost:8080");
+            serverUtils.createParticipant(event, firstName, lastName, email, iban, bic, "http://localhost:8080");
         }
         catch (IOException | InterruptedException e)
         {
