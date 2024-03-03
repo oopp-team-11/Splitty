@@ -10,7 +10,6 @@ import javafx.scene.control.TextField;
 import java.io.IOException;
 
 public class CreateParticipantCtrl {
-    private final MainCtrl mainCtrl;
 
     @FXML
     private TextField id;
@@ -31,6 +30,7 @@ public class CreateParticipantCtrl {
     private TextField bic;
 
     private Event event;
+    private MainCtrl mainCtrl;
 
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
@@ -40,6 +40,10 @@ public class CreateParticipantCtrl {
         this.mainCtrl = mainCtrl;
         this.fileSystemUtils = new FileSystemUtils();
         this.serverUtils = new ServerUtils();
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
     }
 
     public void onCreate() throws IOException, InterruptedException {
@@ -61,6 +65,8 @@ public class CreateParticipantCtrl {
             System.err.println("Error while sending create request to server");
             return;
         }*/
+
+        mainCtrl.showStartScreen(); // Change that to event screen
 
     }
 }

@@ -15,6 +15,8 @@
  */
 package client.scenes;
 
+import commons.Event;
+import commons.Participant;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -33,8 +35,12 @@ public class MainCtrl {
     private CreateParticipantCtrl createParticipantCtrl;
     private Scene createParticipantScene;
 
+    private EditParticipantCtrl editParticipantCtrl;
+    private Scene editParticipantScene;
+
     public void initialize(Stage primaryStage, Pair<StartScreenCtrl, Parent> startScreen,
-                           Pair<CreateParticipantCtrl, Parent> createParticipant) {
+                           Pair<CreateParticipantCtrl, Parent> createParticipant,
+                           Pair<EditParticipantCtrl, Parent> editParticipant) {
         this.primaryStage = primaryStage;
 
         this.startScreenCtrl = startScreen.getKey();
@@ -42,6 +48,9 @@ public class MainCtrl {
 
         this.createParticipantCtrl = createParticipant.getKey();
         this.createParticipantScene = new Scene(createParticipant.getValue());
+
+        this.editParticipantCtrl = editParticipant.getKey();
+        this.editParticipantScene = new Scene(editParticipant.getValue());
 
         //showStartScreen();
         showCreateParticipant(null);
@@ -54,10 +63,18 @@ public class MainCtrl {
         primaryStage.setResizable(false);
     }
 
-    public void showCreateParticipant(String invitationCode) {
+    public void showCreateParticipant(Event event) {
         primaryStage.setTitle("Add participant ui");
         primaryStage.setScene(createParticipantScene);
         primaryStage.setResizable(false);
+        createParticipantCtrl.setEvent(event);
+    }
+
+    public void showEditParticipant(Participant participant) {
+        primaryStage.setTitle("Edit participant ui");
+        primaryStage.setScene(editParticipantScene);
+        primaryStage.setResizable(false);
+        editParticipantCtrl.setParticipant(participant);
     }
 
 }

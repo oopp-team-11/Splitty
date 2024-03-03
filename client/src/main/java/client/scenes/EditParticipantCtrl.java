@@ -10,7 +10,6 @@ import javafx.scene.control.TextField;
 import java.io.IOException;
 
 public class EditParticipantCtrl {
-    private final MainCtrl mainCtrl;
 
     @FXML
     private TextField id;
@@ -31,6 +30,7 @@ public class EditParticipantCtrl {
     private TextField bic;
 
     private Participant participant;
+    private MainCtrl mainCtrl;
 
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
@@ -40,6 +40,10 @@ public class EditParticipantCtrl {
         this.mainCtrl = mainCtrl;
         this.fileSystemUtils = new FileSystemUtils();
         this.serverUtils = new ServerUtils();
+    }
+
+    public void setParticipant(Participant participant) {
+        this.participant = participant;
     }
 
     public void onEdit() throws IOException, InterruptedException {

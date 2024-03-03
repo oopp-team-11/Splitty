@@ -20,8 +20,8 @@ import static com.google.inject.Guice.createInjector;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-//import client.scenes.CreateParticipantCtrl;
 import client.scenes.CreateParticipantCtrl;
+import client.scenes.EditParticipantCtrl;
 import client.scenes.StartScreenCtrl;
 import com.google.inject.Injector;
 
@@ -45,8 +45,9 @@ public class Main extends Application {
 //        var add = FXML.load(AddQuoteCtrl.class, "client", "scenes", "AddQuote.fxml");
         var startScreen = FXML.load(StartScreenCtrl.class, "client", "scenes", "StartScreen.fxml");
         var createParticipant = FXML.load(CreateParticipantCtrl.class, "client", "scenes", "CreateParticipant.fxml");
+        var editParticipant = FXML.load(EditParticipantCtrl.class, "client", "scenes", "EditParticipant.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
-        mainCtrl.initialize(primaryStage, startScreen, createParticipant);
+        mainCtrl.initialize(primaryStage, startScreen, createParticipant, editParticipant);
     }
 }

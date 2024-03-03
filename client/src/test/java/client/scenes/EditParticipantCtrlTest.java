@@ -1,19 +1,17 @@
 package client.scenes;
 
+import client.Main;
 import client.MyFXML;
 import client.MyModule;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import client.Main;
+import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
-
-import javafx.stage.Stage;
 
 import java.io.IOException;
 
@@ -21,7 +19,7 @@ import static com.google.inject.Guice.createInjector;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @ExtendWith(ApplicationExtension.class)
-public class CreateParticipantCtrlTest {
+public class EditParticipantCtrlTest {
 
     private Button button;
 
@@ -40,11 +38,11 @@ public class CreateParticipantCtrlTest {
         }
 
         var FXML = new MyFXML(createInjector(new MyModule()));
-        var createParticipantScene = FXML.load(CreateParticipantCtrl.class,
-                        "client", "scenes", "CreateParticipant.fxml")
-                .getValue();
+        var editParticipantScene = FXML.load(EditParticipantCtrl.class,
+                        "client", "scenes", "EditParticipant.fxml")
+                        .getValue();
 
-        stage.setScene(new Scene(createParticipantScene));
+        stage.setScene(new Scene(editParticipantScene));
         stage.show();
     }
 
@@ -52,7 +50,7 @@ public class CreateParticipantCtrlTest {
      * @param robot - Will be injected by the test runner.
      */
     @Test
-    void shouldContainCreateParticipantButton(FxRobot robot) {
-        Assertions.assertThat(robot.lookup("#CreateParticipant").queryAs(Button.class)).hasText("Add");
+    void shouldContainEditParticipantButton(FxRobot robot) {
+        Assertions.assertThat(robot.lookup("#EditParticipant").queryAs(Button.class)).hasText("Edit");
     }
 }
