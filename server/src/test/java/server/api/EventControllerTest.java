@@ -26,6 +26,32 @@ public class EventControllerTest {
         sut = new EventController(repo);
     }
 
+    // POST: /events
+
+    @Test
+    public void checkNullTitle() {
+        var actual = sut.createEventWithTitle(null);
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void checkEmptyTitle() {
+        var actual = sut.createEventWithTitle("");
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void checkThatEventIsSaved() {
+        sut.createEventWithTitle("Trap");
+        assertEquals("Trap", repo.events.getFirst().getTitle());
+    }
+
+    @Test
+    public void checkStatusCodeWhenEventIsSaved() {
+        var actual = sut.createEventWithTitle("Trap");
+        assertEquals(OK, actual.getStatusCode());
+    }
+
     // GET: /events/{id}     (get an event with specified id)
 
     @Test

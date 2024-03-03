@@ -9,6 +9,7 @@ import commons.Participant;
 import commons.Event;
 import server.database.EventRepository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 //import java.util.Collection;
@@ -32,7 +33,21 @@ public class EventController {
     }
 
 
+    private static boolean isNullOrEmpty(String s) {
+        return s == null || s.isEmpty();
+    }
 
+    @PostMapping (path = {"", "/"})
+    public ResponseEntity<Event> createEventWithTitle(String title) {
+        if (isNullOrEmpty(title)) {
+            return ResponseEntity.badRequest().build();
+        }
+        Event event = new Event(title);
+        event.setCreationDate(LocalDateTime.now());
+        event.setLastActivity(event.getCreationDate());
+        repo.save(event);
+        return ResponseEntity.ok(event);
+    }
 
     /*
     @JsonView(Event.Views.StartScreenView.class)
