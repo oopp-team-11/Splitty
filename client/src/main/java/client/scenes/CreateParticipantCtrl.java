@@ -12,9 +12,6 @@ import java.io.IOException;
 public class CreateParticipantCtrl {
 
     @FXML
-    private TextField id;
-
-    @FXML
     private TextField email;
 
     @FXML
@@ -42,23 +39,39 @@ public class CreateParticipantCtrl {
         this.serverUtils = new ServerUtils();
     }
 
+    /**
+     * Setter for event
+     * @param event
+     */
     public void setEvent(Event event) {
         this.event = event;
     }
 
+    /**
+     * When button gets clicked, send POST request to participants
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public void onCreate() throws IOException, InterruptedException {
-        // todo: send create request (PUT) to /events
         System.out.println("ONCREATE");
 
-        if(firstName == null || lastName == null)
+        String firstNameString = firstName.getText();
+        String lastNameString = lastName.getText();
+        String ibanString = iban.getText();
+        String bicString = iban.getText();
+        String emailString = email.getText();
+
+        if(firstNameString.isEmpty() || lastNameString.isEmpty())
         {
             System.err.println("Error. First name and last name are mandatory.");
             return;
         }
 
         /*
+        // todo: Uncomment / implement properly when there are endpoints for participant
         try {
-            serverUtils.createParticipant(event, firstName, lastName, email, iban, bic, "http://localhost:8080");
+            serverUtils.createParticipant(event, firstNameString, lastNameString, emailString, ibanString, bicString,
+             "http://localhost:8080");
         }
         catch (IOException | InterruptedException e)
         {
@@ -66,7 +79,7 @@ public class CreateParticipantCtrl {
             return;
         }*/
 
-        mainCtrl.showStartScreen(); // Change that to event screen
+        mainCtrl.showStartScreen(); // todo: Change that to event screen when there is one
 
     }
 }

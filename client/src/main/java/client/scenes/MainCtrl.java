@@ -52,17 +52,30 @@ public class MainCtrl {
         this.editParticipantCtrl = editParticipant.getKey();
         this.editParticipantScene = new Scene(editParticipant.getValue());
 
-        //showStartScreen();
-        showCreateParticipant(null);
+        showStartScreen();
+
+        // showStartScreen() should be used in the final version.
+        // Comment out showStartScreen() above and uncomment a scene below to
+        // get it to launch as a start screen for debugging reasons.
+
+        //showCreateParticipant(null);
+        //showEditParticipant(null);
         primaryStage.show();
     }
 
+    /**
+     * Show start screen
+     */
     public void showStartScreen() {
         primaryStage.setTitle("Start Screen");
         primaryStage.setScene(startScreenScene);
         primaryStage.setResizable(false);
     }
 
+    /**
+     * Show create participant UI
+     * @param event
+     */
     public void showCreateParticipant(Event event) {
         primaryStage.setTitle("Add participant ui");
         primaryStage.setScene(createParticipantScene);
@@ -70,6 +83,10 @@ public class MainCtrl {
         createParticipantCtrl.setEvent(event);
     }
 
+    /**
+     * Show edit participant ui
+     * @param participant
+     */
     public void showEditParticipant(Participant participant) {
         primaryStage.setTitle("Edit participant ui");
         primaryStage.setScene(editParticipantScene);

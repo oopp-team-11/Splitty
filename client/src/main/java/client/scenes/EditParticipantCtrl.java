@@ -12,9 +12,6 @@ import java.io.IOException;
 public class EditParticipantCtrl {
 
     @FXML
-    private TextField id;
-
-    @FXML
     private TextField email;
 
     @FXML
@@ -42,21 +39,30 @@ public class EditParticipantCtrl {
         this.serverUtils = new ServerUtils();
     }
 
+    /**
+     * Setter for participant
+     * @param participant
+     */
     public void setParticipant(Participant participant) {
         this.participant = participant;
     }
 
+    /**
+     * When button gets clicked, send PUT request to participants
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public void onEdit() throws IOException, InterruptedException {
-        // todo: send create request (PUT) to /events
-        System.out.println("ONCREATE");
+        System.out.println("ONEDIT");
 
-        if(firstName == null || lastName == null)
-        {
-            System.err.println("Error. First name and last name are mandatory.");
-            return;
-        }
+        String firstNameString = firstName.getText();
+        String lastNameString = lastName.getText();
+        String ibanString = iban.getText();
+        String bicString = iban.getText();
+        String emailString = email.getText();
 
         /*
+        // todo: Uncomment / implement properly when there are endpoints for participant
         try {
             serverUtils.editParticipant(participant, firstName, lastName, email, iban, bic, "http://localhost:8080");
         }
@@ -65,6 +71,8 @@ public class EditParticipantCtrl {
             System.err.println("Error while sending edit request to server");
             return;
         }*/
+
+        mainCtrl.showStartScreen(); // todo: Change that to event screen when there is one
 
     }
 }

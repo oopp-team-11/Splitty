@@ -21,16 +21,15 @@
                <children>
                   <VBox prefHeight="241.0" prefWidth="306.0">
                      <children>
-                        <TextField promptText="Id" />
-                        <TextField layoutX="10.0" layoutY="10.0" promptText="First name" />
-                        <TextField layoutX="10.0" layoutY="35.0" promptText="IBAN" />
+                        <TextField fx:id="firstName" layoutX="10.0" layoutY="10.0" promptText="First name" />
+                        <TextField fx:id="iban" layoutX="10.0" layoutY="35.0" promptText="IBAN" />
+                        <TextField fx:id="bic" promptText="BIC" />
                      </children>
                   </VBox>
                   <VBox prefHeight="361.0" prefWidth="294.0">
                      <children>
-                        <TextField promptText="Email" />
-                        <TextField promptText="Last name" />
-                        <TextField promptText="BIC" />
+                        <TextField fx:id="lastName" promptText="Last name" />
+                        <TextField fx:id="email" promptText="Email" />
                         <Button id="CreateParticipant" mnemonicParsing="false" onAction="#onCreate" prefHeight="25.0" prefWidth="305.0" text="Add" />
                      </children>
                   </VBox>
