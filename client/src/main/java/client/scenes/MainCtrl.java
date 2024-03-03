@@ -19,6 +19,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import java.io.IOException;
 
 public class MainCtrl {
 
@@ -50,7 +51,9 @@ public class MainCtrl {
         primaryStage.setTitle("Start Screen");
         primaryStage.setScene(startScreenScene);
         primaryStage.setResizable(false);
-        startScreenCtrl.refresh();
+        try {
+            startScreenCtrl.refresh();
+        } catch (IOException | InterruptedException ignored) {}
     }
 
     public void showCreateParticipant(String invitationCode) {
