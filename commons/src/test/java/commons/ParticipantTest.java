@@ -141,15 +141,6 @@ class ParticipantTest {
     }
 
     @Test
-    void removeExpense() {
-        int prevSize = participant.getMadeExpenses().size();
-        Expense expense = new Expense(participant, "Expense", 69.);
-        assertEquals(prevSize + 1, participant.getMadeExpenses().size());
-        participant.removeExpense(expense);
-        assertEquals(prevSize, participant.getMadeExpenses().size());
-    }
-
-    @Test
     void getEvent() {
         assertEquals(participant.getEvent(), event);
     }

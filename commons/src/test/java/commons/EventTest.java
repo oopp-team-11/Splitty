@@ -133,13 +133,6 @@ public class EventTest {
     }
 
     @Test
-    public void removeParticipant() {
-        event.removeParticipant(participant2);
-        assertEquals(1, event.getParticipants().size());
-        assertEquals(participant1, event.getParticipants().getFirst());
-    }
-
-    @Test
     void getTitleTest() {
         assertEquals(event.getTitle(), "The Event we need to pay for");
     }

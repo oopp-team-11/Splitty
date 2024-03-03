@@ -35,8 +35,7 @@ public class ParticipantController {
         if (!eventRepository.existsById(event.getId()) || participantRepository.existsById(participant.getId())) {
             return ResponseEntity.badRequest().build();
         }
-        event.setLastActivity(LocalDateTime.now());
-        eventRepository.save(event);
+        eventRepository.save(event); //saves participant reference in event model
         participantRepository.save(participant);
         return ResponseEntity.created(URI.create("/participants/" + participant.getId())).body(participant);
     }
@@ -61,6 +60,7 @@ public class ParticipantController {
             return ResponseEntity.notFound().build();
         }
         Participant participant = participantRepository.getReferenceById(participantId);
+        //automatically removes participant from Event and its expenses due to CascadeType.REMOVE
         participantRepository.delete(participant);
         return ResponseEntity.ok(participant);
     }
