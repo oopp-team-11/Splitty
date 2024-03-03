@@ -25,15 +25,26 @@ public class ParticipantController {
     }
 
     @PostMapping (path = {"", "/"})
-    public ResponseEntity<Participant> createParticipant(@RequestBody Participant participant) {
-        if (participant == null
-                || isNullOrEmpty(participant.getFirstName()) || isNullOrEmpty(participant.getLastName())) {
+    public ResponseEntity<Participant> createParticipant(@RequestBody Long invitationCode,
+                                                         @RequestBody String firstName,
+                                                         @RequestBody String lastName,
+                                                         @RequestBody String email,
+                                                         @RequestBody String iban,
+                                                         @RequestBody String bic) {
+        if (!eventRepository.existsById(invitationCode)) {
+            return ResponseEntity.notFound().build();
+        }
+        if (isNullOrEmpty(firstName) || isNullOrEmpty(lastName)) {
             return ResponseEntity.badRequest().build();
         }
-        Event event = participant.getEvent();
-        if (!eventRepository.existsById(event.getId()) || participantRepository.existsById(participant.getId())) {
-            return ResponseEntity.badRequest().build();
-        }
+        Event event = eventRepository.getReferenceById(invitationCode);
+        Participant participant = new Participant(event,
+                firstName,
+                lastName,
+                email,
+                iban,
+                bic
+        );
         eventRepository.save(event); //saves participant reference in event model
         participantRepository.save(participant);
         return ResponseEntity.created(URI.create("/participants/" + participant.getId())).body(participant);
@@ -41,14 +52,23 @@ public class ParticipantController {
 
     @PutMapping (path = {"/{participantId}", "/{participantId}"})
     public ResponseEntity<Participant> updateParticipant(@PathVariable("participantId") Long participantId,
-                                                         @RequestBody Participant participant) {
+                                                         @RequestBody String firstName,
+                                                         @RequestBody String lastName,
+                                                         @RequestBody String email,
+                                                         @RequestBody String iban,
+                                                         @RequestBody String bic) {
         if (!participantRepository.existsById(participantId)) {
             return ResponseEntity.notFound().build();
         }
-        if (participant == null || participantId != participant.getId()
-                || isNullOrEmpty(participant.getFirstName()) || isNullOrEmpty(participant.getLastName())) {
+        if (isNullOrEmpty(firstName) || isNullOrEmpty(lastName)) {
             return ResponseEntity.badRequest().build();
         }
+        Participant participant = participantRepository.getReferenceById(participantId);
+        participant.setFirstName(firstName);
+        participant.setLastName(lastName);
+        participant.setEmail(email);
+        participant.setIban(iban);
+        participant.setBic(bic);
         participantRepository.save(participant);
         return ResponseEntity.ok(participant);
     }
