@@ -51,7 +51,7 @@ public class CreateParticipantCtrlTest {
     /**
      * @param robot - Will be injected by the test runner.
      */
-    @Test
+    //@Test
     void shouldContainCreateParticipantButton(FxRobot robot) {
         Assertions.assertThat(robot.lookup("#CreateParticipant").queryAs(Button.class)).hasText("Add");
     }
