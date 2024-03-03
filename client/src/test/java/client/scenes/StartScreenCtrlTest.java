@@ -5,13 +5,9 @@ import client.Main;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 import org.testfx.api.FxToolkit;
 import org.testfx.assertions.api.Assertions;
-import org.testfx.framework.junit5.ApplicationExtension;
-import org.testfx.framework.junit5.Start;
 
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
@@ -29,6 +25,7 @@ class StartScreenCtrlTest {
      * @param stage - Will be injected by the test runner.
      */
     //@Start
+
     private void start(Stage stage) {
         var app = new Main();
         try {
@@ -101,4 +98,5 @@ class StartScreenCtrlTest {
         var stage = FxToolkit.registerPrimaryStage();
         assertFalse(stage.isResizable());
     }
+
 }
