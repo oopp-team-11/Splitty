@@ -5,7 +5,6 @@ package server.api;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import commons.Participant;
 import commons.Event;
 import server.database.EventRepository;
 
