@@ -6,7 +6,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.ArrayList;
 
 //Adjustment
 @Entity
@@ -24,7 +25,7 @@ public class Participant {
     private Event event;
 
     @OneToMany(mappedBy = "paidBy", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    Collection<Expense> madeExpenses;
+    ArrayList<Expense> madeExpenses;
 
     public void addExpense(Expense expense) {
         madeExpenses.add(expense);
@@ -39,7 +40,7 @@ public class Participant {
     }
 
     public Participant(Event event, String firstName, String lastName, String email, String iban, String bic,
-                       Collection<Expense> madeExpenses) {
+                       ArrayList<Expense> madeExpenses) {
         this.event = event;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -58,7 +59,7 @@ public class Participant {
         return event;
     }
 
-    public Collection<Expense> getMadeExpenses() {
+    public ArrayList<Expense> getMadeExpenses() {
         return madeExpenses;
     }
 
