@@ -1,7 +1,7 @@
 package server.api;
 
 
-//import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,9 +9,12 @@ import commons.Event;
 import server.database.EventRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-//import java.util.Collection;
+import commons.Views;
+
 
 @RestController
 @RequestMapping("/events")
@@ -48,12 +51,22 @@ public class EventController {
         return ResponseEntity.ok(event);
     }
 
-    /*
-    @JsonView(Event.Views.StartScreenView.class)
-    @GetMapping (path = {"/startScreen", "/startScreen/"})
-    public ResponseEntity<Collection<Event>> sendStartScreen() {
-        var toReturn = repo.findAll();
-        return ResponseEntity.ok(toReturn);
+
+    @JsonView(Views.UpdateInvitationsCodes.class)
+    @GetMapping (path = {"?query=title&invitationCodes={}"})
+    public ResponseEntity<List<Event>> updateRecentlyAccessedEvents(@RequestParam Long[] codes) {
+        if (codes == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (codes.length == 0) {
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+        List<Event> updatedEvents = new ArrayList<>();
+        for (var code : codes) {
+            Optional<Event> event = repo.findById(code);
+            event.ifPresent(updatedEvents::add);
+        }
+        return ResponseEntity.ok(updatedEvents);
     }
-    */
+
 }

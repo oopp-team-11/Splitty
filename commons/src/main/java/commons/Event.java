@@ -14,11 +14,11 @@ import java.util.ArrayList;
 @Entity
 public class Event {
 
-    @JsonView(Views.StartScreenView.class)
+    @JsonView(Views.UpdateInvitationsCodes.class)
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    @JsonView(Views.StartScreenView.class)
+    @JsonView(Views.UpdateInvitationsCodes.class)
     @Column(nullable = false)
     private String title;
 
