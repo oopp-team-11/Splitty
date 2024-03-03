@@ -38,15 +38,14 @@ public class Participant {
 
     }
 
-    public Participant(Event event, String firstName, String lastName, String email, String iban, String bic,
-                       ArrayList<Expense> madeExpenses) {
+    public Participant(Event event, String firstName, String lastName, String email, String iban, String bic) {
         this.event = event;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.iban = iban;
         this.bic = bic;
-        this.madeExpenses = madeExpenses;
+        this.madeExpenses = new ArrayList<>();
         event.addParticipant(this);
     }
 

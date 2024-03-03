@@ -31,9 +31,9 @@ public class Event {
     @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private ArrayList<Participant> participants;
 
-    public Event(String title, ArrayList<Participant> participants) {
+    public Event(String title) {
         this.title = title;
-        this.participants = participants;
+        this.participants = new ArrayList<>();
     }
 
     public Event() {
