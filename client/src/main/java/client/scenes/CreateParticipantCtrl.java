@@ -6,6 +6,8 @@ import com.google.inject.Inject;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
+import java.io.IOException;
+
 public class CreateParticipantCtrl {
     private final MainCtrl mainCtrl;
 
@@ -27,8 +29,6 @@ public class CreateParticipantCtrl {
     @FXML
     private TextField bic;
 
-    private long invitationCode;
-
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
 
@@ -40,9 +40,25 @@ public class CreateParticipantCtrl {
         this.serverUtils = new ServerUtils();
     }
 
-    public void onCreate() {
+    public void onCreate() throws IOException, InterruptedException {
         // todo: send create request (PUT) to /events
         System.out.println("ONCREATE");
+
+        if(firstName == null || lastName == null)
+        {
+            System.err.println("Error. First name and last name are mandatory.");
+            return;
+        }
+
+        /*
+        try {
+            serverUtils.createParticipant(invitationCode, "http://localhost:8080");
+        }
+        catch (IOException | InterruptedException e)
+        {
+            System.err.println("Error while sending create request to server");
+            return;
+        }*/
 
     }
 
