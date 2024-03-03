@@ -17,8 +17,8 @@ public class StartScreenCtrl {
     @FXML
     private TextField joinInvitationCode;
 
-    private FileSystemUtils fileSystemUtils;
-    private ServerUtils serverUtils;
+    private final FileSystemUtils fileSystemUtils;
+    private final ServerUtils serverUtils;
 
     @Inject
     public StartScreenCtrl(MainCtrl mainCtrl) {
@@ -29,7 +29,8 @@ public class StartScreenCtrl {
 
     /**
      * Method that is called when the create button is clicked
-     * @throws IOException if something goes wrong
+     *
+     * @throws IOException          if something goes wrong
      * @throws InterruptedException if something goes wrong with the request
      */
     public void onCreate() throws IOException, InterruptedException {
@@ -41,7 +42,7 @@ public class StartScreenCtrl {
 
         invitationCode = serverUtils.sendCreateRequest(eventName, "http://localhost:8080");
         fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
-            "config.json");
+                "config.json");
 
         serverUtils.sendJoinRequest(invitationCode, "http://localhost:8080");
         //System.out.println(eventName);
@@ -51,7 +52,8 @@ public class StartScreenCtrl {
 
     /**
      * Method that is called when the join button is clicked
-     * @throws IOException if something goes wrong
+     *
+     * @throws IOException          if something goes wrong
      * @throws InterruptedException if something goes wrong with the request
      */
     public void onJoin() throws IOException, InterruptedException {
@@ -65,7 +67,7 @@ public class StartScreenCtrl {
         long invitationCode = Long.parseLong(joinInvitationCode.getText());
 
         fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
-            "config.json");
+                "config.json");
         serverUtils.sendJoinRequest(invitationCode, "http://localhost:8080");
     }
 }
