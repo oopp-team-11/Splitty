@@ -25,8 +25,6 @@ public class StartScreenCtrl implements Initializable {
     @FXML
     private TextField joinInvitationCode;
 
-    private ObservableList<Event> data;
-
     @FXML
     private TableView<Event> eventTable;
 
@@ -68,7 +66,7 @@ public class StartScreenCtrl implements Initializable {
      */
     public void refresh() throws IOException, InterruptedException {
         var events = serverUtils.getRecentEvents("https://127.0.0.1:8080", "config.json");
-        data = FXCollections.observableList(events);
+        ObservableList<Event> data = FXCollections.observableList(events);
         eventTable.setItems(data);
     }
 
