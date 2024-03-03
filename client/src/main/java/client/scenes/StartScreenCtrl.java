@@ -14,8 +14,6 @@ import javafx.stage.Modality;
 
 import java.io.IOException;
 import java.net.URL;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class StartScreenCtrl implements Initializable {
@@ -26,8 +24,6 @@ public class StartScreenCtrl implements Initializable {
 
     @FXML
     private TextField joinInvitationCode;
-
-    private ObservableList<Event> data;
 
     @FXML
     private TableView<Event> eventTable;
@@ -68,21 +64,9 @@ public class StartScreenCtrl implements Initializable {
     /**
      * Refreshes the events table.
      */
-    public void refresh() {
-        // TODO: marios implement this method
-        // getEventsFromConfig should first grab all invitation codes in
-        // the config json, then for each invitation code fetch the Event from
-        // the /events/{invitationCode} endpoint.
-        //var events = serverUtils.getEventsFromConfig
-
-        var events = new ArrayList<Event>();
-        var event = new Event(6662137,
-                "The Event we need to pay for",
-                LocalDateTime.of(2024, 2, 12, 12, 0, 0),
-                LocalDateTime.of(2024, 2, 14, 12, 0, 0),
-                null);
-        events.add(event);
-        data = FXCollections.observableList(events);
+    public void refresh() throws IOException, InterruptedException {
+        var events = serverUtils.getRecentEvents("https://127.0.0.1:8080", "config.json");
+        ObservableList<Event> data = FXCollections.observableList(events);
         eventTable.setItems(data);
     }
 
