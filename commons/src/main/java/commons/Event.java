@@ -28,7 +28,7 @@ public class Event {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime lastActivity;
 
-    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private ArrayList<Participant> participants;
 
     public Event(String title) {
@@ -52,10 +52,6 @@ public class Event {
 
     public void addParticipant(Participant participant) {
         participants.add(participant);
-    }
-
-    public void removeParticipant(Participant participant) {
-        participants.remove(participant);
     }
 
     public String getTitle() {

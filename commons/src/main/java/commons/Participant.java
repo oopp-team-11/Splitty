@@ -23,15 +23,11 @@ public class Participant {
     @JoinColumn(name = "EVENT_ID")
     private Event event;
 
-    @OneToMany(mappedBy = "paidBy", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "paidBy", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     ArrayList<Expense> madeExpenses;
 
     public void addExpense(Expense expense) {
         madeExpenses.add(expense);
-    }
-
-    public void removeExpense(Expense expense) {
-        madeExpenses.remove(expense);
     }
 
     public Participant() {
@@ -99,6 +95,10 @@ public class Participant {
 
     public void setBic(String bic) {
         this.bic = bic;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     @Override
