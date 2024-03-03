@@ -32,6 +32,8 @@ public class EventController {
     }
 
 
+
+
     /*
     @JsonView(Event.Views.StartScreenView.class)
     @GetMapping (path = {"/startScreen", "/startScreen/"})

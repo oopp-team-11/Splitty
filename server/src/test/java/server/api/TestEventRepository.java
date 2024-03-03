@@ -129,6 +129,11 @@ public class TestEventRepository implements EventRepository {
 
     @Override
     public Optional<Event> findById(Long aLong) {
+        for (var event : events) {
+            if (event.getId().equals(aLong)) {
+                return Optional.of(event);
+            }
+        }
         return Optional.empty();
     }
 
