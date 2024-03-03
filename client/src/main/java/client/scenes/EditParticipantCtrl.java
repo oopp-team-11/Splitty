@@ -8,7 +8,7 @@ import javafx.scene.control.TextField;
 
 import java.io.IOException;
 
-public class CreateParticipantCtrl {
+public class EditParticipantCtrl {
     private final MainCtrl mainCtrl;
 
     @FXML
@@ -33,7 +33,7 @@ public class CreateParticipantCtrl {
     private ServerUtils serverUtils;
 
     @Inject
-    public CreateParticipantCtrl(MainCtrl mainCtrl) {
+    public EditParticipantCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         //this.invitationCode = invitationCode;
         this.fileSystemUtils = new FileSystemUtils();
@@ -52,7 +52,7 @@ public class CreateParticipantCtrl {
 
         /*
         try {
-            serverUtils.createParticipant(invitationCode, "http://localhost:8080");
+            serverUtils.editParticipant(invitationCode, "http://localhost:8080");
         }
         catch (IOException | InterruptedException e)
         {
