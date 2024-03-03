@@ -24,6 +24,7 @@ public class Expense {
         this.paidBy = paidBy;
         this.title = title;
         this.amount = amount;
+        paidBy.addExpense(this);
     }
 
     // Getters and setters for all the attributes

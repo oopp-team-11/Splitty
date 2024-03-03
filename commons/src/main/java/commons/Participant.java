@@ -23,7 +23,7 @@ public class Participant {
     @JoinColumn(name = "EVENT_ID")
     private Event event;
 
-    @OneToMany(mappedBy = "paidBy", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "paidBy", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     Collection<Expense> madeExpenses;
 
     public void addExpense(Expense expense) {
@@ -47,6 +47,7 @@ public class Participant {
         this.iban = iban;
         this.bic = bic;
         this.madeExpenses = madeExpenses;
+        event.addParticipant(this);
     }
 
     public long getId() {
