@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,9 +15,7 @@ public class ExpenseTest {
 
     @BeforeEach
     void setup() {
-        List<Participant> participants = new ArrayList<>();
-        Event event = new Event("Event", participants);
-        List<Expense> madeExpenses1 = new ArrayList<>();
+        Event event = new Event("Event", new ArrayList<>());
         participant1 = new Participant(
                 event,
                 "John",
@@ -26,9 +23,8 @@ public class ExpenseTest {
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123",
-                madeExpenses1
+                new ArrayList<>()
         );
-        List<Expense> madeExpenses2 = new ArrayList<>();
         Participant participant2 = new Participant(
                 event,
                 "John",
@@ -36,16 +32,11 @@ public class ExpenseTest {
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123",
-                madeExpenses2
+                new ArrayList<>()
         );
-        participants.add(participant1);
-        participants.add(participant2);
         expense = new Expense(participant1, "Cookies", 69.69);
         expenseEqual = new Expense(participant1, "Cookies", 69.69);
-        madeExpenses1.add(expense);
-        madeExpenses1.add(expenseEqual);
         expenseNotEqual = new Expense(participant2, "Chocolate", 69.69);
-        madeExpenses2.add(expenseNotEqual);
     }
 
     @Test

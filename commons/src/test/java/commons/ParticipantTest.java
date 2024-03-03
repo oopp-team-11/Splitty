@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,8 +14,7 @@ class ParticipantTest {
     private Event event;
     @BeforeEach
     void initClient() {
-        List<Participant> participants = new ArrayList<>();
-        event = new Event("Event", participants);
+        event = new Event("Event", new ArrayList<>());
         participant = new Participant(
                 event,
                 "John",
@@ -44,9 +42,6 @@ class ParticipantTest {
                 "ABNANL2A123",
                 new ArrayList<>()
         );
-        participants.add(participant);
-        participants.add(participantEqual);
-        participants.add(participantNotEqual);
     }
 
     @Test
@@ -147,16 +142,13 @@ class ParticipantTest {
     @Test
     void addExpense() {
         Expense expense = new Expense(participant, "Expense", 69.);
-        int prevSize = participant.getMadeExpenses().size();
-        participant.addExpense(expense);
-        assertEquals(prevSize + 1, participant.getMadeExpenses().size());
+        assertEquals(expense, participant.getMadeExpenses().getLast());
     }
 
     @Test
     void removeExpense() {
-        Expense expense = new Expense(participant, "Expense", 69.);
         int prevSize = participant.getMadeExpenses().size();
-        participant.addExpense(expense);
+        Expense expense = new Expense(participant, "Expense", 69.);
         assertEquals(prevSize + 1, participant.getMadeExpenses().size());
         participant.removeExpense(expense);
         assertEquals(prevSize, participant.getMadeExpenses().size());
@@ -169,10 +161,7 @@ class ParticipantTest {
 
     @Test
     void getMadeExpenses() {
-        List<Expense> madeExpenses = new ArrayList<>();
         Expense expense = new Expense(participant, "Expense", 69.);
-        madeExpenses.add(expense);
-        participant.addExpense(expense);
-        assertEquals(madeExpenses, participant.getMadeExpenses());
+        assertEquals(expense, participant.getMadeExpenses().getFirst());
     }
 }
