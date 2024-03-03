@@ -7,7 +7,7 @@ import javafx.scene.control.Button;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import client.Main;
-import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.assertions.api.Assertions;
 import org.testfx.framework.junit5.ApplicationExtension;
