@@ -45,6 +45,7 @@ auxil/
 
 ### Custom ###
 participant/participant.json
+config.json
 
 ### Mac OS shenanigans ###
 *DS_Store

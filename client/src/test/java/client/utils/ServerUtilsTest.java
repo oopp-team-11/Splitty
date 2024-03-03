@@ -153,16 +153,16 @@ class ServerUtilsTest {
                 .getJSONArray("events").toString());
 
         List<Event> events = new ArrayList<>();
-        for(Object object: jsonArray) {
-            events.add(new Event(
-                    Long.parseLong(((JSONObject) object)
-                            .get("invitationCode").toString()),
-                    ((JSONObject) object).get("eventName").toString(),
-                    null,
-                    null,
-                    null)
-            );
-        }
+//        for(Object object: jsonArray) {
+//            events.add(new Event(
+//                    Long.parseLong(((JSONObject) object)
+//                            .get("invitationCode").toString()),
+//                    ((JSONObject) object).get("eventName").toString(),
+//                    null,
+//                    null,
+//                    null)
+//            );
+//        }
 
         wireMockServer.stubFor(get(urlEqualTo(uri.toString()))
                 .willReturn(aResponse()

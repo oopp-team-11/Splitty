@@ -6,7 +6,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import java.util.Collection;
+import java.util.ArrayList;
 
 //Adjustment
 @Entity
@@ -23,8 +23,8 @@ public class Participant {
     @JoinColumn(name = "EVENT_ID")
     private Event event;
 
-    @OneToMany(mappedBy = "paidBy", cascade = CascadeType.ALL, orphanRemoval = true)
-    Collection<Expense> madeExpenses;
+    @OneToMany(mappedBy = "paidBy", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    ArrayList<Expense> madeExpenses;
 
     public void addExpense(Expense expense) {
         madeExpenses.add(expense);
@@ -38,18 +38,28 @@ public class Participant {
 
     }
 
-    public Participant(String firstName, String lastName, String email, String iban, String bic) {
+    public Participant(Event event, String firstName, String lastName, String email, String iban, String bic) {
+        this.event = event;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.iban = iban;
         this.bic = bic;
+        this.madeExpenses = new ArrayList<>();
+        event.addParticipant(this);
     }
 
     public long getId() {
         return id;
     }
 
+    public Event getEvent() {
+        return event;
+    }
+
+    public ArrayList<Expense> getMadeExpenses() {
+        return madeExpenses;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -97,14 +107,14 @@ public class Participant {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        Participant participant = (Participant) o;
+        Participant that = (Participant) o;
 
-        return new EqualsBuilder().append(id, participant.id).append(firstName, participant.firstName).append(lastName, participant.lastName).append(email, participant.email).append(iban, participant.iban).append(bic, participant.bic).isEquals();
+        return new EqualsBuilder().append(id, that.id).append(firstName, that.firstName).append(lastName, that.lastName).append(email, that.email).append(iban, that.iban).append(bic, that.bic).append(event.getId(), that.event.getId()).append(madeExpenses, that.madeExpenses).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(id).append(firstName).append(lastName).append(email).append(iban).append(bic).toHashCode();
+        return new HashCodeBuilder(17, 37).append(id).append(firstName).append(lastName).append(email).append(iban).append(bic).append(event.getId()).append(madeExpenses).toHashCode();
     }
 
     @Override
@@ -116,6 +126,8 @@ public class Participant {
                 .append("email", email)
                 .append("iban", iban)
                 .append("bic", bic)
+                .append("invitationCode", event.getId())
+                .append("madeExpenses", madeExpenses)
                 .toString();
     }
 }
