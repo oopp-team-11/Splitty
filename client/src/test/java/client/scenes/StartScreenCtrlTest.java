@@ -29,8 +29,8 @@ class StartScreenCtrlTest {
      */
     @Start
     private void start(Stage stage) {
-        var app = new Main();
         try {
+            var app = new Main();
             app.start(stage);
         } catch (IOException e) {
             fail();
