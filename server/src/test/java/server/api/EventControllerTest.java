@@ -10,6 +10,9 @@ import commons.Event;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 public class EventControllerTest {
     private TestEventRepository repo;
@@ -19,6 +22,38 @@ public class EventControllerTest {
     public void setup() {
         repo = new TestEventRepository();
         sut = new EventController(repo);
+    }
+
+    // GET: ?query=title&invitationCodes={}
+
+    @Test
+    public void checkCodesNull() {
+        var actual = sut.updateRecentlyAccessedEvents(null);
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void checkCodesLengthZero() {
+        var actual = sut.updateRecentlyAccessedEvents(new Long[0]);
+        assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void checkUpdatedEvents() {
+        Event event1 = new Event("Trap1");
+        Event event2 = new Event("Trap2");
+        event2.setId(1L);
+        Long id1 = event1.getId();
+        Long id2 = event2.getId();
+        repo.save(event1);
+        Long[] recentEvents = new Long[2];
+        recentEvents[0] = id1;
+        recentEvents[1] = id2;
+        var actual = sut.updateRecentlyAccessedEvents(recentEvents);
+        assertEquals(OK, actual.getStatusCode());
+        List<Long> expected = List.of(id1);
+        List<Long> received = actual.getBody().stream().map(x -> x.getId()).toList();
+        assertEquals(expected, received);
     }
 
     // POST: /events
