@@ -1,20 +1,24 @@
 package commons;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.ArrayList;
 
 
 @Entity
 public class Event {
+
+    @JsonView(Views.StartScreenView.class)
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-
+    @JsonView(Views.StartScreenView.class)
     @Column(nullable = false)
     private String title;
 
@@ -24,16 +28,12 @@ public class Event {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime lastActivity;
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Collection<Participant> participants;
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private ArrayList<Participant> participants;
 
-    public Event(long id, String title, LocalDateTime creationDate,
-                 LocalDateTime lastActivity, Collection<Participant> participants) {
-        this.id = id;
+    public Event(String title) {
         this.title = title;
-        this.creationDate = creationDate;
-        this.lastActivity = lastActivity;
-        this.participants = participants;
+        this.participants = new ArrayList<>();
     }
 
     public Event() {
@@ -43,12 +43,8 @@ public class Event {
         return id;
     }
 
-    public Collection<Participant> getParticipants() {
+    public ArrayList<Participant> getParticipants() {
         return participants;
-    }
-
-    public void setParticipants(Collection<Participant> participants) {
-        this.participants = participants;
     }
 
     public void addParticipant(Participant participant) {
@@ -102,7 +98,7 @@ public class Event {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("id", id)
                 .append("title", title)
                 .append("creationDate", creationDate)

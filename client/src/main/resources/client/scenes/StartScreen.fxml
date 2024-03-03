@@ -47,11 +47,10 @@
                         <Font size="17.0" />
                      </font>
                   </Label>
-                  <TableView id="eventTable" prefHeight="305.0" prefWidth="303.0">
+                  <TableView id="eventTable" fx:id="eventTable" prefHeight="305.0" prefWidth="303.0">
                     <columns>
-                      <TableColumn id="eventNameColumn" prefWidth="113.0" text="Event name" />
-                        <TableColumn prefWidth="99.0" text="Participant count" />
-                        <TableColumn prefWidth="89.0" text="Invitation code" />
+                      <TableColumn id="eventNameColumn" fx:id="eventNameColumn" prefWidth="202.0" text="Event name" />
+                        <TableColumn id="invitationCodeColumn" fx:id="invitationCodeColumn" minWidth="0.0" prefWidth="99.5" text="Invitation code" />
                     </columns>
                   </TableView>
                </children>

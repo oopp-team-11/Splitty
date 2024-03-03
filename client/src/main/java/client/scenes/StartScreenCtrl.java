@@ -3,12 +3,22 @@ package client.scenes;
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import commons.Event;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import javafx.stage.Modality;
 
 import java.io.IOException;
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.ResourceBundle;
 
-public class StartScreenCtrl {
+public class StartScreenCtrl implements Initializable {
     private final MainCtrl mainCtrl;
 
     @FXML
@@ -16,6 +26,17 @@ public class StartScreenCtrl {
 
     @FXML
     private TextField joinInvitationCode;
+
+    private ObservableList<Event> data;
+
+    @FXML
+    private TableView<Event> eventTable;
+
+    @FXML
+    private TableColumn<Event, String> eventNameColumn;
+
+    @FXML
+    private TableColumn<Event, String> invitationCodeColumn;
 
     private final FileSystemUtils fileSystemUtils;
     private final ServerUtils serverUtils;
@@ -27,47 +48,126 @@ public class StartScreenCtrl {
         serverUtils = new ServerUtils();
     }
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        eventNameColumn.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().getTitle()));
+        invitationCodeColumn.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().getId().toString()));
+        eventTable.setRowFactory(tv -> {
+            TableRow<Event> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    Event rowData = row.getItem();
+                    joinInvitationCode.setText(rowData.getId().toString());
+                    onJoin();
+                }
+            });
+            return row;
+        });
+    }
+
+    /**
+     * Refreshes the events table.
+     */
+    public void refresh() {
+        // TODO: marios implement this method
+        // getEventsFromConfig should first grab all invitation codes in
+        // the config json, then for each invitation code fetch the Event from
+        // the /events/{invitationCode} endpoint.
+        //var events = serverUtils.getEventsFromConfig
+
+        var events = new ArrayList<Event>();
+        var event = new Event(6662137,
+                "The Event we need to pay for",
+                LocalDateTime.of(2024, 2, 12, 12, 0, 0),
+                LocalDateTime.of(2024, 2, 14, 12, 0, 0),
+                null);
+        events.add(event);
+        data = FXCollections.observableList(events);
+        eventTable.setItems(data);
+    }
+
     /**
      * Method that is called when the create button is clicked
-     *
-     * @throws IOException          if something goes wrong
-     * @throws InterruptedException if something goes wrong with the request
      */
-    public void onCreate() throws IOException, InterruptedException {
-        // todo: send create request (PUT) to /events
+    public void onCreate() {
         System.out.println("ONCREATE");
         String eventName = newEventName.getText();
+
+        // TODO: validate eventName first
         long invitationCode;
+        try {
+            invitationCode = serverUtils.createEvent(eventName, "http://localhost:8080");
+        } catch (IOException | InterruptedException e) {
+            serverErrorAlert(e);
+            return;
+        }
 
+        try {
+            fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
+                    "config.json");
+        } catch (IOException e) {
+            fileSaveErrorAlert(e);
+            return;
+        }
 
-        invitationCode = serverUtils.sendCreateRequest(eventName, "http://localhost:8080");
-        fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
-                "config.json");
-
-        serverUtils.sendJoinRequest(invitationCode, "http://localhost:8080");
-        //System.out.println(eventName);
-
-
+        try {
+            serverUtils.getEvent(invitationCode, "http://localhost:8080");
+        } catch (IOException | InterruptedException e) {
+            serverErrorAlert(e);
+        }
     }
 
     /**
      * Method that is called when the join button is clicked
-     *
-     * @throws IOException          if something goes wrong
-     * @throws InterruptedException if something goes wrong with the request
      */
-    public void onJoin() throws IOException, InterruptedException {
+    public void onJoin() {
         // todo: send get request to /events with invitation code
         // if status == 200
         //      event = response body
         //      MainCtrl.showEventScreen(event)
         // else
         //      MainCtrl.showUserCreationScreen(invitationCode)
-        System.out.println("ONJOIN");
-        long invitationCode = Long.parseLong(joinInvitationCode.getText());
+        System.out.println("ONJOIN: " + joinInvitationCode.getText());
+        long invitationCode;
+        try {
+            invitationCode = Integer.parseInt(joinInvitationCode.getText());
+        } catch (NumberFormatException e) {
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Invalid invitation code, try again." +
+                    "\nError: " + (e.getMessage() != null ? e.getMessage() : "No error message available."));
+            alert.showAndWait();
+            return;
+        }
 
-        fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
-                "config.json");
-        serverUtils.sendJoinRequest(invitationCode, "http://localhost:8080");
+        try {
+            fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
+                    "config.json");
+        } catch (IOException e) {
+            fileSaveErrorAlert(e);
+            return;
+        }
+
+        try {
+            serverUtils.getEvent(invitationCode, "http://localhost:8080");
+        } catch (IOException | InterruptedException e) {
+            serverErrorAlert(e);
+        }
+    }
+
+    private static void serverErrorAlert(Exception e) {
+        var alert = new Alert(Alert.AlertType.ERROR);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setContentText("Something went wrong while trying to connect to server." +
+                "\nError: " + (e.getMessage() != null ? e.getMessage() : "No error message available."));
+        alert.showAndWait();
+    }
+
+    private static void fileSaveErrorAlert(Exception e) {
+        var alert = new Alert(Alert.AlertType.ERROR);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setContentText("Something went wrong while saving invitation code to disk." +
+                "\nError: " + (e.getMessage() != null ? e.getMessage() : "No error message available."));
+        alert.showAndWait();
     }
 }

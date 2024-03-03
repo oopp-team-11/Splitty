@@ -1,5 +1,6 @@
 package client.utils;
 
+import commons.Event;
 import javax.json.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -53,6 +54,11 @@ public class FileSystemUtils {
         }
 
         List<Long> codes = new ArrayList<>(readInvitationCodes(path));
+
+        if(checkIfCodeExists(invitationCode, codes)) {
+            return;
+        }
+
         codes.add(invitationCode);
 
         JsonObject json = Json.createObjectBuilder()
@@ -72,5 +78,45 @@ public class FileSystemUtils {
      */
     public boolean checkIfFileExists(String path) {
         return new File(path).exists();
+    }
+
+    /**
+     * Method that checks if a code exists in a list of codes
+     * @param code code to be checked
+     * @param codes list of codes
+     * @return true if the code exists, false otherwise
+     */
+    public boolean checkIfCodeExists(long code, List<Long> codes) {
+        return codes.contains(code);
+    }
+
+    /**
+     * Method that updates the config file
+     * @param path path of the file
+     * @param codes list of codes
+     * @throws IOException if something goes wrong
+     */
+    public void updateConfigFile(String path, List<Long> codes) throws IOException {
+        JsonObject json = Json.createObjectBuilder()
+                .add("invitationCodes", Json.createArrayBuilder(codes))
+                .build();
+
+        FileWriter file = new FileWriter(path);
+        file.write(json.toString());
+        file.flush();
+        file.close();
+    }
+
+    /**
+     * Method that extracts the invitation codes from a list of events
+     * @param events list of events
+     * @return list of invitation codes
+     */
+    public List<Long> extractInvitationCodesFromEventList(List<Event> events) {
+        List<Long> codes = new ArrayList<>();
+        for(Event event : events) {
+            codes.add(event.getId());
+        }
+        return codes;
     }
 }

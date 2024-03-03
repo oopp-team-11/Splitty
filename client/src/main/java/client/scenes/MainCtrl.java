@@ -50,6 +50,7 @@ public class MainCtrl {
         primaryStage.setTitle("Start Screen");
         primaryStage.setScene(startScreenScene);
         primaryStage.setResizable(false);
+        startScreenCtrl.refresh();
     }
 
     public void showCreateParticipant(String invitationCode) {
