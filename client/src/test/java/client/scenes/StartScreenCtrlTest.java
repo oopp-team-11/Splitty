@@ -34,7 +34,7 @@ class StartScreenCtrlTest {
             app.start(stage);
         } catch (IOException e) {
             fail();
-        } catch (UnsupportedOperationException ignored) {}
+        }
     }
 
     /**
