@@ -14,11 +14,11 @@ import java.util.ArrayList;
 @Entity
 public class Event {
 
-    @JsonView(Views.StartScreenView.class)
+    @JsonView(Views.UpdateInvitationsCodes.class)
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    @JsonView(Views.StartScreenView.class)
+    @JsonView(Views.UpdateInvitationsCodes.class)
     @Column(nullable = false)
     private String title;
 
@@ -28,7 +28,7 @@ public class Event {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime lastActivity;
 
-    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private ArrayList<Participant> participants;
 
     public Event(String title) {
@@ -42,6 +42,9 @@ public class Event {
     public Long getId() {
         return id;
     }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public ArrayList<Participant> getParticipants() {
         return participants;
@@ -49,10 +52,6 @@ public class Event {
 
     public void addParticipant(Participant participant) {
         participants.add(participant);
-    }
-
-    public void removeParticipant(Participant participant) {
-        participants.remove(participant);
     }
 
     public String getTitle() {

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CreateParticipantCtrl">
+   <children>
+      <VBox layoutX="19.0" prefHeight="403.0" prefWidth="564.0">
+         <children>
+            <Label prefHeight="42.0" prefWidth="176.0" style="-fx-padding: 10;" text="Add a participant">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Label>
+            <HBox prefHeight="407.0" prefWidth="605.0">
+               <children>
+                  <VBox prefHeight="241.0" prefWidth="306.0">
+                     <children>
+                        <TextField fx:id="firstName" layoutX="10.0" layoutY="10.0" promptText="First name" />
+                        <TextField fx:id="iban" layoutX="10.0" layoutY="35.0" promptText="IBAN" />
+                        <TextField fx:id="bic" promptText="BIC" />
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="361.0" prefWidth="294.0">
+                     <children>
+                        <TextField fx:id="lastName" promptText="Last name" />
+                        <TextField fx:id="email" promptText="Email" />
+                        <Button id="CreateParticipant" mnemonicParsing="false" onAction="#onCreate" prefHeight="25.0" prefWidth="305.0" text="Add" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

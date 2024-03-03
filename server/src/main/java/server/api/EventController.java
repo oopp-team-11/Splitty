@@ -1,15 +1,20 @@
 package server.api;
 
 
-//import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import commons.Participant;
 import commons.Event;
 import server.database.EventRepository;
 
-//import java.util.Collection;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import commons.Views;
+
 
 @RestController
 @RequestMapping("/events")
@@ -19,39 +24,49 @@ public class EventController {
     public EventController(EventRepository repo) {
         this.repo = repo;
     }
-    private static boolean isNullOrEmpty(String s) {
-        return s == null || s.isEmpty();
-    }
-    @PutMapping (path = {"/{invitationCode}/participants", "/{invitationCode}/participants/"})
-    public ResponseEntity<Event> add(@PathVariable("invitationCode") Long invitationCode, @RequestBody Participant participant) {
-        // TODO: More complex correctness check.
 
+    @GetMapping (path = {"/{invitationCode}", "/{invitationCode}/"})
+    public ResponseEntity<Event> getEventByInvitationCode(@PathVariable("invitationCode") Long invitationCode) {
         if (invitationCode == null) {
             return ResponseEntity.badRequest().build();
         }
-        if (isNullOrEmpty(participant.getFirstName()) ||
-                isNullOrEmpty(participant.getLastName()) ||
-                isNullOrEmpty(participant.getBic()) ||
-                isNullOrEmpty(participant.getEmail()) ||
-                isNullOrEmpty(participant.getIban())) {
-            return ResponseEntity.badRequest().build();
-        }
-        Event event_to_update = repo.getReferenceById(invitationCode);
-        if (event_to_update == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        event_to_update.getParticipants().add(participant);
-        Event saved = repo.save(event_to_update);
-        return ResponseEntity.ok(saved);
+        Optional<Event> event = repo.findById(invitationCode);
+        return event.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
 
-    /*
-    @JsonView(Event.Views.StartScreenView.class)
-    @GetMapping (path = {"/startScreen", "/startScreen/"})
-    public ResponseEntity<Collection<Event>> sendStartScreen() {
-        var toReturn = repo.findAll();
-        return ResponseEntity.ok(toReturn);
+    private static boolean isNullOrEmpty(String s) {
+        return s == null || s.isEmpty();
     }
-    */
+
+    @PostMapping (path = {"", "/"})
+    public ResponseEntity<Event> createEventWithTitle(@RequestBody String title) {
+        if (isNullOrEmpty(title)) {
+            return ResponseEntity.badRequest().build();
+        }
+        Event event = new Event(title);
+        event.setCreationDate(LocalDateTime.now());
+        event.setLastActivity(event.getCreationDate());
+        repo.save(event);
+        return ResponseEntity.ok(event);
+    }
+
+
+    @JsonView(Views.UpdateInvitationsCodes.class)
+    @GetMapping (path = {"?query=title&invitationCodes={}"})
+    public ResponseEntity<List<Event>> updateRecentlyAccessedEvents(@RequestParam Long[] codes) {
+        if (codes == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (codes.length == 0) {
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+        List<Event> updatedEvents = new ArrayList<>();
+        for (var code : codes) {
+            Optional<Event> event = repo.findById(code);
+            event.ifPresent(updatedEvents::add);
+        }
+        return ResponseEntity.ok(updatedEvents);
+    }
+
 }

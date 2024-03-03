@@ -3,13 +3,13 @@ package client.scenes;
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-import commons.Event;
+import commons.Participant;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
 
-public class CreateParticipantCtrl {
+public class EditParticipantCtrl {
 
     @FXML
     private TextField email;
@@ -26,34 +26,34 @@ public class CreateParticipantCtrl {
     @FXML
     private TextField bic;
 
-    private Event event;
+    private Participant participant;
     private MainCtrl mainCtrl;
 
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
 
     @Inject
-    public CreateParticipantCtrl(MainCtrl mainCtrl) {
+    public EditParticipantCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.fileSystemUtils = new FileSystemUtils();
         this.serverUtils = new ServerUtils();
     }
 
     /**
-     * Setter for event
-     * @param event
+     * Setter for participant
+     * @param participant
      */
-    public void setEvent(Event event) {
-        this.event = event;
+    public void setParticipant(Participant participant) {
+        this.participant = participant;
     }
 
     /**
-     * When button gets clicked, send POST request to participants
+     * When button gets clicked, send PUT request to participants
      * @throws IOException when error occurred while sending the request to server
      * @throws InterruptedException when error occurred while sending the request to server
      */
-    public void onCreate() throws IOException, InterruptedException {
-        System.out.println("ONCREATE");
+    public void onEdit() throws IOException, InterruptedException {
+        System.out.println("ONEDIT");
 
         String firstNameString = firstName.getText();
         String lastNameString = lastName.getText();
@@ -61,20 +61,14 @@ public class CreateParticipantCtrl {
         String bicString = bic.getText();
         String emailString = email.getText();
 
-        if(firstNameString.isEmpty() || lastNameString.isEmpty())
-        {
-            System.err.println("Error. First name and last name are mandatory.");
-            return;
-        }
-
 
         try {
-            serverUtils.createParticipant(event.getId(), firstNameString, lastNameString, emailString,
-                    ibanString, bicString, "http://localhost:8080");
+            serverUtils.editParticipant(participant.getId(), firstNameString, lastNameString,
+                    emailString, ibanString, bicString, "http://localhost:8080");
         }
         catch (IOException | InterruptedException e)
         {
-            System.err.println("Error while sending create request to server");
+            System.err.println("Error while sending edit request to server");
             return;
         }
 

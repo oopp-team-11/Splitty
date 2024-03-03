@@ -5,7 +5,7 @@ public class Views {
 
     }
 
-    public static class StartScreenView extends Public {
+    public static class UpdateInvitationsCodes extends Public {
 
     }
 }

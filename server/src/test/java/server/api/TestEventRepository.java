@@ -23,7 +23,13 @@ public class TestEventRepository implements EventRepository {
     public final List<String> calledMethods = new ArrayList<>();
 
 
+    private void call(String name) {
+        calledMethods.add(name);
+    }
 
+    private Optional<Event> find(Long id) {
+        return events.stream().filter(q -> Objects.equals(q.getId(), id)).findFirst();
+    }
 
     @Override
     public void flush() {
@@ -129,12 +135,18 @@ public class TestEventRepository implements EventRepository {
 
     @Override
     public Optional<Event> findById(Long aLong) {
+        for (var event : events) {
+            if (event.getId().equals(aLong)) {
+                return Optional.of(event);
+            }
+        }
         return Optional.empty();
     }
 
     @Override
     public boolean existsById(Long aLong) {
-        return false;
+        call("existsById");
+        return find(aLong).isPresent();
     }
 
     @Override
