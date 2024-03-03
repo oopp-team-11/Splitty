@@ -9,6 +9,8 @@ import commons.Participant;
 import commons.Event;
 import server.database.EventRepository;
 
+import java.util.Optional;
+
 //import java.util.Collection;
 
 @RestController
@@ -19,30 +21,14 @@ public class EventController {
     public EventController(EventRepository repo) {
         this.repo = repo;
     }
-    private static boolean isNullOrEmpty(String s) {
-        return s == null || s.isEmpty();
-    }
-    @PutMapping (path = {"/{invitationCode}/participants", "/{invitationCode}/participants/"})
-    public ResponseEntity<Event> add(@PathVariable("invitationCode") Long invitationCode, @RequestBody Participant participant) {
-        // TODO: More complex correctness check.
 
+    @GetMapping (path = {"/{invitationCode}", "/{invitationCode}/"})
+    public ResponseEntity<Event> getEventByInvitationCode(@PathVariable("invitationCode") Long invitationCode) {
         if (invitationCode == null) {
             return ResponseEntity.badRequest().build();
         }
-        if (isNullOrEmpty(participant.getFirstName()) ||
-                isNullOrEmpty(participant.getLastName()) ||
-                isNullOrEmpty(participant.getBic()) ||
-                isNullOrEmpty(participant.getEmail()) ||
-                isNullOrEmpty(participant.getIban())) {
-            return ResponseEntity.badRequest().build();
-        }
-        Event event_to_update = repo.getReferenceById(invitationCode);
-        if (event_to_update == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        event_to_update.getParticipants().add(participant);
-        Event saved = repo.save(event_to_update);
-        return ResponseEntity.ok(saved);
+        Optional<Event> event = repo.findById(invitationCode);
+        return event.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
 
