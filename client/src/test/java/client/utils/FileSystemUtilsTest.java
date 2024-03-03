@@ -174,49 +174,43 @@ class FileSystemUtilsTest {
     @Test
     void extractInvitationCodesFromEventListTest() {
         FileSystemUtils fileSystemUtils = new FileSystemUtils();
-        List<Participant> participants1 = new ArrayList<>();
-        List<Participant> participants2 = new ArrayList<>();
         List<Event> events = new ArrayList<>();
         List<Long> codes = new ArrayList<>();
 
-        Event event1 = new Event("The Event we need to pay for", participants1);
-        Event event2 = new Event("The Event we do not need to pay for", participants2);
+        Event event1 = new Event("The Event we need to pay for");
+        Event event2 = new Event("The Event we do not need to pay for");
 
-        participants1.add( new Participant(
+        new Participant(
                 event1,
                 "John",
                 "Doe",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
-                "ABNANL2A123",
-                new ArrayList<>())
+                "ABNANL2A123"
         );
-        participants1.add (new Participant(
+        new Participant(
                 event1,
                 "Lorem",
                 "Ipsum",
                 "l.ipsum@domain.com",
                 "NL69 XING 4269 2137 00",
-                "CDNANL2A666",
-                new ArrayList<>())
+                "CDNANL2A666"
         );
-        participants2.add( new Participant(
+        new Participant(
                 event2,
                 "John",
                 "Doe",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
-                "ABNANL2A123",
-                new ArrayList<>())
+                "ABNANL2A123"
         );
-        participants2.add (new Participant(
+        new Participant(
                 event2,
                 "Lorem",
                 "Ipsum",
                 "l.ipsum@domain.com",
                 "NL69 XING 4269 2137 00",
-                "CDNANL2A666",
-                new ArrayList<>())
+                "CDNANL2A666"
         );
 
         events.add(event1);

@@ -18,7 +18,7 @@ public class EventTest {
 
     @BeforeEach
     void setUp() {
-        event = new Event("The Event we need to pay for", new ArrayList<>());
+        event = new Event("The Event we need to pay for");
         event.setCreationDate(LocalDateTime.of(2024, 2, 12, 12, 0));
         event.setLastActivity(LocalDateTime.of(2024, 2, 14, 12, 0));
         participant1 = new Participant(
@@ -27,8 +27,7 @@ public class EventTest {
                 "Doe",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
-                "ABNANL2A123",
-                new ArrayList<>()
+                "ABNANL2A123"
         );
         participant2 = new Participant(
                 event,
@@ -36,10 +35,9 @@ public class EventTest {
                 "Ipsum",
                 "l.ipsum@domain.com",
                 "NL69 XING 4269 2137 00",
-                "CDNANL2A666",
-                new ArrayList<>()
+                "CDNANL2A666"
         );
-        eventEqual = new Event("The Event we need to pay for", new ArrayList<>());
+        eventEqual = new Event("The Event we need to pay for");
         eventEqual.setCreationDate(LocalDateTime.of(2024, 2, 12, 12, 0));
         eventEqual.setLastActivity(LocalDateTime.of(2024, 2, 14, 12, 0));
         new Participant(
@@ -48,8 +46,7 @@ public class EventTest {
                 "Doe",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
-                "ABNANL2A123",
-                new ArrayList<>()
+                "ABNANL2A123"
         );
         new Participant(
                 eventEqual,
@@ -57,10 +54,9 @@ public class EventTest {
                 "Ipsum",
                 "l.ipsum@domain.com",
                 "NL69 XING 4269 2137 00",
-                "CDNANL2A666",
-                new ArrayList<>()
+                "CDNANL2A666"
         );
-        eventNotEqual = new Event("The Event we do not need to pay for", new ArrayList<>());
+        eventNotEqual = new Event("The Event we do not need to pay for");
         eventNotEqual.setCreationDate(LocalDateTime.of(2024, 2, 12, 12, 0));
         eventNotEqual.setLastActivity(LocalDateTime.of(2024, 2, 14, 12, 0));
         new Participant(
@@ -69,8 +65,7 @@ public class EventTest {
                 "Doe",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
-                "ABNANL2A124",
-                new ArrayList<>()
+                "ABNANL2A124"
         );
         new Participant(
                 eventNotEqual,
@@ -78,8 +73,7 @@ public class EventTest {
                 "Ipsum",
                 "l.ipsum@domain.com",
                 "NL69 XING 4269 2157 00",
-                "CDNANL2A666",
-                new ArrayList<>()
+                "CDNANL2A666"
         );
     }
 
@@ -133,8 +127,7 @@ public class EventTest {
             "Joe",
             "ajoe@domain.com",
             "NL69 AJOE 4269 2137 00",
-            "CDNANL2A666",
-            new ArrayList<>()
+            "CDNANL2A666"
         );
         assertEquals(participant, event.getParticipants().getLast());
     }

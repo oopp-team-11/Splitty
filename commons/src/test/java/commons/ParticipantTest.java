@@ -3,8 +3,6 @@ package commons;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class ParticipantTest {
@@ -14,15 +12,14 @@ class ParticipantTest {
     private Event event;
     @BeforeEach
     void initClient() {
-        event = new Event("Event", new ArrayList<>());
+        event = new Event("Event");
         participant = new Participant(
                 event,
                 "John",
                 "Doe",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
-                "ABNANL2A123",
-                new ArrayList<>()
+                "ABNANL2A123"
         );
         participantEqual = new Participant(
                 event,
@@ -30,8 +27,7 @@ class ParticipantTest {
                 "Doe",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
-                "ABNANL2A123",
-                new ArrayList<>()
+                "ABNANL2A123"
         );
         participantNotEqual = new Participant(
                 event,
@@ -39,8 +35,7 @@ class ParticipantTest {
                 "Burger",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
-                "ABNANL2A123",
-                new ArrayList<>()
+                "ABNANL2A123"
         );
     }
 
