@@ -42,9 +42,7 @@ class StartScreenCtrlTest {
      */
     @Test
     void shouldContainCreateEventBtn(FxRobot robot) {
-        try {
-            Assertions.assertThat(robot.lookup("#createBtn").queryAs(Button.class)).hasText("Create");
-        } catch (UnsupportedOperationException ignored) {}
+        Assertions.assertThat(robot.lookup("#createBtn").queryAs(Button.class)).hasText("Create");
     }
 
     /**
@@ -52,9 +50,7 @@ class StartScreenCtrlTest {
      */
     @Test
     void shouldContainJoinEventBtn(FxRobot robot) {
-        try {
-            Assertions.assertThat(robot.lookup("#joinBtn").queryAs(Button.class)).hasText("Join");
-        } catch (UnsupportedOperationException ignored) {}
+        Assertions.assertThat(robot.lookup("#joinBtn").queryAs(Button.class)).hasText("Join");
     }
 
     /**
@@ -63,10 +59,8 @@ class StartScreenCtrlTest {
      */
     @Test
     void shouldContainRecentEvents(FxRobot robot) {
-        try {
-            Assertions.assertThat(robot.lookup("#eventTable").queryAs(TableView.class))
-                    .hasChild("#eventNameColumn");
-        } catch (UnsupportedOperationException ignored) {}
+        Assertions.assertThat(robot.lookup("#eventTable").queryAs(TableView.class))
+                .hasChild("#eventNameColumn");
     }
 
     /**
@@ -75,12 +69,10 @@ class StartScreenCtrlTest {
      */
     @Test
     void shouldContainJoinEventTextField(FxRobot robot) {
-        try {
-            robot.clickOn("#joinInvitationCode", MouseButton.PRIMARY);
-            robot.write("123456789");
-            Assertions.assertThat(robot.lookup("#joinInvitationCode").queryAs(TextField.class))
-                    .hasText("123456789");
-        } catch (UnsupportedOperationException ignored) {}
+        robot.clickOn("#joinInvitationCode", MouseButton.PRIMARY);
+        robot.write("123456789");
+        Assertions.assertThat(robot.lookup("#joinInvitationCode").queryAs(TextField.class))
+                .hasText("123456789");
     }
 
     /**
@@ -89,12 +81,10 @@ class StartScreenCtrlTest {
      */
     @Test
     void shouldContainCreateEventTextField(FxRobot robot) {
-        try {
-            robot.clickOn("#newEventName", MouseButton.PRIMARY);
-            robot.write("Breakfast");
-            Assertions.assertThat(robot.lookup("#newEventName").queryAs(TextField.class))
-                    .hasText("Breakfast");
-        } catch (UnsupportedOperationException ignored) {}
+        robot.clickOn("#newEventName", MouseButton.PRIMARY);
+        robot.write("Breakfast");
+        Assertions.assertThat(robot.lookup("#newEventName").queryAs(TextField.class))
+                .hasText("Breakfast");
     }
 
     /**
@@ -103,9 +93,7 @@ class StartScreenCtrlTest {
      */
     @Test
     void shouldBeResizeable() throws TimeoutException {
-        try {
-            var stage = FxToolkit.registerPrimaryStage();
-            assertFalse(stage.isResizable());
-        } catch (UnsupportedOperationException ignored) {}
+        var stage = FxToolkit.registerPrimaryStage();
+        assertFalse(stage.isResizable());
     }
 }
