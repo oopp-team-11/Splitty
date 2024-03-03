@@ -127,6 +127,90 @@ public class ServerUtils {
 		return events;
 	}
 
+	/**
+	 * Method that sends a create participant post request to the server
+	 * @param invitationCode invitation code of the event
+	 * @param firstName first name of the participant
+	 * @param lastName last name of the participant
+	 * @param email email of the participant
+	 * @param iban IBAN of the participant
+	 * @param bic BIC of the participant
+	 * @param server server url
+	 * @throws IOException if something goes wrong
+	 * @throws InterruptedException if something goes wrong with the request
+	 */
+	public long createParticipant(long invitationCode, String firstName, String lastName, String email,
+								  String iban, String bic, String server)
+			throws IOException, InterruptedException {
+
+		JsonObject json = Json.createObjectBuilder()
+				.add("invitationCode", invitationCode)
+				.add("firstName", firstName)
+				.add("lastName", lastName)
+				.add("email", email)
+				.add("iban", iban)
+				.add("bic", bic)
+				.build();
+
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(server + "/participants"))
+				.header("Content-Type", "application/json")
+				.header("Accept", "application/json")
+				.POST(HttpRequest.BodyPublishers.ofString(json.toString()))
+				.build();
+
+		HttpClient client = HttpClient.newHttpClient();
+		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+		String responseJson = response.body();
+		JSONObject jsonObject = new JSONObject(responseJson);
+		long participantId = Long.parseLong((jsonObject.get("participantId").toString()));
+
+		return participantId;
+	}
+
+	/**
+	 * Method that sends an edit participant put request to the server
+	 * @param participantId id of the participant
+	 * @param firstName first name of the participant
+	 * @param lastName last name of the participant
+	 * @param email email of the participant
+	 * @param iban IBAN of the participant
+	 * @param bic BIC of the participant
+	 * @param server server url
+	 * @throws IOException if something goes wrong
+	 * @throws InterruptedException if something goes wrong with the request
+	 */
+	public long editParticipant(long participantId, String firstName, String lastName, String email,
+								  String iban, String bic, String server)
+			throws IOException, InterruptedException {
+
+		JsonObject json = Json.createObjectBuilder()
+				.add("participantId", participantId)
+				.add("firstName", firstName)
+				.add("lastName", lastName)
+				.add("email", email)
+				.add("iban", iban)
+				.add("bic", bic)
+				.build();
+
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(server + "/participants/"+participantId))
+				.header("Content-Type", "application/json")
+				.header("Accept", "application/json")
+				.PUT(HttpRequest.BodyPublishers.ofString(json.toString()))
+				.build();
+
+		HttpClient client = HttpClient.newHttpClient();
+		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+		String responseJson = response.body();
+		JSONObject jsonObject = new JSONObject(responseJson);
+		long responseParticipantId = Long.parseLong((jsonObject.get("participantId").toString()));
+
+		return responseParticipantId;
+	}
+
 //	public void getQuotesTheHardWay() throws IOException, URISyntaxException {
 //		var url = new URI("http://localhost:8080/api/quotes").toURL();
 //		var is = url.openConnection().getInputStream();
