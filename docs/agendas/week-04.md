@@ -43,6 +43,7 @@ Possible points:
 - Add / edit expense ui
 - Expense Controller
 - Server utilities for expense requests
+- Client-server communication
 - Suggestions of others
 
 ### Discuss checkstyle adoption (5 min)
