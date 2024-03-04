@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.ArrayList;
+import java.util.List;
 
 //Adjustment
 @Entity
@@ -24,7 +25,7 @@ public class Participant {
     private Event event;
 
     @OneToMany(mappedBy = "paidBy", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    ArrayList<Expense> madeExpenses;
+    List<Expense> madeExpenses;
 
     public void addExpense(Expense expense) {
         madeExpenses.add(expense);
@@ -53,7 +54,7 @@ public class Participant {
         return event;
     }
 
-    public ArrayList<Expense> getMadeExpenses() {
+    public List<Expense> getMadeExpenses() {
         return madeExpenses;
     }
 
