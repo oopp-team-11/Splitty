@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,15 +13,13 @@ public class EventTest {
     private Event event;
     private Event eventEqual;
     private Event eventNotEqual;
-    private Participant participant1;
-    private Participant participant2;
 
     @BeforeEach
     void setUp() {
         event = new Event("The Event we need to pay for");
         event.setCreationDate(LocalDateTime.of(2024, 2, 12, 12, 0));
         event.setLastActivity(LocalDateTime.of(2024, 2, 14, 12, 0));
-        participant1 = new Participant(
+        new Participant(
                 event,
                 "John",
                 "Doe",
@@ -29,7 +27,7 @@ public class EventTest {
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123"
         );
-        participant2 = new Participant(
+        new Participant(
                 event,
                 "Lorem",
                 "Ipsum",
@@ -114,7 +112,7 @@ public class EventTest {
 
     @Test
     void getParticipantsTest() {
-        ArrayList<Participant> participants = event.getParticipants();
+        List<Participant> participants = event.getParticipants();
         assertEquals(2, participants.size());
         assertEquals("John", participants.getFirst().getFirstName());
     }
