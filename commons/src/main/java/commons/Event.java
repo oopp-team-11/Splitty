@@ -136,11 +136,6 @@ public class Event {
         this.lastActivity = lastActivity;
     }
 
-    /**
-     * The equals method for this Event.
-     * @param obj The object to compare to.
-     * @return Returns a boolean whether the obj is equal to this Event.
-     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -152,21 +147,12 @@ public class Event {
                 .append(participants, event.participants).isEquals();
     }
 
-    /**
-     * The hashCode method for this Event.
-     * @return Returns an int storing the hashcode of this Event.
-     */
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(id).append(title)
                 .append(creationDate).append(lastActivity).append(participants).toHashCode();
     }
 
-    /**
-     * The toString method for this Event.
-     * Each field is described in a separate line.
-     * @return Returns a String representation of this Event.
-     */
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
