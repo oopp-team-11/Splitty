@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -29,7 +30,7 @@ public class Event {
     private LocalDateTime lastActivity;
 
     @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private ArrayList<Participant> participants;
+    private List<Participant> participants;
 
     public Event(String title) {
         this.title = title;
@@ -46,7 +47,7 @@ public class Event {
         this.id = id;
     }
 
-    public ArrayList<Participant> getParticipants() {
+    public List<Participant> getParticipants() {
         return participants;
     }
 
