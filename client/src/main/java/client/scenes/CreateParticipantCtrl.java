@@ -9,6 +9,9 @@ import javafx.scene.control.TextField;
 
 import java.io.IOException;
 
+/***
+ * class CreateParticipantController
+ */
 public class CreateParticipantCtrl {
 
     @FXML
@@ -32,6 +35,10 @@ public class CreateParticipantCtrl {
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
 
+    /***
+     * constructor with injection
+     * @param mainCtrl
+     */
     @Inject
     public CreateParticipantCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;

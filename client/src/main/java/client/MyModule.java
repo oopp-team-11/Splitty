@@ -22,6 +22,9 @@ import com.google.inject.Scopes;
 import client.scenes.MainCtrl;
 import client.scenes.StartScreenCtrl;
 
+/**
+ * Class that binds the controllers
+ */
 public class MyModule implements Module {
 
     @Override

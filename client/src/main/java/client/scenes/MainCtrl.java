@@ -23,12 +23,13 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import java.io.IOException;
 
+/**
+ * Main scene controller. It oversights currently active scenes, switches between them,
+ * loads them with the initialize() method
+ */
 public class MainCtrl {
 
     private Stage primaryStage;
-
-//    private QuoteOverviewCtrl overviewCtrl;
-//    private Scene overview;
 
     private StartScreenCtrl startScreenCtrl;
     private Scene startScreenScene;
@@ -38,6 +39,14 @@ public class MainCtrl {
 
     private EditParticipantCtrl editParticipantCtrl;
     private Scene editParticipantScene;
+
+    /**
+     * Initializes javafx scenes and their controllers, sets start screen as the currently shown screen
+     * @param primaryStage stage
+     * @param startScreen a pair of start screen controller and javafx start screen scene
+     * @param createParticipant a pair of create participant controller and javafx create participant scene
+     * @param editParticipant a pair of edit participant controller and javafx edit participant scene
+     */
 
     public void initialize(Stage primaryStage, Pair<StartScreenCtrl, Parent> startScreen,
                            Pair<CreateParticipantCtrl, Parent> createParticipant,
@@ -78,7 +87,7 @@ public class MainCtrl {
 
     /**
      * Show create participant UI
-     * @param event
+     * @param event Event, which the participant will belong to
      */
     public void showCreateParticipant(Event event) {
         primaryStage.setTitle("Add participant ui");
@@ -89,7 +98,7 @@ public class MainCtrl {
 
     /**
      * Show edit participant ui
-     * @param participant
+     * @param participant Participant that will be edited
      */
     public void showEditParticipant(Participant participant) {
         primaryStage.setTitle("Edit participant ui");

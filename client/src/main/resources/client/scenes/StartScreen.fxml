@@ -10,7 +10,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="346.0" prefWidth="511.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.StartScreenCtrl">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="346.0" prefWidth="511.0" xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.StartScreenCtrl">
    <children>
       <HBox prefHeight="346.0" prefWidth="510.0">
          <children>
@@ -23,7 +25,8 @@
                   </Label>
                   <HBox prefHeight="27.0" prefWidth="476.0" style="-fx-padding: 10;">
                      <children>
-                        <TextField id="newEventName" fx:id="newEventName" prefHeight="76.0" prefWidth="134.0" promptText="Event name" />
+                        <TextField id="newEventName" fx:id="newEventName" prefHeight="76.0"
+                                   prefWidth="134.0" promptText="Event name" />
                         <Button id="createBtn" mnemonicParsing="false" onAction="#onCreate" text="Create" />
                      </children>
                   </HBox>
@@ -34,8 +37,10 @@
                   </Label>
                   <HBox prefHeight="40.0" prefWidth="476.0" style="-fx-padding: 10;">
                      <children>
-                        <TextField id="joinInvitationCode" fx:id="joinInvitationCode" prefHeight="26.0" prefWidth="134.0" promptText="Invitation code" />
-                        <Button id="joinBtn" mnemonicParsing="false" onAction="#onJoin" prefHeight="26.0" prefWidth="55.0" text="Join" />
+                        <TextField id="joinInvitationCode" fx:id="joinInvitationCode" prefHeight="26.0"
+                                   prefWidth="134.0" promptText="Invitation code" />
+                        <Button id="joinBtn" mnemonicParsing="false" onAction="#onJoin" prefHeight="26.0"
+                                prefWidth="55.0" text="Join" />
                      </children>
                   </HBox>
                </children>
@@ -50,7 +55,8 @@
                   <TableView id="eventTable" fx:id="eventTable" prefHeight="305.0" prefWidth="303.0">
                     <columns>
                       <TableColumn id="eventNameColumn" fx:id="eventNameColumn" prefWidth="202.0" text="Event name" />
-                        <TableColumn id="invitationCodeColumn" fx:id="invitationCodeColumn" minWidth="0.0" prefWidth="99.5" text="Invitation code" />
+                        <TableColumn id="invitationCodeColumn" fx:id="invitationCodeColumn" minWidth="0.0"
+                                     prefWidth="99.5" text="Invitation code" />
                     </columns>
                   </TableView>
                </children>

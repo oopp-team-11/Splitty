@@ -1,6 +1,5 @@
 package client.scenes;
 
-import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Participant;
@@ -9,6 +8,9 @@ import javafx.scene.control.TextField;
 
 import java.io.IOException;
 
+/**
+ * Client controller for the EditParticipant.fxml scene
+ */
 public class EditParticipantCtrl {
 
     @FXML
@@ -27,21 +29,23 @@ public class EditParticipantCtrl {
     private TextField bic;
 
     private Participant participant;
-    private MainCtrl mainCtrl;
+    private final MainCtrl mainCtrl;
+    private final ServerUtils serverUtils;
 
-    private FileSystemUtils fileSystemUtils;
-    private ServerUtils serverUtils;
-
+    /**
+     * Constructor for the EditParticipant.fxml scene controller.
+     * Creates a new ServerUtils instance.
+     * @param mainCtrl reference to the main scene controller
+     */
     @Inject
     public EditParticipantCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
-        this.fileSystemUtils = new FileSystemUtils();
         this.serverUtils = new ServerUtils();
     }
 
     /**
      * Setter for participant
-     * @param participant
+     * @param participant reference to participant object that is edited
      */
     public void setParticipant(Participant participant) {
         this.participant = participant;
@@ -49,11 +53,8 @@ public class EditParticipantCtrl {
 
     /**
      * When button gets clicked, send PUT request to participants
-     * @throws IOException when error occurred while sending the request to server
-     * @throws InterruptedException when error occurred while sending the request to server
      */
-    public void onEdit() throws IOException, InterruptedException {
-        System.out.println("ONEDIT");
+    public void onEdit() {
 
         String firstNameString = firstName.getText();
         String lastNameString = lastName.getText();

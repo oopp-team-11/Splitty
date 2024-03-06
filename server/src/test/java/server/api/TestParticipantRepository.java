@@ -14,6 +14,9 @@ import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuer
 
 import server.database.ParticipantRepository;
 
+/**
+ * Participant repository implementation for testing purposes
+ */
 public class TestParticipantRepository implements ParticipantRepository {
 
     public final List<Participant> participants = new ArrayList<>();
@@ -102,7 +105,7 @@ public class TestParticipantRepository implements ParticipantRepository {
     }
 
     private Optional<Participant> find(Long id) {
-        return participants.stream().filter(q -> q.getId() == id).findFirst();
+        return participants.stream().filter(participant -> participant.getId() == id).findFirst();
     }
 
     @Override

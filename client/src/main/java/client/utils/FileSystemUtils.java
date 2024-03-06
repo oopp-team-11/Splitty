@@ -6,6 +6,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Client utility class for file handling
+ */
 public class FileSystemUtils {
     //private static final String CLIENT_JSON_PATH = "client.json";
 

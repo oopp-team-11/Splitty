@@ -29,20 +29,35 @@ import client.scenes.MainCtrl;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+/**
+ * The Main class for the client.
+ * Launches the application, loads the scenes from fxml files and pairs them with the corresponding controllers,
+ * and calls the MainCtrl.initialize() method
+ */
 public class Main extends Application {
 
     private static final Injector INJECTOR = createInjector(new MyModule());
     private static final MyFXML FXML = new MyFXML(INJECTOR);
 
+    /**
+     * The client main function. Launches the app, calls start(Stage)
+     * @param args CLI arguments
+     * @throws URISyntaxException If parsing a URI fails
+     * @throws IOException If I/O fails
+     */
     public static void main(String[] args) throws URISyntaxException, IOException {
         launch();
     }
 
+    /**
+     * Javafx function called by launch() that uses dependency injection to load scenes and main controller.
+     * Calls initialize(Stage, scene1, scene2, ...)
+     * @param primaryStage primary stage
+     * @throws IOException if I/O fails
+     */
     @Override
     public void start(Stage primaryStage) throws IOException {
 
-//        var overview = FXML.load(QuoteOverviewCtrl.class, "client", "scenes", "QuoteOverview.fxml");
-//        var add = FXML.load(AddQuoteCtrl.class, "client", "scenes", "AddQuote.fxml");
         var startScreen = FXML.load(StartScreenCtrl.class, "client", "scenes", "StartScreen.fxml");
         var createParticipant = FXML.load(CreateParticipantCtrl.class, "client", "scenes", "CreateParticipant.fxml");
         var editParticipant = FXML.load(EditParticipantCtrl.class, "client", "scenes", "EditParticipant.fxml");
