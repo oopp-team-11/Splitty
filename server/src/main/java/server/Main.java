@@ -19,10 +19,18 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
+/**
+ * The Main class for the server.
+ * Launches Spring Boot
+ */
 @SpringBootApplication
 @EntityScan(basePackages = { "commons", "server" })
 public class Main {
 
+    /**
+     * The server main function. Runs Spring Boot.
+     * @param args CLI arguments
+     */
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
     }
