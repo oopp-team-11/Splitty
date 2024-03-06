@@ -29,15 +29,29 @@ import javafx.util.BuilderFactory;
 import javafx.util.Callback;
 import javafx.util.Pair;
 
+/**
+ * Class that loads the fxml file
+ */
 public class MyFXML {
 
     private Injector injector;
 
+    /**
+     * Constructor for MyFXML
+     * @param injector injector to be used
+     */
     public MyFXML(Injector injector) {
         this.injector = injector;
     }
 
-    public <T> Pair<T, Parent> load(Class<T> c, String... parts) {
+    /**
+     * Method that loads the fxml file and returns the controller and the parent
+     * @param controller class of the controller
+     * @param parts parts of the path
+     * @return pair of the controller and the parent
+     * @param <T> type of the controller
+     */
+    public <T> Pair<T, Parent> load(Class<T> controller, String... parts) {
         try {
             var loader = new FXMLLoader(getLocation(parts), null, null, new MyFactory(), StandardCharsets.UTF_8);
             Parent parent = loader.load();
