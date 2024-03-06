@@ -20,9 +20,16 @@ import java.util.Random;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/***
+ * config class
+ */
 @Configuration
 public class Config {
 
+    /***
+     * providing random class
+     * @return Random class
+     */
     @Bean
     public Random getRandom() {
         return new Random();

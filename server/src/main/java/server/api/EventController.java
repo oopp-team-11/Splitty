@@ -38,7 +38,7 @@ public class EventController {
     private static boolean isNullOrEmpty(String s) {
         return s == null || s.isEmpty();
     }
-
+    // TODO: add JSON View, return only invitationCode, {"invitationCode": id}
     @PostMapping (path = {"", "/"})
     public ResponseEntity<Event> createEventWithTitle(@RequestBody String title) {
         if (isNullOrEmpty(title)) {
