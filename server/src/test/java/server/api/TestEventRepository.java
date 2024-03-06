@@ -17,6 +17,10 @@ import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuer
 
 //import commons.Event;
 import server.database.EventRepository;
+
+/**
+ * Event repository implementation for testing purposes
+ */
 public class TestEventRepository implements EventRepository {
     public final List<Event> events = new ArrayList<>();
 
@@ -28,7 +32,7 @@ public class TestEventRepository implements EventRepository {
     }
 
     private Optional<Event> find(Long id) {
-        return events.stream().filter(q -> Objects.equals(q.getId(), id)).findFirst();
+        return events.stream().filter(event -> Objects.equals(event.getId(), id)).findFirst();
     }
 
     @Override
@@ -73,9 +77,9 @@ public class TestEventRepository implements EventRepository {
 
     @Override
     public Event getReferenceById(Long aLong) {
-        for (var e : events) {
-            if (Objects.equals(e.getId(), aLong)) {
-                return e;
+        for (var event : events) {
+            if (Objects.equals(event.getId(), aLong)) {
+                return event;
             }
         }
         return null;
@@ -119,8 +123,8 @@ public class TestEventRepository implements EventRepository {
     @Override
     public <S extends Event> S save(S entity) {
         calledMethods.add("save");
-        for (var e : events) {
-            if (Objects.equals(entity.getId(), e.getId())) {
+        for (var event : events) {
+            if (Objects.equals(entity.getId(), event.getId())) {
                 return entity;
             }
         }

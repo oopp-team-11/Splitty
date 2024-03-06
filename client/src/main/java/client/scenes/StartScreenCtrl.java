@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Start Screen controller for showing start screen and entering to events
+ */
 public class StartScreenCtrl implements Initializable {
     private final MainCtrl mainCtrl;
 
@@ -37,6 +40,9 @@ public class StartScreenCtrl implements Initializable {
     private final FileSystemUtils fileSystemUtils;
     private final ServerUtils serverUtils;
 
+    /**
+     * @param mainCtrl main Controller, for displaying this scene.
+     */
     @Inject
     public StartScreenCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
@@ -46,8 +52,8 @@ public class StartScreenCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        eventNameColumn.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().getTitle()));
-        invitationCodeColumn.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().getId().toString()));
+        eventNameColumn.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getTitle()));
+        invitationCodeColumn.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getId().toString()));
         eventTable.setRowFactory(tv -> {
             TableRow<Event> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -139,19 +145,21 @@ public class StartScreenCtrl implements Initializable {
         }
     }
 
-    private static void serverErrorAlert(Exception e) {
+    private static void serverErrorAlert(Exception exception) {
         var alert = new Alert(Alert.AlertType.ERROR);
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.setContentText("Something went wrong while trying to connect to server." +
-                "\nError: " + (e.getMessage() != null ? e.getMessage() : "No error message available."));
+                "\nError: " +
+                (exception.getMessage() != null ? exception.getMessage() : "No error message available."));
         alert.showAndWait();
     }
 
-    private static void fileSaveErrorAlert(Exception e) {
+    private static void fileSaveErrorAlert(Exception exception) {
         var alert = new Alert(Alert.AlertType.ERROR);
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.setContentText("Something went wrong while saving invitation code to disk." +
-                "\nError: " + (e.getMessage() != null ? e.getMessage() : "No error message available."));
+                "\nError: " +
+                (exception.getMessage() != null ? exception.getMessage() : "No error message available."));
         alert.showAndWait();
     }
 }

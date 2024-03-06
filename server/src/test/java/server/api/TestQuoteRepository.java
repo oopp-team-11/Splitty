@@ -29,6 +29,9 @@ import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuer
 import commons.Quote;
 import server.database.QuoteRepository;
 
+/**
+ * Quote repository implementation for testing purposes
+ */
 public class TestQuoteRepository implements QuoteRepository {
 
     public final List<Quote> quotes = new ArrayList<>();
@@ -117,7 +120,7 @@ public class TestQuoteRepository implements QuoteRepository {
     }
 
     private Optional<Quote> find(Long id) {
-        return quotes.stream().filter(q -> q.id == id).findFirst();
+        return quotes.stream().filter(quote -> quote.id == id).findFirst();
     }
 
     @Override
