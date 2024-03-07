@@ -15,6 +15,7 @@ import javafx.stage.Modality;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 /**
  * Start Screen controller for showing start screen and entering to events
@@ -84,7 +85,7 @@ public class StartScreenCtrl implements Initializable {
         String eventName = newEventName.getText();
 
         // TODO: validate eventName first
-        long invitationCode;
+        UUID invitationCode;
         try {
             invitationCode = serverUtils.createEvent(eventName, "http://localhost:8080");
         } catch (IOException | InterruptedException e) {
@@ -118,9 +119,9 @@ public class StartScreenCtrl implements Initializable {
         // else
         //      MainCtrl.showUserCreationScreen(invitationCode)
         System.out.println("ONJOIN: " + joinInvitationCode.getText());
-        long invitationCode;
+        UUID invitationCode;
         try {
-            invitationCode = Integer.parseInt(joinInvitationCode.getText());
+            invitationCode = UUID.fromString(joinInvitationCode.getText());
         } catch (NumberFormatException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
