@@ -21,7 +21,6 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.UUID;
 
 /**
  * Start Screen controller for showing start screen and entering to events
