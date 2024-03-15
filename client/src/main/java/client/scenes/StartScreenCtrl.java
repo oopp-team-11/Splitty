@@ -162,8 +162,8 @@ public class StartScreenCtrl implements Initializable {
         WebSocketStompClient stompClient = new WebSocketStompClient(client);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
-        //TODO:Change the UUID.randomUUID() to an actual invitationCode
-        sessionHandler = new EventStompSessionHandler(UUID.randomUUID().toString());
+        //TODO:Change dummy event to an actual event
+        sessionHandler = new EventStompSessionHandler(new Event("DummyEvent"));
         stompClient.connectAsync("ws://localhost:8080/event", sessionHandler);
     }
 
