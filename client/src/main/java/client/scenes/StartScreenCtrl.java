@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.utils.EventStompSessionHandler;
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
@@ -11,10 +12,18 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandler;
+import org.springframework.web.socket.client.WebSocketClient;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Start Screen controller for showing start screen and entering to events
@@ -143,6 +152,15 @@ public class StartScreenCtrl implements Initializable {
         } catch (IOException | InterruptedException e) {
             serverErrorAlert(e);
         }
+
+        WebSocketClient client = new StandardWebSocketClient();
+
+        WebSocketStompClient stompClient = new WebSocketStompClient(client);
+        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+
+        //TODO:Change the UUID.randomUUID() to an actual invitationCode
+        StompSessionHandler sessionHandler = new EventStompSessionHandler(UUID.randomUUID().toString());
+        stompClient.connectAsync("ws://localhost:8080/event", sessionHandler);
     }
 
     private static void serverErrorAlert(Exception exception) {
