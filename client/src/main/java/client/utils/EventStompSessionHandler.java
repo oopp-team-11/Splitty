@@ -24,16 +24,28 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
         this.invitationCode = invitationCode;
     }
 
+    /**
+     * Handles the behaviour after establishing WebSocket connection.
+     *
+     * @param session StompSession
+     * @param connectedHeaders Headers to send potentially with session.send()
+     */
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
         this.session = session;
         session.subscribe(invitationCode, this);
     }
 
+    /**
+     * Handles the messages from server
+     *
+     * @param headers Message headers
+     * @param payload Updated object
+     */
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        String modelType = "test";//headers.getFirst("model");
-        String methodType = "test";//headers.getFirst("method");
+        String modelType = headers.getFirst("model");
+        String methodType = headers.getFirst("method");
         switch (modelType) {
             case "Event" -> {
                 Event receivedEvent = (Event) payload;
