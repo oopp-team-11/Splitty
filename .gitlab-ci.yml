@@ -36,4 +36,4 @@ test:
 checkstyle:
   stage: checkstyle
   script:
-    - ./gradlew checkstyleMain
+    - ./gradlew checkstyleMain --stacktrace
