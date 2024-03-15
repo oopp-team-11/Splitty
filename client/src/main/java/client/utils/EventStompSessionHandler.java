@@ -32,8 +32,8 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        String modelType = headers.getFirst("model");
-        String methodType = headers.getFirst("method");
+        String modelType = "test";//headers.getFirst("model");
+        String methodType = "test";//headers.getFirst("method");
         switch (modelType) {
             case "Event" -> {
                 Event receivedEvent = (Event) payload;
