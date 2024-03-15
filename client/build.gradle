@@ -25,15 +25,13 @@ dependencies {
 	implementation group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: '3.0.3'
 	implementation group: 'jakarta.activation', name: 'jakarta.activation-api', version: '2.0.1'
 	implementation 'com.google.inject:guice:5.0.1'
-	implementation 'com.google.code.gson:gson:2.10.1'
 	implementation 'org.openjfx:javafx-controls:17.0.2'
 	implementation 'org.openjfx:javafx-fxml:17.0.2'
 	testImplementation "org.wiremock:wiremock:3.4.1"
 	implementation 'javax.json:javax.json-api:1.1.4'
 	implementation 'org.glassfish:javax.json:1.1.4'
 	implementation 'org.json:json:20231013'
-	implementation 'org.springframework:spring-websocket:6.1.4'
-	implementation 'org.springframework:spring-messaging:6.1.4'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '3.2.2'
 	testImplementation group: 'org.testfx', name: 'testfx-junit5', version: '4.0.18'
 	testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.13.2'
 }
