@@ -33,7 +33,7 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
         this.session = session;
-        session.subscribe(event.getId().toString(), this);
+        session.subscribe("/topic/" + event.getId().toString(), this);
     }
 
     /**
@@ -64,7 +64,7 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
         StompHeaders headers = new StompHeaders();
         headers.add("model", "Participant");
         headers.add("method", methodType);
-        headers.setDestination(event.getId().toString());
+        headers.setDestination("/app/" + event.getId().toString());
         session.send(headers, participant);
     }
 
@@ -99,7 +99,7 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
         StompHeaders headers = new StompHeaders();
         headers.add("model", "Event");
         headers.add("method", methodType);
-        headers.setDestination(event.getId().toString());
+        headers.setDestination("/app/" + event.getId().toString());
         session.send(headers, event);
     }
 
@@ -129,7 +129,7 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
         StompHeaders headers = new StompHeaders();
         headers.add("model", "Expense");
         headers.add("method", methodType);
-        headers.setDestination(event.getId().toString());
+        headers.setDestination("/app/" + event.getId().toString());
         session.send(headers, expense);
     }
 
