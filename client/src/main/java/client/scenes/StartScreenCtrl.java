@@ -46,6 +46,7 @@ public class StartScreenCtrl implements Initializable {
 
     private final FileSystemUtils fileSystemUtils;
     private final ServerUtils serverUtils;
+    private StompSessionHandler sessionHandler;
 
     /**
      * @param mainCtrl main Controller, for displaying this scene.
@@ -154,17 +155,16 @@ public class StartScreenCtrl implements Initializable {
         startWebSocket();
     }
 
-    private static void startWebSocket() {
+    //TODO: Potentially move this method to a more appropriate class
+    private void startWebSocket() {
         WebSocketClient client = new StandardWebSocketClient();
 
         WebSocketStompClient stompClient = new WebSocketStompClient(client);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
         //TODO:Change the UUID.randomUUID() to an actual invitationCode
-        StompSessionHandler sessionHandler = new EventStompSessionHandler(UUID.randomUUID().toString());
-        //stompClient.connectAsync("ws://localhost:8080/event", sessionHandler);
-        //TODO:Create new instances of data handling methods for models.
-        //TODO:SessionHandler should be passed as a parameter of the classes' constructors
+        sessionHandler = new EventStompSessionHandler(UUID.randomUUID().toString());
+        stompClient.connectAsync("ws://localhost:8080/event", sessionHandler);
     }
 
     private static void serverErrorAlert(Exception exception) {
