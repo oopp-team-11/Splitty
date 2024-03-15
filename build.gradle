@@ -18,7 +18,8 @@ subprojects {
 	version = '0.0.1-SNAPSHOT'
 	sourceCompatibility = '11'
 	checkstyle {
-		toolVersion "9.3"
+		toolVersion ('10.3.1')
+
 		ignoreFailures = false
 		maxErrors = 0
 		maxWarnings = 0
@@ -39,7 +40,7 @@ subprojects {
 	
 	dependencies {
 		implementation 'org.apache.commons:commons-lang3:3.12.0'
-
+		
 		testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
 		testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 		testImplementation 'org.mockito:mockito-core:4.1.0'
