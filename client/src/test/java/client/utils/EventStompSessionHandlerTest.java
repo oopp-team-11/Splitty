@@ -33,7 +33,7 @@ class EventStompSessionHandlerTest {
     void afterConnected() {
         handler.afterConnected(session, headers);
         verify(session, times(1)).subscribe(
-                Mockito.eq(event.getId().toString()),
+                Mockito.eq("/topic/" + event.getId().toString()),
                 Mockito.eq(handler)
         );
     }
