@@ -162,7 +162,7 @@ public class StartScreenCtrl implements Initializable {
 
         //TODO:Change the UUID.randomUUID() to an actual invitationCode
         StompSessionHandler sessionHandler = new EventStompSessionHandler(UUID.randomUUID().toString());
-        stompClient.connectAsync("ws://localhost:8080/event", sessionHandler);
+        //stompClient.connectAsync("ws://localhost:8080/event", sessionHandler);
         //TODO:Create new instances of data handling methods for models.
         //TODO:SessionHandler should be passed as a parameter of the classes' constructors
     }
