@@ -8,6 +8,7 @@ import server.database.EventRepository;
 import server.database.ParticipantRepository;
 
 import java.net.URI;
+import java.util.UUID;
 
 /**
  * Class that represents the participant controller
@@ -43,7 +44,7 @@ public class ParticipantController {
      * @return response entity of the participant
      */
     @PostMapping (path = {"", "/"})
-    public ResponseEntity<Participant> createParticipant(@RequestBody Long invitationCode,
+    public ResponseEntity<Participant> createParticipant(@RequestBody UUID invitationCode,
                                                          @RequestBody String firstName,
                                                          @RequestBody String lastName,
                                                          @RequestBody String email,
@@ -79,7 +80,7 @@ public class ParticipantController {
      * @return response entity of the participant
      */
     @PutMapping (path = {"/{participantId}", "/{participantId}"})
-    public ResponseEntity<Participant> updateParticipant(@PathVariable("participantId") Long participantId,
+    public ResponseEntity<Participant> updateParticipant(@PathVariable("participantId") UUID participantId,
                                                          @RequestBody String firstName,
                                                          @RequestBody String lastName,
                                                          @RequestBody String email,
@@ -107,7 +108,7 @@ public class ParticipantController {
      * @return response entity of the participant
      */
     @DeleteMapping (path = {"/{participantId}", "/{participantId}"})
-    public ResponseEntity<Participant> deleteParticipant(@PathVariable("participantId") Long participantId) {
+    public ResponseEntity<Participant> deleteParticipant(@PathVariable("participantId") UUID participantId) {
         if (!participantRepository.existsById(participantId)) {
             return ResponseEntity.notFound().build();
         }
