@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.utils.EventStompSessionHandler;
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
@@ -11,6 +12,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompSessionHandler;
+import org.springframework.web.socket.client.WebSocketClient;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.io.IOException;
 import java.net.URL;
@@ -40,6 +46,7 @@ public class StartScreenCtrl implements Initializable {
 
     private final FileSystemUtils fileSystemUtils;
     private final ServerUtils serverUtils;
+    private StompSessionHandler sessionHandler;
 
     /**
      * @param mainCtrl main Controller, for displaying this scene.
@@ -144,6 +151,20 @@ public class StartScreenCtrl implements Initializable {
         } catch (IOException | InterruptedException e) {
             serverErrorAlert(e);
         }
+
+        startWebSocket();
+    }
+
+    //TODO: Potentially move this method to a more appropriate class
+    private void startWebSocket() {
+        WebSocketClient client = new StandardWebSocketClient();
+
+        WebSocketStompClient stompClient = new WebSocketStompClient(client);
+        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+
+        //TODO:Change dummy event to an actual event
+        sessionHandler = new EventStompSessionHandler(new Event("DummyEvent"));
+        stompClient.connectAsync("ws://localhost:8080/event", sessionHandler);
     }
 
     private static void serverErrorAlert(Exception exception) {
