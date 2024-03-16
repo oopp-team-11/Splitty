@@ -19,7 +19,6 @@ public class Expense {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PARTICIPANT_ID")
     private Participant paidBy;

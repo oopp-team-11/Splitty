@@ -27,14 +27,12 @@ public class Participant {
     private String iban;
     private String bic;
 
-
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "EVENT_ID")
     private Event event;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "paidBy", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "paidBy", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     List<Expense> madeExpenses;
 
     /**

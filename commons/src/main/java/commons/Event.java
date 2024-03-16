@@ -35,7 +35,7 @@ public class Event {
     private LocalDateTime lastActivity;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Participant> participants;
 
     /**
