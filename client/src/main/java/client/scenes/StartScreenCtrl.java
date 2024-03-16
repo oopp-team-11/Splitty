@@ -163,7 +163,7 @@ public class StartScreenCtrl implements Initializable {
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
         //TODO:Change dummy event to an actual event
-        sessionHandler = new EventStompSessionHandler(new Event("DummyEvent"));
+        sessionHandler = new EventStompSessionHandler(UUID.randomUUID());
         stompClient.connectAsync("ws://localhost:8080/event", sessionHandler);
     }
 

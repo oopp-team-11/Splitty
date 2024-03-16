@@ -7,21 +7,23 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 
+import java.util.UUID;
+
 /**
  * StompSessionHandler for handling a WebSocket client connection.
  * Listens to /event/{invitationCode} topic.
  */
 public class EventStompSessionHandler extends StompSessionHandlerAdapter {
-    private final Event event;
+    private final UUID invitationCode;
     private StompSession session;
 
     /**
      * Custom constructor for EventStompSessionHandler
      *
-     * @param event the reference to the event object
+     * @param invitationCode invitationCode for the event
      */
-    public EventStompSessionHandler(Event event) {
-        this.event = event;
+    public EventStompSessionHandler(UUID invitationCode) {
+        this.invitationCode = invitationCode;
     }
 
     /**
@@ -33,7 +35,7 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
         this.session = session;
-        session.subscribe("/topic/" + event.getId().toString(), this);
+        session.subscribe("/topic/" + invitationCode, this);
     }
 
     /**
@@ -64,7 +66,7 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
         StompHeaders headers = new StompHeaders();
         headers.add("model", "Participant");
         headers.add("method", methodType);
-        headers.setDestination("/app/" + event.getId().toString());
+        headers.setDestination("/app/" + invitationCode);
         session.send(headers, participant);
     }
 
@@ -99,7 +101,7 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
         StompHeaders headers = new StompHeaders();
         headers.add("model", "Event");
         headers.add("method", methodType);
-        headers.setDestination("/app/" + event.getId().toString());
+        headers.setDestination("/app/" + invitationCode);
         session.send(headers, event);
     }
 
@@ -111,7 +113,9 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
      */
     public void receiveEvent(Event receivedEvent, String methodType) {
         switch (methodType) {
-            case "update" -> event.setTitle(receivedEvent.getTitle());
+            case "update" -> {
+                //TODO: handle title update
+            }
             case "delete" -> {
                 //TODO: Discuss handling of event deletion.
             }
@@ -129,7 +133,7 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
         StompHeaders headers = new StompHeaders();
         headers.add("model", "Expense");
         headers.add("method", methodType);
-        headers.setDestination("/app/" + event.getId().toString());
+        headers.setDestination("/app/" + invitationCode);
         session.send(headers, expense);
     }
 
