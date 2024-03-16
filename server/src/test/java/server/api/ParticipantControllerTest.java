@@ -80,4 +80,43 @@ public class ParticipantControllerTest {
         assertEquals(OK, returnValue.getStatusCode());
         assertFalse(participantRepository.existsById(returnValue.getBody().getId()));
     }
+    @Test
+    public void checkParticipantThatDoesntExistGetExpenses() {
+        var eventId = eventRepository.save(new Event("hi")).getId();
+        var returnValue = participantController.createParticipant(eventId, "John",
+                "Doe", null, null, null);
+
+        var actualId = returnValue.getBody().getId() + 1;
+        var actual = participantController.getExpensesByParticipantId(actualId);
+
+        assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void checkParticipantThatExistsGetExpenses() {
+        var eventId = eventRepository.save(new Event("hi")).getId();
+        var returnValue = participantController.createParticipant(eventId, "John",
+                "Doe", "jdoe@gmail.com", "NL666", "NL42");
+        var actualId = returnValue.getBody().getId();
+
+        var actual = participantController.getExpensesByParticipantId(actualId);
+        assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void checkParticipantThatExistsGetExpensesNotNull() {
+        var eventId = eventRepository.save(new Event("hi")).getId();
+        var returnValue = participantController.createParticipant(eventId, "John",
+                "Doe", null, null, null);
+        var actualId = returnValue.getBody().getId();
+
+        var actual = participantController.getExpensesByParticipantId(actualId);
+        assertNotNull(actual.getBody());
+    }
+
+    @Test
+    void checkParticipantGetExpensesNullId() {
+        var actual = participantController.getExpensesByParticipantId(null);
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
 }

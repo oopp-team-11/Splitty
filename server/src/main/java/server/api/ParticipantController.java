@@ -136,6 +136,6 @@ public class ParticipantController {
         if(!participantRepository.existsById(participantId))
             return ResponseEntity.notFound().build();
 
-        return ResponseEntity.ok(participantRepository.findById(participantId).get().getMadeExpenses());
+        return ResponseEntity.ok(participantRepository.getReferenceById(participantId).getMadeExpenses());
     }
 }

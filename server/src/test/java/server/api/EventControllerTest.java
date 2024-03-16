@@ -2,11 +2,12 @@ package server.api;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.OK;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.http.HttpStatus.*;
 
 
 import commons.Event;
+import commons.Participant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -114,6 +115,50 @@ public class EventControllerTest {
         Long invitationCode = toSave.getId();
         repo.save(toSave);
         var actual = sut.getEventByInvitationCode(invitationCode + 1);
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+    @Test
+    public void checkEventThatDoesntExistGetParticipants() {
+        Event toSave = new Event("Trap");
+        var invitationCode = toSave.getId();
+        repo.save(toSave);
+        var actual = sut.getParticipantsByInvitationCode(invitationCode + 1);
+        assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void checkEventThatExistsGetParticipants() {
+        Event toSave = new Event("Trap");
+        toSave.addParticipant(new Participant());
+        var invitationCode = toSave.getId();
+        repo.save(toSave);
+        var actual = sut.getParticipantsByInvitationCode(invitationCode);
+        assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void checkEventThatExistsGetParticipantsNotNull() {
+        Event toSave = new Event("Trap");
+        toSave.addParticipant(new Participant());
+        var invitationCode = toSave.getId();
+        repo.save(toSave);
+        var actual = sut.getParticipantsByInvitationCode(invitationCode);
+        assertNotNull(actual.getBody());
+    }
+
+    @Test
+    public void checkEventThatExistsGetParticipantsParticipant() {
+        Event toSave = new Event("Trap");
+        toSave.addParticipant(new Participant());
+        var invitationCode = toSave.getId();
+        repo.save(toSave);
+        var actual = sut.getParticipantsByInvitationCode(invitationCode);
+        assertNotNull(actual.getBody().get(0));
+    }
+
+    @Test
+    void checkEventGetParticipantsNullId() {
+        var actual = sut.getParticipantsByInvitationCode(null);
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 }
