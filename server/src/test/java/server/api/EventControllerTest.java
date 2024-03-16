@@ -7,6 +7,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 
 import commons.Event;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +18,11 @@ import java.util.UUID;
 public class EventControllerTest {
     private TestEventRepository repo;
     private EventController sut;
+
+    private static void setId(Event toSet, UUID newId) throws IllegalAccessException {
+        FieldUtils.writeField(toSet, "id", newId, true);
+    }
+
 
     @BeforeEach
     public void setup() {
@@ -42,10 +48,12 @@ public class EventControllerTest {
     public void checkUpdatedEvents() {
         Event event1 = new Event("Trap1");
         Event event2 = new Event("Trap2");
-        event1.setId(UUID.randomUUID());
-        event2.setId(UUID.randomUUID());
-        UUID id1 = event1.getId();
-        UUID id2 = event2.getId();
+        UUID id1 = UUID.randomUUID();
+        UUID id2 = UUID.randomUUID();
+        try {
+            setId(event1, id1);
+            setId(event2, id2);
+        } catch (IllegalAccessException ignored) {}
         repo.save(event1);
         UUID[] recentEvents = new UUID[2];
         recentEvents[0] = id1;
@@ -95,7 +103,9 @@ public class EventControllerTest {
     @Test
     public void checkEventThatExists() {
         Event toSave = new Event("Trap");
-        toSave.setId(UUID.randomUUID());
+        try {
+            setId(toSave, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
         repo.save(toSave);
         UUID invitationCode = toSave.getId();
         var actual = sut.getEventByInvitationCode(invitationCode);
@@ -105,7 +115,9 @@ public class EventControllerTest {
     @Test
     public void checkEventThatExistsTitle() {
         Event toSave = new Event("Trap");
-        toSave.setId(UUID.randomUUID());
+        try {
+            setId(toSave, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
         UUID invitationCode = toSave.getId();
         repo.save(toSave);
         var actual = sut.getEventByInvitationCode(invitationCode);
@@ -115,8 +127,9 @@ public class EventControllerTest {
     @Test
     public void checkEventThatDoesntExist() {
         Event toSave = new Event("Trap");
-        toSave.setId(UUID.randomUUID());
-        UUID invitationCode = toSave.getId();
+        try {
+            setId(toSave, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
         repo.save(toSave);
         var actual = sut.getEventByInvitationCode(UUID.randomUUID());
         assertEquals(BAD_REQUEST, actual.getStatusCode());

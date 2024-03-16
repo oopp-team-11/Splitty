@@ -79,15 +79,6 @@ public class Participant {
     }
 
     /**
-     * Setter for the id field
-     * NOTE: FOR TESTING PURPOSES ONLY
-     * @param id the id to be set
-     */
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    /**
      * Method that returns the event the participant is participating in
      * @return event the participant is participating in
      */

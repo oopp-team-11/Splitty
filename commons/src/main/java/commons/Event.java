@@ -63,15 +63,6 @@ public class Event {
     }
 
     /**
-     * Setter for the invitation code
-     * NOTE: FOR TESTING PURPOSES ONLY
-     * @param id The id to be set
-     */
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    /**
      * Getter for the list of Participants that are part of the Event.
      * @return Returns a List of Participant objects (i.e. children of this Event entity)
      */

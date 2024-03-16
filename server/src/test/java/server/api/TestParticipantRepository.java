@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import commons.Participant;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,10 @@ import server.database.ParticipantRepository;
  * Participant repository implementation for testing purposes
  */
 public class TestParticipantRepository implements ParticipantRepository {
+
+    private static void setId(Participant toSet, UUID newId) throws IllegalAccessException {
+        FieldUtils.writeField(toSet, "id", newId, true);
+    }
 
     public final List<Participant> participants = new ArrayList<>();
     public final List<String> calledMethods = new ArrayList<>();
@@ -130,7 +135,9 @@ public class TestParticipantRepository implements ParticipantRepository {
     @Override
     public <S extends Participant> S save(S entity) {
         call("save");
-        entity.setId(UUID.randomUUID());
+        try {
+            setId(entity, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
         participants.add(entity);
         return entity;
     }
