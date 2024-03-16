@@ -3,9 +3,11 @@ package server.api;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 
 import commons.Participant;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +20,10 @@ import server.database.ParticipantRepository;
  * Participant repository implementation for testing purposes
  */
 public class TestParticipantRepository implements ParticipantRepository {
+
+    private static void setId(Participant toSet, UUID newId) throws IllegalAccessException {
+        FieldUtils.writeField(toSet, "id", newId, true);
+    }
 
     public final List<Participant> participants = new ArrayList<>();
     public final List<String> calledMethods = new ArrayList<>();
@@ -39,7 +45,7 @@ public class TestParticipantRepository implements ParticipantRepository {
     }
 
     @Override
-    public List<Participant> findAllById(Iterable<Long> ids) {
+    public List<Participant> findAllById(Iterable<UUID> ids) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -75,7 +81,7 @@ public class TestParticipantRepository implements ParticipantRepository {
     }
 
     @Override
-    public void deleteAllByIdInBatch(Iterable<Long> ids) {
+    public void deleteAllByIdInBatch(Iterable<UUID> ids) {
         // TODO Auto-generated method stub
 
     }
@@ -87,25 +93,25 @@ public class TestParticipantRepository implements ParticipantRepository {
     }
 
     @Override
-    public Participant getOne(Long id) {
+    public Participant getOne(UUID id) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Participant getById(Long id) {
+    public Participant getById(UUID id) {
         call("getById");
         return find(id).get();
     }
 
     @Override
-    public Participant getReferenceById(Long id) {
+    public Participant getReferenceById(UUID id) {
         call("getReferenceById");
         return find(id).get();
     }
 
-    private Optional<Participant> find(Long id) {
-        return participants.stream().filter(participant -> participant.getId() == id).findFirst();
+    private Optional<Participant> find(UUID id) {
+        return participants.stream().filter(participant -> participant.getId().equals(id)).findFirst();
     }
 
     @Override
@@ -129,19 +135,21 @@ public class TestParticipantRepository implements ParticipantRepository {
     @Override
     public <S extends Participant> S save(S entity) {
         call("save");
-        entity.setId( (long) participants.size());
+        try {
+            setId(entity, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
         participants.add(entity);
         return entity;
     }
 
     @Override
-    public Optional<Participant> findById(Long id) {
+    public Optional<Participant> findById(UUID id) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public boolean existsById(Long id) {
+    public boolean existsById(UUID id) {
         call("existsById");
         return find(id).isPresent();
     }
@@ -152,7 +160,7 @@ public class TestParticipantRepository implements ParticipantRepository {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(UUID id) {
         // TODO Auto-generated method stub
 
     }
@@ -163,7 +171,7 @@ public class TestParticipantRepository implements ParticipantRepository {
     }
 
     @Override
-    public void deleteAllById(Iterable<? extends Long> ids) {
+    public void deleteAllById(Iterable<? extends UUID> ids) {
         // TODO Auto-generated method stub
 
     }

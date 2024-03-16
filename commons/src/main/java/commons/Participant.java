@@ -1,5 +1,6 @@
 package commons;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -8,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 //Adjustment
 
@@ -17,18 +19,20 @@ import java.util.List;
 @Entity
 public class Participant {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private UUID id;
     private String firstName;
     private String lastName;
     private String email;
     private String iban;
     private String bic;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "EVENT_ID")
     private Event event;
 
-    @OneToMany(mappedBy = "paidBy", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    @OneToMany(mappedBy = "paidBy", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     List<Expense> madeExpenses;
 
     /**
@@ -70,7 +74,7 @@ public class Participant {
      * Method that returns the id of the participant
      * @return id of the participant
      */
-    public long getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -168,14 +172,6 @@ public class Participant {
      */
     public void setBic(String bic) {
         this.bic = bic;
-    }
-
-    /**
-     * Method that sets the id of the participant
-     * @param id id of the participant
-     */
-    public void setId(long id) {
-        this.id = id;
     }
 
     @Override

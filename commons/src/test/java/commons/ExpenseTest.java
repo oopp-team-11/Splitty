@@ -1,11 +1,15 @@
 package commons;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ExpenseTest {
+    private UUID shouldBeId;
     private Expense expense;
     private Expense expenseEqual;
     private Expense expenseNotEqual;
@@ -33,6 +37,22 @@ public class ExpenseTest {
         expense = new Expense(participant1, "Cookies", 69.69);
         expenseEqual = new Expense(participant1, "Cookies", 69.69);
         expenseNotEqual = new Expense(participant2, "Chocolate", 69.69);
+        try {
+            UUID id = UUID.randomUUID();
+            setId(expense, id);
+            setId(expenseEqual, id);
+            this.shouldBeId = id;
+        } catch (IllegalAccessException ignored) {}
+    }
+
+    private static void setId(Expense toSet, UUID newId) throws IllegalAccessException {
+        FieldUtils.writeField(toSet, "id", newId, true);
+    }
+
+    @Test
+    void testGetId() {
+        assertEquals(expense.getId(), shouldBeId);
+        assertEquals(expenseEqual.getId(), shouldBeId);
     }
 
     @Test
@@ -62,11 +82,6 @@ public class ExpenseTest {
         assertTrue(expenseToString.contains("paidByID="));
         assertTrue(expenseToString.contains("title="));
         assertTrue(expenseToString.contains("amount="));
-    }
-
-    @Test
-    void getIdTest() {
-        assertTrue(expense.getId() >= 0);
     }
 
     @Test

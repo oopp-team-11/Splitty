@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import commons.Views;
 
@@ -42,7 +43,7 @@ public class EventController {
      * Returns a 404 Not Found status code when no Event was found with the provided invitationCode.
      */
     @GetMapping (path = {"/{invitationCode}", "/{invitationCode}/"})
-    public ResponseEntity<Event> getEventByInvitationCode(@PathVariable("invitationCode") Long invitationCode) {
+    public ResponseEntity<Event> getEventByInvitationCode(@PathVariable("invitationCode") UUID invitationCode) {
         if (invitationCode == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -89,7 +90,7 @@ public class EventController {
      */
     @JsonView(Views.UpdateInvitationsCodes.class)
     @GetMapping (path = {"?query=title&invitationCodes={}"})
-    public ResponseEntity<List<Event>> updateRecentlyAccessedEvents(@RequestParam Long[] codes) {
+    public ResponseEntity<List<Event>> updateRecentlyAccessedEvents(@RequestParam UUID[] codes) {
         if (codes == null) {
             return ResponseEntity.badRequest().build();
         }

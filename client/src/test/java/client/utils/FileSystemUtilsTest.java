@@ -1,9 +1,9 @@
 package client.utils;
 
-import static org.junit.jupiter.api.Assertions.*;
 import commons.Event;
 import commons.Participant;
 import org.junit.jupiter.api.Test;
+
 import javax.json.Json;
 import javax.json.JsonObject;
 import java.io.File;
@@ -14,18 +14,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 class FileSystemUtilsTest {
     @Test
     void checkIfFileExistsFalse() {
         FileSystemUtils fileSystemUtils = new FileSystemUtils();
-        String randomFileName = UUID.randomUUID().toString() + ".txt";
+        String randomFileName = UUID.randomUUID() + ".txt";
         assertFalse(fileSystemUtils.checkIfFileExists(randomFileName));
     }
 
     @Test
     void checkIfFileExistsTrue() {
         FileSystemUtils fileSystemUtils = new FileSystemUtils();
-        String randomFileName = UUID.randomUUID().toString() + ".txt";
+        String randomFileName = UUID.randomUUID() + ".txt";
         try {
             new File(randomFileName).createNewFile();
         } catch (IOException e) {
@@ -38,9 +40,9 @@ class FileSystemUtilsTest {
     @Test
     void readInvitationCodesFileMotFound() {
         FileSystemUtils fileSystemUtils = new FileSystemUtils();
-        String randomFileName = UUID.randomUUID().toString() + ".txt";
+        String randomFileName = UUID.randomUUID() + ".txt";
 
-        if(new File(randomFileName).exists()) {
+        if (new File(randomFileName).exists()) {
             new File(randomFileName).delete();
         }
 
@@ -50,18 +52,19 @@ class FileSystemUtilsTest {
     @Test
     void readInvitationCodesFileFound() throws IOException {
         FileSystemUtils fileSystemUtils = new FileSystemUtils();
-        String randomFileName = UUID.randomUUID().toString() + ".json";
+        String randomFileName = UUID.randomUUID() + ".json";
 
-        if(new File(randomFileName).exists()) {
+        if (new File(randomFileName).exists()) {
             new File(randomFileName).delete();
         }
 
-        List<Long> codes = new ArrayList<>();
-        long randomCode = UUID.randomUUID().hashCode();
+        List<UUID> codes = new ArrayList<>();
+        UUID randomCode = UUID.randomUUID();
         codes.add(randomCode);
+        List<String> codeStrings = codes.stream().map(UUID::toString).toList();
         JsonObject json = Json.createObjectBuilder()
-            .add("invitationCodes", Json.createArrayBuilder(codes))
-            .build();
+                .add("invitationCodes", Json.createArrayBuilder(codeStrings))
+                .build();
 
         FileWriter file = new FileWriter(randomFileName);
         file.write(json.toString());
@@ -75,13 +78,13 @@ class FileSystemUtilsTest {
     @Test
     void saveInvitationCodesToConfigFileFileNotFound() throws IOException {
         FileSystemUtils fileSystemUtils = new FileSystemUtils();
-        String randomFileName = UUID.randomUUID().toString() + ".json";
+        String randomFileName = UUID.randomUUID() + ".json";
 
-        if(new File(randomFileName).exists()) {
+        if (new File(randomFileName).exists()) {
             new File(randomFileName).delete();
         }
 
-        long randomCode = UUID.randomUUID().hashCode();
+        UUID randomCode = UUID.randomUUID();
         fileSystemUtils.saveInvitationCodesToConfigFile(randomCode, randomFileName);
         assertTrue(new File(randomFileName).exists());
         assertEquals(randomCode, fileSystemUtils.readInvitationCodes(randomFileName).get(0));
@@ -91,25 +94,26 @@ class FileSystemUtilsTest {
     @Test
     void saveInvitationCodesToConfigFileFileFound() throws IOException {
         FileSystemUtils fileSystemUtils = new FileSystemUtils();
-        String randomFileName = UUID.randomUUID().toString() + ".json";
+        String randomFileName = UUID.randomUUID() + ".json";
 
-        if(new File(randomFileName).exists()) {
+        if (new File(randomFileName).exists()) {
             new File(randomFileName).delete();
         }
 
-        List<Long> codes = new ArrayList<>();
-        long randomCode = UUID.randomUUID().hashCode();
+        List<UUID> codes = new ArrayList<>();
+        UUID randomCode = UUID.randomUUID();
         codes.add(randomCode);
+        List<String> codeStrings = codes.stream().map(UUID::toString).toList();
         JsonObject json = Json.createObjectBuilder()
-            .add("invitationCodes", Json.createArrayBuilder(codes))
-            .build();
+                .add("invitationCodes", Json.createArrayBuilder(codeStrings))
+                .build();
 
         FileWriter file = new FileWriter(randomFileName);
         file.write(json.toString());
         file.flush();
         file.close();
 
-        long randomCode2 = UUID.randomUUID().hashCode();
+        UUID randomCode2 = UUID.randomUUID();
         fileSystemUtils.saveInvitationCodesToConfigFile(randomCode2, randomFileName);
         codes.add(randomCode2);
         assertTrue(new File(randomFileName).exists());
@@ -120,8 +124,8 @@ class FileSystemUtilsTest {
     @Test
     void checkIfCodeExistsTrue() {
         FileSystemUtils fileSystemUtils = new FileSystemUtils();
-        List<Long> codes = new ArrayList<>();
-        long randomCode = UUID.randomUUID().hashCode();
+        List<UUID> codes = new ArrayList<>();
+        UUID randomCode = UUID.randomUUID();
         codes.add(randomCode);
         assertTrue(fileSystemUtils.checkIfCodeExists(randomCode, codes));
     }
@@ -129,41 +133,42 @@ class FileSystemUtilsTest {
     @Test
     void checkIfCodeExistsFalse() {
         FileSystemUtils fileSystemUtils = new FileSystemUtils();
-        List<Long> codes = new ArrayList<>();
-        long randomCode = UUID.randomUUID().hashCode();
+        List<UUID> codes = new ArrayList<>();
+        UUID randomCode = UUID.randomUUID();
         assertFalse(fileSystemUtils.checkIfCodeExists(randomCode, codes));
     }
 
     @Test
     void checkIfCodeExistsEmptyList() {
         FileSystemUtils fileSystemUtils = new FileSystemUtils();
-        List<Long> codes = new ArrayList<>();
-        long randomCode = UUID.randomUUID().hashCode();
+        List<UUID> codes = new ArrayList<>();
+        UUID randomCode = UUID.randomUUID();
         assertFalse(fileSystemUtils.checkIfCodeExists(randomCode, codes));
     }
 
     @Test
     void updateConfigFileTest() throws IOException {
         FileSystemUtils fileSystemUtils = new FileSystemUtils();
-        String randomFileName = UUID.randomUUID().toString() + ".json";
+        String randomFileName = UUID.randomUUID() + ".json";
 
-        if(new File(randomFileName).exists()) {
+        if (new File(randomFileName).exists()) {
             new File(randomFileName).delete();
         }
 
-        List<Long> codes = new ArrayList<>();
-        long randomCode = UUID.randomUUID().hashCode();
+        List<UUID> codes = new ArrayList<>();
+        UUID randomCode = UUID.randomUUID();
         codes.add(randomCode);
+        List<String> codeStrings = codes.stream().map(UUID::toString).toList();
         JsonObject json = Json.createObjectBuilder()
-            .add("invitationCodes", Json.createArrayBuilder(codes))
-            .build();
+                .add("invitationCodes", Json.createArrayBuilder(codeStrings))
+                .build();
 
         FileWriter file = new FileWriter(randomFileName);
         file.write(json.toString());
         file.flush();
         file.close();
 
-        long randomCode2 = UUID.randomUUID().hashCode();
+        UUID randomCode2 = UUID.randomUUID();
         codes.add(randomCode2);
         fileSystemUtils.updateConfigFile(randomFileName, codes);
         assertTrue(new File(randomFileName).exists());
@@ -175,7 +180,7 @@ class FileSystemUtilsTest {
     void extractInvitationCodesFromEventListTest() {
         FileSystemUtils fileSystemUtils = new FileSystemUtils();
         List<Event> events = new ArrayList<>();
-        List<Long> codes = new ArrayList<>();
+        List<UUID> codes = new ArrayList<>();
 
         Event event1 = new Event("The Event we need to pay for");
         Event event2 = new Event("The Event we do not need to pay for");

@@ -1,15 +1,18 @@
 package commons;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EventTest {
 
+    private UUID shouldBeId;
     private Event event;
     private Event eventEqual;
     private Event eventNotEqual;
@@ -73,6 +76,22 @@ public class EventTest {
                 "NL69 XING 4269 2157 00",
                 "CDNANL2A666"
         );
+        try {
+            UUID id = UUID.randomUUID();
+            setId(event, id);
+            setId(eventEqual, id);
+            this.shouldBeId = id;
+        } catch (IllegalAccessException ignored) {}
+    }
+
+    private static void setId(Event toSet, UUID newId) throws IllegalAccessException {
+        FieldUtils.writeField(toSet, "id", newId, true);
+    }
+
+    @Test
+    void testGetId() {
+        assertEquals(event.getId(), shouldBeId);
+        assertEquals(eventEqual.getId(), shouldBeId);
     }
 
     @Test
@@ -103,11 +122,6 @@ public class EventTest {
         assertTrue(eventToString.contains("creationDate=2024-02-12"));
         assertTrue(eventToString.contains("lastActivity=2024-02-14"));
         assertTrue(eventToString.contains("participants="));
-    }
-
-    @Test
-    void getIdTest() {
-        assertTrue(event.getId() >= 0);
     }
 
     @Test
