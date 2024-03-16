@@ -24,6 +24,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
 import commons.Event;
 import org.json.*;
 
@@ -43,7 +45,7 @@ public class ServerUtils {
      * @throws IOException if something goes wrong
      * @throws InterruptedException if something goes wrong with the request
      */
-    public void getEvent(long invitationCode, String server)
+    public void getEvent(UUID invitationCode, String server)
         throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(server + "/events/" + invitationCode))
@@ -60,9 +62,9 @@ public class ServerUtils {
      * @param server server url
      * @throws IOException if something goes wrong
      * @throws InterruptedException if something goes wrong with the request
-     * @return an invitation code long
+     * @return an invitation code UUID
      */
-    public long createEvent(String eventName, String server)
+    public UUID createEvent(String eventName, String server)
         throws IOException, InterruptedException {
         JsonObject json = Json.createObjectBuilder()
             .add("eventName", eventName)
@@ -80,7 +82,7 @@ public class ServerUtils {
 
         String responseJson = response.body();
         JSONObject jsonObject = new JSONObject(responseJson);
-        long invitationCode = Long.parseLong((jsonObject.get("invitationCode").toString()));
+        UUID invitationCode = UUID.fromString((jsonObject.get("invitationCode").toString()));
 
         return invitationCode;
     }
@@ -95,7 +97,7 @@ public class ServerUtils {
      */
     public List<Event> getRecentEvents(String server, String path) throws IOException, InterruptedException {
         FileSystemUtils fileSystemUtils = new FileSystemUtils();
-        List<Long> codes = fileSystemUtils.readInvitationCodes(path);
+        List<UUID> codes = fileSystemUtils.readInvitationCodes(path);
 
         URI uri = URI.create(server + "/events?query=titles&invitationCodes=" + codes.toString()
                 .replace("[", "").
@@ -146,14 +148,14 @@ public class ServerUtils {
      * @param server server url
      * @throws IOException if something goes wrong
      * @throws InterruptedException if something goes wrong with the request
-     * @return participant ID long
+     * @return participant ID UUID
      */
-    public long createParticipant(long invitationCode, String firstName, String lastName, String email,
+    public UUID createParticipant(UUID invitationCode, String firstName, String lastName, String email,
                                   String iban, String bic, String server)
             throws IOException, InterruptedException {
 
         JsonObject json = Json.createObjectBuilder()
-                .add("invitationCode", invitationCode)
+                .add("invitationCode", invitationCode.toString())
                 .add("firstName", firstName)
                 .add("lastName", lastName)
                 .add("email", email)
@@ -173,7 +175,7 @@ public class ServerUtils {
 
         String responseJson = response.body();
         JSONObject jsonObject = new JSONObject(responseJson);
-        long participantId = Long.parseLong((jsonObject.get("participantId").toString()));
+        UUID participantId = UUID.fromString((jsonObject.get("participantId").toString()));
 
         return participantId;
     }
@@ -189,14 +191,14 @@ public class ServerUtils {
      * @param server server url
      * @throws IOException if something goes wrong
      * @throws InterruptedException if something goes wrong with the request
-     * @return response participant ID long
+     * @return response participant UUID
      */
-    public long editParticipant(long participantId, String firstName, String lastName, String email,
+    public UUID editParticipant(UUID participantId, String firstName, String lastName, String email,
                                   String iban, String bic, String server)
             throws IOException, InterruptedException {
 
         JsonObject json = Json.createObjectBuilder()
-                .add("participantId", participantId)
+                .add("participantId", participantId.toString())
                 .add("firstName", firstName)
                 .add("lastName", lastName)
                 .add("email", email)
@@ -216,7 +218,7 @@ public class ServerUtils {
 
         String responseJson = response.body();
         JSONObject jsonObject = new JSONObject(responseJson);
-        long responseParticipantId = Long.parseLong((jsonObject.get("participantId").toString()));
+        UUID responseParticipantId = UUID.fromString((jsonObject.get("participantId").toString()));
 
         return responseParticipantId;
     }

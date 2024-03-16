@@ -1,11 +1,15 @@
 package commons;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ParticipantTest {
+    private UUID shouldBeId;
     private Participant participant;
     private Participant participantEqual;
     private Participant participantNotEqual;
@@ -37,6 +41,22 @@ class ParticipantTest {
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123"
         );
+        try {
+            UUID id = UUID.randomUUID();
+            setId(participant, id);
+            setId(participantEqual, id);
+            this.shouldBeId = id;
+        } catch (IllegalAccessException ignored) {}
+    }
+
+    private static void setId(Participant toSet, UUID newId) throws IllegalAccessException {
+        FieldUtils.writeField(toSet, "id", newId, true);
+    }
+
+    @Test
+    void testGetId() {
+        assertEquals(participant.getId(), shouldBeId);
+        assertEquals(participantEqual.getId(), shouldBeId);
     }
 
     @Test
@@ -71,13 +91,6 @@ class ParticipantTest {
         assertTrue(clientToString.contains("invitationCode"));
         assertTrue(clientToString.contains("madeExpenses"));
     }
-
-    @Test
-    void getId() {
-        assertTrue(participant.getId() >= 0);
-    }
-
-
 
     @Test
     void getFirstName() {

@@ -38,14 +38,14 @@ class ServerUtilsTest {
     @Test
     void getEventThrowsInterruptedException() throws IOException, InterruptedException {
         ServerUtils serverUtils = Mockito.spy(ServerUtils.class);
-        long randomCode = UUID.randomUUID().hashCode();
+        UUID randomCode = UUID.randomUUID();
         Mockito.doThrow(new InterruptedException()).when(serverUtils).getEvent(randomCode, "http://localhost:8080");
     }
 
     @Test
     void getEventThrowsIOException() throws IOException, InterruptedException {
         ServerUtils serverUtils = Mockito.spy(ServerUtils.class);
-        long randomCode = UUID.randomUUID().hashCode();
+        UUID randomCode = UUID.randomUUID();
         Mockito.doThrow(new IOException()).when(serverUtils).getEvent(randomCode, "http://localhost:8080");
         assertThrows(IOException.class, () -> serverUtils.getEvent(randomCode, "http://localhost:8080"));
     }
@@ -57,7 +57,7 @@ class ServerUtilsTest {
             .port(9090));
         wireMockServer.start();
 
-        long randomCode = UUID.randomUUID().hashCode();
+        UUID randomCode = UUID.randomUUID();
         ServerUtils serverUtils = new ServerUtils();
         wireMockServer.stubFor(get(urlEqualTo("/events/" + randomCode))
                 .willReturn(aResponse()
@@ -78,7 +78,7 @@ class ServerUtilsTest {
         wireMockServer.start();
 
         String randomName = "testEvent";
-        int responseCode = UUID.randomUUID().hashCode();
+        UUID responseCode = UUID.randomUUID();
         ServerUtils serverUtils = new ServerUtils();
         wireMockServer.stubFor(post(urlEqualTo("/events"))
                 .willReturn(aResponse()
@@ -98,7 +98,7 @@ class ServerUtilsTest {
 
         serverUtils.createEvent(randomName, "http://localhost:9091");
 
-        assertEquals(responseCode, jsonObject.getInt("invitationCode"));
+        assertEquals(responseCode.toString(), jsonObject.getString("invitationCode"));
         assertEquals(200, wireMockServer.getAllServeEvents().get(1).getResponse().getStatus());
         wireMockServer.stop();
     }
@@ -111,14 +111,15 @@ class ServerUtilsTest {
         wireMockServer.start();
 
         ServerUtils serverUtils = new ServerUtils();
-        List<Long> codes = new ArrayList<>();
-        String randomFileName = UUID.randomUUID().toString() + ".json";
+        List<UUID> codes = new ArrayList<>();
+        String randomFileName = UUID.randomUUID() + ".json";
 
-        codes.add(54321L);
-        codes.add(12345L);
+        codes.add(UUID.fromString("3909e6f3-7bf3-47c5-992a-3dcf53738ab5"));
+        codes.add(UUID.fromString("370e486d-6aa8-4d29-90c6-10aade69b13b"));
 
+        List<String> codeStrings = codes.stream().map(UUID::toString).toList();
         JsonObject json = Json.createObjectBuilder()
-                .add("invitationCodes", Json.createArrayBuilder(codes))
+                .add("invitationCodes", Json.createArrayBuilder(codeStrings))
                 .build();
 
         if(new File(randomFileName).exists()) {
@@ -136,18 +137,19 @@ class ServerUtilsTest {
                 replace("]", "").
                 replace(" ", ""));
 
-        String jsonEventsList = "{\n" +
-                "    \"events\": [\n" +
-                "        {\n" +
-                "            \"invitationCode\": 12345,\n" +
-                "            \"eventName\": \"testEvent1\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"invitationCode\": 54321,\n" +
-                "            \"eventName\": \"testEvent2\"\n" +
-                "        }\n" +
-                "    ]\n" +
-                "}";
+        String jsonEventsList = """
+                {
+                    "events": [
+                        {
+                            "invitationCode": "3909e6f3-7bf3-47c5-992a-3dcf53738ab5",
+                            "eventName": "testEvent1"
+                        },
+                        {
+                            "invitationCode": "370e486d-6aa8-4d29-90c6-10aade69b13b",
+                            "eventName": "testEvent2"
+                        }
+                    ]
+                }""";
         JSONObject jsonObject = new JSONObject(jsonEventsList);
         JSONArray jsonArray = new JSONArray(jsonObject
                 .getJSONArray("events").toString());

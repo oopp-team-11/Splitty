@@ -5,6 +5,7 @@ import javax.json.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Client utility class for file handling
@@ -18,7 +19,7 @@ public class FileSystemUtils {
      * @return lust of invitation codes
      * @throws FileNotFoundException if the file is not found
      */
-    public List<Long> readInvitationCodes(String path) throws FileNotFoundException {
+    public List<UUID> readInvitationCodes(String path) throws FileNotFoundException {
         if(!checkIfFileExists(path)) {
             throw new FileNotFoundException("File not found");
         }
@@ -27,8 +28,10 @@ public class FileSystemUtils {
         JsonObject json = reader.readObject();
         reader.close();
 
-        List<Long> codes = new ArrayList<>();
-        json.getJsonArray("invitationCodes").forEach(code -> codes.add(Long.parseLong(code.toString())));
+        List<UUID> codes = new ArrayList<>();
+        json.getJsonArray("invitationCodes").forEach(code -> {
+            codes.add(UUID.fromString(code.toString().replaceAll("^\"|\"$", "")));
+        });
 
         return codes;
 
@@ -40,14 +43,15 @@ public class FileSystemUtils {
      * @param path path of the file
      * @throws IOException if something goes wrong
      */
-    public void saveInvitationCodesToConfigFile(long invitationCode, String path)
+    public void saveInvitationCodesToConfigFile(UUID invitationCode, String path)
         throws IOException {
         if(!checkIfFileExists(path)) {
-            List<Long> codes = new ArrayList<>();
+            List<UUID> codes = new ArrayList<>();
             codes.add(invitationCode);
+            List<String> codeStrings = codes.stream().map(UUID::toString).toList();
             JsonObject json = Json.createObjectBuilder()
-                .add("invitationCodes", Json.createArrayBuilder(codes))
-                .build();
+                    .add("invitationCodes", Json.createArrayBuilder(codeStrings))
+                    .build();
 
             FileWriter file = new FileWriter(path);
             file.write(json.toString());
@@ -56,7 +60,7 @@ public class FileSystemUtils {
             return;
         }
 
-        List<Long> codes = new ArrayList<>(readInvitationCodes(path));
+        List<UUID> codes = new ArrayList<>(readInvitationCodes(path));
 
         if(checkIfCodeExists(invitationCode, codes)) {
             return;
@@ -64,8 +68,9 @@ public class FileSystemUtils {
 
         codes.add(invitationCode);
 
+        List<String> codeStrings = codes.stream().map(UUID::toString).toList();
         JsonObject json = Json.createObjectBuilder()
-                .add("invitationCodes", Json.createArrayBuilder(codes))
+                .add("invitationCodes", Json.createArrayBuilder(codeStrings))
                 .build();
 
         FileWriter file = new FileWriter(path);
@@ -89,7 +94,7 @@ public class FileSystemUtils {
      * @param codes list of codes
      * @return true if the code exists, false otherwise
      */
-    public boolean checkIfCodeExists(long code, List<Long> codes) {
+    public boolean checkIfCodeExists(UUID code, List<UUID> codes) {
         return codes.contains(code);
     }
 
@@ -99,9 +104,10 @@ public class FileSystemUtils {
      * @param codes list of codes
      * @throws IOException if something goes wrong
      */
-    public void updateConfigFile(String path, List<Long> codes) throws IOException {
+    public void updateConfigFile(String path, List<UUID> codes) throws IOException {
+        List<String> codeStrings = codes.stream().map(UUID::toString).toList();
         JsonObject json = Json.createObjectBuilder()
-                .add("invitationCodes", Json.createArrayBuilder(codes))
+                .add("invitationCodes", Json.createArrayBuilder(codeStrings))
                 .build();
 
         FileWriter file = new FileWriter(path);
@@ -115,8 +121,8 @@ public class FileSystemUtils {
      * @param events list of events
      * @return list of invitation codes
      */
-    public List<Long> extractInvitationCodesFromEventList(List<Event> events) {
-        List<Long> codes = new ArrayList<>();
+    public List<UUID> extractInvitationCodesFromEventList(List<Event> events) {
+        List<UUID> codes = new ArrayList<>();
         for(Event event : events) {
             codes.add(event.getId());
         }

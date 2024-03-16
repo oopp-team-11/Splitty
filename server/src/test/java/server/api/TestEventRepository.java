@@ -2,10 +2,7 @@ package server.api;
 
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 import commons.Event;
@@ -31,7 +28,7 @@ public class TestEventRepository implements EventRepository {
         calledMethods.add(name);
     }
 
-    private Optional<Event> find(Long id) {
+    private Optional<Event> find(UUID id) {
         return events.stream().filter(event -> Objects.equals(event.getId(), id)).findFirst();
     }
 
@@ -56,7 +53,7 @@ public class TestEventRepository implements EventRepository {
     }
 
     @Override
-    public void deleteAllByIdInBatch(Iterable<Long> longs) {
+    public void deleteAllByIdInBatch(Iterable<UUID> ids) {
 
     }
 
@@ -66,19 +63,19 @@ public class TestEventRepository implements EventRepository {
     }
 
     @Override
-    public Event getOne(Long aLong) {
+    public Event getOne(UUID aUUID) {
         return null;
     }
 
     @Override
-    public Event getById(Long aLong) {
+    public Event getById(UUID aUUID) {
         return null;
     }
 
     @Override
-    public Event getReferenceById(Long aLong) {
+    public Event getReferenceById(UUID aUUID) {
         for (var event : events) {
-            if (Objects.equals(event.getId(), aLong)) {
+            if (Objects.equals(event.getId(), aUUID)) {
                 return event;
             }
         }
@@ -138,9 +135,9 @@ public class TestEventRepository implements EventRepository {
     }
 
     @Override
-    public Optional<Event> findById(Long aLong) {
+    public Optional<Event> findById(UUID aUUID) {
         for (var event : events) {
-            if (event.getId().equals(aLong)) {
+            if (event.getId().equals(aUUID)) {
                 return Optional.of(event);
             }
         }
@@ -148,9 +145,9 @@ public class TestEventRepository implements EventRepository {
     }
 
     @Override
-    public boolean existsById(Long aLong) {
+    public boolean existsById(UUID aUUID) {
         call("existsById");
-        return find(aLong).isPresent();
+        return find(aUUID).isPresent();
     }
 
     @Override
@@ -159,7 +156,7 @@ public class TestEventRepository implements EventRepository {
     }
 
     @Override
-    public List<Event> findAllById(Iterable<Long> longs) {
+    public List<Event> findAllById(Iterable<UUID> uuids) {
         return null;
     }
 
@@ -169,7 +166,7 @@ public class TestEventRepository implements EventRepository {
     }
 
     @Override
-    public void deleteById(Long aLong) {
+    public void deleteById(UUID aUUID) {
 
     }
 
@@ -179,7 +176,7 @@ public class TestEventRepository implements EventRepository {
     }
 
     @Override
-    public void deleteAllById(Iterable<? extends Long> longs) {
+    public void deleteAllById(Iterable<? extends UUID> uuids) {
 
     }
 
