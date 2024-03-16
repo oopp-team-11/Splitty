@@ -2,6 +2,7 @@ package server.api;
 
 
 import com.fasterxml.jackson.annotation.JsonView;
+import commons.Participant;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -101,6 +102,27 @@ public class EventController {
             event.ifPresent(updatedEvents::add);
         }
         return ResponseEntity.ok(updatedEvents);
+    }
+
+    /**
+     * Handles the GET: /{invitationCode}/participants endpoint
+     * @param invitationCode The invitationCode of an Event.
+     * @return Returns a 200 OK status code and the Participants list when the invitationCode exists in the DB.
+     * Returns a 400 Bad Request status code when no invitationCode was provided.
+     * Returns a 404 Not Found status code when no Event was found with the provided invitationCode.
+     */
+    @GetMapping (path = {"/{invitationCode}/participants"})
+    public ResponseEntity<List<Participant>> getParticipantsByInvitationCode(
+            @PathVariable("invitationCode") Long invitationCode /*todo: Change to UUID*/ )
+    {
+        if (invitationCode == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        if(!repo.existsById(invitationCode))
+            return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(repo.findById(invitationCode).get().getParticipants());
     }
 
 }
