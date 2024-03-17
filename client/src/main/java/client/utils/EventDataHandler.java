@@ -7,6 +7,9 @@ import commons.Participant;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * class for event data handling
+ */
 public class EventDataHandler {
 
     private Event event;
@@ -27,7 +30,7 @@ public class EventDataHandler {
 
     /***
      * std getter
-     * @return
+     * @return event
      */
     public Event getEvent() {
         return event;
@@ -35,7 +38,7 @@ public class EventDataHandler {
 
     /***
      * std getter
-     * @return
+     * @return List of participants
      */
     public List<Participant> getParticipants() {
         return participants;
@@ -43,7 +46,7 @@ public class EventDataHandler {
 
     /***
      * std getter
-     * @return
+     * @return List of Expenses
      */
     public List<Expense> getExpenses() {
         return expenses;
@@ -52,7 +55,7 @@ public class EventDataHandler {
     /***
      * helper method that handles the state of the participant
      * @param uuid
-     * @return
+     * @return Participant
      */
     private Participant getParticipantById(UUID uuid) {
         for (var participant : participants) {
@@ -120,7 +123,7 @@ public class EventDataHandler {
     /***
      * returns expense by id
      * @param uuid
-     * @return
+     * @return Expense
      */
     private Expense getExpenseById(UUID uuid) {
         for (var expense : expenses) {

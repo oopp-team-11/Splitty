@@ -26,6 +26,17 @@ public class Expense {
     @Column(nullable = false)
     private double amount;
 
+    @Transient
+    private UUID participantId;
+
+    /***
+     * std getter
+     * @return UUID of parent participant
+     */
+    public UUID getParticipantId() {
+        return participantId;
+    }
+
     /**
      * An empty Expense constructor for object mappers.
      */
