@@ -22,7 +22,7 @@ public class Event {
 
     @JsonView(Views.UpdateInvitationsCodes.class)
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @JsonView(Views.UpdateInvitationsCodes.class)
     @Column(nullable = false)
