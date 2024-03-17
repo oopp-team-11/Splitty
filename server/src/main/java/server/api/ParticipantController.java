@@ -1,6 +1,7 @@
 package server.api;
 
 import commons.Event;
+import commons.Expense;
 import commons.Participant;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +9,7 @@ import server.database.EventRepository;
 import server.database.ParticipantRepository;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -116,5 +118,25 @@ public class ParticipantController {
         //automatically removes participant from Event and its expenses due to CascadeType.REMOVE
         participantRepository.delete(participant);
         return ResponseEntity.ok(participant);
+    }
+
+    /**
+     * Handles the GET: /{participantId}/expenses endpoint
+     * @param participantId The id of a participant.
+     * @return Returns a 200 OK status code and the Participants list when the participant exists in the DB.
+     * Returns a 400 Bad Request status code when no participantId was provided.
+     * Returns a 404 Not Found status code when no Participant was found with the provided participantId.
+     */
+    @GetMapping (path = {"/{participantId}/expenses"})
+    public ResponseEntity<List<Expense>> getExpensesByParticipantId(@PathVariable("participantId") UUID participantId)
+    {
+        if (participantId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        if(!participantRepository.existsById(participantId))
+            return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(participantRepository.getReferenceById(participantId).getMadeExpenses());
     }
 }
