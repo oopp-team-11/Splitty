@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import server.database.EventRepository;
 import server.database.ParticipantRepository;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpStatus.*;
 
@@ -82,11 +84,7 @@ public class ParticipantControllerTest {
     }
     @Test
     public void checkParticipantThatDoesntExistGetExpenses() {
-        var eventId = eventRepository.save(new Event("hi")).getId();
-        var returnValue = participantController.createParticipant(eventId, "John",
-                "Doe", null, null, null);
-
-        var actualId = returnValue.getBody().getId() + 1;
+        var actualId = UUID.randomUUID();
         var actual = participantController.getExpensesByParticipantId(actualId);
 
         assertEquals(NOT_FOUND, actual.getStatusCode());

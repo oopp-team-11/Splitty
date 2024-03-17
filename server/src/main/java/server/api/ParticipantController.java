@@ -128,8 +128,8 @@ public class ParticipantController {
      * Returns a 404 Not Found status code when no Participant was found with the provided participantId.
      */
     @GetMapping (path = {"/{participantId}/expenses"})
-    public ResponseEntity<List<Expense>> getExpensesByParticipantId(@PathVariable("participantId") Long participantId)
-    { //todo: Change to UUID
+    public ResponseEntity<List<Expense>> getExpensesByParticipantId(@PathVariable("participantId") UUID participantId)
+    {
         if (participantId == null) {
             return ResponseEntity.badRequest().build();
         }

@@ -114,7 +114,7 @@ public class EventController {
      */
     @GetMapping (path = {"/{invitationCode}/participants"})
     public ResponseEntity<List<Participant>> getParticipantsByInvitationCode(
-            @PathVariable("invitationCode") Long invitationCode /*todo: Change to UUID*/ )
+            @PathVariable("invitationCode") UUID invitationCode)
     {
         if (invitationCode == null) {
             return ResponseEntity.badRequest().build();
@@ -123,7 +123,7 @@ public class EventController {
         if(!repo.existsById(invitationCode))
             return ResponseEntity.notFound().build();
 
-        return ResponseEntity.ok(repo.findById(invitationCode).get().getParticipants());
+        return ResponseEntity.ok(repo.getReferenceById(invitationCode).getParticipants());
     }
 
 }

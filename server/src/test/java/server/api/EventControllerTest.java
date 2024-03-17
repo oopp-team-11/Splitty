@@ -138,15 +138,21 @@ public class EventControllerTest {
     @Test
     public void checkEventThatDoesntExistGetParticipants() {
         Event toSave = new Event("Trap");
-        var invitationCode = toSave.getId();
+        try {
+            setId(toSave, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
         repo.save(toSave);
-        var actual = sut.getParticipantsByInvitationCode(invitationCode + 1);
+
+        var actual = sut.getParticipantsByInvitationCode(UUID.randomUUID());
         assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test
     public void checkEventThatExistsGetParticipants() {
         Event toSave = new Event("Trap");
+        try {
+            setId(toSave, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
         toSave.addParticipant(new Participant());
         var invitationCode = toSave.getId();
         repo.save(toSave);
@@ -157,6 +163,9 @@ public class EventControllerTest {
     @Test
     public void checkEventThatExistsGetParticipantsNotNull() {
         Event toSave = new Event("Trap");
+        try {
+            setId(toSave, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
         toSave.addParticipant(new Participant());
         var invitationCode = toSave.getId();
         repo.save(toSave);
@@ -167,6 +176,9 @@ public class EventControllerTest {
     @Test
     public void checkEventThatExistsGetParticipantsParticipant() {
         Event toSave = new Event("Trap");
+        try {
+            setId(toSave, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
         toSave.addParticipant(new Participant());
         var invitationCode = toSave.getId();
         repo.save(toSave);
