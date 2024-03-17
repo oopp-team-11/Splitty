@@ -35,6 +35,17 @@ public class Participant {
     @OneToMany(mappedBy = "paidBy", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     List<Expense> madeExpenses;
 
+    @Transient
+    private UUID eventId;
+
+    /***
+     * std getter
+     * @return UUID of parent event
+     */
+    public UUID getEventId() {
+        return eventId;
+    }
+
     /**
      * Method that adds an expense to the list of expenses
      * @param expense expense to be added
@@ -68,6 +79,7 @@ public class Participant {
         this.bic = bic;
         this.madeExpenses = new ArrayList<>();
         event.addParticipant(this);
+        this.eventId = event.getId();
     }
 
     /**
