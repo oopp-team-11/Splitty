@@ -25,7 +25,9 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import commons.Event;
 import org.json.*;
 
@@ -39,13 +41,14 @@ public class ServerUtils {
 
 
     /**
-     * Method that sends a join event get request to the server
+     * Method that sends a get request to the server to get the event
      * @param invitationCode invitation code of the event
      * @param server server url
+     * @return event object
      * @throws IOException if something goes wrong
      * @throws InterruptedException if something goes wrong with the request
      */
-    public void getEvent(UUID invitationCode, String server)
+    public Event getEvent(UUID invitationCode, String server)
         throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(server + "/events/" + invitationCode))
@@ -54,6 +57,14 @@ public class ServerUtils {
 
         HttpClient client = HttpClient.newHttpClient();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        Event event = mapper.readValue(response.body(), Event.class);
+
+        return event;
     }
 
     /**
@@ -65,16 +76,13 @@ public class ServerUtils {
      * @return an invitation code UUID
      */
     public UUID createEvent(String eventName, String server)
-        throws IOException, InterruptedException {
-        JsonObject json = Json.createObjectBuilder()
-            .add("eventName", eventName)
-                .build();
+            throws IOException, InterruptedException {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(server + "/events"))
-                .header("Content-Type", "application/json")
+                .header("Content-Type", "text/plain")
                 .header("Accept", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(json.toString()))
+                .POST(HttpRequest.BodyPublishers.ofString(eventName))
                 .build();
 
         HttpClient client = HttpClient.newHttpClient();
@@ -82,7 +90,13 @@ public class ServerUtils {
 
         String responseJson = response.body();
         JSONObject jsonObject = new JSONObject(responseJson);
-        UUID invitationCode = UUID.fromString((jsonObject.get("invitationCode").toString()));
+        System.out.println(jsonObject);
+        UUID invitationCode;
+        if (jsonObject.has("id")) {
+            invitationCode = UUID.fromString(jsonObject.getString("id"));
+        } else {
+            throw new JSONException("The key 'invitationCode' does not exist in the JSON object.");
+        }
 
         return invitationCode;
     }

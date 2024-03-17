@@ -63,7 +63,13 @@ class ServerUtilsTest {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
-                        .withBody("")));
+                        .withBody("""
+                                {
+                                    "id":"5bf9b70b-c20a-4959-883f-4fa0e54f90d2",
+                                    "title":"TEST",
+                                    "creationDate":"2024-03-17T14:47:58.026241",
+                                    "lastActivity":"2024-03-17T14:47:58.026241"
+                                }""")));
 
         serverUtils.getEvent(randomCode, "http://localhost:9090");
         assertEquals(200, wireMockServer.getAllServeEvents().get(0).getResponse().getStatus());
@@ -84,7 +90,7 @@ class ServerUtilsTest {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
-                        .withBody("{'invitationCode': " + responseCode + "}")));
+                        .withBody("{'id': " + responseCode + "}")));
 
         serverUtils.createEvent(randomName, "http://localhost:9091");
         JSONObject jsonObject = new JSONObject(wireMockServer.getAllServeEvents().get(0).getResponse().getBodyAsString());
@@ -98,7 +104,7 @@ class ServerUtilsTest {
 
         serverUtils.createEvent(randomName, "http://localhost:9091");
 
-        assertEquals(responseCode.toString(), jsonObject.getString("invitationCode"));
+        assertEquals(responseCode.toString(), jsonObject.getString("id"));
         assertEquals(200, wireMockServer.getAllServeEvents().get(1).getResponse().getStatus());
         wireMockServer.stop();
     }
