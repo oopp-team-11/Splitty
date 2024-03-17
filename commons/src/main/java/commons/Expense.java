@@ -54,6 +54,7 @@ public class Expense {
         this.title = title;
         this.amount = amount;
         paidBy.addExpense(this);
+        this.participantId = paidBy.getId();
     }
 
     /**

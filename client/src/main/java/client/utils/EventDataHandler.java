@@ -18,6 +18,12 @@ public class EventDataHandler {
     private List<Expense> expenses;
 
     /***
+     * default constructor
+     */
+    public EventDataHandler() {
+    }
+
+    /***
      * std constructor
      * @param event
      * @param participants
@@ -98,7 +104,7 @@ public class EventDataHandler {
                 participants.remove(getParticipantById(receivedParticipant.getId()));
                 List<Expense> toRemove = new ArrayList<>();
                 for (var expense : expenses) {
-                    if (receivedParticipant.getId().equals(expense.getId())) {
+                    if (receivedParticipant.getId().equals(expense.getParticipantId())) {
                         toRemove.add(expense);
                     }
                 }
