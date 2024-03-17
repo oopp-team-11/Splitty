@@ -4,6 +4,7 @@ import commons.Event;
 import commons.Expense;
 import commons.Participant;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -95,7 +96,15 @@ public class EventDataHandler {
             }
             case "delete" -> {
                 participants.remove(getParticipantById(receivedParticipant.getId()));
-                // TODO: remove expenses
+                List<Expense> toRemove = new ArrayList<>();
+                for (var expense : expenses) {
+                    if (receivedParticipant.getId().equals(expense.getId())) {
+                        toRemove.add(expense);
+                    }
+                }
+                for (var expense : toRemove) {
+                    expenses.remove(expense);
+                }
             }
             case null, default -> System.out.println("Method type invalid or not specified in the message headers");
         }
