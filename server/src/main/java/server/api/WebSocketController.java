@@ -3,9 +3,13 @@ package server.api;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.support.ErrorMessage;
 import org.springframework.stereotype.Controller;
 import server.database.EventRepository;
 import server.database.ParticipantRepository;
@@ -19,6 +23,9 @@ public class WebSocketController {
 
     private final EventRepository repo;
     private final ParticipantRepository participantRepository;
+
+    @Autowired
+    private SimpMessagingTemplate template;
 
     public WebSocketController(EventRepository repo, ParticipantRepository participantRepository) {
         this.repo = repo;
@@ -93,6 +100,31 @@ public class WebSocketController {
             }
             case null, default -> {return ResponseEntity.badRequest().build();}
         }
+    }
+
+    @MessageMapping("/event:create")
+    @SendTo("/topic/{invitationCode}")
+    public void createEvent(StompHeaders headers, Object payload)
+    {
+        if(!headers.getFirst("model").equals("Event")
+        || !headers.getFirst("method").equals("create"))
+            template.convertAndSend(new ErrorMessage(new IllegalArgumentException()));
+
+        if(payload.getClass() != Event.class) {
+            template.convertAndSend(new ErrorMessage(new IllegalArgumentException()));
+        }
+
+        Event receivedEvent = (Event) payload;
+        if (isNullOrEmpty(receivedEvent.getTitle())) {
+            template.convertAndSend(new ErrorMessage(new IllegalArgumentException()));
+        }
+
+        Event event = new Event(receivedEvent.getTitle());
+        event.setCreationDate(LocalDateTime.now());
+        event.setLastActivity(event.getCreationDate());
+        repo.save(event);
+
+        template.convertAndSend(event);
     }
 
     public ResponseEntity<Participant> receiveParticipant(String methodType, Participant receivedParticipant){
