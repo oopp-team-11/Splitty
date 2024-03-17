@@ -27,9 +27,11 @@ public class WebSocketController {
     @Autowired
     private SimpMessagingTemplate template;
 
-    public WebSocketController(EventRepository repo, ParticipantRepository participantRepository) {
+    public WebSocketController(SimpMessagingTemplate template,
+                               EventRepository repo, ParticipantRepository participantRepository) {
         this.repo = repo;
         this.participantRepository = participantRepository;
+        this.template = template;
     }
 
     /**
@@ -107,16 +109,20 @@ public class WebSocketController {
     public void createEvent(StompHeaders headers, Object payload)
     {
         if(!headers.getFirst("model").equals("Event")
-        || !headers.getFirst("method").equals("create"))
+        || !headers.getFirst("method").equals("create")) {
             template.convertAndSend(new ErrorMessage(new IllegalArgumentException()));
+            return;
+        }
 
         if(payload.getClass() != Event.class) {
             template.convertAndSend(new ErrorMessage(new IllegalArgumentException()));
+            return;
         }
 
         Event receivedEvent = (Event) payload;
         if (isNullOrEmpty(receivedEvent.getTitle())) {
             template.convertAndSend(new ErrorMessage(new IllegalArgumentException()));
+            return;
         }
 
         Event event = new Event(receivedEvent.getTitle());
