@@ -31,6 +31,7 @@ dependencies {
 	implementation 'javax.json:javax.json-api:1.1.4'
 	implementation 'org.glassfish:javax.json:1.1.4'
 	implementation 'org.json:json:20231013'
+	implementation 'com.google.code.gson:gson:2.10.1'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '3.2.2'
 	testImplementation group: 'org.testfx', name: 'testfx-junit5', version: '4.0.18'
 	testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.13.2'
