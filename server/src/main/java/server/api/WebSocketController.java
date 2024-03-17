@@ -18,6 +18,9 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+/**
+ * Controller for websocket endpoints.
+ */
 @Controller
 public class WebSocketController {
 
@@ -27,6 +30,12 @@ public class WebSocketController {
     @Autowired
     private SimpMessagingTemplate template;
 
+    /**
+     * Constructor for WebSocketController
+     * @param template SimpMessagingTemplate
+     * @param repo Event repository
+     * @param participantRepository Participant repository
+     */
     public WebSocketController(SimpMessagingTemplate template,
                                EventRepository repo, ParticipantRepository participantRepository) {
         this.repo = repo;
@@ -70,6 +79,13 @@ public class WebSocketController {
         }
     }
 
+    //TODO: This method should be split into three and fixed
+    /**
+     * Handles websocket endpoints for event
+     * @param methodType type of endpoint
+     * @param receivedEvent received event that we want to interact with
+     * @return server response
+     */
     public ResponseEntity<Event> receiveEvent(String methodType, Event receivedEvent){
         switch(methodType){
             case "create" -> {
@@ -104,12 +120,17 @@ public class WebSocketController {
         }
     }
 
+    /**
+     * Handles create websocket endpoint for event
+     * @param headers Stomp headers
+     * @param payload content of a websocket message
+     */
     @MessageMapping("/event:create")
     @SendTo("/topic/{invitationCode}")
     public void createEvent(StompHeaders headers, Object payload)
     {
         if(!headers.getFirst("model").equals("Event")
-        || !headers.getFirst("method").equals("create")) {
+            || !headers.getFirst("method").equals("create")) {
             template.convertAndSend(new ErrorMessage(new IllegalArgumentException()));
             return;
         }
@@ -133,6 +154,13 @@ public class WebSocketController {
         template.convertAndSend(event);
     }
 
+    //TODO: This method should be split into three and fixed
+    /**
+     * Handles websocket endpoints for participant
+     * @param methodType type of endpoint
+     * @param receivedParticipant received participant that we want to interact with
+     * @return server response
+     */
     public ResponseEntity<Participant> receiveParticipant(String methodType, Participant receivedParticipant){
         switch(methodType){
             case "create" -> {
@@ -188,6 +216,13 @@ public class WebSocketController {
     }
 
     //TODO: Expense controller / Expense repository without it we cannot do anything
+    //TODO: This method should be split into three and fixed
+    /**
+     * Handles websocket endpoints for expense.
+     * @param methodType type of endpoint
+     * @param receivedExpense received expense that we want to interact with
+     * @return server response
+     */
     public ResponseEntity<Expense> receiveExpense(String methodType, Expense receivedExpense){
         switch(methodType){
             case "create" -> {
