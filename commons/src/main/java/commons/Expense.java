@@ -6,6 +6,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.UUID;
+
 /**
  * Expense persistent commons' entity.
  * An item or activity that has been paid by one participant, for at least one other participant.
@@ -13,8 +15,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @Entity
 public class Expense {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PARTICIPANT_ID")
@@ -47,7 +49,7 @@ public class Expense {
      * Getter for the id of this Expense.
      * @return Returns a UUID id
      */
-    public long getId() {
+    public UUID getId() {
         return id;
     }
 

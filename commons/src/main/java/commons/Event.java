@@ -1,5 +1,6 @@
 package commons;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -10,6 +11,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Event persistent commons' entity.
@@ -20,8 +22,8 @@ public class Event {
 
     @JsonView(Views.UpdateInvitationsCodes.class)
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     @JsonView(Views.UpdateInvitationsCodes.class)
     @Column(nullable = false)
     private String title;
@@ -32,7 +34,8 @@ public class Event {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime lastActivity;
 
-    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Participant> participants;
 
     /**
@@ -55,17 +58,8 @@ public class Event {
      * Getter for the invitationCode (i.e. id field).
      * @return Returns an invitationCode as a UUID object.
      */
-    public Long getId() {
+    public UUID getId() {
         return id;
-    }
-
-    /**
-     * Setter for the invitationCode (i.e. id field).
-     * NOTE: FOR TESTING PURPOSES ONLY
-     * @param id the invitationCode that should be assigned to this object
-     */
-    public void setId(Long id) {
-        this.id = id;
     }
 
     /**
