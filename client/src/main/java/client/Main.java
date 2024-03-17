@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import client.scenes.CreateParticipantCtrl;
 import client.scenes.EditParticipantCtrl;
 import client.scenes.StartScreenCtrl;
+import client.scenes.EventOverviewCtrl;
 import com.google.inject.Injector;
 
 import client.scenes.MainCtrl;
@@ -61,8 +62,9 @@ public class Main extends Application {
         var startScreen = FXML.load(StartScreenCtrl.class, "client", "scenes", "StartScreen.fxml");
         var createParticipant = FXML.load(CreateParticipantCtrl.class, "client", "scenes", "CreateParticipant.fxml");
         var editParticipant = FXML.load(EditParticipantCtrl.class, "client", "scenes", "EditParticipant.fxml");
+        var eventOverview = FXML.load(EventOverviewCtrl.class, "client", "scenes", "EventOverview.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
-        mainCtrl.initialize(primaryStage, startScreen, createParticipant, editParticipant);
+        mainCtrl.initialize(primaryStage, startScreen, createParticipant, editParticipant, eventOverview);
     }
 }
