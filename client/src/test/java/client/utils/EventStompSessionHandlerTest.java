@@ -10,21 +10,23 @@ import org.mockito.Mockito;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 class EventStompSessionHandlerTest {
 
-    private Event event;
+    private UUID invitationCode;
     private EventStompSessionHandler handler;
     private StompHeaders headers;
     private StompSession session;
 
     @BeforeEach
     void setUp() {
-        event = new Event("mockedEvent");
-        handler = new EventStompSessionHandler(event);
+        invitationCode = UUID.randomUUID();
+        handler = new EventStompSessionHandler(invitationCode);
         headers = new StompHeaders();
         session = Mockito.mock(StompSession.class);
     }
@@ -33,13 +35,13 @@ class EventStompSessionHandlerTest {
     void afterConnected() {
         handler.afterConnected(session, headers);
         verify(session, times(1)).subscribe(
-                Mockito.eq("/topic/" + event.getId().toString()),
+                Mockito.eq("/topic/" + invitationCode),
                 Mockito.eq(handler)
         );
     }
 
     @Test
-    void sendParticipant() {
+    void sendEvent() {
         handler.afterConnected(session, headers);
         Event event1 = new Event("updatedTitle");
 
@@ -57,9 +59,9 @@ class EventStompSessionHandlerTest {
     }
 
     @Test
-    void sendEvent() {
+    void sendParticipant() {
         handler.afterConnected(session, headers);
-        Participant participant = new Participant(event, "John", "Doe",
+        Participant participant = new Participant(new Event("dummyEvent"), "John", "Doe",
                 null, null, null);
 
         ArgumentCaptor<StompHeaders> headersCaptor = ArgumentCaptor.forClass(StompHeaders.class);
@@ -78,7 +80,7 @@ class EventStompSessionHandlerTest {
     @Test
     void sendExpense() {
         handler.afterConnected(session, headers);
-        Participant participant = new Participant(event, "John", "Doe",
+        Participant participant = new Participant(new Event("dummyEvent"), "John", "Doe",
                                             null, null, null);
         Expense expense = new Expense(participant, "sampleExpense", 4.20);
 
