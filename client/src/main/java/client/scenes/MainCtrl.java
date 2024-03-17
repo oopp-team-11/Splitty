@@ -40,17 +40,22 @@ public class MainCtrl {
     private EditParticipantCtrl editParticipantCtrl;
     private Scene editParticipantScene;
 
+    private EventOverviewCtrl eventOverviewCtrl;
+    private Scene eventOverviewScene;
+
     /**
      * Initializes javafx scenes and their controllers, sets start screen as the currently shown screen
      * @param primaryStage stage
      * @param startScreen a pair of start screen controller and javafx start screen scene
      * @param createParticipant a pair of create participant controller and javafx create participant scene
      * @param editParticipant a pair of edit participant controller and javafx edit participant scene
+     * @param eventOverview a pair of event overview controller and javafx event overview scene
      */
 
     public void initialize(Stage primaryStage, Pair<StartScreenCtrl, Parent> startScreen,
                            Pair<CreateParticipantCtrl, Parent> createParticipant,
-                           Pair<EditParticipantCtrl, Parent> editParticipant) {
+                           Pair<EditParticipantCtrl, Parent> editParticipant,
+                           Pair<EventOverviewCtrl, Parent> eventOverview) {
         this.primaryStage = primaryStage;
 
         this.startScreenCtrl = startScreen.getKey();
@@ -62,7 +67,11 @@ public class MainCtrl {
         this.editParticipantCtrl = editParticipant.getKey();
         this.editParticipantScene = new Scene(editParticipant.getValue());
 
-        showStartScreen();
+        this.eventOverviewCtrl = eventOverview.getKey();
+        this.eventOverviewScene = new Scene(eventOverview.getValue());
+
+
+        //showEventOverview(event);
 
         // showStartScreen() should be used in the final version.
         // Comment out showStartScreen() above and uncomment a scene below to
@@ -105,6 +114,17 @@ public class MainCtrl {
         primaryStage.setScene(editParticipantScene);
         primaryStage.setResizable(false);
         editParticipantCtrl.setParticipant(participant);
+    }
+
+    /**
+     * Show event overview
+     * @param event Event, which will be shown
+     */
+    public void showEventOverview(Event event) {
+        primaryStage.setTitle("Event overview");
+        primaryStage.setScene(eventOverviewScene);
+        primaryStage.setResizable(false);
+        eventOverviewCtrl.setEvent(event);
     }
 
 }
