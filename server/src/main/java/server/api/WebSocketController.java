@@ -9,9 +9,7 @@ import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.support.ErrorMessage;
 import org.springframework.stereotype.Controller;
@@ -125,11 +123,12 @@ public class WebSocketController {
         }
     }
 
-    //todo: Check if the method works with Principal*/
+    //todo: Check if the method works with Principal
     //todo: if not, then change it to SimpMessageHeaderAccessor
     //todo: and implement all the necessary interfaces
     /**
      * Handles create websocket endpoint for event
+     * @param principal connection data about user
      * @param headers Stomp headers
      * @param payload content of a websocket message
      */
@@ -160,6 +159,51 @@ public class WebSocketController {
         Event event = new Event(receivedEvent.getTitle());
         event.setCreationDate(LocalDateTime.now());
         event.setLastActivity(event.getCreationDate());
+        repo.save(event);
+
+        template.convertAndSend(event);
+    }
+
+    /**
+     * Handles update websocket endpoint for event
+     * @param principal connection data about user
+     * @param headers Stomp headers
+     * @param payload content of a websocket message
+     */
+    @MessageMapping("/event:update")
+    @SendTo("/topic/{invitationCode}")
+    public void updateEvent(Principal principal, @Headers StompHeaders headers, @Payload Object payload)
+    {
+        if(!headers.getFirst("model").equals("Event")
+                || !headers.getFirst("method").equals("update")) {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    new ErrorMessage(new IllegalArgumentException()));
+            return;
+        }
+
+        if(payload.getClass() != Event.class) {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    new ErrorMessage(new IllegalArgumentException()));
+            return;
+        }
+
+        Event receivedEvent = (Event) payload;
+        if (isNullOrEmpty(receivedEvent.getTitle())) {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    new ErrorMessage(new IllegalArgumentException()));
+            return;
+        }
+        if(!repo.existsById(receivedEvent.getId()))
+        {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    new ErrorMessage(new IllegalArgumentException()));
+            return;
+        }
+
+        Event event = repo.getReferenceById(receivedEvent.getId());
+        event.setTitle(receivedEvent.getTitle());
+        event.setCreationDate(receivedEvent.getCreationDate());
+        event.setLastActivity(receivedEvent.getLastActivity());
         repo.save(event);
 
         template.convertAndSend(event);
