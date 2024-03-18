@@ -45,15 +45,14 @@ class EventStompSessionHandlerTest {
         handler.afterConnected(session, headers);
         Event event1 = new Event("updatedTitle");
 
-        ArgumentCaptor<StompHeaders> headersCaptor = ArgumentCaptor.forClass(StompHeaders.class);
+        ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Object> payloadCaptor = ArgumentCaptor.forClass(Object.class);
 
         handler.sendEvent(event1, "update");
-        verify(session, times(1)).send(headersCaptor.capture(), payloadCaptor.capture());
+        verify(session, times(1)).send(destinationCaptor.capture(), payloadCaptor.capture());
 
-        StompHeaders capturedHeaders = headersCaptor.getValue();
-        assertEquals("Event", capturedHeaders.getFirst("model"));
-        assertEquals("update", capturedHeaders.getFirst("method"));
+        String capturedDestination = destinationCaptor.getValue();
+        assertEquals("/app/event:update", capturedDestination);
 
         assertEquals(event1, payloadCaptor.getValue());
     }
@@ -64,15 +63,14 @@ class EventStompSessionHandlerTest {
         Participant participant = new Participant(new Event("dummyEvent"), "John", "Doe",
                 null, null, null);
 
-        ArgumentCaptor<StompHeaders> headersCaptor = ArgumentCaptor.forClass(StompHeaders.class);
+        ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Object> payloadCaptor = ArgumentCaptor.forClass(Object.class);
 
         handler.sendParticipant(participant, "delete");
-        verify(session, times(1)).send(headersCaptor.capture(), payloadCaptor.capture());
+        verify(session, times(1)).send(destinationCaptor.capture(), payloadCaptor.capture());
 
-        StompHeaders capturedHeaders = headersCaptor.getValue();
-        assertEquals("Participant", capturedHeaders.getFirst("model"));
-        assertEquals("delete", capturedHeaders.getFirst("method"));
+        String capturedDestination = destinationCaptor.getValue();
+        assertEquals("/app/participant:delete", capturedDestination);
 
         assertEquals(participant, payloadCaptor.getValue());
     }
@@ -84,15 +82,14 @@ class EventStompSessionHandlerTest {
                                             null, null, null);
         Expense expense = new Expense(participant, "sampleExpense", 4.20);
 
-        ArgumentCaptor<StompHeaders> headersCaptor = ArgumentCaptor.forClass(StompHeaders.class);
+        ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Object> payloadCaptor = ArgumentCaptor.forClass(Object.class);
 
         handler.sendExpense(expense, "create");
-        verify(session, times(1)).send(headersCaptor.capture(), payloadCaptor.capture());
+        verify(session, times(1)).send(destinationCaptor.capture(), payloadCaptor.capture());
 
-        StompHeaders capturedHeaders = headersCaptor.getValue();
-        assertEquals("Expense", capturedHeaders.getFirst("model"));
-        assertEquals("create", capturedHeaders.getFirst("method"));
+        String capturedDestination = destinationCaptor.getValue();
+        assertEquals("/app/expense:create", capturedDestination);
 
         assertEquals(expense, payloadCaptor.getValue());
     }

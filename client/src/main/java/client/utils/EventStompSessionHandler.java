@@ -15,6 +15,7 @@ import java.util.UUID;
  */
 public class EventStompSessionHandler extends StompSessionHandlerAdapter {
     private final UUID invitationCode;
+    private EventDataHandler dataHandler;
     private StompSession session;
 
     /**
@@ -36,6 +37,9 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
         this.session = session;
         session.subscribe("/topic/" + invitationCode, this);
+        session.subscribe("/user/queue/reply", this);
+        //TODO:Initialise eventDataHandler
+        dataHandler = new EventDataHandler();
     }
 
     /**
@@ -49,9 +53,9 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
         String modelType = headers.getFirst("model");
         String methodType = headers.getFirst("method");
         switch (modelType) {
-            case "Event" -> receiveEvent((Event) payload, methodType);
-            case "Participant" -> receiveParticipant((Participant) payload, methodType);
-            case "Expense" -> receiveExpense((Expense) payload, methodType);
+            case "Event" -> dataHandler.receiveEvent((Event) payload, methodType);
+            case "Participant" -> dataHandler.receiveParticipant((Participant) payload, methodType);
+            case "Expense" -> dataHandler.receiveExpense((Expense) payload, methodType);
             case null, default -> System.out.println("Model type invalid or not specified in the message headers");
         }
     }
@@ -63,32 +67,7 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
      * @param methodType  supports {"create", "update", "delete"}
      */
     public void sendParticipant(Participant participant, String methodType) {
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Participant");
-        headers.add("method", methodType);
-        headers.setDestination("/app/" + invitationCode);
-        session.send(headers, participant);
-    }
-
-    /**
-     * Handles received updates on a Participant object
-     *
-     * @param receivedParticipant received Participant object
-     * @param methodType type of change
-     */
-    public void receiveParticipant(Participant receivedParticipant, String methodType) {
-        switch (methodType) {
-            case "create" -> {
-                ///TODO: setEvent for participant, add participant to event
-            }
-            case "update" -> {
-                //TODO: getParticipantById() and update
-            }
-            case "delete" -> {
-                //TODO: getParticipantById() and remove. Also remove their expenses
-            }
-            case null, default -> System.out.println("Method type invalid or not specified in the message headers");
-        }
+        session.send("/app/participant:" + methodType, participant);
     }
 
     /**
@@ -98,29 +77,7 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
      * @param methodType supports {"create", "update", "delete"}
      */
     public void sendEvent(Event event, String methodType) {
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Event");
-        headers.add("method", methodType);
-        headers.setDestination("/app/" + invitationCode);
-        session.send(headers, event);
-    }
-
-    /**
-     * Handles received updates on the Event object
-     *
-     * @param receivedEvent received Event object
-     * @param methodType type of change, supports {"update", "delete"}
-     */
-    public void receiveEvent(Event receivedEvent, String methodType) {
-        switch (methodType) {
-            case "update" -> {
-                //TODO: handle title update
-            }
-            case "delete" -> {
-                //TODO: Discuss handling of event deletion.
-            }
-            case null, default -> System.out.println("Method type invalid or not specified in the message headers");
-        }
+        session.send("/app/event:" + methodType, event);
     }
 
     /**
@@ -130,31 +87,6 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
      * @param methodType supports {"create", "update", "delete"}
      */
     public void sendExpense(Expense expense, String methodType) {
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Expense");
-        headers.add("method", methodType);
-        headers.setDestination("/app/" + invitationCode);
-        session.send(headers, expense);
-    }
-
-    /**
-     * Handles received updates on an Expense object
-     *
-     * @param receivedExpense received Expense object
-     * @param methodType type of change, supports {"create", "update", "delete"}
-     */
-    public void receiveExpense(Expense receivedExpense, String methodType) {
-        switch (methodType) {
-            case "create" -> {
-                ///TODO: getParticipantById(), setPaidBy, add expense to participant
-            }
-            case "update" -> {
-                //TODO: getParticipantById(), getExpenseById(), update expense
-            }
-            case "delete" -> {
-                //TODO: getParticipantById(), removeExpenseById()
-            }
-            case null, default -> System.out.println("Method type invalid or not specified in the message headers");
-        }
+        session.send("/app/expense:" + methodType, expense);
     }
 }
