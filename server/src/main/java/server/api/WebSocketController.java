@@ -5,9 +5,13 @@ import commons.Expense;
 import commons.Participant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.support.ErrorMessage;
 import org.springframework.stereotype.Controller;
@@ -15,6 +19,7 @@ import server.database.EventRepository;
 import server.database.ParticipantRepository;
 
 import java.net.URI;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -120,6 +125,9 @@ public class WebSocketController {
         }
     }
 
+    //todo: Check if the method works with Principal*/
+    //todo: if not, then change it to SimpMessageHeaderAccessor
+    //todo: and implement all the necessary interfaces
     /**
      * Handles create websocket endpoint for event
      * @param headers Stomp headers
@@ -127,22 +135,25 @@ public class WebSocketController {
      */
     @MessageMapping("/event:create")
     @SendTo("/topic/{invitationCode}")
-    public void createEvent(StompHeaders headers, Object payload)
+    public void createEvent(Principal principal, @Headers StompHeaders headers, @Payload Object payload)
     {
         if(!headers.getFirst("model").equals("Event")
             || !headers.getFirst("method").equals("create")) {
-            template.convertAndSend(new ErrorMessage(new IllegalArgumentException()));
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    new ErrorMessage(new IllegalArgumentException()));
             return;
         }
 
         if(payload.getClass() != Event.class) {
-            template.convertAndSend(new ErrorMessage(new IllegalArgumentException()));
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    new ErrorMessage(new IllegalArgumentException()));
             return;
         }
 
         Event receivedEvent = (Event) payload;
         if (isNullOrEmpty(receivedEvent.getTitle())) {
-            template.convertAndSend(new ErrorMessage(new IllegalArgumentException()));
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    new ErrorMessage(new IllegalArgumentException()));
             return;
         }
 

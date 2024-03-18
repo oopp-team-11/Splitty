@@ -8,8 +8,11 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.support.ErrorMessage;
 
+import java.security.Principal;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -18,6 +21,7 @@ public class WebSocketControllerTest {
     private SimpMessagingTemplate messagingTemplate;
     private TestEventRepository eventRepo;
     private TestParticipantRepository participantRepo;
+    private Principal principal;
 
     @BeforeEach
     void setUp() {
@@ -25,6 +29,7 @@ public class WebSocketControllerTest {
         eventRepo = new TestEventRepository();
         participantRepo = new TestParticipantRepository();
         webSocketController = new WebSocketController(messagingTemplate, eventRepo, participantRepo);
+        principal = mock(Principal.class);
     }
 
     @Test
@@ -35,7 +40,7 @@ public class WebSocketControllerTest {
         headers.add("model", "Event");
         headers.add("method", "create");
 
-        webSocketController.createEvent(headers, event);
+        webSocketController.createEvent(principal, headers, event);
 
         assertTrue(eventRepo.existsById(event.getId()));
 
@@ -55,10 +60,11 @@ public class WebSocketControllerTest {
         headers.add("model", "Event");
         headers.add("method", "create");
 
-        webSocketController.createEvent(headers, event);
+        webSocketController.createEvent(principal, headers, event);
 
         assertFalse(eventRepo.existsById(event.getId()));
-        verify(messagingTemplate).convertAndSend(any(ErrorMessage.class));
+        verify(messagingTemplate).convertAndSendToUser(
+                eq(principal.getName()),eq("/queue/reply"), any(ErrorMessage.class));
     }
 
     @Test
@@ -69,10 +75,11 @@ public class WebSocketControllerTest {
         headers.add("model", "Event");
         headers.add("method", "create");
 
-        webSocketController.createEvent(headers, participant);
+        webSocketController.createEvent(principal, headers, participant);
 
         assertFalse(eventRepo.existsById(participant.getId()));
-        verify(messagingTemplate).convertAndSend(any(ErrorMessage.class));
+        verify(messagingTemplate).convertAndSendToUser(
+                eq(principal.getName()) ,eq("/queue/reply"), any(ErrorMessage.class));
     }
 
     @Test
@@ -82,9 +89,10 @@ public class WebSocketControllerTest {
         StompHeaders headers = new StompHeaders();
         headers.add("model", "Participant");
         headers.add("method", "create");
-        webSocketController.createEvent(headers, event);
+        webSocketController.createEvent(principal, headers, event);
         assertFalse(eventRepo.existsById(event.getId()));
-        verify(messagingTemplate).convertAndSend(any(ErrorMessage.class));
+        verify(messagingTemplate).convertAndSendToUser(
+                eq(principal.getName()) ,eq("/queue/reply"), any(ErrorMessage.class));
     }
 
     @Test
@@ -94,8 +102,9 @@ public class WebSocketControllerTest {
         StompHeaders headers = new StompHeaders();
         headers.add("model", "Event");
         headers.add("method", "update");
-        webSocketController.createEvent(headers, event);
+        webSocketController.createEvent(principal, headers, event);
         assertFalse(eventRepo.existsById(event.getId()));
-        verify(messagingTemplate).convertAndSend(any(ErrorMessage.class));
+        verify(messagingTemplate).convertAndSendToUser(
+                eq(principal.getName()) ,eq("/queue/reply"), any(ErrorMessage.class));
     }
 }
