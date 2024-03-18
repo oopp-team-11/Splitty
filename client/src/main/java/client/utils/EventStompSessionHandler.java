@@ -3,6 +3,7 @@ package client.utils;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
+import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
@@ -58,6 +59,13 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
             case "Expense" -> dataHandler.receiveExpense((Expense) payload, methodType);
             case null, default -> System.out.println("Model type invalid or not specified in the message headers");
         }
+    }
+
+    //TODO: Expand this exceptionHandler to support server-side error messages
+    @Override
+    public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload,
+                                Throwable exception) {
+        throw new RuntimeException("Failure in WebSocket handling", exception);
     }
 
     /**
