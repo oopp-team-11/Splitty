@@ -209,6 +209,56 @@ public class WebSocketController {
         template.convertAndSend(event);
     }
 
+    /**
+     * Handles delete websocket endpoint for event
+     * @param principal connection data about user
+     * @param headers Stomp headers
+     * @param payload content of a websocket message
+     */
+    @MessageMapping("/event:update")
+    @SendTo("/topic/{invitationCode}")
+    public void deleteEvent(Principal principal, @Headers StompHeaders headers, @Payload Object payload)
+    {
+        if(!headers.getFirst("model").equals("Event")
+                || !headers.getFirst("method").equals("delete")) {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    new ErrorMessage(new IllegalArgumentException()));
+            return;
+        }
+
+        /*TODO: Implement admin passcode verification*/
+//        if()
+//        {
+//            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+//                    new ErrorMessage(new IllegalAccessException()));
+//            return;
+//        }
+
+        if(payload.getClass() != Event.class) {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    new ErrorMessage(new IllegalArgumentException()));
+            return;
+        }
+
+        Event receivedEvent = (Event) payload;
+        if (isNullOrEmpty(receivedEvent.getTitle())) {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    new ErrorMessage(new IllegalArgumentException()));
+            return;
+        }
+        if(!repo.existsById(receivedEvent.getId()))
+        {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    new ErrorMessage(new IllegalArgumentException()));
+            return;
+        }
+
+        Event event = repo.getReferenceById(receivedEvent.getId());
+        repo.delete(event);
+
+        template.convertAndSend(event);
+    }
+
     //TODO: This method should be split into three and fixed
     /**
      * Handles websocket endpoints for participant

@@ -172,7 +172,7 @@ public class TestEventRepository implements EventRepository {
 
     @Override
     public void delete(Event entity) {
-
+        events.remove(entity);
     }
 
     @Override

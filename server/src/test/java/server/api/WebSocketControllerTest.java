@@ -170,7 +170,7 @@ public class WebSocketControllerTest {
         headers.add("model", "Event");
         headers.add("method", "update");
 
-        webSocketController.createEvent(principal, headers, participant);
+        webSocketController.updateEvent(principal, headers, participant);
 
         assertFalse(eventRepo.existsById(participant.getId()));
         verify(messagingTemplate).convertAndSendToUser(
@@ -233,4 +233,118 @@ public class WebSocketControllerTest {
         verify(messagingTemplate).convertAndSendToUser(
                 eq(principal.getName()),eq("/queue/reply"), any(ErrorMessage.class));
     }
+
+    //TODO: Incorporate admin password into tests for deleteEvent()
+    @Test
+    void checkDeleteEvent() {
+        Event event = new Event("event");
+
+        StompHeaders headers = new StompHeaders();
+        headers.add("model", "Event");
+        headers.add("method", "create");
+
+        webSocketController.createEvent(principal, headers, event);
+
+        assertTrue(eventRepo.existsById(event.getId()));
+
+        headers = new StompHeaders();
+        headers.add("model", "Event");
+        headers.add("method", "delete");
+
+        webSocketController.deleteEvent(principal, headers, event);
+
+        assertFalse(eventRepo.existsById(event.getId()));
+
+        verify(messagingTemplate, times(2)).convertAndSend(any(Event.class));
+    }
+
+    @Test
+    void checkDeleteEventNull() {
+        Event event = new Event("event");
+
+        StompHeaders headers = new StompHeaders();
+        headers.add("model", "Event");
+        headers.add("method", "create");
+
+        webSocketController.createEvent(principal, headers, event);
+
+        event.setTitle(null);
+
+        headers = new StompHeaders();
+        headers.add("model", "Event");
+        headers.add("method", "delete");
+
+        webSocketController.deleteEvent(principal, headers, event);
+
+        verify(messagingTemplate).convertAndSendToUser(
+                eq(principal.getName()),eq("/queue/reply"), any(ErrorMessage.class));
+    }
+
+    @Test
+    void checkDeleteEventWrongClass() {
+        Participant participant = new Participant();
+
+        StompHeaders headers = new StompHeaders();
+        headers.add("model", "Event");
+        headers.add("method", "delete");
+
+        webSocketController.deleteEvent(principal, headers, participant);
+
+        verify(messagingTemplate).convertAndSendToUser(
+                eq(principal.getName()) ,eq("/queue/reply"), any(ErrorMessage.class));
+    }
+
+    @Test
+    void checkDeleteEventWrongHeaders1() {
+        Event event = new Event();
+
+        StompHeaders headers = new StompHeaders();
+        headers.add("model", "Participant");
+        headers.add("method", "delete");
+        webSocketController.deleteEvent(principal, headers, event);
+        verify(messagingTemplate).convertAndSendToUser(
+                eq(principal.getName()) ,eq("/queue/reply"), any(ErrorMessage.class));
+    }
+
+    @Test
+    void checkDeleteEventWrongHeaders2() {
+        Event event = new Event();
+
+        StompHeaders headers = new StompHeaders();
+        headers.add("model", "Event");
+        headers.add("method", "create");
+        webSocketController.deleteEvent(principal, headers, event);
+        verify(messagingTemplate).convertAndSendToUser(
+                eq(principal.getName()) ,eq("/queue/reply"), any(ErrorMessage.class));
+    }
+
+    @Test
+    void checkDeleteEventNotFound() {
+        Event startEvent = new Event("event");
+
+        StompHeaders headers = new StompHeaders();
+        headers.add("model", "Event");
+        headers.add("method", "create");
+
+        webSocketController.createEvent(principal, headers, startEvent);
+
+        Event event = new Event("foo");
+
+        try {
+            setId(event, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
+
+        headers = new StompHeaders();
+        headers.add("model", "Event");
+        headers.add("method", "delete");
+
+        webSocketController.deleteEvent(principal, headers, event);
+
+        assertFalse(eventRepo.existsById(event.getId()));
+        assertTrue(eventRepo.existsById(startEvent.getId()));
+        verify(messagingTemplate).convertAndSendToUser(
+                eq(principal.getName()),eq("/queue/reply"), any(ErrorMessage.class));
+    }
+
+    //TODO: add a test for unauthorized access
 }
