@@ -215,7 +215,7 @@ public class WebSocketController {
      * @param headers Stomp headers
      * @param payload content of a websocket message
      */
-    @MessageMapping("/event:update")
+    @MessageMapping("/event:delete")
     @SendTo("/topic/{invitationCode}")
     public void deleteEvent(Principal principal, @Headers StompHeaders headers, @Payload Object payload)
     {
