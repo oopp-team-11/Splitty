@@ -17,6 +17,10 @@ public class StatusEntity<T> {
         this.unsolvable = unsolvable;
     }
 
+    public T getBody() {
+        return body;
+    }
+
     public StatusCode getStatusCode() {
         return statusCode;
     }
@@ -25,27 +29,27 @@ public class StatusEntity<T> {
         return unsolvable;
     }
 
-    public StatusEntity<T> ok(T body)
+    public static <T> StatusEntity<T> ok(T body)
     {
         return new StatusEntity<T>(body, OK, false);
     }
 
-    public StatusEntity<T> badRequest(T body, boolean unsolvable)
+    public static <T> StatusEntity<T> badRequest(T body, boolean unsolvable)
     {
         return new StatusEntity<T>(body, BAD_REQUEST, unsolvable);
     }
 
-    public StatusEntity<T> badRequest(T body)
+    public static <T> StatusEntity<T> badRequest(T body)
     {
         return new StatusEntity<T>(body, BAD_REQUEST, false);
     }
 
-    public StatusEntity<T> notFound(T body, boolean unsolvable)
+    public static <T> StatusEntity<T> notFound(T body, boolean unsolvable)
     {
         return new StatusEntity<T>(body, NOT_FOUND, unsolvable);
     }
 
-    public StatusEntity<T> notFound(T body)
+    public static <T> StatusEntity<T> notFound(T body)
     {
         return new StatusEntity<T>(body, NOT_FOUND, false);
     }
