@@ -7,9 +7,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import static commons.StatusCode.*;
 
 public class StatusEntity<T> {
-    private T body;
-    private StatusCode statusCode;
-    private boolean unsolvable;
+    private final T body;
+    private final StatusCode statusCode;
+    private final boolean unsolvable;
 
     private StatusEntity(T body, StatusCode statusCode, boolean unsolvable) {
         this.body = body;
