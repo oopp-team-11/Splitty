@@ -84,7 +84,7 @@ public class FileSystemUtils {
      * @param path path of the file
      * @return true if the file exists, false otherwise
      */
-    public boolean checkIfFileExists(String path) {
+    public static boolean checkIfFileExists(String path) {
         return new File(path).exists();
     }
 

@@ -1,6 +1,7 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
+import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
 import commons.Participant;
 import javafx.fxml.FXML;
@@ -31,6 +32,7 @@ public class EditParticipantCtrl {
     private Participant participant;
     private final MainCtrl mainCtrl;
     private final ServerUtils serverUtils;
+    private TranslationSupplier translationSupplier;
 
     /**
      * Constructor for the EditParticipant.fxml scene controller.
@@ -75,5 +77,9 @@ public class EditParticipantCtrl {
 
         mainCtrl.showStartScreen(); // todo: Change that to event screen when there is one
 
+    }
+
+    public void setTranslationSupplier(TranslationSupplier tl) {
+        this.translationSupplier = tl;
     }
 }

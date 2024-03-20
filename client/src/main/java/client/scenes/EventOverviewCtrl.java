@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
+import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
 import commons.Event;
 import commons.Participant;
@@ -30,6 +31,7 @@ public class EventOverviewCtrl {
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
     private Event event;
+    private TranslationSupplier translationSupplier;
 
     /***
      * constructor with injection
@@ -121,4 +123,7 @@ public class EventOverviewCtrl {
         eventNameLabel.setText(eventName);
     }
 
+    public void setTranslationSupplier(TranslationSupplier tl) {
+        this.translationSupplier = tl;
+    }
 }

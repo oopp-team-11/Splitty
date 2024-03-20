@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
+import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
 import commons.Event;
 import javafx.fxml.FXML;
@@ -34,6 +35,7 @@ public class CreateParticipantCtrl {
 
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
+    private TranslationSupplier translationSupplier;
 
     /***
      * constructor with injection
@@ -87,5 +89,9 @@ public class CreateParticipantCtrl {
 
         mainCtrl.showStartScreen(); // todo: Change that to event screen when there is one
 
+    }
+
+    public void setTranslationSupplier(TranslationSupplier tl) {
+        this.translationSupplier = tl;
     }
 }

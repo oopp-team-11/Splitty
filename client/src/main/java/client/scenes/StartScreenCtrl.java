@@ -3,6 +3,7 @@ package client.scenes;
 import client.utils.EventStompSessionHandler;
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
+import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
 import commons.Event;
 import javafx.beans.property.SimpleStringProperty;
@@ -20,14 +21,16 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Start Screen controller for showing start screen and entering to events
  */
 public class StartScreenCtrl implements Initializable {
     private final MainCtrl mainCtrl;
+
+    @FXML
+    private Label newEventLabel;
 
     @FXML
     private TextField newEventName;
@@ -47,6 +50,7 @@ public class StartScreenCtrl implements Initializable {
     private final FileSystemUtils fileSystemUtils;
     private final ServerUtils serverUtils;
     private StompSessionHandler sessionHandler;
+    private TranslationSupplier translationSupplier;
 
     /**
      * @param mainCtrl main Controller, for displaying this scene.
@@ -72,6 +76,17 @@ public class StartScreenCtrl implements Initializable {
                 }
             });
             return row;
+        });
+    }
+
+    private void translate() {
+        if (this.translationSupplier == null) return;
+        Map<Label, String> labels = new HashMap<>();
+        labels.put(this.newEventLabel, "startScreen_newEventLabel");
+        labels.forEach((k, v) -> {
+            var translation = this.translationSupplier.getTranslation(v);
+            if (translation == null) return;
+            k.setText(translation.replaceAll("\"", ""));
         });
     }
 
@@ -183,5 +198,10 @@ public class StartScreenCtrl implements Initializable {
                 "\nError: " +
                 (exception.getMessage() != null ? exception.getMessage() : "No error message available."));
         alert.showAndWait();
+    }
+
+    public void setTranslationSupplier(TranslationSupplier tl) {
+        this.translationSupplier = tl;
+        this.translate();
     }
 }

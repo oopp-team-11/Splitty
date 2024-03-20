@@ -18,7 +18,7 @@
          <children>
             <VBox prefHeight="247.0" prefWidth="208.0">
                <children>
-                  <Label prefHeight="17.0" prefWidth="157.0" style="-fx-padding: 10;" text="Create a new event">
+                  <Label fx:id="newEventLabel" prefHeight="17.0" prefWidth="157.0" style="-fx-padding: 10;" text="Create a new event">
                      <font>
                         <Font size="17.0" />
                      </font>
