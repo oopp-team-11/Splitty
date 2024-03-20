@@ -46,8 +46,18 @@ for it this week.
 * We agreed to host an additional meeting right after the official one to plan out the upcoming two
 weeks in more detail.
 
-### Distribution of work (discussed after the official meeting)
-*TODO: Insert the assigned work here*
+### Distribution of work for this week (discussed after the official meeting)
+* Jakub will be adding support for status codes, websockets and updating last activity
+fields on the server-side
+* Adam will be adding support for websocket status codes, sending and receiving initial
+data on the client side
+* Boaz will be creating the expense UI, fixing scene switching and potentially adding
+support for UI pop-ups
+* David will be adding support for data propagation to the UI and creating new 
+transient fields to store the parent IDs
+* Marios will be adding support for long polling in start screen on both the client
+and the server side and fixing the createEvent REST request
+* Midas will be adding support for at least the basic language switching
 
 ### Results of the stand-up
 * David created the event data handler on the client side
