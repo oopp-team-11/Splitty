@@ -1,7 +1,7 @@
 package client.scenes;
 
+import client.utils.EventStompSessionHandler;
 import client.utils.FileSystemUtils;
-import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Event;
 import commons.Participant;
@@ -30,8 +30,8 @@ public class EventOverviewCtrl {
     private VBox deleteVbox;
     private MainCtrl mainCtrl;
     private FileSystemUtils fileSystemUtils;
-    private ServerUtils serverUtils;
     private Event event;
+    private EventStompSessionHandler sessionHandler;
 
     /***
      * constructor with injection
@@ -41,15 +41,16 @@ public class EventOverviewCtrl {
     public EventOverviewCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.fileSystemUtils = new FileSystemUtils();
-        this.serverUtils = new ServerUtils();
     }
 
     /**
      * Setter for event name
      * @param event event object
+     * @param sessionHandler current session handler with websocket connection
      */
-    public void setEvent(Event event) {
+    public void setEvent(Event event, EventStompSessionHandler sessionHandler) {
         this.event = event;
+        this.sessionHandler = sessionHandler;
 
         setEventNameLabel(event.getTitle());
         namesVbox.getChildren().clear();
@@ -105,7 +106,7 @@ public class EventOverviewCtrl {
     public void deleteParticipant(Participant participant) {
         event.getParticipants().remove(participant);
         //serverUtils.deleteParticipant(participant);
-        setEvent(event);
+        setEvent(event, sessionHandler);
     }
 
     /**
@@ -113,7 +114,7 @@ public class EventOverviewCtrl {
      */
     public void addParticipant() {
         mainCtrl.showCreateParticipant(event);
-        setEvent(event);
+        setEvent(event, sessionHandler);
     }
 
     /**
@@ -122,7 +123,7 @@ public class EventOverviewCtrl {
      */
     public void editParticipant(Participant participant) {
         mainCtrl.showEditParticipant(participant);
-        setEvent(event);
+        setEvent(event, sessionHandler);
     }
 
     /**

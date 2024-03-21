@@ -1,12 +1,10 @@
 package client.scenes;
 
-import client.utils.ServerUtils;
+import client.utils.EventStompSessionHandler;
 import com.google.inject.Inject;
 import commons.Participant;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
-
-import java.io.IOException;
 
 /**
  * Client controller for the EditParticipant.fxml scene
@@ -30,7 +28,7 @@ public class EditParticipantCtrl {
 
     private Participant participant;
     private final MainCtrl mainCtrl;
-    private final ServerUtils serverUtils;
+    private EventStompSessionHandler sessionHandler;
 
     /**
      * Constructor for the EditParticipant.fxml scene controller.
@@ -40,14 +38,15 @@ public class EditParticipantCtrl {
     @Inject
     public EditParticipantCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
-        this.serverUtils = new ServerUtils();
     }
 
     /**
      * Setter for participant
      * @param participant reference to participant object that is edited
+     * @param sessionHandler current session handler with websocket connection
      */
-    public void setParticipant(Participant participant) {
+    public void setParticipant(Participant participant, EventStompSessionHandler sessionHandler) {
+        this.sessionHandler = sessionHandler;
         this.participant = participant;
         firstName.setText(participant.getFirstName());
         lastName.setText(participant.getLastName());
@@ -67,12 +66,16 @@ public class EditParticipantCtrl {
         String bicString = bic.getText();
         String emailString = email.getText();
 
+        this.participant.setFirstName(firstNameString);
+        this.participant.setLastName(lastNameString);
+        this.participant.setIban(ibanString);
+        this.participant.setBic(bicString);
+        this.participant.setEmail(emailString);
 
         try {
-            serverUtils.editParticipant(participant.getId(), firstNameString, lastNameString,
-                    emailString, ibanString, bicString, "http://localhost:8080");
+            sessionHandler.sendParticipant(participant, "update");
         }
-        catch (IOException | InterruptedException e)
+        catch (Exception e)
         {
             System.err.println("Error while sending edit request to server");
             return;

@@ -15,6 +15,7 @@
  */
 package client.scenes;
 
+import client.utils.EventStompSessionHandler;
 import commons.Event;
 import commons.Participant;
 import javafx.scene.Parent;
@@ -22,6 +23,11 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompSessionHandler;
+import org.springframework.web.socket.client.WebSocketClient;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -45,6 +51,7 @@ public class MainCtrl {
 
     private EventOverviewCtrl eventOverviewCtrl;
     private Scene eventOverviewScene;
+    private EventStompSessionHandler sessionHandler;
 
     /**
      * Initializes javafx scenes and their controllers, sets start screen as the currently shown screen
@@ -112,7 +119,7 @@ public class MainCtrl {
         primaryStage.setTitle("Add participant ui");
         primaryStage.setScene(createParticipantScene);
         primaryStage.setResizable(false);
-        createParticipantCtrl.setEvent(event);
+        createParticipantCtrl.setEvent(event, sessionHandler);
     }
 
     /**
@@ -123,7 +130,7 @@ public class MainCtrl {
         primaryStage.setTitle("Edit participant ui");
         primaryStage.setScene(editParticipantScene);
         primaryStage.setResizable(false);
-        editParticipantCtrl.setParticipant(participant);
+        editParticipantCtrl.setParticipant(participant, sessionHandler);
     }
 
     /**
@@ -134,7 +141,24 @@ public class MainCtrl {
         primaryStage.setTitle("Event overview");
         primaryStage.setScene(eventOverviewScene);
         primaryStage.setResizable(false);
-        eventOverviewCtrl.setEvent(event);
+        eventOverviewCtrl.setEvent(event, sessionHandler);
+    }
+
+
+    /**
+     * Start websocket connection
+     * @return Stomp session handler, so you can share the websocket connection between scenes
+     */
+    public StompSessionHandler startWebSocket() {
+        WebSocketClient client = new StandardWebSocketClient();
+
+        WebSocketStompClient stompClient = new WebSocketStompClient(client);
+        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+
+        //TODO:Change dummy event to an actual event
+        sessionHandler = new EventStompSessionHandler(UUID.randomUUID());
+        stompClient.connectAsync("ws://localhost:8080/event", sessionHandler);
+        return sessionHandler;
     }
 
 }
