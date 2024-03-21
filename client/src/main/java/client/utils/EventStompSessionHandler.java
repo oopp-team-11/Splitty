@@ -24,7 +24,7 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
      * Custom constructor for EventStompSessionHandler
      *
      * @param invitationCode invitationCode for the event
-     * @param dataHandler dataHandler of the client
+     * @param dataHandler    dataHandler of the client
      */
     public EventStompSessionHandler(UUID invitationCode, EventDataHandler dataHandler) {
         this.dataHandler = dataHandler;
