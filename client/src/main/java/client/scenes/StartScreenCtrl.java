@@ -78,10 +78,17 @@ public class StartScreenCtrl implements Initializable {
     /**
      * Refreshes the events table.
      */
-    public void refresh() throws IOException, InterruptedException {
-        var events = serverUtils.getRecentEvents("https://127.0.0.1:8080", "config.json");
-        ObservableList<Event> data = FXCollections.observableList(events);
-        eventTable.setItems(data);
+    public void refresh() {
+        try {
+            var events = serverUtils.getRecentEvents("http://127.0.0.1:8080", "config.json");
+            ObservableList<Event> data = FXCollections.observableList(events);
+            eventTable.setItems(data);
+        } catch (IOException | InterruptedException e) {
+            // Handle exception
+        } catch (org.json.JSONException e) {
+            // Handle JSON parsing exception
+            System.out.println("Failed to parse server response: " + e.getMessage());
+        }
     }
 
     /**

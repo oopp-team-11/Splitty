@@ -70,6 +70,7 @@ public class MainCtrl {
         this.eventOverviewCtrl = eventOverview.getKey();
         this.eventOverviewScene = new Scene(eventOverview.getValue());
 
+        showStartScreen();
 
         //showEventOverview(event);
 
@@ -91,13 +92,16 @@ public class MainCtrl {
         primaryStage.setResizable(false);
         try {
             startScreenCtrl.refresh();
-        } catch (IOException | InterruptedException ignored) {}
+        } catch (org.json.JSONException e) {
+            // Handle JSON parsing exception
+            System.out.println("Failed to parse server response: " + e.getMessage());
+        }
     }
 
-    /**
-     * Show create participant UI
-     * @param event Event, which the participant will belong to
-     */
+            /**
+             * Show create participant UI
+             * @param event Event, which the participant will belong to
+             */
     public void showCreateParticipant(Event event) {
         primaryStage.setTitle("Add participant ui");
         primaryStage.setScene(createParticipantScene);
