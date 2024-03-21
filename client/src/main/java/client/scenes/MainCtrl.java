@@ -15,7 +15,9 @@
  */
 package client.scenes;
 
+import client.utils.EventStompSessionHandler;
 import commons.Event;
+import commons.Expense;
 import commons.Participant;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -40,6 +42,12 @@ public class MainCtrl {
     private EditParticipantCtrl editParticipantCtrl;
     private Scene editParticipantScene;
 
+    private AddExpenseCtrl addExpenseCtrl;
+    private Scene addExpenseScene;
+
+    private EditExpenseCtrl editExpenseCtrl;
+    private Scene editExpenseScene;
+
     private EventOverviewCtrl eventOverviewCtrl;
     private Scene eventOverviewScene;
 
@@ -50,12 +58,16 @@ public class MainCtrl {
      * @param createParticipant a pair of create participant controller and javafx create participant scene
      * @param editParticipant a pair of edit participant controller and javafx edit participant scene
      * @param eventOverview a pair of event overview controller and javafx event overview scene
+     * @param editExpense a pair of edit expense controller and javafx edit expense scene
+     * @param addExpense a pair of add expense controller and javafx add expense scene
      */
 
     public void initialize(Stage primaryStage, Pair<StartScreenCtrl, Parent> startScreen,
                            Pair<CreateParticipantCtrl, Parent> createParticipant,
                            Pair<EditParticipantCtrl, Parent> editParticipant,
-                           Pair<EventOverviewCtrl, Parent> eventOverview) {
+                           Pair<EventOverviewCtrl, Parent> eventOverview,
+                           Pair<EditExpenseCtrl, Parent> editExpense,
+                           Pair<AddExpenseCtrl, Parent> addExpense) {
         this.primaryStage = primaryStage;
 
         this.startScreenCtrl = startScreen.getKey();
@@ -66,6 +78,12 @@ public class MainCtrl {
 
         this.editParticipantCtrl = editParticipant.getKey();
         this.editParticipantScene = new Scene(editParticipant.getValue());
+
+        this.addExpenseCtrl = addExpense.getKey();
+        this.addExpenseScene = new Scene(addExpense.getValue());
+
+        this.editExpenseCtrl = editExpense.getKey();
+        this.editExpenseScene = new Scene(editExpense.getValue());
 
         this.eventOverviewCtrl = eventOverview.getKey();
         this.eventOverviewScene = new Scene(eventOverview.getValue());
@@ -114,6 +132,31 @@ public class MainCtrl {
         primaryStage.setScene(editParticipantScene);
         primaryStage.setResizable(false);
         editParticipantCtrl.setParticipant(participant);
+    }
+
+    /**
+     * Show edit expense ui
+     * @param expense expense that will be edited
+     * @param event corresponding with expense
+     * @param sessionHandler shared session handler
+     */
+    public void showEditExpense(Expense expense, Event event, EventStompSessionHandler sessionHandler) {
+        primaryStage.setTitle("Edit expense ui");
+        primaryStage.setScene(editExpenseScene);
+        primaryStage.setResizable(false);
+        editExpenseCtrl.setEventAndExpense(event, expense, sessionHandler);
+    }
+
+    /**
+     * Show edit expense ui
+     * @param event corresponding with expense
+     * @param sessionHandler shared session handler
+     */
+    public void showAddExpense(Event event, EventStompSessionHandler sessionHandler) {
+        primaryStage.setTitle("Edit expense ui");
+        primaryStage.setScene(addExpenseScene);
+        primaryStage.setResizable(false);
+        addExpenseCtrl.setEvent(event, sessionHandler);
     }
 
     /**
