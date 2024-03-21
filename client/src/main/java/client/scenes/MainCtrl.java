@@ -147,6 +147,7 @@ public class MainCtrl {
 
     /**
      * Start websocket connection
+     * @param invitationCode for setting correct event
      * @return Stomp session handler, so you can share the websocket connection between scenes
      */
     public StompSessionHandler startWebSocket(UUID invitationCode) {
