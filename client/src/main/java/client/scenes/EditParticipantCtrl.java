@@ -3,7 +3,6 @@ package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Participant;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
@@ -83,6 +82,9 @@ public class EditParticipantCtrl {
 
     }
 
+    /**
+     * Button function to abort editing participant
+     */
     public void abort() {
         mainCtrl.showEventOverview(participant.getEvent());
     }

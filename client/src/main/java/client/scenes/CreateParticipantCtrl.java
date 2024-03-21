@@ -94,6 +94,9 @@ public class CreateParticipantCtrl {
 
     }
 
+    /**
+     * Button function to abort creating participant
+     */
     public void abort() {
         mainCtrl.showEventOverview(event);
     }
