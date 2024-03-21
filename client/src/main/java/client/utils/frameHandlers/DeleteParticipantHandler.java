@@ -8,17 +8,17 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 import java.lang.reflect.Type;
 
 /**
- * Frame handler for /participant:create topic
+ * Frame handler for /participant:delete topic
  */
-public class CreateParticipantHandler implements StompFrameHandler {
+public class DeleteParticipantHandler implements StompFrameHandler {
     private final EventDataHandler dataHandler;
 
     /**
-     * Constructor for the CreateParticipantHandler
+     * Constructor for the DeleteParticipantHandler
      *
      * @param dataHandler reference to the dataHandler
      */
-    public CreateParticipantHandler(EventDataHandler dataHandler) {
+    public DeleteParticipantHandler(EventDataHandler dataHandler) {
         this.dataHandler = dataHandler;
     }
 
@@ -29,6 +29,6 @@ public class CreateParticipantHandler implements StompFrameHandler {
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        dataHandler.getCreateParticipant((Participant) payload);
+        dataHandler.getDeleteParticipant((Participant) payload);
     }
 }

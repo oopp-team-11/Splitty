@@ -1,34 +1,34 @@
 package client.utils.frameHandlers;
 
 import client.utils.EventDataHandler;
-import commons.Participant;
+import commons.Expense;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
 import java.lang.reflect.Type;
 
 /**
- * Frame handler for /participant:create topic
+ * Frame handler for /expense:delete topic
  */
-public class CreateParticipantHandler implements StompFrameHandler {
+public class DeleteExpenseHandler implements StompFrameHandler {
     private final EventDataHandler dataHandler;
 
     /**
-     * Constructor for the CreateParticipantHandler
+     * Constructor for the DeleteExpenseHandler
      *
      * @param dataHandler reference to the dataHandler
      */
-    public CreateParticipantHandler(EventDataHandler dataHandler) {
+    public DeleteExpenseHandler(EventDataHandler dataHandler) {
         this.dataHandler = dataHandler;
     }
 
     @Override
     public Type getPayloadType(StompHeaders headers) {
-        return Participant.class;
+        return Expense.class;
     }
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        dataHandler.getCreateParticipant((Participant) payload);
+        dataHandler.getDeleteExpense((Expense) payload);
     }
 }

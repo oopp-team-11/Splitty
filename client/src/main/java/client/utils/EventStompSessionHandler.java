@@ -1,5 +1,6 @@
 package client.utils;
 
+import client.utils.frameHandlers.*;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
@@ -37,31 +38,27 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
         this.session = session;
-        session.subscribe("/topic/" + invitationCode, this);
+        session.subscribe("/topic/" + invitationCode + "/expense:create",
+                new CreateExpenseHandler(dataHandler));
+        session.subscribe("/topic/" + invitationCode + "/expense:update",
+                new UpdateExpenseHandler(dataHandler));
+        session.subscribe("/topic/" + invitationCode + "/expense:delete",
+                new DeleteExpenseHandler(dataHandler));
+        session.subscribe("/topic/" + invitationCode + "/participant:create",
+                new CreateParticipantHandler(dataHandler));
+        session.subscribe("/topic/" + invitationCode + "/participant:update",
+                new UpdateParticipantHandler(dataHandler));
+        session.subscribe("/topic/" + invitationCode + "/participant:delete",
+                new DeleteParticipantHandler(dataHandler));
+        session.subscribe("/topic/" + invitationCode + "/event:update",
+                new UpdateEventHandler(dataHandler));
+        session.subscribe("/topic/" + invitationCode + "/event:delete",
+                new DeleteEventHandler(dataHandler));
         session.subscribe("/user/queue/reply", this);
         //TODO:Initialise eventDataHandler
         dataHandler = new EventDataHandler();
     }
 
-    /**
-     * Handles the messages from server
-     *
-     * @param headers Message headers
-     * @param payload Updated object
-     */
-    @Override
-    public void handleFrame(StompHeaders headers, Object payload) {
-        String modelType = headers.getFirst("model");
-        String methodType = headers.getFirst("method");
-        switch (modelType) {
-            case "Event" -> dataHandler.receiveEvent((Event) payload, methodType);
-            case "Participant" -> dataHandler.receiveParticipant((Participant) payload, methodType);
-            case "Expense" -> dataHandler.receiveExpense((Expense) payload, methodType);
-            case null, default -> System.out.println("Model type invalid or not specified in the message headers");
-        }
-    }
-
-    //TODO: Expand this exceptionHandler to support server-side error messages
     @Override
     public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload,
                                 Throwable exception) {

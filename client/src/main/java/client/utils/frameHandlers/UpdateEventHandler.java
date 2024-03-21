@@ -1,34 +1,34 @@
 package client.utils.frameHandlers;
 
 import client.utils.EventDataHandler;
-import commons.Participant;
+import commons.Event;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
 import java.lang.reflect.Type;
 
 /**
- * Frame handler for /participant:create topic
+ * Frame handler for /event:update topic
  */
-public class CreateParticipantHandler implements StompFrameHandler {
+public class UpdateEventHandler implements StompFrameHandler {
     private final EventDataHandler dataHandler;
 
     /**
-     * Constructor for the CreateParticipantHandler
+     * Constructor for the UpdateEventHandler
      *
      * @param dataHandler reference to the dataHandler
      */
-    public CreateParticipantHandler(EventDataHandler dataHandler) {
+    public UpdateEventHandler(EventDataHandler dataHandler) {
         this.dataHandler = dataHandler;
     }
 
     @Override
     public Type getPayloadType(StompHeaders headers) {
-        return Participant.class;
+        return Event.class;
     }
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        dataHandler.getCreateParticipant((Participant) payload);
+        dataHandler.getUpdateEvent((Event) payload);
     }
 }
