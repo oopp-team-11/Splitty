@@ -21,7 +21,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import org.apache.commons.lang3.reflect.FieldUtils;
+
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * Main scene controller. It oversights currently active scenes, switches between them,
@@ -70,8 +73,15 @@ public class MainCtrl {
         this.eventOverviewCtrl = eventOverview.getKey();
         this.eventOverviewScene = new Scene(eventOverview.getValue());
 
+        Event event = new Event("My Event");
+        Participant part = new Participant(event, "Boaz", "Bakhuijzen", "bbboaz.bb@gmail.com", null, null);
+        try {
+            FieldUtils.writeField(event, "id", UUID.fromString("748d9079-8450-4b6d-adb3-736afd312ad7"), true);
+        }
+        catch (IllegalAccessException e){
 
-        //showEventOverview(event);
+        }
+        showEventOverview(event);
 
         // showStartScreen() should be used in the final version.
         // Comment out showStartScreen() above and uncomment a scene below to

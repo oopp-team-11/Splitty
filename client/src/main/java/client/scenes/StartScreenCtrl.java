@@ -82,6 +82,8 @@ public class StartScreenCtrl implements Initializable {
         var events = serverUtils.getRecentEvents("https://127.0.0.1:8080", "config.json");
         ObservableList<Event> data = FXCollections.observableList(events);
         eventTable.setItems(data);
+        newEventName.clear();
+        joinInvitationCode.clear();
     }
 
     /**

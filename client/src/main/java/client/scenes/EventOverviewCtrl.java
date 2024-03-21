@@ -6,18 +6,20 @@ import com.google.inject.Inject;
 import commons.Event;
 import commons.Participant;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 
 /***
  * class CreateParticipantController
  */
 public class EventOverviewCtrl {
     @FXML
-    private Label eventNameLabel;
+    public Label invitationCode;
     @FXML
-    private Button sendInvitesButton;
+    private Label eventNameLabel;
     @FXML
     private Label addParticipantLabel;
     @FXML
@@ -55,8 +57,8 @@ public class EventOverviewCtrl {
         deleteVbox.getChildren().clear();
         for (Participant participant : event.getParticipants()) {
 
-            Label label = new Label(participant.getFirstName() + " " + participant.getLastName());
-            label.setFont(new javafx.scene.text.Font("Arial", 16));
+            Label nameLabel = new Label(participant.getFirstName() + " " + participant.getLastName());
+            nameLabel.setFont(new javafx.scene.text.Font("Arial", 16));
             Label deleteLabel = new Label("❌");
             deleteLabel.setAlignment(javafx.geometry.Pos.CENTER);
             deleteLabel.setFont(new javafx.scene.text.Font("Arial", 16));
@@ -73,7 +75,7 @@ public class EventOverviewCtrl {
             addParticipantLabel.onMouseClickedProperty()
                 .set(event1 -> addParticipant());
 
-            namesVbox.getChildren().add(label);
+            namesVbox.getChildren().add(nameLabel);
             deleteVbox.getChildren().add(deleteLabel);
             editVbox.getChildren().add(editLabel);
         }
@@ -83,7 +85,17 @@ public class EventOverviewCtrl {
      * When button gets clicked, trigger send invites method
      */
     public void sendInvites() {
-        System.out.println("SEND INVITES");
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putString(event.getId().toString());
+        clipboard.setContent(content);
+        invitationCode.setText("Code moved to \nClipboard.");
+    }
+    /**
+     * When button gets clicked, trigger go to homeScreen method
+     */
+    public void goToHomeScreen() {
+        mainCtrl.showStartScreen();
     }
 
     /**
@@ -118,7 +130,7 @@ public class EventOverviewCtrl {
      * @param eventName event name
      */
     public void setEventNameLabel(String eventName) {
-        eventNameLabel.setText(eventName);
+        eventNameLabel.setText("Title: " + eventName);
     }
 
 }

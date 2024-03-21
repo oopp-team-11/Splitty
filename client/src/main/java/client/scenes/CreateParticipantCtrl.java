@@ -52,6 +52,11 @@ public class CreateParticipantCtrl {
      */
     public void setEvent(Event event) {
         this.event = event;
+        firstName.clear();
+        lastName.clear();
+        iban.clear();
+        email.clear();
+        bic.clear();
     }
 
     /**
@@ -59,7 +64,7 @@ public class CreateParticipantCtrl {
      * @throws IOException when error occurred while sending the request to server
      * @throws InterruptedException when error occurred while sending the request to server
      */
-    public void onCreate() throws IOException, InterruptedException {
+    public void onCreate(){
         System.out.println("ONCREATE");
 
         String firstNameString = firstName.getText();
@@ -84,8 +89,12 @@ public class CreateParticipantCtrl {
             System.err.println("Error while sending create request to server");
             return;
         }
+        // todo: Change that to event screen when there is one
+        mainCtrl.showEventOverview(event);
 
-        mainCtrl.showStartScreen(); // todo: Change that to event screen when there is one
+    }
 
+    public void abort() {
+        mainCtrl.showEventOverview(event);
     }
 }

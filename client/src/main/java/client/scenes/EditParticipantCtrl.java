@@ -3,6 +3,7 @@ package client.scenes;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Participant;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
@@ -49,6 +50,11 @@ public class EditParticipantCtrl {
      */
     public void setParticipant(Participant participant) {
         this.participant = participant;
+        firstName.setText(participant.getFirstName());
+        lastName.setText(participant.getLastName());
+        email.setText(participant.getEmail());
+        bic.setText(participant.getBic());
+        iban.setText(participant.getIban());
     }
 
     /**
@@ -73,7 +79,11 @@ public class EditParticipantCtrl {
             return;
         }
 
-        mainCtrl.showStartScreen(); // todo: Change that to event screen when there is one
+        mainCtrl.showEventOverview(participant.getEvent()); // todo: Change that to event screen when there is one
 
+    }
+
+    public void abort() {
+        mainCtrl.showEventOverview(participant.getEvent());
     }
 }
