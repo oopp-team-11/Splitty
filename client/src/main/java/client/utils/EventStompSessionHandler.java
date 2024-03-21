@@ -24,6 +24,7 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
      * Custom constructor for EventStompSessionHandler
      *
      * @param invitationCode invitationCode for the event
+     * @param dataHandler dataHandler of the client
      */
     public EventStompSessionHandler(UUID invitationCode, EventDataHandler dataHandler) {
         this.dataHandler = dataHandler;
@@ -39,6 +40,19 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
         this.session = session;
+
+        //Handles initial read requests
+        session.subscribe("/user/topic/" + invitationCode + "/event:read",
+                new ReadEventHandler(dataHandler));
+        session.send("/app/event:read", invitationCode);
+        session.subscribe("/user/topic/" + invitationCode + "/participants:read",
+                new ReadParticipantsHandler(dataHandler));
+        session.send("/app/participants:read", invitationCode);
+        session.subscribe("/user/topic/" + invitationCode + "/expenses:read",
+                new ReadEventHandler(dataHandler));
+        session.send("/app/expenses:read", invitationCode);
+
+        //Subscribes to topics about data changes
         session.subscribe("/topic/" + invitationCode + "/expense:create",
                 new CreateExpenseHandler(dataHandler));
         session.subscribe("/topic/" + invitationCode + "/expense:update",
