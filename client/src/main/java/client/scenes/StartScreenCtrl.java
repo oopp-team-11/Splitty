@@ -79,8 +79,14 @@ public class StartScreenCtrl implements Initializable {
      * Refreshes the events table.
      */
     public void refresh() {
+        System.out.println("REFRESH");
         try {
             var events = serverUtils.getRecentEvents("http://127.0.0.1:8080", "config.json");
+
+//            for(Event event : events) {
+//                System.out.println(event.getTitle() + " " + event.getId());
+//            }
+
             ObservableList<Event> data = FXCollections.observableList(events);
             eventTable.setItems(data);
         } catch (IOException | InterruptedException e) {
