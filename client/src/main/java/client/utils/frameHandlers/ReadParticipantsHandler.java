@@ -1,34 +1,36 @@
 package client.utils.frameHandlers;
 
 import client.utils.EventDataHandler;
-import commons.Event;
+import commons.Participant;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 /**
- * Frame handler for /event:read topic
+ * Frame handler for /participants:read topic
  */
-public class ReadEventHandler implements StompFrameHandler {
+public class ReadParticipantsHandler implements StompFrameHandler {
     private final EventDataHandler dataHandler;
 
     /**
-     * Constructor for the ReadEventHandler
+     * Constructor for the ReadParticipantsHandler
      *
      * @param dataHandler reference to the dataHandler
      */
-    public ReadEventHandler(EventDataHandler dataHandler) {
+    public ReadParticipantsHandler(EventDataHandler dataHandler) {
         this.dataHandler = dataHandler;
     }
 
     @Override
     public Type getPayloadType(StompHeaders headers) {
-        return Event.class;
+        return new ParameterizedTypeReference<List<Participant>>() {}.getType();
     }
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        dataHandler.setEvent((Event) payload);
+        dataHandler.setParticipants((List<Participant>) payload);
     }
 }
