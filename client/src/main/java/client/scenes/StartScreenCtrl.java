@@ -141,13 +141,7 @@ public class StartScreenCtrl implements Initializable {
             return;
         }
 
-        try {
-            serverUtils.getEvent(invitationCode, "http://localhost:8080");
-        } catch (IOException | InterruptedException e) {
-            serverErrorAlert(e);
-        }
-
-        mainCtrl.startWebSocket();
+        mainCtrl.startWebSocket(invitationCode);
     }
 
 

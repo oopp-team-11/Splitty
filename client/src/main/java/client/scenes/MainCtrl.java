@@ -149,14 +149,13 @@ public class MainCtrl {
      * Start websocket connection
      * @return Stomp session handler, so you can share the websocket connection between scenes
      */
-    public StompSessionHandler startWebSocket() {
+    public StompSessionHandler startWebSocket(UUID invitationCode) {
         WebSocketClient client = new StandardWebSocketClient();
 
         WebSocketStompClient stompClient = new WebSocketStompClient(client);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
-        //TODO:Change dummy event to an actual event
-        sessionHandler = new EventStompSessionHandler(UUID.randomUUID());
+        sessionHandler = new EventStompSessionHandler(invitationCode);
         stompClient.connectAsync("ws://localhost:8080/event", sessionHandler);
         return sessionHandler;
     }
