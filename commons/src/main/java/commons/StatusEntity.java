@@ -4,7 +4,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import static commons.StatusCode.*;
+import static commons.StatusEntity.StatusCode.*;
 
 /**
  * Entity sent as an answer for WebSocket requests
@@ -13,6 +13,16 @@ import static commons.StatusCode.*;
  * @param <T> Class of the object being sent through WebSocket
  */
 public class StatusEntity<T> {
+
+    /**
+     * Status codes for WebSocket requests
+     */
+    public enum StatusCode {
+        OK,
+        BAD_REQUEST,
+        NOT_FOUND
+    }
+
     private final T body;
     private final StatusCode statusCode;
     private final boolean unsolvable;
