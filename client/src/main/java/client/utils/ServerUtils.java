@@ -49,7 +49,7 @@ public class ServerUtils {
      * @throws InterruptedException if something goes wrong with the request
      */
     public Event getEvent(UUID invitationCode, String server)
-        throws IOException, InterruptedException {
+            throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(server + "/events/" + invitationCode))
                 .GET()
@@ -127,26 +127,31 @@ public class ServerUtils {
         HttpClient client = HttpClient.newHttpClient();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        JSONObject jsonObject = new JSONObject(response.body());
+
+        String jsonResp = response.body();
+        jsonResp = "{\"events\":" + jsonResp + "}";
+
+        JSONObject jsonObject = new JSONObject(jsonResp);
         JSONArray jsonArray = new JSONArray(jsonObject.getJSONArray("events").toString());
 
         List<Event> events = new ArrayList<>();
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
         //TODO: Here Event objects with only invitationCode and eventName will be parsed using
-	    // @JsonView(Views.StartScreenView.class)
+        // @JsonView(Views.StartScreenView.class)
         //Use https://www.baeldung.com/jackson-json-view-annotation for reference
-//		for(Object object: jsonArray) {
-//			events.add(new Event(
-//					Long.parseLong(((JSONObject) object).get("invitationCode").toString()),
-//					((JSONObject) object).get("eventName").toString(),
-//					null,
-//					null,
-//					null)
-//			);
-//		}
+        for(Object object: jsonArray) {
+            String jsonString = ((JSONObject) object).toString();
+            Event event = mapper.readValue(jsonString, Event.class);
+            events.add(event);
+        }
 
         if(response.statusCode() == 205)
             fileSystemUtils.updateConfigFile("config.json",
-		            fileSystemUtils.extractInvitationCodesFromEventList(events));
+                    fileSystemUtils.extractInvitationCodesFromEventList(events));
 
         return events;
     }
@@ -208,7 +213,7 @@ public class ServerUtils {
      * @return response participant UUID
      */
     public UUID editParticipant(UUID participantId, String firstName, String lastName, String email,
-                                  String iban, String bic, String server)
+                                String iban, String bic, String server)
             throws IOException, InterruptedException {
 
         JsonObject json = Json.createObjectBuilder()
