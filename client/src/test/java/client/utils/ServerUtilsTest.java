@@ -5,6 +5,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import commons.Event;
+import commons.Participant;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -110,7 +112,7 @@ class ServerUtilsTest {
     }
 
     @Test
-    void getRecentEventsWireMock() throws IOException, InterruptedException {
+    void getRecentEventsWireMock() throws IOException, InterruptedException, IllegalAccessException {
         WireMockServer wireMockServer = new WireMockServer(WireMockConfiguration
             .options()
             .port(9092));
@@ -144,23 +146,34 @@ class ServerUtilsTest {
                 replace(" ", ""));
 
         String jsonEventsList = """
-                {
-                    "events": [
+                        [
                         {
-                            "invitationCode": "3909e6f3-7bf3-47c5-992a-3dcf53738ab5",
-                            "eventName": "testEvent1"
+                            "id": "3909e6f3-7bf3-47c5-992a-3dcf53738ab5",
+                            "title": "testEvent1"
                         },
                         {
-                            "invitationCode": "370e486d-6aa8-4d29-90c6-10aade69b13b",
-                            "eventName": "testEvent2"
+                            "id": "370e486d-6aa8-4d29-90c6-10aade69b13b",
+                            "title": "testEvent2"
                         }
                     ]
-                }""";
-        JSONObject jsonObject = new JSONObject(jsonEventsList);
-        JSONArray jsonArray = new JSONArray(jsonObject
-                .getJSONArray("events").toString());
+                """;
+//        JSONObject jsonObject = new JSONObject(jsonEventsList);
+//        JSONArray jsonArray = new JSONArray(jsonObject
+//                .getJSONArray("events").toString());
+//
+//        System.out.println("AAAAAAAA");
 
         List<Event> events = new ArrayList<>();
+
+        Event event1 = new Event("testEvent1");
+        Event event2 = new Event("testEvent2");
+        setId(event1, UUID.fromString("3909e6f3-7bf3-47c5-992a-3dcf53738ab5"));
+        setId(event2, UUID.fromString("370e486d-6aa8-4d29-90c6-10aade69b13b"));
+        setParticipants(event1, null);
+        setParticipants(event2, null);
+        events.add(event1);
+        events.add(event2);
+
 //        for(Object object: jsonArray) {
 //            events.add(new Event(
 //                    Long.parseLong(((JSONObject) object)
@@ -184,4 +197,15 @@ class ServerUtilsTest {
         new File(randomFileName).delete();
         wireMockServer.stop();
     }
+
+
+    private static void setId(Event toSet, UUID newId) throws IllegalAccessException {
+        FieldUtils.writeField(toSet, "id", newId, true);
+    }
+
+    private static void setParticipants(Event toSet, List<Participant> newParticipants) throws IllegalAccessException {
+        FieldUtils.writeField(toSet, "participants", newParticipants, true);
+    }
+
+
 }
