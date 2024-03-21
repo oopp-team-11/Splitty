@@ -17,7 +17,7 @@ import java.util.UUID;
  */
 public class EventStompSessionHandler extends StompSessionHandlerAdapter {
     private final UUID invitationCode;
-    private EventDataHandler dataHandler;
+    private final EventDataHandler dataHandler;
     private StompSession session;
 
     /**
@@ -25,7 +25,8 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
      *
      * @param invitationCode invitationCode for the event
      */
-    public EventStompSessionHandler(UUID invitationCode) {
+    public EventStompSessionHandler(UUID invitationCode, EventDataHandler dataHandler) {
+        this.dataHandler = dataHandler;
         this.invitationCode = invitationCode;
     }
 
@@ -54,9 +55,6 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
                 new UpdateEventHandler(dataHandler));
         session.subscribe("/topic/" + invitationCode + "/event:delete",
                 new DeleteEventHandler(dataHandler));
-        session.subscribe("/user/queue/reply", this);
-        //TODO:Initialise eventDataHandler
-        dataHandler = new EventDataHandler();
     }
 
     @Override

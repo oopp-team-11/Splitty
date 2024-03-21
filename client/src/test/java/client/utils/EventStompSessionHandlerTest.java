@@ -26,7 +26,7 @@ class EventStompSessionHandlerTest {
     @BeforeEach
     void setUp() {
         invitationCode = UUID.randomUUID();
-        handler = new EventStompSessionHandler(invitationCode);
+        handler = new EventStompSessionHandler(invitationCode, new EventDataHandler());
         headers = new StompHeaders();
         session = Mockito.mock(StompSession.class);
     }
