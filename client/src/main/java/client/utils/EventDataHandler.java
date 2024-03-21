@@ -35,6 +35,33 @@ public class EventDataHandler {
         this.expenses = expenses;
     }
 
+    /**
+     * Setter for event. Used during initial read requests
+     *
+     * @param event the initial event object
+     */
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    /**
+     * Setter for participants. Used during initial read requests
+     *
+     * @param participants Initial list of participants
+     */
+    public void setParticipants(List<Participant> participants) {
+        this.participants = participants;
+    }
+
+    /**
+     * Setter for expenses. Used during initial read requests
+     *
+     * @param expenses Initial list of expenses.
+     */
+    public void setExpenses(List<Expense> expenses) {
+        this.expenses = expenses;
+    }
+
     /***
      * std getter
      * @return event
