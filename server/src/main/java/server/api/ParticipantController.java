@@ -3,32 +3,44 @@ package server.api;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
+import commons.StatusEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import server.database.EventRepository;
 import server.database.ParticipantRepository;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * Class that represents the participant controller
  */
-@RestController
-@RequestMapping("/participants")
+@Controller
 public class ParticipantController {
     private final ParticipantRepository participantRepository;
     private final EventRepository eventRepository;
+    @Autowired
+    private SimpMessagingTemplate template;
 
     /**
      * Constructor
      * @param participantRepository participant repository
      * @param eventRepository event repository
+     * @param template SimpMessagingTemplate
      */
-    public ParticipantController(ParticipantRepository participantRepository, EventRepository eventRepository) {
+    public ParticipantController(ParticipantRepository participantRepository, EventRepository eventRepository,
+                                 SimpMessagingTemplate template) {
         this.participantRepository = participantRepository;
         this.eventRepository = eventRepository;
+        this.template = template;
     }
 
     private static boolean isNullOrEmpty(String str) {
@@ -45,7 +57,7 @@ public class ParticipantController {
      * @param bic BIC of the participant
      * @return response entity of the participant
      */
-    @PostMapping (path = {"", "/"})
+    @PostMapping (path = {"participants", "participants/"})
     public ResponseEntity<Participant> createParticipant(@RequestBody UUID invitationCode,
                                                          @RequestBody String firstName,
                                                          @RequestBody String lastName,
@@ -81,7 +93,7 @@ public class ParticipantController {
      * @param bic BIC of the participant
      * @return response entity of the participant
      */
-    @PutMapping (path = {"/{participantId}", "/{participantId}"})
+    @PutMapping (path = {"participants/{participantId}", "participants/{participantId}"})
     public ResponseEntity<Participant> updateParticipant(@PathVariable("participantId") UUID participantId,
                                                          @RequestBody String firstName,
                                                          @RequestBody String lastName,
@@ -109,7 +121,7 @@ public class ParticipantController {
      * @param participantId id of the participant
      * @return response entity of the participant
      */
-    @DeleteMapping (path = {"/{participantId}", "/{participantId}"})
+    @DeleteMapping (path = {"participants/{participantId}", "participants/{participantId}"})
     public ResponseEntity<Participant> deleteParticipant(@PathVariable("participantId") UUID participantId) {
         if (!participantRepository.existsById(participantId)) {
             return ResponseEntity.notFound().build();
@@ -127,7 +139,7 @@ public class ParticipantController {
      * Returns a 400 Bad Request status code when no participantId was provided.
      * Returns a 404 Not Found status code when no Participant was found with the provided participantId.
      */
-    @GetMapping (path = {"/{participantId}/expenses"})
+    @GetMapping (path = {"participants/{participantId}/expenses"})
     public ResponseEntity<List<Expense>> getExpensesByParticipantId(@PathVariable("participantId") UUID participantId)
     {
         if (participantId == null) {
@@ -138,5 +150,59 @@ public class ParticipantController {
             return ResponseEntity.notFound().build();
 
         return ResponseEntity.ok(participantRepository.getReferenceById(participantId).getMadeExpenses());
+    }
+
+    /**
+     * Handles update websocket endpoint for participant
+     * @param principal connection data about user
+     * @param payload content of a websocket message
+     */
+    @MessageMapping("/participant:update")
+    public void updateParticipant(Principal principal, @Payload Object payload)
+    {
+        if(payload.getClass() != Participant.class) {
+            template.convertAndSendToUser(principal.getName(), "/queue/reply",
+                    StatusEntity.badRequest("Payload should be a participant", true));
+            return;
+        }
+
+        Participant receivedParticipant = (Participant) payload;
+
+        if (isNullOrEmpty(receivedParticipant.getFirstName())) {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    StatusEntity.badRequest("First name should not be empty"));
+            return;
+        }
+        if (isNullOrEmpty(receivedParticipant.getLastName())) {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    StatusEntity.badRequest("Last name should not be empty"));
+            return;
+        }
+        if(!receivedParticipant.getEmail().isEmpty() &&
+                !Pattern.compile("^(.+)@(\\S+)$").matcher(receivedParticipant.getEmail()).matches())
+        {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    StatusEntity.badRequest("Provided email is invalid"));
+            return;
+        }
+
+        if(!participantRepository.existsById(receivedParticipant.getId()))
+        {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    StatusEntity.notFound("Participant not found", true));
+            return;
+        }
+
+        Participant participant = participantRepository.getReferenceById(receivedParticipant.getId());
+        participant.setFirstName(receivedParticipant.getFirstName());
+        participant.setLastName(receivedParticipant.getLastName());
+        participant.setEmail(receivedParticipant.getEmail());
+        participant.setIban(receivedParticipant.getIban());
+        participant.setBic(receivedParticipant.getBic());
+        participantRepository.save(participant);
+
+        template.convertAndSend("/topic/"+receivedParticipant.getId(), participant);
+        template.convertAndSendToUser(principal.getName(), "queue/reply",
+                StatusEntity.ok("participant:update " + participant.getId()));
     }
 }
