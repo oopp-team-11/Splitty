@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.utils.EventDataHandler;
 import client.utils.EventStompSessionHandler;
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
@@ -165,19 +166,19 @@ public class StartScreenCtrl implements Initializable {
             serverErrorAlert(e);
         }
 
-        startWebSocket();
+        startWebSocket(invitationCode);
     }
 
     //TODO: Potentially move this method to a more appropriate class
-    private void startWebSocket() {
+    private void startWebSocket(UUID invitationCode) {
         WebSocketClient client = new StandardWebSocketClient();
 
         WebSocketStompClient stompClient = new WebSocketStompClient(client);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
-        //TODO:Change dummy event to an actual event
-        sessionHandler = new EventStompSessionHandler(UUID.randomUUID());
-        stompClient.connectAsync("ws://localhost:8080/event", sessionHandler);
+        //TODO:Change new EventDataHandler to the actual reference
+        sessionHandler = new EventStompSessionHandler(invitationCode, new EventDataHandler());
+        stompClient.connectAsync("ws://localhost:8080/v1", sessionHandler);
     }
 
     private static void serverErrorAlert(Exception exception) {
