@@ -378,4 +378,42 @@ public class ParticipantControllerTest {
                 eq(StatusEntity.notFound("Participant not found",true)));
         assertFalse(participantRepository.existsById(participant.getId()));
     }
+
+    @Test
+    void checkReadParticipant() {
+        Participant participant = new Participant();
+
+        try {
+            setId(participant, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
+
+        participantRepository.save(participant);
+
+        participantController.readParticipant(principal, participant.getId());
+
+        verify(messagingTemplate).convertAndSend("/topic/"+participant.getId(), participant);
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("/queue/reply"),
+                eq(StatusEntity.ok("participant:read "+participant.getId())));
+    }
+
+    @Test
+    void checkReadParticipantWrongClass() {
+        Participant participant = new Participant();
+
+        participantController.readParticipant(principal, participant);
+
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
+                eq(StatusEntity.badRequest("Payload should be a UUID", true)));
+    }
+
+    @Test
+    void checkReadParticipantNotFound() {
+        UUID uuid = UUID.randomUUID();
+
+        participantController.readParticipant(principal, uuid);
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
+                eq(StatusEntity.notFound("Participant not found",true)));
+
+        assertFalse(participantRepository.existsById(uuid));
+    }
 }

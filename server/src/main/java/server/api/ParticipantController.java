@@ -194,6 +194,36 @@ public class ParticipantController {
     }
 
     /**
+     * Handles read websocket endpoint for participant
+     * @param principal connection data about user
+     * @param payload content of a websocket message
+     */
+    @MessageMapping("/participant:read")
+    public void readParticipant(Principal principal, @Payload Object payload)
+    {
+        if(payload.getClass() != UUID.class) {
+            template.convertAndSendToUser(principal.getName(), "/queue/reply",
+                    StatusEntity.badRequest("Payload should be a UUID", true));
+            return;
+        }
+
+        UUID invitationCode = (UUID) payload;
+
+        if(!participantRepository.existsById(invitationCode))
+        {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    StatusEntity.notFound("Participant not found", true));
+            return;
+        }
+
+        Participant participant = participantRepository.getReferenceById(invitationCode);
+
+        template.convertAndSend("/topic/"+invitationCode, participant);
+        template.convertAndSendToUser(principal.getName(), "/queue/reply",
+                StatusEntity.ok("participant:read " + participant.getId()));
+    }
+
+    /**
      * Handles update websocket endpoint for participant
      * @param principal connection data about user
      * @param payload content of a websocket message
