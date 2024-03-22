@@ -16,6 +16,7 @@ public class EventDataHandler {
     private Event event;
     private List<Participant> participants;
     private List<Expense> expenses;
+    private EventStompSessionHandler sessionHandler;
 
     /***
      * default constructor
@@ -33,6 +34,22 @@ public class EventDataHandler {
         this.event = event;
         this.participants = participants;
         this.expenses = expenses;
+    }
+
+    /**
+     * Getter for sessionHandler
+     * @return returns a reference to sessionHandler
+     */
+    public EventStompSessionHandler getSessionHandler() {
+        return sessionHandler;
+    }
+
+    /**
+     * Setter for sessionHandler used by sessionHandler constructor
+     * @param sessionHandler sessionHandler
+     */
+    public void setSessionHandler(EventStompSessionHandler sessionHandler) {
+        this.sessionHandler = sessionHandler;
     }
 
     /**
