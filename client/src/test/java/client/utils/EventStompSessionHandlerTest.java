@@ -1,6 +1,7 @@
 package client.utils;
 
 
+import client.scenes.MainCtrl;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
@@ -30,7 +31,7 @@ class EventStompSessionHandlerTest {
     @BeforeEach
     void setUp() {
         invitationCode = UUID.randomUUID();
-        handler = new EventStompSessionHandler(invitationCode, new EventDataHandler());
+        handler = new EventStompSessionHandler(invitationCode, new EventDataHandler(), new MainCtrl());
         headers = new StompHeaders();
         session = Mockito.mock(StompSession.class);
     }
@@ -43,7 +44,7 @@ class EventStompSessionHandlerTest {
         ArgumentCaptor<StompFrameHandler> stompFrameHandlerCaptor = ArgumentCaptor.forClass(StompFrameHandler.class);
         ArgumentCaptor<UUID> idCaptor = ArgumentCaptor.forClass(UUID.class);
 
-        verify(session, times(11)).subscribe(destinationCaptor.capture(),
+        verify(session, times(12)).subscribe(destinationCaptor.capture(),
                 stompFrameHandlerCaptor.capture());
         verify(session, times(3)).send(destinationCaptor.capture(), idCaptor.capture());
 
@@ -55,20 +56,21 @@ class EventStompSessionHandlerTest {
         assertEquals(invitationCode, uuids.get(2));
 
         assertEquals("/topic/" + invitationCode + "/event:delete", destinations.get(0));
-        assertEquals("/user/topic/" + invitationCode + "/event:read", destinations.get(1));
-        assertEquals("/topic/" + invitationCode + "/event:update", destinations.get(2));
-        assertEquals("/user/topic/" + invitationCode + "/participants:read", destinations.get(3));
-        assertEquals("/topic/" + invitationCode + "/participant:delete", destinations.get(4));
-        assertEquals("/topic/" + invitationCode + "/participant:update", destinations.get(5));
-        assertEquals("/topic/" + invitationCode + "/participant:create", destinations.get(6));
-        assertEquals("/user/topic/" + invitationCode + "/expenses:read", destinations.get(7));
-        assertEquals("/topic/" + invitationCode + "/expense:delete", destinations.get(8));
-        assertEquals("/topic/" + invitationCode + "/expense:update", destinations.get(9));
-        assertEquals("/topic/" + invitationCode + "/expense:create", destinations.get(10));
+        assertEquals("/user/queue/reply", destinations.get(1));
+        assertEquals("/user/topic/" + invitationCode + "/event:read", destinations.get(2));
+        assertEquals("/topic/" + invitationCode + "/event:update", destinations.get(3));
+        assertEquals("/user/topic/" + invitationCode + "/participants:read", destinations.get(4));
+        assertEquals("/topic/" + invitationCode + "/participant:delete", destinations.get(5));
+        assertEquals("/topic/" + invitationCode + "/participant:update", destinations.get(6));
+        assertEquals("/topic/" + invitationCode + "/participant:create", destinations.get(7));
+        assertEquals("/user/topic/" + invitationCode + "/expenses:read", destinations.get(8));
+        assertEquals("/topic/" + invitationCode + "/expense:delete", destinations.get(9));
+        assertEquals("/topic/" + invitationCode + "/expense:update", destinations.get(10));
+        assertEquals("/topic/" + invitationCode + "/expense:create", destinations.get(11));
 
-        assertEquals("/app/event:read", destinations.get(11));
-        assertEquals("/app/participants:read", destinations.get(12));
-        assertEquals("/app/expenses:read", destinations.get(13));
+        assertEquals("/app/event:read", destinations.get(12));
+        assertEquals("/app/participants:read", destinations.get(13));
+        assertEquals("/app/expenses:read", destinations.get(14));
     }
 
     @Test
@@ -125,7 +127,7 @@ class EventStompSessionHandlerTest {
     void sendExpense() {
         handler.afterConnected(session, headers);
         Participant participant = new Participant(new Event("dummyEvent"), "John", "Doe",
-                                            null, null, null);
+                null, null, null);
         Expense expense = new Expense(participant, "sampleExpense", 4.20);
 
         ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);

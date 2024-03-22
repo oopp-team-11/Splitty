@@ -1,5 +1,6 @@
 package client.utils;
 
+import client.scenes.MainCtrl;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
@@ -56,6 +57,7 @@ class EventDataHandlerTest {
     private static void setId(Participant toSet, UUID newId) throws IllegalAccessException {
         FieldUtils.writeField(toSet, "id", newId, true);
     }
+
     @Test
     void receiveParticipantCreate() {
         handler.receiveParticipant(p1, "create");
@@ -107,7 +109,8 @@ class EventDataHandlerTest {
 
     @Test
     void setSessionHandler() {
-        EventStompSessionHandler sessionHandler = new EventStompSessionHandler(UUID.randomUUID(), handler);
+        EventStompSessionHandler sessionHandler = new EventStompSessionHandler(UUID.randomUUID(), handler,
+                new MainCtrl());
         handler.setSessionHandler(sessionHandler);
         assertEquals(sessionHandler, handler.getSessionHandler());
     }
