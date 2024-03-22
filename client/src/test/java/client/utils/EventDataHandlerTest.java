@@ -58,20 +58,20 @@ class EventDataHandlerTest {
     }
     @Test
     void receiveParticipantCreate() {
-        handler.receiveParticipant(p1, "create");
+        handler.getCreateParticipant(p1);
         assertEquals(handler.getParticipants().getLast(), p1);
     }
 
     @Test
     void receiveParticipantUpdate() {
         p1.setFirstName("Antihype");
-        handler.receiveParticipant(p1, "update");
+        handler.getUpdateParticipant(p1);
         assertEquals(handler.getParticipants().getFirst().getFirstName(), p1.getFirstName());
     }
 
     @Test
     void receiveParticipantDelete() {
-        handler.receiveParticipant(p1, "delete");
+        handler.getDeleteParticipant(p1);
         assertEquals(1, handler.getParticipants().size());
         assertEquals(p2, handler.getParticipants().getFirst());
         assertEquals(1, handler.getExpenses().size());
@@ -81,26 +81,26 @@ class EventDataHandlerTest {
     @Test
     void receiveEventUpdate() {
         event.setTitle("Antihype");
-        handler.receiveEvent(event, "update");
+        handler.getUpdateEvent(event);
         assertEquals(event, handler.getEvent());
     }
 
     @Test
     void receiveExpenseCreate() {
-        handler.receiveExpense(e1, "create");
+        handler.getCreateExpense(e1);
         assertEquals(e1, handler.getExpenses().getLast());
     }
 
     @Test
     void receiveExpenseUpdate() {
         e1.setTitle("Antihype");
-        handler.receiveExpense(e1, "update");
+        handler.getUpdateExpense(e1);
         assertEquals(e1, handler.getExpenses().getFirst());
     }
 
     @Test
     void receiveExpenseDelete() {
-        handler.receiveExpense(e1, "delete");
+        handler.getDeleteExpense(e1);
         assertEquals(1, handler.getExpenses().size());
         assertEquals(e2, handler.getExpenses().getFirst());
     }
