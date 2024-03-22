@@ -193,7 +193,7 @@ public class EventDataHandler {
                 participants.remove(getParticipantById(receivedParticipant.getId()));
                 List<Expense> toRemove = new ArrayList<>();
                 for (var expense : expenses) {
-                    if (receivedParticipant.getId().equals(expense.getParticipantId())) {
+                    if (receivedParticipant.getId().equals(expense.getPaidById())) {
                         toRemove.add(expense);
                     }
                 }
