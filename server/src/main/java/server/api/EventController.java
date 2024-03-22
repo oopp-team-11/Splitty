@@ -168,8 +168,6 @@ public class EventController {
 
         Event event = repo.getReferenceById(receivedEvent.getId());
         event.setTitle(receivedEvent.getTitle());
-        event.setCreationDate(receivedEvent.getCreationDate());
-        event.setLastActivity(receivedEvent.getLastActivity());
         repo.save(event);
 
         template.convertAndSend("/topic/"+receivedEvent.getId(), event);

@@ -135,6 +135,91 @@ public class ParticipantControllerTest {
     }
 
     @Test
+    void checkCreateParticipant() {
+        Participant participant = new Participant();
+
+        try {
+            setId(participant, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
+
+        participant.setFirstName("foo");
+        participant.setLastName("fooman");
+        participant.setEmail("foo@foo.com");
+
+        participantController.createParticipant(principal, participant);
+
+        assertTrue(participantRepository.existsById(participant.getId()));
+
+        verify(messagingTemplate).convertAndSend("/topic/"+participant.getId(), participant);
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("queue/reply"),
+                eq(StatusEntity.ok("participant:create "+participant.getId())));
+    }
+
+    @Test
+    void checkCreateParticipantNullFirstName() {
+        Participant participant = new Participant();
+
+        try {
+            setId(participant, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
+
+        participantController.createParticipant(principal, participant);
+
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
+                eq(StatusEntity.badRequest("First name should not be empty")));
+
+        assertFalse(participantRepository.existsById(participant.getId()));
+    }
+
+    @Test
+    void checkCreateParticipantNullLastName() {
+        Participant participant = new Participant();
+
+        participant.setFirstName("foo");
+        try {
+            setId(participant, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
+
+        participantController.createParticipant(principal, participant);
+
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
+                eq(StatusEntity.badRequest("Last name should not be empty")));
+        assertFalse(participantRepository.existsById(participant.getId()));
+
+    }
+
+    @Test
+    void checkCreateParticipantInvalidEmail() {
+        Participant participant = new Participant();
+
+        participant.setFirstName("foo");
+        participant.setLastName("fooman");
+        participant.setEmail("foomail");
+        try {
+            setId(participant, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
+
+        participantController.createParticipant(principal, participant);
+
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
+                eq(StatusEntity.badRequest("Provided email is invalid")));
+        assertFalse(participantRepository.existsById(participant.getId()));
+
+    }
+
+    @Test
+    void checkCreateParticipantWrongClass() {
+        Event event = new Event();
+
+        participantController.createParticipant(principal, event);
+
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()) ,eq("/queue/reply"),
+                eq(StatusEntity.badRequest("Payload should be a participant", true)));
+
+        assertFalse(participantRepository.existsById(event.getId()));
+    }
+
+    @Test
     void checkUpdateParticipant() {
         Participant participant = new Participant();
 

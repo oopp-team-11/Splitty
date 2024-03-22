@@ -153,6 +153,47 @@ public class ParticipantController {
     }
 
     /**
+     * Handles create websocket endpoint for participant
+     * @param principal connection data about user
+     * @param payload content of a websocket message
+     */
+    @MessageMapping("/participant:create")
+    public void createParticipant(Principal principal, @Payload Object payload)
+    {
+        if(payload.getClass() != Participant.class) {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    StatusEntity.badRequest("Payload should be a participant", true));
+            return;
+        }
+
+        Participant receivedParticipant = (Participant) payload;
+
+        if (isNullOrEmpty(receivedParticipant.getFirstName())) {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    StatusEntity.badRequest("First name should not be empty"));
+            return;
+        }
+        if (isNullOrEmpty(receivedParticipant.getLastName())) {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    StatusEntity.badRequest("Last name should not be empty"));
+            return;
+        }
+        if(!receivedParticipant.getEmail().isEmpty() &&
+                !Pattern.compile("^(.+)@(\\S+)$").matcher(receivedParticipant.getEmail()).matches())
+        {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    StatusEntity.badRequest("Provided email is invalid"));
+            return;
+        }
+
+        participantRepository.save(receivedParticipant);
+
+        template.convertAndSend("/topic/"+receivedParticipant.getId(), receivedParticipant);
+        template.convertAndSendToUser(principal.getName(), "queue/reply",
+                StatusEntity.ok("participant:create " + receivedParticipant.getId()));
+    }
+
+    /**
      * Handles update websocket endpoint for participant
      * @param principal connection data about user
      * @param payload content of a websocket message
