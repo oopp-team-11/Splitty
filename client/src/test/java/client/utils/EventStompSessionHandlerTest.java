@@ -54,17 +54,17 @@ class EventStompSessionHandlerTest {
         assertEquals(invitationCode, uuids.get(1));
         assertEquals(invitationCode, uuids.get(2));
 
-        assertEquals("/user/topic/" + invitationCode + "/event:read", destinations.get(0));
-        assertEquals("/user/topic/" + invitationCode + "/participants:read", destinations.get(1));
-        assertEquals("/user/topic/" + invitationCode + "/expenses:read", destinations.get(2));
-        assertEquals("/topic/" + invitationCode + "/expense:create", destinations.get(3));
-        assertEquals("/topic/" + invitationCode + "/expense:update", destinations.get(4));
-        assertEquals("/topic/" + invitationCode + "/expense:delete", destinations.get(5));
+        assertEquals("/topic/" + invitationCode + "/event:delete", destinations.get(0));
+        assertEquals("/user/topic/" + invitationCode + "/event:read", destinations.get(1));
+        assertEquals("/topic/" + invitationCode + "/event:update", destinations.get(2));
+        assertEquals("/user/topic/" + invitationCode + "/participants:read", destinations.get(3));
+        assertEquals("/topic/" + invitationCode + "/participant:delete", destinations.get(4));
+        assertEquals("/topic/" + invitationCode + "/participant:update", destinations.get(5));
         assertEquals("/topic/" + invitationCode + "/participant:create", destinations.get(6));
-        assertEquals("/topic/" + invitationCode + "/participant:update", destinations.get(7));
-        assertEquals("/topic/" + invitationCode + "/participant:delete", destinations.get(8));
-        assertEquals("/topic/" + invitationCode + "/event:update", destinations.get(9));
-        assertEquals("/topic/" + invitationCode + "/event:delete", destinations.get(10));
+        assertEquals("/user/topic/" + invitationCode + "/expenses:read", destinations.get(7));
+        assertEquals("/topic/" + invitationCode + "/expense:delete", destinations.get(8));
+        assertEquals("/topic/" + invitationCode + "/expense:update", destinations.get(9));
+        assertEquals("/topic/" + invitationCode + "/expense:create", destinations.get(10));
 
         assertEquals("/app/event:read", destinations.get(11));
         assertEquals("/app/participants:read", destinations.get(12));
@@ -138,5 +138,53 @@ class EventStompSessionHandlerTest {
         assertEquals("/app/expense:create", capturedDestination);
 
         assertEquals(expense, payloadCaptor.getValue());
+    }
+
+    @Test
+    void refreshEvent() {
+        handler.afterConnected(session, headers);
+
+        ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Object> payloadCaptor = ArgumentCaptor.forClass(Object.class);
+
+        handler.refreshEvent();
+        verify(session, times(4)).send(destinationCaptor.capture(), payloadCaptor.capture());
+
+        String capturedDestination = destinationCaptor.getValue();
+        assertEquals("/app/event:read", capturedDestination);
+
+        assertEquals(invitationCode, payloadCaptor.getValue());
+    }
+
+    @Test
+    void refreshParticipants() {
+        handler.afterConnected(session, headers);
+
+        ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Object> payloadCaptor = ArgumentCaptor.forClass(Object.class);
+
+        handler.refreshParticipants();
+        verify(session, times(4)).send(destinationCaptor.capture(), payloadCaptor.capture());
+
+        String capturedDestination = destinationCaptor.getValue();
+        assertEquals("/app/participants:read", capturedDestination);
+
+        assertEquals(invitationCode, payloadCaptor.getValue());
+    }
+
+    @Test
+    void refreshExpenses() {
+        handler.afterConnected(session, headers);
+
+        ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Object> payloadCaptor = ArgumentCaptor.forClass(Object.class);
+
+        handler.refreshExpenses();
+        verify(session, times(4)).send(destinationCaptor.capture(), payloadCaptor.capture());
+
+        String capturedDestination = destinationCaptor.getValue();
+        assertEquals("/app/expenses:read", capturedDestination);
+
+        assertEquals(invitationCode, payloadCaptor.getValue());
     }
 }
