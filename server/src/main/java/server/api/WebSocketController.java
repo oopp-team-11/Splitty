@@ -4,16 +4,12 @@ import commons.Event;
 import commons.Expense;
 import commons.Participant;
 import commons.StatusEntity;
-import commons.StatusEntity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaders;
-import org.springframework.messaging.support.ErrorMessage;
 import org.springframework.stereotype.Controller;
 import server.database.EventRepository;
 import server.database.ParticipantRepository;
@@ -137,7 +133,8 @@ public class WebSocketController {
 //     */
 //    @MessageMapping("/event:create")
 //    @SendTo("/topic/{invitationCode}")
-//    public StatusEntity<Event> createEvent(Principal principal, @Headers StompHeaders headers, @Payload Object payload)
+//    public StatusEntity<Event> createEvent(Principal principal, @Headers StompHeaders headers,
+//    @Payload Object payload)
 //    {
 //        // If true: payload is not of event class
 //        if(payload.getClass() != Event.class) {
@@ -175,9 +172,7 @@ public class WebSocketController {
     /**
      * Handles update websocket endpoint for event
      * @param principal connection data about user
-     * @param headers Stomp headers
      * @param payload content of a websocket message
-     * @return Status entity (status code, body, boolean unsolvable)
      */
     @MessageMapping("/event:update")
 //    @SendTo("/topic/{invitationCode}")
@@ -220,25 +215,16 @@ public class WebSocketController {
     /**
      * Handles delete websocket endpoint for event
      * @param principal connection data about user
-     * @param headers Stomp headers
      * @param payload content of a websocket message
-     * @return Status entity (status code, body, boolean unsolvable)
      */
     @MessageMapping("/event:delete")
-    @SendTo("/topic/{invitationCode}")
-    public StatusEntity<String> deleteEvent(Principal principal, @Headers StompHeaders headers, @Payload Object payload)
+//    @SendTo("/topic/{invitationCode}")
+    public void deleteEvent(Principal principal, @Payload Object payload)
     {
         if(payload.getClass() != Event.class) {
             template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    new ErrorMessage(new IllegalArgumentException()));
-            return StatusEntity.badRequest("Payload should be an Event", true);
-        }
-
-        if(!headers.getFirst("model").equals("Event")
-                || !headers.getFirst("method").equals("delete")) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    new ErrorMessage(new IllegalArgumentException()));
-            return StatusEntity.badRequest("Headers do not match the method", true);
+                    StatusEntity.badRequest("Payload should be an Event", true));
+            return;
         }
 
         /*TODO: Implement admin passcode verification*/
@@ -253,15 +239,16 @@ public class WebSocketController {
         if(!repo.existsById(receivedEvent.getId()))
         {
             template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    new ErrorMessage(new IllegalArgumentException()));
-            return StatusEntity.notFound("Event not found", true);
+                    StatusEntity.notFound("Event not found", true));
+            return;
         }
 
         Event event = repo.getReferenceById(receivedEvent.getId());
         repo.delete(event);
 
-        template.convertAndSend(event);
-        return StatusEntity.ok("event:delete " + event.getId());
+        template.convertAndSend("/topic/"+receivedEvent.getId(), event);
+        template.convertAndSendToUser(principal.getName(), "queue/reply",
+                StatusEntity.ok("event:delete " + event.getId()));
     }
 
     //TODO: This method should be split into three and fixed
