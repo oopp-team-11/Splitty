@@ -17,19 +17,15 @@ import static org.mockito.Mockito.*;
 
 public class WebSocketControllerTest {
     private WebSocketController webSocketController;
-    private EventController eventController;
     private SimpMessagingTemplate messagingTemplate;
     private TestEventRepository eventRepo;
-    private TestParticipantRepository participantRepo;
     private Principal principal;
 
     @BeforeEach
     void setUp() {
         messagingTemplate = mock(SimpMessagingTemplate.class);
         eventRepo = new TestEventRepository();
-        participantRepo = new TestParticipantRepository();
-        webSocketController = new WebSocketController(messagingTemplate, eventRepo, participantRepo);
-        eventController = new EventController(eventRepo);
+        webSocketController = new WebSocketController(messagingTemplate, eventRepo);
         principal = mock(Principal.class);
     }
 
