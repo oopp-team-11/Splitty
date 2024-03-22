@@ -189,7 +189,7 @@ public class ParticipantController {
         participantRepository.save(receivedParticipant);
 
         template.convertAndSend("/topic/"+receivedParticipant.getId(), receivedParticipant);
-        template.convertAndSendToUser(principal.getName(), "queue/reply",
+        template.convertAndSendToUser(principal.getName(), "/queue/reply",
                 StatusEntity.ok("participant:create " + receivedParticipant.getId()));
     }
 
@@ -243,7 +243,7 @@ public class ParticipantController {
         participantRepository.save(participant);
 
         template.convertAndSend("/topic/"+receivedParticipant.getId(), participant);
-        template.convertAndSendToUser(principal.getName(), "queue/reply",
+        template.convertAndSendToUser(principal.getName(), "/queue/reply",
                 StatusEntity.ok("participant:update " + participant.getId()));
     }
 
@@ -273,7 +273,7 @@ public class ParticipantController {
         participantRepository.delete(participant);
 
         template.convertAndSend("/topic/"+receivedParticipant.getId(), participant);
-        template.convertAndSendToUser(principal.getName(), "queue/reply",
+        template.convertAndSendToUser(principal.getName(), "/queue/reply",
                 StatusEntity.ok("participant:delete " + participant.getId()));
     }
 }

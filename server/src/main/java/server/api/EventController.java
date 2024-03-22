@@ -171,8 +171,38 @@ public class EventController {
         repo.save(event);
 
         template.convertAndSend("/topic/"+receivedEvent.getId(), event);
-        template.convertAndSendToUser(principal.getName(), "queue/reply",
+        template.convertAndSendToUser(principal.getName(), "/queue/reply",
                 StatusEntity.ok("event:update " + event.getId()));
+    }
+
+    /**
+     * Handles read websocket endpoint for event
+     * @param principal connection data about user
+     * @param payload content of a websocket message
+     */
+    @MessageMapping("/event:read")
+    public void readEvent(Principal principal, @Payload Object payload)
+    {
+        if(payload.getClass() != UUID.class) {
+            template.convertAndSendToUser(principal.getName(), "/queue/reply",
+                    StatusEntity.badRequest("Payload should be a UUID", true));
+            return;
+        }
+
+        UUID invitationCode = (UUID) payload;
+
+        if(!repo.existsById(invitationCode))
+        {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    StatusEntity.notFound("Event not found", true));
+            return;
+        }
+
+        Event event = repo.getReferenceById(invitationCode);
+
+        template.convertAndSend("/topic/"+invitationCode, event);
+        template.convertAndSendToUser(principal.getName(), "/queue/reply",
+                StatusEntity.ok("event:read " + event.getId()));
     }
 
     /**
@@ -209,7 +239,7 @@ public class EventController {
         repo.delete(event);
 
         template.convertAndSend("/topic/"+receivedEvent.getId(), event);
-        template.convertAndSendToUser(principal.getName(), "queue/reply",
+        template.convertAndSendToUser(principal.getName(), "/queue/reply",
                 StatusEntity.ok("event:delete " + event.getId()));
     }
 

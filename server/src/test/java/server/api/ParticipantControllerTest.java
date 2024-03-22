@@ -151,7 +151,7 @@ public class ParticipantControllerTest {
         assertTrue(participantRepository.existsById(participant.getId()));
 
         verify(messagingTemplate).convertAndSend("/topic/"+participant.getId(), participant);
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("queue/reply"),
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("/queue/reply"),
                 eq(StatusEntity.ok("participant:create "+participant.getId())));
     }
 
@@ -236,7 +236,7 @@ public class ParticipantControllerTest {
         participantController.updateParticipant(principal, participant);
 
         verify(messagingTemplate).convertAndSend("/topic/"+participant.getId(), participant);
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("queue/reply"),
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("/queue/reply"),
                 eq(StatusEntity.ok("participant:update "+participant.getId())));
 
         assertTrue(participantRepository.existsById(participant.getId()));
@@ -346,7 +346,7 @@ public class ParticipantControllerTest {
         participantController.deleteParticipant(principal, participant);
 
         verify(messagingTemplate).convertAndSend("/topic/"+participant.getId(), participant);
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("queue/reply"),
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("/queue/reply"),
                 eq(StatusEntity.ok("participant:delete "+participant.getId())));
         assertFalse(participantRepository.existsById(participant.getId()));
     }

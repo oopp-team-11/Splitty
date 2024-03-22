@@ -218,7 +218,7 @@ public class EventControllerTest {
         sut.updateEvent(principal, event);
 
         verify(messagingTemplate).convertAndSend("/topic/"+event.getId(), event);
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("queue/reply"),
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("/queue/reply"),
                 eq(StatusEntity.ok("event:update "+event.getId())));
 
         assertTrue(eventRepo.existsById(event.getId()));
@@ -287,7 +287,7 @@ public class EventControllerTest {
         sut.deleteEvent(principal, event);
 
         verify(messagingTemplate).convertAndSend("/topic/"+event.getId(), event);
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("queue/reply"),
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("/queue/reply"),
                 eq(StatusEntity.ok("event:delete "+event.getId())));
         assertFalse(eventRepo.existsById(event.getId()));
     }
@@ -318,6 +318,44 @@ public class EventControllerTest {
     }
 
     //TODO: add a test for unauthorized access
+
+    @Test
+    void checkReadEvent() {
+        Event event = new Event("event");
+
+        try {
+            setId(event, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
+
+        eventRepo.save(event);
+
+        sut.readEvent(principal, event.getId());
+
+        verify(messagingTemplate).convertAndSend("/topic/"+event.getId(), event);
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("/queue/reply"),
+                eq(StatusEntity.ok("event:read "+event.getId())));
+    }
+
+    @Test
+    void checkReadEventWrongClass() {
+        Participant participant = new Participant();
+
+        sut.readEvent(principal, participant);
+
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
+                eq(StatusEntity.badRequest("Payload should be a UUID", true)));
+    }
+
+    @Test
+    void checkReadEventNotFound() {
+        UUID uuid = UUID.randomUUID();
+
+        sut.readEvent(principal, uuid);
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
+                eq(StatusEntity.notFound("Event not found",true)));
+
+        assertFalse(eventRepo.existsById(uuid));
+    }
 }
 
 
