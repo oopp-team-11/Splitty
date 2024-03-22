@@ -138,6 +138,8 @@ public class EventDataHandler {
     public void getCreateParticipant(Participant receivedParticipant) {
         if (participants.contains(receivedParticipant)) {
             // logic of refetching list of participants
+            sessionHandler.refreshParticipants();
+            // TODO: logic of pop-up
             return;
         }
         participants.add(receivedParticipant);
@@ -151,6 +153,8 @@ public class EventDataHandler {
     public void getDeleteParticipant(Participant receivedParticipant) {
         if (!participants.contains(receivedParticipant)) {
             //logic of refetching
+            sessionHandler.refreshParticipants();
+            // TODO: logic of pop-up
             return;
         }
 
@@ -174,6 +178,8 @@ public class EventDataHandler {
     public void getUpdateParticipant(Participant receivedParticipant) {
         if (!participants.contains(receivedParticipant)) {
             //logic of refetching
+            sessionHandler.refreshParticipants();
+            // TODO: logic of pop-up
             return;
         }
 
@@ -188,6 +194,8 @@ public class EventDataHandler {
     public void getUpdateEvent(Event receivedEvent) {
         if (event == null) {
             // logic of pop-up
+            sessionHandler.refreshEvent();
+            // TODO: logic of pop-up
         }
 
         event.setTitle(receivedEvent.getTitle());
@@ -211,6 +219,8 @@ public class EventDataHandler {
     public void getCreateExpense(Expense receivedExpense) {
         if (expenses.contains(receivedExpense)) {
             // logic of refetching expenses from server
+            sessionHandler.refreshEvent();
+            // TODO: logic of pop-up
             return;
         }
 
@@ -225,6 +235,8 @@ public class EventDataHandler {
     public void getUpdateExpense(Expense receivedExpense) {
         if (!expenses.contains(receivedExpense)) {
             // logic of refetching expenses
+            sessionHandler.refreshExpenses();
+            // TODO: logic of pop-up
             return;
         }
 
@@ -239,6 +251,8 @@ public class EventDataHandler {
     public void getDeleteExpense(Expense receivedExpense) {
         if (!expenses.contains(receivedExpense)) {
             // logic of refetching expenses
+            sessionHandler.refreshExpenses();
+            // TODO: logic of pop-up
             return;
         }
 
