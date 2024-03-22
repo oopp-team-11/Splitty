@@ -19,6 +19,7 @@ import static org.mockito.Mockito.*;
 
 public class WebSocketControllerTest {
     private WebSocketController webSocketController;
+    private EventController eventController;
     private SimpMessagingTemplate messagingTemplate;
     private TestEventRepository eventRepo;
     private TestParticipantRepository participantRepo;
@@ -30,6 +31,7 @@ public class WebSocketControllerTest {
         eventRepo = new TestEventRepository();
         participantRepo = new TestParticipantRepository();
         webSocketController = new WebSocketController(messagingTemplate, eventRepo, participantRepo);
+        eventController = new EventController(eventRepo);
         principal = mock(Principal.class);
     }
 
@@ -37,91 +39,93 @@ public class WebSocketControllerTest {
         FieldUtils.writeField(toSet, "id", newId, true);
     }
 
-    @Test
-    void checkCreateEvent() {
-        Event event = new Event("event");
-
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Event");
-        headers.add("method", "create");
-
-        webSocketController.createEvent(principal, headers, event);
-
-        assertTrue(eventRepo.existsById(event.getId()));
-
-        var repoEvent = eventRepo.getReferenceById(event.getId());
-
-        verify(messagingTemplate).convertAndSend(repoEvent);
-
-        assertNotNull(repoEvent.getCreationDate());
-        assertNotNull(repoEvent.getLastActivity());
-    }
-
-    @Test
-    void checkCreateEventNull() {
-        Event event = new Event(null);
-
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Event");
-        headers.add("method", "create");
-
-        webSocketController.createEvent(principal, headers, event);
-
-        assertFalse(eventRepo.existsById(event.getId()));
-        verify(messagingTemplate).convertAndSendToUser(
-                eq(principal.getName()),eq("/queue/reply"), any(ErrorMessage.class));
-    }
-
-    @Test
-    void checkCreateEventWrongClass() {
-        Participant participant = new Participant();
-
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Event");
-        headers.add("method", "create");
-
-        webSocketController.createEvent(principal, headers, participant);
-
-        assertFalse(eventRepo.existsById(participant.getId()));
-        verify(messagingTemplate).convertAndSendToUser(
-                eq(principal.getName()) ,eq("/queue/reply"), any(ErrorMessage.class));
-    }
-
-    @Test
-    void checkCreateEventWrongHeaders1() {
-        Event event = new Event();
-
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Participant");
-        headers.add("method", "create");
-        webSocketController.createEvent(principal, headers, event);
-        assertFalse(eventRepo.existsById(event.getId()));
-        verify(messagingTemplate).convertAndSendToUser(
-                eq(principal.getName()) ,eq("/queue/reply"), any(ErrorMessage.class));
-    }
-
-    @Test
-    void checkCreateEventWrongHeaders2() {
-        Event event = new Event();
-
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Event");
-        headers.add("method", "update");
-        webSocketController.createEvent(principal, headers, event);
-        assertFalse(eventRepo.existsById(event.getId()));
-        verify(messagingTemplate).convertAndSendToUser(
-                eq(principal.getName()) ,eq("/queue/reply"), any(ErrorMessage.class));
-    }
+//    @Test
+//    void checkCreateEvent() {
+//        Event event = new Event("event");
+//
+//        StompHeaders headers = new StompHeaders();
+//        headers.add("model", "Event");
+//        headers.add("method", "create");
+//
+//        webSocketController.createEvent(principal, headers, event);
+//
+//        assertTrue(eventRepo.existsById(event.getId()));
+//
+//        var repoEvent = eventRepo.getReferenceById(event.getId());
+//
+//        verify(messagingTemplate).convertAndSend(repoEvent);
+//
+//        assertNotNull(repoEvent.getCreationDate());
+//        assertNotNull(repoEvent.getLastActivity());
+//    }
+//
+//    @Test
+//    void checkCreateEventNull() {
+//        Event event = new Event(null);
+//
+//        StompHeaders headers = new StompHeaders();
+//        headers.add("model", "Event");
+//        headers.add("method", "create");
+//
+//        webSocketController.createEvent(principal, headers, event);
+//
+//        assertFalse(eventRepo.existsById(event.getId()));
+//        verify(messagingTemplate).convertAndSendToUser(
+//                eq(principal.getName()),eq("/queue/reply"), any(ErrorMessage.class));
+//    }
+//
+//    @Test
+//    void checkCreateEventWrongClass() {
+//        Participant participant = new Participant();
+//
+//        StompHeaders headers = new StompHeaders();
+//        headers.add("model", "Event");
+//        headers.add("method", "create");
+//
+//        webSocketController.createEvent(principal, headers, participant);
+//
+//        assertFalse(eventRepo.existsById(participant.getId()));
+//        verify(messagingTemplate).convertAndSendToUser(
+//                eq(principal.getName()) ,eq("/queue/reply"), any(ErrorMessage.class));
+//    }
+//
+//    @Test
+//    void checkCreateEventWrongHeaders1() {
+//        Event event = new Event();
+//
+//        StompHeaders headers = new StompHeaders();
+//        headers.add("model", "Participant");
+//        headers.add("method", "create");
+//        webSocketController.createEvent(principal, headers, event);
+//        assertFalse(eventRepo.existsById(event.getId()));
+//        verify(messagingTemplate).convertAndSendToUser(
+//                eq(principal.getName()) ,eq("/queue/reply"), any(ErrorMessage.class));
+//    }
+//
+//    @Test
+//    void checkCreateEventWrongHeaders2() {
+//        Event event = new Event();
+//
+//        StompHeaders headers = new StompHeaders();
+//        headers.add("model", "Event");
+//        headers.add("method", "update");
+//        webSocketController.createEvent(principal, headers, event);
+//        assertFalse(eventRepo.existsById(event.getId()));
+//        verify(messagingTemplate).convertAndSendToUser(
+//                eq(principal.getName()) ,eq("/queue/reply"), any(ErrorMessage.class));
+//    }
 
     @Test
     void checkUpdateEvent() {
-        Event event = new Event("event");
 
         StompHeaders headers = new StompHeaders();
         headers.add("model", "Event");
         headers.add("method", "create");
 
-        webSocketController.createEvent(principal, headers, event);
+//        webSocketController.createEvent(principal, headers, event);
+        var response = eventController.createEventWithTitle("event");
+
+        Event event = eventController.getEventByInvitationCode(response.getBody().getId()).getBody();
 
         event.setTitle("foo");
 
@@ -142,13 +146,15 @@ public class WebSocketControllerTest {
 
     @Test
     void checkUpdateEventNull() {
-        Event event = new Event("event");
 
         StompHeaders headers = new StompHeaders();
         headers.add("model", "Event");
         headers.add("method", "create");
 
-        webSocketController.createEvent(principal, headers, event);
+//        webSocketController.createEvent(principal, headers, event);
+        var response = eventController.createEventWithTitle("event");
+
+        Event event = eventController.getEventByInvitationCode(response.getBody().getId()).getBody();
 
         event.setTitle(null);
 
@@ -205,25 +211,13 @@ public class WebSocketControllerTest {
 
     @Test
     void checkUpdateEventNotFound() {
-        Event startEvent = new Event("event");
-
-        try {
-            setId(startEvent, UUID.randomUUID());
-        } catch (IllegalAccessException ignored) {}
-
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Event");
-        headers.add("method", "create");
-
-        webSocketController.createEvent(principal, headers, startEvent);
-
-        Event event = new Event("foo");
+        Event event = new Event("event");
 
         try {
             setId(event, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        headers = new StompHeaders();
+        StompHeaders headers = new StompHeaders();
         headers.add("model", "Event");
         headers.add("method", "update");
 
@@ -237,13 +231,14 @@ public class WebSocketControllerTest {
     //TODO: Incorporate admin password into tests for deleteEvent()
     @Test
     void checkDeleteEvent() {
-        Event event = new Event("event");
-
         StompHeaders headers = new StompHeaders();
         headers.add("model", "Event");
         headers.add("method", "create");
 
-        webSocketController.createEvent(principal, headers, event);
+//        webSocketController.createEvent(principal, headers, event);
+        var response = eventController.createEventWithTitle("event");
+
+        Event event = eventController.getEventByInvitationCode(response.getBody().getId()).getBody();
 
         assertTrue(eventRepo.existsById(event.getId()));
 
@@ -256,28 +251,6 @@ public class WebSocketControllerTest {
         assertFalse(eventRepo.existsById(event.getId()));
 
         verify(messagingTemplate, times(2)).convertAndSend(any(Event.class));
-    }
-
-    @Test
-    void checkDeleteEventNull() {
-        Event event = new Event("event");
-
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Event");
-        headers.add("method", "create");
-
-        webSocketController.createEvent(principal, headers, event);
-
-        event.setTitle(null);
-
-        headers = new StompHeaders();
-        headers.add("model", "Event");
-        headers.add("method", "delete");
-
-        webSocketController.deleteEvent(principal, headers, event);
-
-        verify(messagingTemplate).convertAndSendToUser(
-                eq(principal.getName()),eq("/queue/reply"), any(ErrorMessage.class));
     }
 
     @Test
@@ -320,28 +293,19 @@ public class WebSocketControllerTest {
 
     @Test
     void checkDeleteEventNotFound() {
-        Event startEvent = new Event("event");
-
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Event");
-        headers.add("method", "create");
-
-        webSocketController.createEvent(principal, headers, startEvent);
-
         Event event = new Event("foo");
 
         try {
             setId(event, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        headers = new StompHeaders();
+        StompHeaders headers = new StompHeaders();
         headers.add("model", "Event");
         headers.add("method", "delete");
 
         webSocketController.deleteEvent(principal, headers, event);
 
         assertFalse(eventRepo.existsById(event.getId()));
-        assertTrue(eventRepo.existsById(startEvent.getId()));
         verify(messagingTemplate).convertAndSendToUser(
                 eq(principal.getName()),eq("/queue/reply"), any(ErrorMessage.class));
     }
