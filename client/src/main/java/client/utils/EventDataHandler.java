@@ -119,6 +119,10 @@ public class EventDataHandler {
      * @param receivedParticipant the new Participant
      */
     public void getCreateParticipant(Participant receivedParticipant) {
+        if (participants.contains(receivedParticipant)) {
+            // logic of refetching list of participants
+            return;
+        }
         participants.add(receivedParticipant);
     }
 
@@ -128,6 +132,11 @@ public class EventDataHandler {
      * @param receivedParticipant the participant to be deleted
      */
     public void getDeleteParticipant(Participant receivedParticipant) {
+        if (!participants.contains(receivedParticipant)) {
+            //logic of refetching
+            return;
+        }
+
         participants.remove(getParticipantById(receivedParticipant.getId()));
         List<Expense> toRemove = new ArrayList<>();
         for (var expense : expenses) {
@@ -146,6 +155,11 @@ public class EventDataHandler {
      * @param receivedParticipant new data for the already existing participant
      */
     public void getUpdateParticipant(Participant receivedParticipant) {
+        if (!participants.contains(receivedParticipant)) {
+            //logic of refetching
+            return;
+        }
+
         updateParticipant(getParticipantById(receivedParticipant.getId()), receivedParticipant);
     }
 
@@ -155,6 +169,10 @@ public class EventDataHandler {
      * @param receivedEvent Event object containing the updated fields
      */
     public void getUpdateEvent(Event receivedEvent) {
+        if (event == null) {
+            // logic of pop-up
+        }
+
         event.setTitle(receivedEvent.getTitle());
     }
 
@@ -174,6 +192,11 @@ public class EventDataHandler {
      * @param receivedExpense the new Expense
      */
     public void getCreateExpense(Expense receivedExpense) {
+        if (expenses.contains(receivedExpense)) {
+            // logic of refetching expenses from server
+            return;
+        }
+
         expenses.add(receivedExpense);
     }
 
@@ -183,6 +206,11 @@ public class EventDataHandler {
      * @param receivedExpense an expense object containing updated fields
      */
     public void getUpdateExpense(Expense receivedExpense) {
+        if (!expenses.contains(receivedExpense)) {
+            // logic of refetching expenses
+            return;
+        }
+
         updateExpense(getExpenseById(receivedExpense.getId()), receivedExpense);
     }
 
@@ -192,6 +220,11 @@ public class EventDataHandler {
      * @param receivedExpense the Expense that should be deleted
      */
     public void getDeleteExpense(Expense receivedExpense) {
+        if (!expenses.contains(receivedExpense)) {
+            // logic of refetching expenses
+            return;
+        }
+
         expenses.remove(receivedExpense);
     }
 
