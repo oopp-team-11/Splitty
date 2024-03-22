@@ -119,6 +119,7 @@ public class EventDataHandler {
      * @param receivedParticipant the new Participant
      */
     public void getCreateParticipant(Participant receivedParticipant) {
+        participants.add(receivedParticipant);
     }
 
     /**
@@ -127,6 +128,16 @@ public class EventDataHandler {
      * @param receivedParticipant the participant to be deleted
      */
     public void getDeleteParticipant(Participant receivedParticipant) {
+        participants.remove(getParticipantById(receivedParticipant.getId()));
+        List<Expense> toRemove = new ArrayList<>();
+        for (var expense : expenses) {
+            if (receivedParticipant.getId().equals(expense.getPaidById())) {
+                toRemove.add(expense);
+            }
+        }
+        for (var expense : toRemove) {
+            expenses.remove(expense);
+        }
     }
 
     /**
@@ -135,6 +146,7 @@ public class EventDataHandler {
      * @param receivedParticipant new data for the already existing participant
      */
     public void getUpdateParticipant(Participant receivedParticipant) {
+        updateParticipant(getParticipantById(receivedParticipant.getId()), receivedParticipant);
     }
 
     /**
@@ -143,12 +155,17 @@ public class EventDataHandler {
      * @param receivedEvent Event object containing the updated fields
      */
     public void getUpdateEvent(Event receivedEvent) {
+        event.setTitle(receivedEvent.getTitle());
     }
 
     /**
      * Receives the request to delete all data related to current event and change the scene to start screen
      */
     public void getDeleteEvent() {
+        // Maybe some smarter logic will be needed
+        event = null;
+        participants = null;
+        expenses = null;
     }
 
     /**
@@ -157,6 +174,7 @@ public class EventDataHandler {
      * @param receivedExpense the new Expense
      */
     public void getCreateExpense(Expense receivedExpense) {
+        expenses.add(receivedExpense);
     }
 
     /**
@@ -165,6 +183,7 @@ public class EventDataHandler {
      * @param receivedExpense an expense object containing updated fields
      */
     public void getUpdateExpense(Expense receivedExpense) {
+        updateExpense(getExpenseById(receivedExpense.getId()), receivedExpense);
     }
 
     /**
@@ -173,6 +192,7 @@ public class EventDataHandler {
      * @param receivedExpense the Expense that should be deleted
      */
     public void getDeleteExpense(Expense receivedExpense) {
+        expenses.remove(receivedExpense);
     }
 
     /**
@@ -181,48 +201,7 @@ public class EventDataHandler {
      * @param receivedParticipant received Participant object
      * @param methodType          type of change
      */
-    public void receiveParticipant(Participant receivedParticipant, String methodType) {
-        switch (methodType) {
-            case "create" -> {
-                participants.add(receivedParticipant);
-            }
-            case "update" -> {
-                updateParticipant(getParticipantById(receivedParticipant.getId()), receivedParticipant);
-            }
-            case "delete" -> {
-                participants.remove(getParticipantById(receivedParticipant.getId()));
-                List<Expense> toRemove = new ArrayList<>();
-                for (var expense : expenses) {
-                    if (receivedParticipant.getId().equals(expense.getPaidById())) {
-                        toRemove.add(expense);
-                    }
-                }
-                for (var expense : toRemove) {
-                    expenses.remove(expense);
-                }
-            }
-            case null, default -> System.out.println("Method type invalid or not specified in the message headers");
-        }
-    }
 
-
-    /**
-     * Handles received updates on the Event object
-     *
-     * @param receivedEvent received Event object
-     * @param methodType    type of change, supports {"update", "delete"}
-     */
-    public void receiveEvent(Event receivedEvent, String methodType) {
-        switch (methodType) {
-            case "update" -> {
-                event.setTitle(receivedEvent.getTitle());
-            }
-            case "delete" -> {
-                //TODO: Discuss handling of event deletion.
-            }
-            case null, default -> System.out.println("Method type invalid or not specified in the message headers");
-        }
-    }
 
     /***
      * returns expense by id
@@ -238,32 +217,13 @@ public class EventDataHandler {
         return null;
     }
 
-
-    private void updateExpense(Expense toUpdate, Expense fromUpdate) {
+    /***
+     * updates the toUpdate expense with fromUpdate expense
+     * @param toUpdate
+     * @param fromUpdate
+     */
+    private static void updateExpense(Expense toUpdate, Expense fromUpdate) {
         toUpdate.setTitle(fromUpdate.getTitle());
         toUpdate.setAmount(fromUpdate.getAmount());
-    }
-
-
-    /**
-     * Handles received updates on an Expense object
-     *
-     * @param receivedExpense received Expense object
-     * @param methodType      type of change, supports {"create", "update", "delete"}
-     */
-    public void receiveExpense(Expense receivedExpense, String methodType) {
-        switch (methodType) {
-            case "create" -> {
-                expenses.add(receivedExpense);
-            }
-            case "update" -> {
-                updateExpense(getExpenseById(receivedExpense.getId()), receivedExpense);
-                //TODO: discuss possible modifications or additions to this method
-            }
-            case "delete" -> {
-                expenses.remove(receivedExpense);
-            }
-            case null, default -> System.out.println("Method type invalid or not specified in the message headers");
-        }
     }
 }
