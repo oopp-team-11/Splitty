@@ -242,4 +242,55 @@ public class ParticipantControllerTest {
 
         assertFalse(participantRepository.existsById(participant.getId()));
     }
+
+    @Test
+    void checkDeleteParticipant() {
+        Participant participant = new Participant();
+
+        participant.setFirstName("foo");
+        participant.setLastName("fooman");
+        participant.setEmail("foo@foomail.com");
+        try {
+            setId(participant, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
+
+        participantRepository.save(participant);
+
+        assertTrue(participantRepository.existsById(participant.getId()));
+
+        participantController.deleteParticipant(principal, participant);
+
+        verify(messagingTemplate).convertAndSend("/topic/"+participant.getId(), participant);
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("queue/reply"),
+                eq(StatusEntity.ok("participant:delete "+participant.getId())));
+        assertFalse(participantRepository.existsById(participant.getId()));
+    }
+
+    @Test
+    void checkDeleteParticipantWrongClass() {
+        Event event = new Event();
+
+        participantController.deleteParticipant(principal, event);
+
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()) ,eq("/queue/reply"),
+                eq(StatusEntity.badRequest("Payload should be a participant",true)));
+    }
+
+    @Test
+    void checkDeleteParticipantNotFound() {
+        Participant participant = new Participant();
+
+        participant.setFirstName("foo");
+        participant.setLastName("fooman");
+        participant.setEmail("foo@foomail.com");
+        try {
+            setId(participant, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
+
+        participantController.deleteParticipant(principal, participant);
+
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
+                eq(StatusEntity.notFound("Participant not found",true)));
+        assertFalse(participantRepository.existsById(participant.getId()));
+    }
 }

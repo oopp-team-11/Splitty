@@ -183,7 +183,6 @@ public class EventController {
      * @param payload content of a websocket message
      */
     @MessageMapping("/event:delete")
-//    @SendTo("/topic/{invitationCode}")
     public void deleteEvent(Principal principal, @Payload Object payload)
     {
         if(payload.getClass() != Event.class) {

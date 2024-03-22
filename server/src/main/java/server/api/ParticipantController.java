@@ -205,4 +205,34 @@ public class ParticipantController {
         template.convertAndSendToUser(principal.getName(), "queue/reply",
                 StatusEntity.ok("participant:update " + participant.getId()));
     }
+
+    /**
+     * Handles delete websocket endpoint for participant
+     * @param principal connection data about user
+     * @param payload content of a websocket message
+     */
+    @MessageMapping("/participant:delete")
+    public void deleteParticipant(Principal principal, @Payload Object payload)
+    {
+        if(payload.getClass() != Participant.class) {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    StatusEntity.badRequest("Payload should be a participant", true));
+            return;
+        }
+
+        Participant receivedParticipant = (Participant) payload;
+        if(!participantRepository.existsById(receivedParticipant.getId()))
+        {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    StatusEntity.notFound("Participant not found", true));
+            return;
+        }
+
+        Participant participant = participantRepository.getReferenceById(receivedParticipant.getId());
+        participantRepository.delete(participant);
+
+        template.convertAndSend("/topic/"+receivedParticipant.getId(), participant);
+        template.convertAndSendToUser(principal.getName(), "queue/reply",
+                StatusEntity.ok("participant:delete " + participant.getId()));
+    }
 }
