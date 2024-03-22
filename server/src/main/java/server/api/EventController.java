@@ -3,12 +3,19 @@ package server.api;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import commons.Participant;
+import commons.StatusEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import commons.Event;
 import server.database.EventRepository;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -18,17 +25,21 @@ import commons.Views;
  * Server-side EventController for the Event entity.
  * Handles the CRUD operations under all /events endpoints.
  */
-@RestController
-@RequestMapping("/events")
+@Controller
 public class EventController {
     private final EventRepository repo;
+
+    @Autowired
+    private SimpMessagingTemplate template;
 
     /**
      * Constructor for the EventController.
      * Constructed automatically by Spring Boot.
+     * @param template SimpMessagingTemplate
      * @param repo The EventRepository provided automatically by JPA
      */
-    public EventController(EventRepository repo) {
+    public EventController(SimpMessagingTemplate template, EventRepository repo) {
+        this.template = template;
         this.repo = repo;
     }
 
@@ -39,7 +50,7 @@ public class EventController {
      * Returns a 400 Bad Request status code when no invitationCode was provided.
      * Returns a 404 Not Found status code when no Event was found with the provided invitationCode.
      */
-    @GetMapping (path = {"/{invitationCode}", "/{invitationCode}/"})
+    @GetMapping (path = {"events/{invitationCode}", "events/{invitationCode}/"})
     public ResponseEntity<Event> getEventByInvitationCode(@PathVariable("invitationCode") UUID invitationCode) {
         if (invitationCode == null) {
             return ResponseEntity.badRequest().build();
@@ -65,7 +76,7 @@ public class EventController {
      * @return Returns a 200 OK status code and the invitationCode when the Event was successfully saved.
      * Returns a 400 Bad Request status code when no title was provided.
      */
-    @PostMapping (path = {"", "/"})
+    @PostMapping (path = {"events", "events/"})
     public ResponseEntity<Event> createEventWithTitle(@RequestBody String title) {
         if (isNullOrEmpty(title)) {
             return ResponseEntity.badRequest().build();
@@ -87,7 +98,7 @@ public class EventController {
      * Returns a 400 Bad Request status code when no codes were provided.
      */
     @JsonView(Views.UpdateInvitationsCodes.class)
-    @GetMapping(path = {"", "/"})
+    @GetMapping(path = {"events", "events/"})
     public ResponseEntity<List<Event>> updateRecentlyAccessedEvents(@RequestParam("query") String query,
                                                                     @RequestParam("invitationCodes") UUID[] codes) {
         if (codes == null || !"titles".equals(query)) {
@@ -112,7 +123,7 @@ public class EventController {
      * Returns a 400 Bad Request status code when no invitationCode was provided.
      * Returns a 404 Not Found status code when no Event was found with the provided invitationCode.
      */
-    @GetMapping (path = {"/{invitationCode}/participants"})
+    @GetMapping (path = {"events/{invitationCode}/participants"})
     public ResponseEntity<List<Participant>> getParticipantsByInvitationCode(
             @PathVariable("invitationCode") UUID invitationCode)
     {
@@ -124,6 +135,85 @@ public class EventController {
             return ResponseEntity.notFound().build();
 
         return ResponseEntity.ok(repo.getReferenceById(invitationCode).getParticipants());
+    }
+
+    /**
+     * Handles update websocket endpoint for event
+     * @param principal connection data about user
+     * @param payload content of a websocket message
+     */
+    @MessageMapping("/event:update")
+    public void updateEvent(Principal principal, @Payload Object payload)
+    {
+        if(payload.getClass() != Event.class) {
+            template.convertAndSendToUser(principal.getName(), "/queue/reply",
+                    StatusEntity.badRequest("Payload should be an Event", true));
+            return;
+        }
+
+        Event receivedEvent = (Event) payload;
+
+        if (isNullOrEmpty(receivedEvent.getTitle())) {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    StatusEntity.badRequest("Title should not be empty"));
+            return;
+        }
+
+        if(!repo.existsById(receivedEvent.getId()))
+        {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    StatusEntity.notFound("Event not found", true));
+            return;
+        }
+
+        Event event = repo.getReferenceById(receivedEvent.getId());
+        event.setTitle(receivedEvent.getTitle());
+        event.setCreationDate(receivedEvent.getCreationDate());
+        event.setLastActivity(receivedEvent.getLastActivity());
+        repo.save(event);
+
+        template.convertAndSend("/topic/"+receivedEvent.getId(), event);
+        template.convertAndSendToUser(principal.getName(), "queue/reply",
+                StatusEntity.ok("event:update " + event.getId()));
+    }
+
+    /**
+     * Handles delete websocket endpoint for event
+     * @param principal connection data about user
+     * @param payload content of a websocket message
+     */
+    @MessageMapping("/event:delete")
+//    @SendTo("/topic/{invitationCode}")
+    public void deleteEvent(Principal principal, @Payload Object payload)
+    {
+        if(payload.getClass() != Event.class) {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    StatusEntity.badRequest("Payload should be an Event", true));
+            return;
+        }
+
+        /*TODO: Implement admin passcode verification*/
+//        if()
+//        {
+//            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+//                    new ErrorMessage(new IllegalAccessException()));
+//            return;
+//        }
+
+        Event receivedEvent = (Event) payload;
+        if(!repo.existsById(receivedEvent.getId()))
+        {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    StatusEntity.notFound("Event not found", true));
+            return;
+        }
+
+        Event event = repo.getReferenceById(receivedEvent.getId());
+        repo.delete(event);
+
+        template.convertAndSend("/topic/"+receivedEvent.getId(), event);
+        template.convertAndSendToUser(principal.getName(), "queue/reply",
+                StatusEntity.ok("event:delete " + event.getId()));
     }
 
 }
