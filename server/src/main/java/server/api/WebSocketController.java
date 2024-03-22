@@ -180,37 +180,30 @@ public class WebSocketController {
      * @return Status entity (status code, body, boolean unsolvable)
      */
     @MessageMapping("/event:update")
-    @SendTo("/topic/{invitationCode}")
-    public StatusEntity<String> updateEvent(Principal principal, @Headers StompHeaders headers, @Payload Object payload)
+//    @SendTo("/topic/{invitationCode}")
+    public void updateEvent(Principal principal, @Payload Object payload)
     {
-        // If true: payload is not of event class
         if(payload.getClass() != Event.class) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    new ErrorMessage(new IllegalArgumentException()));
-            return StatusEntity.badRequest("Payload should be an Event", true);
+//            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+//                    new ErrorMessage(new IllegalArgumentException()));
+            template.convertAndSendToUser(principal.getName(), "/queue/reply",
+                    StatusEntity.badRequest("Payload should be an Event", true));
+            return;
         }
 
         Event receivedEvent = (Event) payload;
 
-        // If true: headers are mismatched
-        if(!headers.getFirst("model").equals("Event")
-                || !headers.getFirst("method").equals("update")) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    new ErrorMessage(new IllegalArgumentException()));
-            return StatusEntity.badRequest("Headers do not match the method", true);
-        }
-
         if (isNullOrEmpty(receivedEvent.getTitle())) {
             template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    new ErrorMessage(new IllegalArgumentException()));
-            return StatusEntity.badRequest("Title should not be empty");
+                    StatusEntity.badRequest("Title should not be empty"));
+            return;
         }
 
         if(!repo.existsById(receivedEvent.getId()))
         {
             template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    new ErrorMessage(new IllegalArgumentException()));
-            return StatusEntity.notFound("Event not found", true);
+                    StatusEntity.notFound("Event not found", true));
+            return;
         }
 
         Event event = repo.getReferenceById(receivedEvent.getId());
@@ -219,9 +212,9 @@ public class WebSocketController {
         event.setLastActivity(receivedEvent.getLastActivity());
         repo.save(event);
 
-        template.convertAndSend(event);
-
-        return StatusEntity.ok("event:update " + event.getId());
+        template.convertAndSend("/topic/"+receivedEvent.getId(), event);
+        template.convertAndSendToUser(principal.getName(), "queue/reply",
+                StatusEntity.ok("event:update " + event.getId()));
     }
 
     /**

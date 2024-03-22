@@ -2,6 +2,7 @@ package server.api;
 
 import commons.Event;
 import commons.Participant;
+import commons.StatusEntity;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -121,10 +122,6 @@ public class WebSocketControllerTest {
     void checkUpdateEvent() {
         Event event = new Event("event");
 
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Event");
-        headers.add("method", "create");
-
         try {
             setId(event, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
@@ -133,20 +130,14 @@ public class WebSocketControllerTest {
 
         event.setTitle("foo");
 
-        headers = new StompHeaders();
-        headers.add("model", "Event");
-        headers.add("method", "update");
+        webSocketController.updateEvent(principal, event);
 
-        var status = webSocketController.updateEvent(principal, headers, event);
+        verify(messagingTemplate).convertAndSend("/topic/"+event.getId(), event);
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("queue/reply"),
+                eq(StatusEntity.ok("event:update "+event.getId())));
 
-        assertEquals(OK, status.getStatusCode());
-        assertEquals("event:update "+event.getId(), status.getBody());
-        assertFalse(status.isUnsolvable());
         assertTrue(eventRepo.existsById(event.getId()));
-
         var repoEvent = eventRepo.getReferenceById(event.getId());
-
-        verify(messagingTemplate).convertAndSend(any(Event.class));
         assertEquals("foo", repoEvent.getTitle());
     }
 
@@ -158,77 +149,26 @@ public class WebSocketControllerTest {
             setId(event, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Event");
-        headers.add("method", "create");
-
         eventRepo.save(event);
 
         event.setTitle(null);
 
-        headers = new StompHeaders();
-        headers.add("model", "Event");
-        headers.add("method", "update");
+        webSocketController.updateEvent(principal, event);
 
-        var status = webSocketController.updateEvent(principal, headers, event);
-
-        assertEquals(BAD_REQUEST, status.getStatusCode());
-        assertEquals("Title should not be empty", status.getBody());
-        assertFalse(status.isUnsolvable());
-        verify(messagingTemplate).convertAndSendToUser(
-                eq(principal.getName()),eq("/queue/reply"), any(ErrorMessage.class));
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
+                eq(StatusEntity.badRequest("Title should not be empty")));
     }
 
     @Test
     void checkUpdateEventWrongClass() {
         Participant participant = new Participant();
 
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Event");
-        headers.add("method", "update");
+        webSocketController.updateEvent(principal, participant);
 
-        var status = webSocketController.updateEvent(principal, headers, participant);
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()) ,eq("/queue/reply"),
+                eq(StatusEntity.badRequest("Payload should be an Event", true)));
 
-        assertEquals(BAD_REQUEST, status.getStatusCode());
-        assertEquals("Payload should be an Event", status.getBody());
-        assertTrue(status.isUnsolvable());
         assertFalse(eventRepo.existsById(participant.getId()));
-        verify(messagingTemplate).convertAndSendToUser(
-                eq(principal.getName()) ,eq("/queue/reply"), any(ErrorMessage.class));
-    }
-
-    @Test
-    void checkUpdateEventWrongHeaders1() {
-        Event event = new Event();
-
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Participant");
-        headers.add("method", "update");
-        var status = webSocketController.updateEvent(principal, headers, event);
-
-        assertEquals(BAD_REQUEST, status.getStatusCode());
-        assertEquals("Headers do not match the method", status.getBody());
-        assertTrue(status.isUnsolvable());
-        assertFalse(eventRepo.existsById(event.getId()));
-        verify(messagingTemplate).convertAndSendToUser(
-                eq(principal.getName()) ,eq("/queue/reply"), any(ErrorMessage.class));
-    }
-
-    @Test
-    void checkUpdateEventWrongHeaders2() {
-        Event event = new Event();
-
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Event");
-        headers.add("method", "create");
-        var status = webSocketController.updateEvent(principal, headers, event);
-
-        assertEquals(BAD_REQUEST, status.getStatusCode());
-        assertEquals("Headers do not match the method", status.getBody());
-        assertTrue(status.isUnsolvable());
-        assertFalse(eventRepo.existsById(event.getId()));
-        verify(messagingTemplate).convertAndSendToUser(
-                eq(principal.getName()) ,eq("/queue/reply"), any(ErrorMessage.class));
     }
 
     @Test
@@ -239,18 +179,11 @@ public class WebSocketControllerTest {
             setId(event, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Event");
-        headers.add("method", "update");
+        webSocketController.updateEvent(principal, event);
+        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
+                eq(StatusEntity.notFound("Event not found",true)));
 
-        var status = webSocketController.updateEvent(principal, headers, event);
-
-        assertEquals(NOT_FOUND, status.getStatusCode());
-        assertEquals("Event not found", status.getBody());
-        assertTrue(status.isUnsolvable());
         assertFalse(eventRepo.existsById(event.getId()));
-        verify(messagingTemplate).convertAndSendToUser(
-                eq(principal.getName()),eq("/queue/reply"), any(ErrorMessage.class));
     }
 
     //TODO: Incorporate admin password into tests for deleteEvent()
