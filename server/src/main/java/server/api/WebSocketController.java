@@ -187,7 +187,7 @@ public class WebSocketController {
         if(payload.getClass() != Event.class) {
             template.convertAndSendToUser(principal.getName(),"/queue/reply",
                     new ErrorMessage(new IllegalArgumentException()));
-            return StatusEntity.badRequest("Payload should be an Event");
+            return StatusEntity.badRequest("Payload should be an Event", true);
         }
 
         Event receivedEvent = (Event) payload;
@@ -197,7 +197,7 @@ public class WebSocketController {
                 || !headers.getFirst("method").equals("update")) {
             template.convertAndSendToUser(principal.getName(),"/queue/reply",
                     new ErrorMessage(new IllegalArgumentException()));
-            return StatusEntity.badRequest("Headers do not match the method");
+            return StatusEntity.badRequest("Headers do not match the method", true);
         }
 
         if (isNullOrEmpty(receivedEvent.getTitle())) {
@@ -238,14 +238,14 @@ public class WebSocketController {
         if(payload.getClass() != Event.class) {
             template.convertAndSendToUser(principal.getName(),"/queue/reply",
                     new ErrorMessage(new IllegalArgumentException()));
-            return StatusEntity.badRequest("Payload should be an Event");
+            return StatusEntity.badRequest("Payload should be an Event", true);
         }
 
         if(!headers.getFirst("model").equals("Event")
                 || !headers.getFirst("method").equals("delete")) {
             template.convertAndSendToUser(principal.getName(),"/queue/reply",
                     new ErrorMessage(new IllegalArgumentException()));
-            return StatusEntity.badRequest("Headers do not match the method");
+            return StatusEntity.badRequest("Headers do not match the method", true);
         }
 
         /*TODO: Implement admin passcode verification*/
