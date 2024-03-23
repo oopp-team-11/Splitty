@@ -104,4 +104,11 @@ class EventDataHandlerTest {
         assertEquals(1, handler.getExpenses().size());
         assertEquals(e2, handler.getExpenses().getFirst());
     }
+
+    @Test
+    void setSessionHandler() {
+        EventStompSessionHandler sessionHandler = new EventStompSessionHandler(UUID.randomUUID(), handler);
+        handler.setSessionHandler(sessionHandler);
+        assertEquals(sessionHandler, handler.getSessionHandler());
+    }
 }

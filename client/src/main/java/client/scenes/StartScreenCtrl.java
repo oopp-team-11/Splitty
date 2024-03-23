@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.utils.EventDataHandler;
 import client.utils.EventStompSessionHandler;
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
@@ -78,10 +79,23 @@ public class StartScreenCtrl implements Initializable {
     /**
      * Refreshes the events table.
      */
-    public void refresh() throws IOException, InterruptedException {
-        var events = serverUtils.getRecentEvents("https://127.0.0.1:8080", "config.json");
-        ObservableList<Event> data = FXCollections.observableList(events);
-        eventTable.setItems(data);
+    public void refresh() {
+        System.out.println("REFRESH");
+        try {
+            var events = serverUtils.getRecentEvents("http://127.0.0.1:8080", "config.json");
+
+//            for(Event event : events) {
+//                System.out.println(event.getTitle() + " " + event.getId());
+//            }
+
+            ObservableList<Event> data = FXCollections.observableList(events);
+            eventTable.setItems(data);
+        } catch (IOException | InterruptedException e) {
+            // Handle exception
+        } catch (org.json.JSONException e) {
+            // Handle JSON parsing exception
+            System.out.println("Failed to parse server response: " + e.getMessage());
+        }
     }
 
     /**
@@ -152,19 +166,19 @@ public class StartScreenCtrl implements Initializable {
             serverErrorAlert(e);
         }
 
-        startWebSocket();
+        startWebSocket(invitationCode);
     }
 
     //TODO: Potentially move this method to a more appropriate class
-    private void startWebSocket() {
+    private void startWebSocket(UUID invitationCode) {
         WebSocketClient client = new StandardWebSocketClient();
 
         WebSocketStompClient stompClient = new WebSocketStompClient(client);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
-        //TODO:Change dummy event to an actual event
-        sessionHandler = new EventStompSessionHandler(UUID.randomUUID());
-        stompClient.connectAsync("ws://localhost:8080/event", sessionHandler);
+        //TODO:Change new EventDataHandler to the actual reference
+        sessionHandler = new EventStompSessionHandler(invitationCode, new EventDataHandler());
+        stompClient.connectAsync("ws://localhost:8080/v1", sessionHandler);
     }
 
     private static void serverErrorAlert(Exception exception) {

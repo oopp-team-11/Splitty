@@ -154,7 +154,7 @@ public class Event {
                 .append("title", title)
                 .append("creationDate", creationDate)
                 .append("lastActivity", lastActivity)
-                .append("participants", participants.toString())
+                .append("participants", participants == null ? "null" : participants.toString())
                 .toString();
     }
 }

@@ -1,8 +1,10 @@
 package client.utils;
 
+import client.utils.frameHandlers.*;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
+import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
@@ -15,15 +17,19 @@ import java.util.UUID;
  */
 public class EventStompSessionHandler extends StompSessionHandlerAdapter {
     private final UUID invitationCode;
+    private final EventDataHandler dataHandler;
     private StompSession session;
 
     /**
      * Custom constructor for EventStompSessionHandler
      *
      * @param invitationCode invitationCode for the event
+     * @param dataHandler    dataHandler of the client
      */
-    public EventStompSessionHandler(UUID invitationCode) {
+    public EventStompSessionHandler(UUID invitationCode, EventDataHandler dataHandler) {
+        this.dataHandler = dataHandler;
         this.invitationCode = invitationCode;
+        dataHandler.setSessionHandler(this);
     }
 
     /**
@@ -35,25 +41,47 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
         this.session = session;
-        session.subscribe("/topic/" + invitationCode, this);
+
+        //We want to track event deletion as soon as possible
+        session.subscribe("/topic/" + invitationCode + "/event:delete",
+                new DeleteEventHandler(dataHandler));
+        //Initial event read
+        session.subscribe("/user/topic/" + invitationCode + "/event:read",
+                new ReadEventHandler(dataHandler));
+        session.send("/app/event:read", invitationCode);
+        //Track event updates
+        session.subscribe("/topic/" + invitationCode + "/event:update",
+                new UpdateEventHandler(dataHandler));
+
+        //Initial participants read
+        session.subscribe("/user/topic/" + invitationCode + "/participants:read",
+                new ReadParticipantsHandler(dataHandler));
+        session.send("/app/participants:read", invitationCode);
+        //Track participants updates
+        session.subscribe("/topic/" + invitationCode + "/participant:delete",
+                new DeleteParticipantHandler(dataHandler));
+        session.subscribe("/topic/" + invitationCode + "/participant:update",
+                new UpdateParticipantHandler(dataHandler));
+        session.subscribe("/topic/" + invitationCode + "/participant:create",
+                new CreateParticipantHandler(dataHandler));
+
+        //Initial expenses read
+        session.subscribe("/user/topic/" + invitationCode + "/expenses:read",
+                new ReadEventHandler(dataHandler));
+        session.send("/app/expenses:read", invitationCode);
+        //Track expenses updates
+        session.subscribe("/topic/" + invitationCode + "/expense:delete",
+                new DeleteExpenseHandler(dataHandler));
+        session.subscribe("/topic/" + invitationCode + "/expense:update",
+                new UpdateExpenseHandler(dataHandler));
+        session.subscribe("/topic/" + invitationCode + "/expense:create",
+                new CreateExpenseHandler(dataHandler));
     }
 
-    /**
-     * Handles the messages from server
-     *
-     * @param headers Message headers
-     * @param payload Updated object
-     */
     @Override
-    public void handleFrame(StompHeaders headers, Object payload) {
-        String modelType = headers.getFirst("model");
-        String methodType = headers.getFirst("method");
-        switch (modelType) {
-            case "Event" -> receiveEvent((Event) payload, methodType);
-            case "Participant" -> receiveParticipant((Participant) payload, methodType);
-            case "Expense" -> receiveExpense((Expense) payload, methodType);
-            case null, default -> System.out.println("Model type invalid or not specified in the message headers");
-        }
+    public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload,
+                                Throwable exception) {
+        throw new RuntimeException("Failure in WebSocket handling", exception);
     }
 
     /**
@@ -63,32 +91,7 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
      * @param methodType  supports {"create", "update", "delete"}
      */
     public void sendParticipant(Participant participant, String methodType) {
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Participant");
-        headers.add("method", methodType);
-        headers.setDestination("/app/" + invitationCode);
-        session.send(headers, participant);
-    }
-
-    /**
-     * Handles received updates on a Participant object
-     *
-     * @param receivedParticipant received Participant object
-     * @param methodType type of change
-     */
-    public void receiveParticipant(Participant receivedParticipant, String methodType) {
-        switch (methodType) {
-            case "create" -> {
-                ///TODO: setEvent for participant, add participant to event
-            }
-            case "update" -> {
-                //TODO: getParticipantById() and update
-            }
-            case "delete" -> {
-                //TODO: getParticipantById() and remove. Also remove their expenses
-            }
-            case null, default -> System.out.println("Method type invalid or not specified in the message headers");
-        }
+        session.send("/app/participant:" + methodType, participant);
     }
 
     /**
@@ -98,29 +101,7 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
      * @param methodType supports {"create", "update", "delete"}
      */
     public void sendEvent(Event event, String methodType) {
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Event");
-        headers.add("method", methodType);
-        headers.setDestination("/app/" + invitationCode);
-        session.send(headers, event);
-    }
-
-    /**
-     * Handles received updates on the Event object
-     *
-     * @param receivedEvent received Event object
-     * @param methodType type of change, supports {"update", "delete"}
-     */
-    public void receiveEvent(Event receivedEvent, String methodType) {
-        switch (methodType) {
-            case "update" -> {
-                //TODO: handle title update
-            }
-            case "delete" -> {
-                //TODO: Discuss handling of event deletion.
-            }
-            case null, default -> System.out.println("Method type invalid or not specified in the message headers");
-        }
+        session.send("/app/event:" + methodType, event);
     }
 
     /**
@@ -130,31 +111,27 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
      * @param methodType supports {"create", "update", "delete"}
      */
     public void sendExpense(Expense expense, String methodType) {
-        StompHeaders headers = new StompHeaders();
-        headers.add("model", "Expense");
-        headers.add("method", methodType);
-        headers.setDestination("/app/" + invitationCode);
-        session.send(headers, expense);
+        session.send("/app/expense:" + methodType, expense);
     }
 
     /**
-     * Handles received updates on an Expense object
-     *
-     * @param receivedExpense received Expense object
-     * @param methodType type of change, supports {"create", "update", "delete"}
+     * Used for refreshing the Event object in case of data synchronisation issues
      */
-    public void receiveExpense(Expense receivedExpense, String methodType) {
-        switch (methodType) {
-            case "create" -> {
-                ///TODO: getParticipantById(), setPaidBy, add expense to participant
-            }
-            case "update" -> {
-                //TODO: getParticipantById(), getExpenseById(), update expense
-            }
-            case "delete" -> {
-                //TODO: getParticipantById(), removeExpenseById()
-            }
-            case null, default -> System.out.println("Method type invalid or not specified in the message headers");
-        }
+    public void refreshEvent() {
+        session.send("/app/event:read", invitationCode);
+    }
+
+    /**
+     * Used for refreshing the Participants list in case of data synchronisation issues
+     */
+    public void refreshParticipants() {
+        session.send("/app/participants:read", invitationCode);
+    }
+
+    /**
+     * Used for refreshing the Expenses list in case of data synchronisation issues
+     */
+    public void refreshExpenses() {
+        session.send("/app/expenses:read", invitationCode);
     }
 }
