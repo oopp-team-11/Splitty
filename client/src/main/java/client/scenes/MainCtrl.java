@@ -15,16 +15,12 @@
  */
 package client.scenes;
 
-import client.utils.TranslationSupplier;
 import commons.Event;
 import commons.Participant;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 /**
  * Main scene controller. It oversights currently active scenes, switches between them,
@@ -46,8 +42,6 @@ public class MainCtrl {
     private EventOverviewCtrl eventOverviewCtrl;
     private Scene eventOverviewScene;
 
-    private TranslationSupplier tl;
-
     /**
      * Initializes javafx scenes and their controllers, sets start screen as the currently shown screen
      * @param primaryStage stage
@@ -63,35 +57,27 @@ public class MainCtrl {
                            Pair<EventOverviewCtrl, Parent> eventOverview) {
         this.primaryStage = primaryStage;
 
-        try {
-            this.tl = new TranslationSupplier("nl");
-        } catch (FileNotFoundException e) {
-            System.err.println("Could not initialize translation supplier, locale not found.");
-        }
-
         this.startScreenCtrl = startScreen.getKey();
-        this.startScreenCtrl.setTranslationSupplier(this.tl);
         this.startScreenScene = new Scene(startScreen.getValue());
 
         this.createParticipantCtrl = createParticipant.getKey();
-        this.createParticipantCtrl.setTranslationSupplier(this.tl);
         this.createParticipantScene = new Scene(createParticipant.getValue());
 
         this.editParticipantCtrl = editParticipant.getKey();
-        this.editParticipantCtrl.setTranslationSupplier(this.tl);
         this.editParticipantScene = new Scene(editParticipant.getValue());
 
         this.eventOverviewCtrl = eventOverview.getKey();
-        this.eventOverviewCtrl.setTranslationSupplier(this.tl);
         this.eventOverviewScene = new Scene(eventOverview.getValue());
+
+        showStartScreen();
 
         //showEventOverview(event);
 
-        //showStartScreen();
+        // showStartScreen() should be used in the final version.
         // Comment out showStartScreen() above and uncomment a scene below to
         // get it to launch as a start screen for debugging reasons.
 
-        showCreateParticipant(null);
+        //showCreateParticipant(null);
         //showEditParticipant(null);
         primaryStage.show();
     }
@@ -105,13 +91,16 @@ public class MainCtrl {
         primaryStage.setResizable(false);
         try {
             startScreenCtrl.refresh();
-        } catch (IOException | InterruptedException ignored) {}
+        } catch (org.json.JSONException e) {
+            // Handle JSON parsing exception
+            System.out.println("Failed to parse server response: " + e.getMessage());
+        }
     }
 
-    /**
-     * Show create participant UI
-     * @param event Event, which the participant will belong to
-     */
+            /**
+             * Show create participant UI
+             * @param event Event, which the participant will belong to
+             */
     public void showCreateParticipant(Event event) {
         primaryStage.setTitle("Add participant ui");
         primaryStage.setScene(createParticipantScene);

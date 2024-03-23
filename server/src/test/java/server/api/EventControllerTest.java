@@ -35,13 +35,13 @@ public class EventControllerTest {
 
     @Test
     public void checkCodesNull() {
-        var actual = sut.updateRecentlyAccessedEvents(null);
+        var actual = sut.updateRecentlyAccessedEvents("titles", null);
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void checkCodesLengthZero() {
-        var actual = sut.updateRecentlyAccessedEvents(new UUID[0]);
+        var actual = sut.updateRecentlyAccessedEvents("titles", new UUID[0]);
         assertEquals(OK, actual.getStatusCode());
     }
 
@@ -56,13 +56,14 @@ public class EventControllerTest {
             setId(event2, id2);
         } catch (IllegalAccessException ignored) {}
         repo.save(event1);
+        repo.save(event2);
         UUID[] recentEvents = new UUID[2];
         recentEvents[0] = id1;
         recentEvents[1] = id2;
-        var actual = sut.updateRecentlyAccessedEvents(recentEvents);
+        var actual = sut.updateRecentlyAccessedEvents("titles", recentEvents);
         assertEquals(OK, actual.getStatusCode());
-        List<UUID> expected = List.of(id1);
-        List<UUID> received = actual.getBody().stream().map(x -> x.getId()).toList();
+        List<UUID> expected = List.of(id1, id2);
+        List<UUID> received = actual.getBody().stream().map(Event::getId).toList();
         assertEquals(expected, received);
     }
 

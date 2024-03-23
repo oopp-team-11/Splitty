@@ -10,10 +10,7 @@ import commons.Event;
 import server.database.EventRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import commons.Views;
 
@@ -82,16 +79,18 @@ public class EventController {
 
 
     /**
-     * Handles the GET: /events?query=title&invitationCodes={} endpoint
+     * Handles the GET: /events endpoint with query parameters
+     * @param query The query parameter provided by the client.
      * @param codes The List of invitationCodes provided by the client from their config.json
      * @return Returns a 200 OK status code and a List of partial Event objects containing existing invitationCodes
      * and appropriate titles.
      * Returns a 400 Bad Request status code when no codes were provided.
      */
     @JsonView(Views.UpdateInvitationsCodes.class)
-    @GetMapping (path = {"?query=title&invitationCodes={}"})
-    public ResponseEntity<List<Event>> updateRecentlyAccessedEvents(@RequestParam UUID[] codes) {
-        if (codes == null) {
+    @GetMapping(path = {"", "/"})
+    public ResponseEntity<List<Event>> updateRecentlyAccessedEvents(@RequestParam("query") String query,
+                                                                    @RequestParam("invitationCodes") UUID[] codes) {
+        if (codes == null || !"titles".equals(query)) {
             return ResponseEntity.badRequest().build();
         }
         if (codes.length == 0) {
@@ -102,6 +101,7 @@ public class EventController {
             Optional<Event> event = repo.findById(code);
             event.ifPresent(updatedEvents::add);
         }
+
         return ResponseEntity.ok(updatedEvents);
     }
 
