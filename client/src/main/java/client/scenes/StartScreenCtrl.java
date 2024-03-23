@@ -91,6 +91,10 @@ public class StartScreenCtrl implements Initializable {
         });
     }
 
+    /**
+     * Sets the translation supplier for this controller
+     * @param tl the translation supplier that should be used
+     */
     public void setTranslationSupplier(TranslationSupplier tl) {
         this.translationSupplier = tl;
         this.translate();
@@ -106,22 +110,22 @@ public class StartScreenCtrl implements Initializable {
         labels.put(this.joinBtn, "Join");
         labels.put(this.newEventName, "EventName");
         labels.put(this.joinInvitationCode, "InvitationCode");
-        labels.forEach((k, v) -> {
-            var translation = this.translationSupplier.getTranslation(v);
+        labels.forEach((key, val) -> {
+            var translation = this.translationSupplier.getTranslation(val);
             if (translation == null) return;
-            if (k instanceof Labeled)
-                ((Labeled) k).setText(translation.replaceAll("\"", ""));
-            if (k instanceof TextField)
-                ((TextField) k).setPromptText(translation.replaceAll("\"", ""));
+            if (key instanceof Labeled)
+                ((Labeled) key).setText(translation.replaceAll("\"", ""));
+            if (key instanceof TextField)
+                ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
         });
 
         Map<TableColumn<Event, String>, String> tableColumns = new HashMap<>();
         tableColumns.put(this.eventNameColumn, "EventName");
         tableColumns.put(this.invitationCodeColumn, "InvitationCode");
-        tableColumns.forEach((k, v) -> {
-            var translation = this.translationSupplier.getTranslation(v);
+        tableColumns.forEach((key, val) -> {
+            var translation = this.translationSupplier.getTranslation(val);
             if (translation == null) return;
-            k.setText(translation.replaceAll("\"", ""));
+            key.setText(translation.replaceAll("\"", ""));
         });
     }
 
