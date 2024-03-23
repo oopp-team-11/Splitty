@@ -1,5 +1,6 @@
 package commons;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class Expense {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @JsonIgnore
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,14 +29,41 @@ public class Expense {
     private double amount;
 
     @Transient
-    private UUID participantId;
+    private UUID paidById;
+
+    @Transient
+    private UUID invitationCode;
+
+    /***
+     * std setter
+     * @param paidById
+     */
+    public void setPaidById(UUID paidById) {
+        this.paidById = paidById;
+    }
+
+    /***
+     * std setter
+     * @param invitationCode
+     */
+    public void setInvitationCode(UUID invitationCode) {
+        this.invitationCode = invitationCode;
+    }
 
     /***
      * std getter
-     * @return UUID of parent participant
+     * @return UUID of participant who paid for expense
      */
-    public UUID getParticipantId() {
-        return participantId;
+    public UUID getPaidById() {
+        return paidById;
+    }
+
+    /***
+     * std getter
+     * @return invitation code of event
+     */
+    public UUID getInvitationCode() {
+        return invitationCode;
     }
 
     /**
@@ -44,7 +73,7 @@ public class Expense {
     }
 
     /**
-     * Constructor for the Expense entity.
+     * Constructor for the Expense entity. (server-side)
      * @param paidBy Participant (i.e. the parent entity) who created this Expense
      * @param title String representation of the title of this Expense
      * @param amount A double storing the amount spent on this Expense
@@ -54,7 +83,8 @@ public class Expense {
         this.title = title;
         this.amount = amount;
         paidBy.addExpense(this);
-        this.participantId = paidBy.getId();
+        this.paidById = paidBy.getId();
+        this.invitationCode = paidBy.getEventId();
     }
 
     /**
