@@ -7,14 +7,18 @@ import com.google.inject.Inject;
 import commons.Event;
 import commons.Participant;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /***
  * class CreateParticipantController
  */
 public class EventOverviewCtrl {
+    @FXML
+    private Label participantsLabel;
     @FXML
     private Label eventNameLabel;
     @FXML
@@ -82,6 +86,30 @@ public class EventOverviewCtrl {
     }
 
     /**
+     * Sets the translation supplier for this controller
+     * @param tl the translation supplier that should be used
+     */
+    public void setTranslationSupplier(TranslationSupplier tl) {
+        this.translationSupplier = tl;
+        this.translate();
+    }
+
+    private void translate() {
+        if (this.translationSupplier == null) return;
+        Map<Control, String> labels = new HashMap<>();
+        labels.put(this.sendInvitesButton, "SendInvites");
+        labels.put(this.participantsLabel, "Participants");
+        labels.forEach((key, val) -> {
+            var translation = this.translationSupplier.getTranslation(val);
+            if (translation == null) return;
+            if (key instanceof Labeled)
+                ((Labeled) key).setText(translation.replaceAll("\"", ""));
+            if (key instanceof TextField)
+                ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
+        });
+    }
+
+    /**
      * When button gets clicked, trigger send invites method
      */
     public void sendInvites() {
@@ -121,9 +149,5 @@ public class EventOverviewCtrl {
      */
     public void setEventNameLabel(String eventName) {
         eventNameLabel.setText(eventName);
-    }
-
-    public void setTranslationSupplier(TranslationSupplier tl) {
-        this.translationSupplier = tl;
     }
 }

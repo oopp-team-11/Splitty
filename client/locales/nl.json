@@ -11,5 +11,7 @@
   "LastName": "Achternaam",
   "AddAParticipant": "Voeg een deelnemer toe",
   "EditAParticipant": "Bewerk een deelnemer",
-  "Edit": "Bewerk"
+  "Edit": "Bewerk",
+  "SendInvites": "Stuur uitnodigingen",
+  "Participants": "Deelnemers"
 }
