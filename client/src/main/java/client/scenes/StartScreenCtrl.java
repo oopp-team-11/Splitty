@@ -30,7 +30,19 @@ public class StartScreenCtrl implements Initializable {
     private final MainCtrl mainCtrl;
 
     @FXML
+    private Button createBtn;
+
+    @FXML
+    private Button joinBtn;
+
+    @FXML
     private Label newEventLabel;
+
+    @FXML
+    private Label joinEventLabel;
+
+    @FXML
+    private Label recentEventsLabel;
 
     @FXML
     private TextField newEventName;
@@ -81,9 +93,27 @@ public class StartScreenCtrl implements Initializable {
 
     private void translate() {
         if (this.translationSupplier == null) return;
-        Map<Label, String> labels = new HashMap<>();
-        labels.put(this.newEventLabel, "startScreen_newEventLabel");
+        Map<Control, String> labels = new HashMap<>();
+        labels.put(this.newEventLabel, "CreateNewEventLabel");
+        labels.put(this.joinEventLabel, "JoinEventLabel");
+        labels.put(this.recentEventsLabel, "RecentEventsLabel");
+        labels.put(this.createBtn, "Create");
+        labels.put(this.joinBtn, "Join");
+        labels.put(this.newEventName, "EventName");
+        labels.put(this.joinInvitationCode, "InvitationCode");
         labels.forEach((k, v) -> {
+            var translation = this.translationSupplier.getTranslation(v);
+            if (translation == null) return;
+            if (k instanceof Labeled)
+                ((Labeled) k).setText(translation.replaceAll("\"", ""));
+            if (k instanceof TextField)
+                ((TextField) k).setPromptText(translation.replaceAll("\"", ""));
+        });
+
+        Map<TableColumn<Event, String>, String> tableColumns = new HashMap<>();
+        tableColumns.put(this.eventNameColumn, "EventName");
+        tableColumns.put(this.invitationCodeColumn, "InvitationCode");
+        tableColumns.forEach((k, v) -> {
             var translation = this.translationSupplier.getTranslation(v);
             if (translation == null) return;
             k.setText(translation.replaceAll("\"", ""));

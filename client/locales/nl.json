@@ -1,3 +1,9 @@
 {
-  "startScreen_newEventLabel": "Nieuw evenement aanmaken"
+  "CreateNewEventLabel": "Nieuw evenement aanmaken",
+  "JoinEventLabel": "Deelnemen aan evenement",
+  "RecentEventsLabel": "Neem deel aan recent evenement",
+  "Create": "Maak aan",
+  "Join": "Deelnemen",
+  "EventName":"Evenement naam",
+  "InvitationCode":"Uitnodgingscode"
 }
