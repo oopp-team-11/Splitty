@@ -29,6 +29,7 @@ public class Participant {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "EVENT_ID")
+    @JsonIgnore
     private Event event;
 
     @JsonIgnore
