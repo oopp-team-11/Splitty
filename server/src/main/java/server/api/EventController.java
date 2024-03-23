@@ -2,7 +2,6 @@ package server.api;
 
 
 import com.fasterxml.jackson.annotation.JsonView;
-import commons.Participant;
 import commons.StatusEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -41,22 +40,6 @@ public class EventController {
     public EventController(SimpMessagingTemplate template, EventRepository repo) {
         this.template = template;
         this.repo = repo;
-    }
-
-    /**
-     * Handles the GET: /events/{invitationCode} endpoint
-     * @param invitationCode The invitationCode of an Event.
-     * @return Returns a 200 OK status code and the Event object when the invitationCode exists in the DB.
-     * Returns a 400 Bad Request status code when no invitationCode was provided.
-     * Returns a 404 Not Found status code when no Event was found with the provided invitationCode.
-     */
-    @GetMapping (path = {"events/{invitationCode}", "events/{invitationCode}/"})
-    public ResponseEntity<Event> getEventByInvitationCode(@PathVariable("invitationCode") UUID invitationCode) {
-        if (invitationCode == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        Optional<Event> event = repo.findById(invitationCode);
-        return event.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
 
@@ -114,27 +97,6 @@ public class EventController {
         }
 
         return ResponseEntity.ok(updatedEvents);
-    }
-
-    /**
-     * Handles the GET: /{invitationCode}/participants endpoint
-     * @param invitationCode The invitationCode of an Event.
-     * @return Returns a 200 OK status code and the Participants list when the invitationCode exists in the DB.
-     * Returns a 400 Bad Request status code when no invitationCode was provided.
-     * Returns a 404 Not Found status code when no Event was found with the provided invitationCode.
-     */
-    @GetMapping (path = {"events/{invitationCode}/participants"})
-    public ResponseEntity<List<Participant>> getParticipantsByInvitationCode(
-            @PathVariable("invitationCode") UUID invitationCode)
-    {
-        if (invitationCode == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        if(!repo.existsById(invitationCode))
-            return ResponseEntity.notFound().build();
-
-        return ResponseEntity.ok(repo.getReferenceById(invitationCode).getParticipants());
     }
 
     /**
