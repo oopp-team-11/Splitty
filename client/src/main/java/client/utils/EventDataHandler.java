@@ -196,6 +196,7 @@ public class EventDataHandler {
             // logic of pop-up
             sessionHandler.refreshEvent();
             // TODO: logic of pop-up
+            return;
         }
 
         event.setTitle(receivedEvent.getTitle());
@@ -219,7 +220,7 @@ public class EventDataHandler {
     public void getCreateExpense(Expense receivedExpense) {
         if (expenses.contains(receivedExpense)) {
             // logic of refetching expenses from server
-            sessionHandler.refreshEvent();
+            sessionHandler.refreshExpenses();
             // TODO: logic of pop-up
             return;
         }

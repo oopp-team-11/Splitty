@@ -6,12 +6,15 @@ import commons.Participant;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 class EventDataHandlerTest {
 
@@ -23,6 +26,7 @@ class EventDataHandlerTest {
     Expense e2;
     List<Participant> participants;
     List<Expense> expenses;
+    EventStompSessionHandler sessionMock;
 
     @BeforeEach
     public void setup() throws IllegalAccessException {
@@ -43,6 +47,8 @@ class EventDataHandlerTest {
         expenses.add(e1);
         expenses.add(e2);
         this.handler = new EventDataHandler(event, participants, expenses);
+        this.sessionMock = Mockito.mock(EventStompSessionHandler.class);
+        this.handler.setSessionHandler(this.sessionMock);
     }
 
     private static void setId(Event toSet, UUID newId) throws IllegalAccessException {
@@ -56,10 +62,55 @@ class EventDataHandlerTest {
     private static void setId(Participant toSet, UUID newId) throws IllegalAccessException {
         FieldUtils.writeField(toSet, "id", newId, true);
     }
+
+
+
+    @Test
+    void noExpenseToDelete() {
+        handler.getDeleteExpense(new Expense(p1, "Hype Train", 1.5));
+        verify(sessionMock, times(1)).refreshExpenses();
+    }
+    @Test
+    void noExpenseToUpdate() {
+        handler.getUpdateExpense(new Expense(p1, "Hype Train", 1.5));
+        verify(sessionMock, times(1)).refreshExpenses();
+    }
+    @Test
+    void expenseAlreadyCreated() {
+        handler.getCreateExpense(e1);
+        verify(sessionMock, times(1)).refreshExpenses();
+    }
+
+    @Test
+    void noEventToUpdate() {
+        handler.setEvent(null);
+        handler.getUpdateEvent(event);
+        verify(sessionMock, times(1)).refreshEvent();
+    }
+
+    @Test
+    void noParticipantForUpdate() {
+        handler.getUpdateParticipant(new Participant(event, "a", "b", "c", "d", "e"));
+        verify(sessionMock, times(1)).refreshParticipants();
+    }
+
+    @Test
+    void participantAlreadyDeleted() {
+        handler.getDeleteParticipant(new Participant(event, "a", "b", "c", "d", "e"));
+        verify(sessionMock, times(1)).refreshParticipants();
+    }
+
+    @Test
+    void participantAlreadyCreated() {
+        handler.getCreateParticipant(p1);
+        verify(sessionMock, times(1)).refreshParticipants();
+    }
+
     @Test
     void receiveParticipantCreate() {
-        handler.getCreateParticipant(p1);
-        assertEquals(handler.getParticipants().getLast(), p1);
+        var p3 = new Participant(event, "A", "B", "C", "D", "E");
+        handler.getCreateParticipant(p3);
+        assertEquals(handler.getParticipants().getLast(), p3);
     }
 
     @Test
@@ -87,8 +138,9 @@ class EventDataHandlerTest {
 
     @Test
     void receiveExpenseCreate() {
-        handler.getCreateExpense(e1);
-        assertEquals(e1, handler.getExpenses().getLast());
+        var e3 = new Expense(p2, "Antihypetrain", 3.0);
+        handler.getCreateExpense(e3);
+        assertEquals(e3, handler.getExpenses().getLast());
     }
 
     @Test
@@ -110,5 +162,10 @@ class EventDataHandlerTest {
         EventStompSessionHandler sessionHandler = new EventStompSessionHandler(UUID.randomUUID(), handler);
         handler.setSessionHandler(sessionHandler);
         assertEquals(sessionHandler, handler.getSessionHandler());
+    }
+
+    @Test
+    void checkAlreadyCreatedParticipant() {
+
     }
 }
