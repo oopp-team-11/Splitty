@@ -91,6 +91,11 @@ public class StartScreenCtrl implements Initializable {
         });
     }
 
+    public void setTranslationSupplier(TranslationSupplier tl) {
+        this.translationSupplier = tl;
+        this.translate();
+    }
+
     private void translate() {
         if (this.translationSupplier == null) return;
         Map<Control, String> labels = new HashMap<>();
@@ -228,10 +233,5 @@ public class StartScreenCtrl implements Initializable {
                 "\nError: " +
                 (exception.getMessage() != null ? exception.getMessage() : "No error message available."));
         alert.showAndWait();
-    }
-
-    public void setTranslationSupplier(TranslationSupplier tl) {
-        this.translationSupplier = tl;
-        this.translate();
     }
 }

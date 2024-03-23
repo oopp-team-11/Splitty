@@ -6,14 +6,22 @@ import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
 import commons.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /***
  * class CreateParticipantController
  */
 public class CreateParticipantCtrl {
+
+    @FXML
+    public Label addParticipantLabel;
+
+    @FXML
+    public Button createBtn;
 
     @FXML
     private TextField email;
@@ -46,6 +54,29 @@ public class CreateParticipantCtrl {
         this.mainCtrl = mainCtrl;
         this.fileSystemUtils = new FileSystemUtils();
         this.serverUtils = new ServerUtils();
+    }
+
+    public void setTranslationSupplier(TranslationSupplier tl) {
+        this.translationSupplier = tl;
+        this.translate();
+    }
+
+    private void translate() {
+        if (this.translationSupplier == null) return;
+        Map<Control, String> labels = new HashMap<>();
+        labels.put(this.email, "Email");
+        labels.put(this.firstName, "FirstName");
+        labels.put(this.lastName, "LastName");
+        labels.put(this.addParticipantLabel, "AddAParticipant");
+        labels.put(this.createBtn, "Create");
+        labels.forEach((k, v) -> {
+            var translation = this.translationSupplier.getTranslation(v);
+            if (translation == null) return;
+            if (k instanceof Labeled)
+                ((Labeled) k).setText(translation.replaceAll("\"", ""));
+            if (k instanceof TextField)
+                ((TextField) k).setPromptText(translation.replaceAll("\"", ""));
+        });
     }
 
     /**
@@ -89,9 +120,5 @@ public class CreateParticipantCtrl {
 
         mainCtrl.showStartScreen(); // todo: Change that to event screen when there is one
 
-    }
-
-    public void setTranslationSupplier(TranslationSupplier tl) {
-        this.translationSupplier = tl;
     }
 }

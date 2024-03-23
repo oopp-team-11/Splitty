@@ -87,11 +87,11 @@ public class MainCtrl {
 
         //showEventOverview(event);
 
-        showStartScreen();
+        //showStartScreen();
         // Comment out showStartScreen() above and uncomment a scene below to
         // get it to launch as a start screen for debugging reasons.
 
-        //showCreateParticipant(null);
+        showCreateParticipant(null);
         //showEditParticipant(null);
         primaryStage.show();
     }

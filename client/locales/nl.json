@@ -5,5 +5,9 @@
   "Create": "Maak aan",
   "Join": "Deelnemen",
   "EventName":"Evenement naam",
-  "InvitationCode":"Uitnodgingscode"
+  "InvitationCode":"Uitnodgingscode",
+  "Email": "Email",
+  "FirstName": "Voornaam",
+  "LastName": "Achternaam",
+  "AddAParticipant": "Voeg een deelnemer toe"
 }
