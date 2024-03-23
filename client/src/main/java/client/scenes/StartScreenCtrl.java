@@ -27,16 +27,12 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 import javafx.application.Platform;
 import java.io.IOException;
 import java.net.URL;
-
 import java.util.*;
-
-
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 /**
  * Start Screen controller for showing start screen and entering to events
  */
@@ -299,7 +295,6 @@ public class StartScreenCtrl implements Initializable {
 
         pollingThread.start();
     }
-
 
     private void updateUI(Map<UUID, String> updatedEvents) {
         Platform.runLater(() -> {
