@@ -94,7 +94,7 @@ public class ExpenseController {
         if(!expenseRepository.existsById(invitationCode))
         {
             template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.notFound("Participant not found", true));
+                    StatusEntity.notFound("Expense not found", true));
             return;
         }
 
@@ -140,7 +140,7 @@ public class ExpenseController {
         if(!expenseRepository.existsById(receivedExpense.getId()))
         {
             template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.notFound("Participant not found", true));
+                    StatusEntity.notFound("Expense not found", true));
             return;
         }
 
@@ -184,6 +184,13 @@ public class ExpenseController {
         if (receivedExpense.getAmount() <= 0) {
             template.convertAndSendToUser(principal.getName(),"/queue/reply",
                     StatusEntity.badRequest("Amount should be positive"));
+            return;
+        }
+
+        if(!expenseRepository.existsById(receivedExpense.getId()))
+        {
+            template.convertAndSendToUser(principal.getName(),"/queue/reply",
+                    StatusEntity.notFound("Expense not found", true));
             return;
         }
 

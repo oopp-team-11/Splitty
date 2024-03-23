@@ -59,7 +59,7 @@ public class Participant {
      * Constructor
      */
     public Participant() {
-
+        this.madeExpenses = new ArrayList<>();
     }
 
     /**
