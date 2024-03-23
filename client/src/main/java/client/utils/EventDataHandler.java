@@ -16,6 +16,7 @@ public class EventDataHandler {
     private Event event;
     private List<Participant> participants;
     private List<Expense> expenses;
+    private EventStompSessionHandler sessionHandler;
 
     /***
      * default constructor
@@ -32,6 +33,49 @@ public class EventDataHandler {
     public EventDataHandler(Event event, List<Participant> participants, List<Expense> expenses) {
         this.event = event;
         this.participants = participants;
+        this.expenses = expenses;
+    }
+
+    /**
+     * Getter for sessionHandler
+     * @return returns a reference to sessionHandler
+     */
+    public EventStompSessionHandler getSessionHandler() {
+        return sessionHandler;
+    }
+
+    /**
+     * Setter for sessionHandler used by sessionHandler constructor
+     * @param sessionHandler sessionHandler
+     */
+    public void setSessionHandler(EventStompSessionHandler sessionHandler) {
+        this.sessionHandler = sessionHandler;
+    }
+
+    /**
+     * Setter for event. Used during initial read requests
+     *
+     * @param event the initial event object
+     */
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    /**
+     * Setter for participants. Used during initial read requests
+     *
+     * @param participants Initial list of participants
+     */
+    public void setParticipants(List<Participant> participants) {
+        this.participants = participants;
+    }
+
+    /**
+     * Setter for expenses. Used during initial read requests
+     *
+     * @param expenses Initial list of expenses.
+     */
+    public void setExpenses(List<Expense> expenses) {
         this.expenses = expenses;
     }
 
@@ -87,10 +131,72 @@ public class EventDataHandler {
     }
 
     /**
+     * Adds a new Participant to the list of Participants
+     *
+     * @param receivedParticipant the new Participant
+     */
+    public void getCreateParticipant(Participant receivedParticipant) {
+    }
+
+    /**
+     * Deletes the requested Participant from the list of participants
+     *
+     * @param receivedParticipant the participant to be deleted
+     */
+    public void getDeleteParticipant(Participant receivedParticipant) {
+    }
+
+    /**
+     * Updates an already existing Participant with the same id with new data
+     *
+     * @param receivedParticipant new data for the already existing participant
+     */
+    public void getUpdateParticipant(Participant receivedParticipant) {
+    }
+
+    /**
+     * Updates the fields of the Event object
+     *
+     * @param receivedEvent Event object containing the updated fields
+     */
+    public void getUpdateEvent(Event receivedEvent) {
+    }
+
+    /**
+     * Receives the request to delete all data related to current event and change the scene to start screen
+     */
+    public void getDeleteEvent() {
+    }
+
+    /**
+     * Adds a new Expense to the list of Expenses
+     *
+     * @param receivedExpense the new Expense
+     */
+    public void getCreateExpense(Expense receivedExpense) {
+    }
+
+    /**
+     * Updates an already existing Expense with new data
+     *
+     * @param receivedExpense an expense object containing updated fields
+     */
+    public void getUpdateExpense(Expense receivedExpense) {
+    }
+
+    /**
+     * Deletes a requested Expense
+     *
+     * @param receivedExpense the Expense that should be deleted
+     */
+    public void getDeleteExpense(Expense receivedExpense) {
+    }
+
+    /**
      * Handles received updates on a Participant object
      *
      * @param receivedParticipant received Participant object
-     * @param methodType type of change
+     * @param methodType          type of change
      */
     public void receiveParticipant(Participant receivedParticipant, String methodType) {
         switch (methodType) {
@@ -121,7 +227,7 @@ public class EventDataHandler {
      * Handles received updates on the Event object
      *
      * @param receivedEvent received Event object
-     * @param methodType type of change, supports {"update", "delete"}
+     * @param methodType    type of change, supports {"update", "delete"}
      */
     public void receiveEvent(Event receivedEvent, String methodType) {
         switch (methodType) {
@@ -160,7 +266,7 @@ public class EventDataHandler {
      * Handles received updates on an Expense object
      *
      * @param receivedExpense received Expense object
-     * @param methodType type of change, supports {"create", "update", "delete"}
+     * @param methodType      type of change, supports {"create", "update", "delete"}
      */
     public void receiveExpense(Expense receivedExpense, String methodType) {
         switch (methodType) {
