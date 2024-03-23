@@ -14,6 +14,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 
+/**
+ * Expense repository test stub for testing purposes
+ */
 public class TestExpenseRepository implements ExpenseRepository {
     public final List<Expense> expenses = new ArrayList<>();
 
@@ -111,7 +114,8 @@ public class TestExpenseRepository implements ExpenseRepository {
     }
 
     @Override
-    public <S extends Expense, R> R findBy(Example<S> example, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
+    public <S extends Expense, R> R findBy(Example<S> example,
+                                           Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
         return null;
     }
 
