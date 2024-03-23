@@ -9,5 +9,7 @@
   "Email": "Email",
   "FirstName": "Voornaam",
   "LastName": "Achternaam",
-  "AddAParticipant": "Voeg een deelnemer toe"
+  "AddAParticipant": "Voeg een deelnemer toe",
+  "EditAParticipant": "Bewerk een deelnemer",
+  "Edit": "Bewerk"
 }
