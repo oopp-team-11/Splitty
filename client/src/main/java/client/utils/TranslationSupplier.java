@@ -7,10 +7,21 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashMap;
 
+/**
+ * Supplies translations to the rest of the application.
+ * On creation the TranslationSupplier accepts a language string.
+ * This language string should correspond to a json file stored in /locales/ under the same name.
+ */
 public class TranslationSupplier {
     private static final String localesPath = "locales/";
     private HashMap<String, String> translationMap;
 
+    /**
+     * Constructor for the translation supplier
+     *
+     * @param lang This language string should correspond to a json file stored in localesPath under the same name.
+     * @throws FileNotFoundException in case there is no corresponding json file found.
+     */
     public TranslationSupplier(String lang) throws FileNotFoundException {
         var path = localesPath + lang + ".json";
         if(!FileSystemUtils.checkIfFileExists(localesPath + lang + ".json")) {
@@ -21,9 +32,15 @@ public class TranslationSupplier {
         reader.close();
 
         translationMap = new HashMap<>();
-        json.forEach((k, v) -> translationMap.put(k,v.toString()));
+        json.forEach((key, val) -> translationMap.put(key,val.toString()));
         System.out.println(translationMap);
     }
 
+    /**
+     * Method used to get a translation from the translation supplier.
+     *
+     * @param key the key for the translation
+     * @return Either the correct translation or null
+     */
     public String getTranslation(String key) { return translationMap.get(key); }
 }
