@@ -60,6 +60,10 @@ public class EditParticipantCtrl {
         this.participant = participant;
     }
 
+    /**
+     * Sets the translation supplier for this controller
+     * @param tl the translation supplier that should be used
+     */
     public void setTranslationSupplier(TranslationSupplier tl) {
         this.translationSupplier = tl;
         this.translate();
@@ -73,13 +77,13 @@ public class EditParticipantCtrl {
         labels.put(this.lastName, "LastName");
         labels.put(this.editParticipantLabel, "EditAParticipant");
         labels.put(this.editBtn, "Edit");
-        labels.forEach((k, v) -> {
-            var translation = this.translationSupplier.getTranslation(v);
+        labels.forEach((key, val) -> {
+            var translation = this.translationSupplier.getTranslation(val);
             if (translation == null) return;
-            if (k instanceof Labeled)
-                ((Labeled) k).setText(translation.replaceAll("\"", ""));
-            if (k instanceof TextField)
-                ((TextField) k).setPromptText(translation.replaceAll("\"", ""));
+            if (key instanceof Labeled)
+                ((Labeled) key).setText(translation.replaceAll("\"", ""));
+            if (key instanceof TextField)
+                ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
         });
     }
 
