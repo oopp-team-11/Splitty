@@ -25,7 +25,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.simp.stomp.StompSessionHandler;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
@@ -184,6 +183,10 @@ public class MainCtrl {
         eventOverviewCtrl.setEvent(event);
     }
 
+    /**
+     * Start websocket using invitationCode of event
+     * @param invitationCode of event to start websocket on
+     */
     public void startWebSocket(UUID invitationCode) {
         WebSocketClient client = new StandardWebSocketClient();
 
