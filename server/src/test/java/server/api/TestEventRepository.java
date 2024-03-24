@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.function.Function;
 
 import commons.Event;
-import commons.Expense;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;

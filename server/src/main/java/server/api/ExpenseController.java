@@ -28,7 +28,9 @@ public class ExpenseController {
 
     /**
      * Constructor
+     * @param eventRepository event repository
      * @param expenseRepository expense repository
+     * @param participantRepository participant repository
      * @param template SimpMessagingTemplate
      */
     public ExpenseController(EventRepository eventRepository,
