@@ -115,11 +115,9 @@ public class EventControllerTest {
 
         event.setTitle("foo");
 
-        sut.updateEvent(principal, event);
+        assertEquals(StatusEntity.ok("event:update " + event.getId()), sut.updateEvent(event));
 
-        verify(messagingTemplate).convertAndSend("/topic/"+event.getId(), event);
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("/queue/reply"),
-                eq(StatusEntity.ok("event:update "+event.getId())));
+        verify(messagingTemplate).convertAndSend("/topic/" + event.getId() + "/event:update", event);
 
         assertTrue(eventRepo.existsById(event.getId()));
         var repoEvent = eventRepo.getReferenceById(event.getId());
@@ -138,22 +136,14 @@ public class EventControllerTest {
 
         event.setTitle(null);
 
-        sut.updateEvent(principal, event);
-
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
-                eq(StatusEntity.badRequest("Title should not be empty")));
+        assertEquals(StatusEntity.badRequest("Event title should not be empty", true),
+                sut.updateEvent(event));
     }
 
     @Test
-    void checkUpdateEventWrongClass() {
-        Participant participant = new Participant();
-
-        sut.updateEvent(principal, participant);
-
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()) ,eq("/queue/reply"),
-                eq(StatusEntity.badRequest("Payload should be an Event", true)));
-
-        assertFalse(eventRepo.existsById(participant.getId()));
+    void checkUpdateEventNotProvided() {
+        assertEquals(StatusEntity.badRequest("Event object not found in message body", true),
+                sut.updateEvent(null));
     }
 
     @Test
@@ -164,9 +154,7 @@ public class EventControllerTest {
             setId(event, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        sut.updateEvent(principal, event);
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
-                eq(StatusEntity.notFound("Event not found",true)));
+        assertEquals(StatusEntity.notFound("Event not found", true), sut.updateEvent(event));
 
         assertFalse(eventRepo.existsById(event.getId()));
     }
@@ -229,30 +217,18 @@ public class EventControllerTest {
 
         eventRepo.save(event);
 
-        sut.readEvent(principal, event.getId());
-
-        verify(messagingTemplate).convertAndSend("/topic/"+event.getId(), event);
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("/queue/reply"),
-                eq(StatusEntity.ok("event:read "+event.getId())));
+        assertEquals(StatusEntity.ok(event), sut.readEvent(event.getId()));
     }
 
     @Test
-    void checkReadEventWrongClass() {
-        Participant participant = new Participant();
-
-        sut.readEvent(principal, participant);
-
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
-                eq(StatusEntity.badRequest("Payload should be a UUID", true)));
+    void checkReadEventCodeNotProvided() {
+        assertEquals(StatusEntity.badRequest(null, true), sut.readEvent(null));
     }
 
     @Test
     void checkReadEventNotFound() {
         UUID uuid = UUID.randomUUID();
-
-        sut.readEvent(principal, uuid);
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
-                eq(StatusEntity.notFound("Event not found",true)));
+        assertEquals(StatusEntity.notFound(null, true), sut.readEvent(uuid));
 
         assertFalse(eventRepo.existsById(uuid));
     }

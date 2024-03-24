@@ -104,6 +104,7 @@ public class EventController {
      * Handles update websocket endpoint for event
      *
      * @param receivedEvent Event received from the client
+     * @return returns statusEntity<String> to user with status code and error message
      */
     @MessageMapping("/event:update")
     @SendToUser("/queue/reply")
@@ -131,6 +132,8 @@ public class EventController {
      * Handles read websocket endpoint for event
      *
      * @param invitationCode invitationCode of the requested event
+     * @return returns a StatusEntity<Event> body contains Event if status code is OK
+     * returns null in body otherwise
      */
     @MessageMapping("/event:read")
     @SendToUser("/queue/event:read")
