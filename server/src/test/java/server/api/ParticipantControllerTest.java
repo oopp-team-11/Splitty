@@ -17,11 +17,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.springframework.http.HttpStatus.*;
 
 public class ParticipantControllerTest {
 
     private ParticipantRepository participantRepository;
+    private EventRepository eventRepository;
     private ParticipantController participantController;
     private SimpMessagingTemplate messagingTemplate;
     private Principal principal;
@@ -29,34 +29,48 @@ public class ParticipantControllerTest {
     @BeforeEach
     public void setup() {
         participantRepository = new TestParticipantRepository();
+        eventRepository = new TestEventRepository();
         messagingTemplate = mock(SimpMessagingTemplate.class);
         principal = mock(Principal.class);
-        participantController = new ParticipantController(participantRepository, messagingTemplate);
+        participantController = new ParticipantController(participantRepository, eventRepository, messagingTemplate);
     }
 
     private static void setId(Participant toSet, UUID newId) throws IllegalAccessException {
         FieldUtils.writeField(toSet, "id", newId, true);
     }
+    private static void setId(Event toSet, UUID newId) throws IllegalAccessException {
+        FieldUtils.writeField(toSet, "id", newId, true);
+    }
 
     @Test
     void checkCreateParticipant() {
+        Event event = new Event("event");
+        try {
+            setId(event, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
+
+        eventRepository.save(event);
+
         Participant participant = new Participant();
+        participant.setFirstName("foo");
+        participant.setLastName("fooman");
+        participant.setEmail("foo@fooomail.com");
+        participant.setEventId(event.getId());
 
         try {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        participant.setFirstName("foo");
-        participant.setLastName("fooman");
-        participant.setEmail("foo@foo.com");
-
-        participantController.createParticipant(principal, participant);
+        assertEquals(StatusEntity.ok("participant:create " + participant.getId()),
+                participantController.createParticipant(participant));
 
         assertTrue(participantRepository.existsById(participant.getId()));
+        assertEquals(event, participantRepository.getReferenceById(participant.getId()).getEvent());
 
-        verify(messagingTemplate).convertAndSend("/topic/"+participant.getId(), participant);
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("/queue/reply"),
-                eq(StatusEntity.ok("participant:create "+participant.getId())));
+        participant.setEvent(event);
+
+        verify(messagingTemplate).convertAndSend("/topic/"+participant.getId()+"/participant:create",
+                participant);
     }
 
     @Test
@@ -67,10 +81,8 @@ public class ParticipantControllerTest {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        participantController.createParticipant(principal, participant);
-
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
-                eq(StatusEntity.badRequest("First name should not be empty")));
+        assertEquals(StatusEntity.badRequest("First name should not be empty"),
+                participantController.createParticipant(participant));
 
         assertFalse(participantRepository.existsById(participant.getId()));
     }
@@ -84,12 +96,10 @@ public class ParticipantControllerTest {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        participantController.createParticipant(principal, participant);
+        assertEquals(StatusEntity.badRequest("Last name should not be empty"),
+                participantController.createParticipant(participant));
 
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
-                eq(StatusEntity.badRequest("Last name should not be empty")));
         assertFalse(participantRepository.existsById(participant.getId()));
-
     }
 
     @Test
@@ -103,28 +113,21 @@ public class ParticipantControllerTest {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        participantController.createParticipant(principal, participant);
+        assertEquals(StatusEntity.badRequest("Provided email is invalid"),
+                participantController.createParticipant(participant));
 
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
-                eq(StatusEntity.badRequest("Provided email is invalid")));
         assertFalse(participantRepository.existsById(participant.getId()));
-
-    }
-
-    @Test
-    void checkCreateParticipantWrongClass() {
-        Event event = new Event();
-
-        participantController.createParticipant(principal, event);
-
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()) ,eq("/queue/reply"),
-                eq(StatusEntity.badRequest("Payload should be a participant", true)));
-
-        assertFalse(participantRepository.existsById(event.getId()));
     }
 
     @Test
     void checkUpdateParticipant() {
+        Event event = new Event("event");
+        try {
+            setId(event, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
+
+        eventRepository.save(event);
+
         Participant participant = new Participant();
 
         try {
@@ -136,18 +139,21 @@ public class ParticipantControllerTest {
         participant.setFirstName("foo");
         participant.setLastName("fooman");
         participant.setEmail("foo@foo.com");
+        participant.setEventId(event.getId());
 
-        participantController.updateParticipant(principal, participant);
+        assertEquals(StatusEntity.ok("participant:update " + participant.getId()),
+                participantController.updateParticipant(participant));
 
-        verify(messagingTemplate).convertAndSend("/topic/"+participant.getId(), participant);
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("/queue/reply"),
-                eq(StatusEntity.ok("participant:update "+participant.getId())));
+        verify(messagingTemplate).convertAndSend("/topic/"+participant.getId()+"/participant:update",
+                participant);
 
         assertTrue(participantRepository.existsById(participant.getId()));
         var repoParticipant = participantRepository.getReferenceById(participant.getId());
         assertEquals("foo", repoParticipant.getFirstName());
         assertEquals("fooman", repoParticipant.getLastName());
         assertEquals("foo@foo.com", repoParticipant.getEmail());
+        assertEquals(event, repoParticipant.getEvent());
+
     }
 
     @Test
@@ -160,10 +166,8 @@ public class ParticipantControllerTest {
 
         participantRepository.save(participant);
 
-        participantController.updateParticipant(principal, participant);
-
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
-                eq(StatusEntity.badRequest("First name should not be empty")));
+        assertEquals(StatusEntity.badRequest("First name should not be empty"),
+                participantController.updateParticipant(participant));
     }
 
     @Test
@@ -177,10 +181,8 @@ public class ParticipantControllerTest {
 
         participantRepository.save(participant);
 
-        participantController.updateParticipant(principal, participant);
-
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
-                eq(StatusEntity.badRequest("Last name should not be empty")));
+        assertEquals(StatusEntity.badRequest("Last name should not be empty"),
+                participantController.updateParticipant(participant));
     }
 
     @Test
@@ -196,22 +198,8 @@ public class ParticipantControllerTest {
 
         participantRepository.save(participant);
 
-        participantController.updateParticipant(principal, participant);
-
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
-                eq(StatusEntity.badRequest("Provided email is invalid")));
-    }
-
-    @Test
-    void checkUpdateParticipantWrongClass() {
-        Event event = new Event();
-
-        participantController.updateParticipant(principal, event);
-
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()) ,eq("/queue/reply"),
-                eq(StatusEntity.badRequest("Payload should be a participant", true)));
-
-        assertFalse(participantRepository.existsById(event.getId()));
+        assertEquals(StatusEntity.badRequest("Provided email is invalid"),
+                participantController.updateParticipant(participant));
     }
 
     @Test
@@ -225,9 +213,8 @@ public class ParticipantControllerTest {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        participantController.updateParticipant(principal, participant);
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
-                eq(StatusEntity.notFound("Participant not found",true)));
+        assertEquals(StatusEntity.notFound("Participant not found", true),
+                participantController.updateParticipant(participant));
 
         assertFalse(participantRepository.existsById(participant.getId()));
     }
@@ -247,22 +234,12 @@ public class ParticipantControllerTest {
 
         assertTrue(participantRepository.existsById(participant.getId()));
 
-        participantController.deleteParticipant(principal, participant);
+        assertEquals(StatusEntity.ok("participant:delete " + participant.getId()),
+                participantController.deleteParticipant(participant));
 
-        verify(messagingTemplate).convertAndSend("/topic/"+participant.getId(), participant);
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("/queue/reply"),
-                eq(StatusEntity.ok("participant:delete "+participant.getId())));
+        verify(messagingTemplate).convertAndSend("/topic/"+participant.getId()+"/participant:delete",
+                participant);
         assertFalse(participantRepository.existsById(participant.getId()));
-    }
-
-    @Test
-    void checkDeleteParticipantWrongClass() {
-        Event event = new Event();
-
-        participantController.deleteParticipant(principal, event);
-
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()) ,eq("/queue/reply"),
-                eq(StatusEntity.badRequest("Payload should be a participant",true)));
     }
 
     @Test
@@ -276,16 +253,23 @@ public class ParticipantControllerTest {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        participantController.deleteParticipant(principal, participant);
+        assertEquals(StatusEntity.notFound("Participant not found", true),
+                participantController.deleteParticipant(participant));
 
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
-                eq(StatusEntity.notFound("Participant not found",true)));
         assertFalse(participantRepository.existsById(participant.getId()));
     }
 
     @Test
     void checkReadParticipant() {
+        Event event = new Event("event");
+        try {
+            setId(event, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
+
+        eventRepository.save(event);
+
         Participant participant = new Participant();
+        participant.setEvent(event);
 
         try {
             setId(participant, UUID.randomUUID());
@@ -293,30 +277,16 @@ public class ParticipantControllerTest {
 
         participantRepository.save(participant);
 
-        participantController.readParticipant(principal, participant.getId());
+        participant.setEventId(event.getId());
 
-        verify(messagingTemplate).convertAndSend("/topic/"+participant.getId(), participant);
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("/queue/reply"),
-                eq(StatusEntity.ok("participant:read "+participant.getId())));
-    }
-
-    @Test
-    void checkReadParticipantWrongClass() {
-        Participant participant = new Participant();
-
-        participantController.readParticipant(principal, participant);
-
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
-                eq(StatusEntity.badRequest("Payload should be a UUID", true)));
+        assertEquals(StatusEntity.ok(participant), participantController.readParticipant(participant.getId()));
     }
 
     @Test
     void checkReadParticipantNotFound() {
         UUID uuid = UUID.randomUUID();
 
-        participantController.readParticipant(principal, uuid);
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
-                eq(StatusEntity.notFound("Participant not found",true)));
+        assertEquals(StatusEntity.notFound(null, true), participantController.readParticipant(uuid));
 
         assertFalse(participantRepository.existsById(uuid));
     }

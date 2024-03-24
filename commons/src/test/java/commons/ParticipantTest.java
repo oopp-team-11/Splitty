@@ -148,6 +148,20 @@ class ParticipantTest {
     }
 
     @Test
+    void setEventId() {
+        UUID uuid = UUID.randomUUID();
+        participant.setEventId(uuid);
+        assertEquals(uuid, participant.getEventId());
+    }
+
+    @Test
+    void setEvent() {
+        Event event = new Event("event");
+        participant.setEvent(event);
+        assertEquals(event, participant.getEvent());
+    }
+
+    @Test
     void addExpense() {
         Expense expense = new Expense(participant, "Expense", 69.);
         assertEquals(expense, participant.getMadeExpenses().getLast());

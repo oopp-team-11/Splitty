@@ -4,12 +4,12 @@ import commons.Participant;
 import commons.StatusEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
+import server.database.EventRepository;
 import server.database.ParticipantRepository;
 
-import java.security.Principal;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 @Controller
 public class ParticipantController {
     private final ParticipantRepository participantRepository;
+    private final EventRepository eventRepository;
     @Autowired
     private SimpMessagingTemplate template;
 
@@ -27,9 +28,10 @@ public class ParticipantController {
      * @param participantRepository participant repository
      * @param template SimpMessagingTemplate
      */
-    public ParticipantController(ParticipantRepository participantRepository,
+    public ParticipantController(ParticipantRepository participantRepository, EventRepository eventRepository,
                                  SimpMessagingTemplate template) {
         this.participantRepository = participantRepository;
+        this.eventRepository = eventRepository;
         this.template = template;
     }
 
@@ -39,156 +41,105 @@ public class ParticipantController {
 
     /**
      * Handles create websocket endpoint for participant
-     * @param principal connection data about user
-     * @param payload content of a websocket message
      */
     @MessageMapping("/participant:create")
-    public void createParticipant(Principal principal, @Payload Object payload)
+    @SendToUser("/queue/reply")
+    public StatusEntity<String> createParticipant(Participant receivedParticipant)
     {
-        if(payload.getClass() != Participant.class) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Payload should be a participant", true));
-            return;
-        }
-
-        Participant receivedParticipant = (Participant) payload;
-
         if (isNullOrEmpty(receivedParticipant.getFirstName())) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("First name should not be empty"));
-            return;
+            return StatusEntity.badRequest("First name should not be empty");
         }
         if (isNullOrEmpty(receivedParticipant.getLastName())) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Last name should not be empty"));
-            return;
+            return StatusEntity.badRequest("Last name should not be empty");
         }
         if(!receivedParticipant.getEmail().isEmpty() &&
-                !Pattern.compile("^(.+)@(\\S+)$").matcher(receivedParticipant.getEmail()).matches())
+                !Pattern.compile("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$").
+                        matcher(receivedParticipant.getEmail()).matches())
         {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Provided email is invalid"));
-            return;
+            return StatusEntity.badRequest("Provided email is invalid");
         }
 
+//        Participant participant = new Participant(
+//                eventRepository.getReferenceById(receivedParticipant.getEventId()),
+//                receivedParticipant.getFirstName(), receivedParticipant.getLastName(), receivedParticipant.getEmail(),
+//                receivedParticipant.getIban(), receivedParticipant.getBic()
+//        );
+        receivedParticipant.setEvent(eventRepository.getReferenceById(receivedParticipant.getEventId()));
         participantRepository.save(receivedParticipant);
 
-        template.convertAndSend("/topic/"+receivedParticipant.getId(), receivedParticipant);
-        template.convertAndSendToUser(principal.getName(), "/queue/reply",
-                StatusEntity.ok("participant:create " + receivedParticipant.getId()));
+        template.convertAndSend("/topic/"+receivedParticipant.getId()+"/participant:create",
+                receivedParticipant);
+        return StatusEntity.ok("participant:create " + receivedParticipant.getId());
     }
 
     /**
      * Handles read websocket endpoint for participant
-     * @param principal connection data about user
-     * @param payload content of a websocket message
      */
     @MessageMapping("/participant:read")
-    public void readParticipant(Principal principal, @Payload Object payload)
+    @SendToUser("/queue/event:read")
+    public StatusEntity<Participant> readParticipant(UUID id)
     {
-        if(payload.getClass() != UUID.class) {
-            template.convertAndSendToUser(principal.getName(), "/queue/reply",
-                    StatusEntity.badRequest("Payload should be a UUID", true));
-            return;
-        }
-
-        UUID invitationCode = (UUID) payload;
-
-        if(!participantRepository.existsById(invitationCode))
+        if(!participantRepository.existsById(id))
         {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.notFound("Participant not found", true));
-            return;
+            return StatusEntity.notFound(null, true);
         }
 
-        Participant participant = participantRepository.getReferenceById(invitationCode);
+        Participant participant = participantRepository.getReferenceById(id);
+        participant.setEventId(participant.getEvent().getId());
 
-        template.convertAndSend("/topic/"+invitationCode, participant);
-        template.convertAndSendToUser(principal.getName(), "/queue/reply",
-                StatusEntity.ok("participant:read " + participant.getId()));
+        return StatusEntity.ok(participant);
     }
 
     /**
      * Handles update websocket endpoint for participant
-     * @param principal connection data about user
-     * @param payload content of a websocket message
      */
     @MessageMapping("/participant:update")
-    public void updateParticipant(Principal principal, @Payload Object payload)
+    @SendToUser("/queue/reply")
+    public StatusEntity<String> updateParticipant(Participant receivedParticipant)
     {
-        if(payload.getClass() != Participant.class) {
-            template.convertAndSendToUser(principal.getName(), "/queue/reply",
-                    StatusEntity.badRequest("Payload should be a participant", true));
-            return;
-        }
-
-        Participant receivedParticipant = (Participant) payload;
-
         if (isNullOrEmpty(receivedParticipant.getFirstName())) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("First name should not be empty"));
-            return;
+            return StatusEntity.badRequest("First name should not be empty");
         }
         if (isNullOrEmpty(receivedParticipant.getLastName())) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Last name should not be empty"));
-            return;
+            return StatusEntity.badRequest("Last name should not be empty");
         }
         if(!receivedParticipant.getEmail().isEmpty() &&
-                !Pattern.compile("^(.+)@(\\S+)$").matcher(receivedParticipant.getEmail()).matches())
+                !Pattern.compile("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$").
+                        matcher(receivedParticipant.getEmail()).matches())
         {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Provided email is invalid"));
-            return;
+            return StatusEntity.badRequest("Provided email is invalid");
         }
 
         if(!participantRepository.existsById(receivedParticipant.getId()))
         {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.notFound("Participant not found", true));
-            return;
+            return StatusEntity.notFound("Participant not found", true);
         }
 
-        Participant participant = participantRepository.getReferenceById(receivedParticipant.getId());
-        participant.setFirstName(receivedParticipant.getFirstName());
-        participant.setLastName(receivedParticipant.getLastName());
-        participant.setEmail(receivedParticipant.getEmail());
-        participant.setIban(receivedParticipant.getIban());
-        participant.setBic(receivedParticipant.getBic());
-        participantRepository.save(participant);
+        receivedParticipant.setEvent(eventRepository.getReferenceById(receivedParticipant.getEventId()));
 
-        template.convertAndSend("/topic/"+receivedParticipant.getId(), participant);
-        template.convertAndSendToUser(principal.getName(), "/queue/reply",
-                StatusEntity.ok("participant:update " + participant.getId()));
+        participantRepository.save(receivedParticipant);
+
+        template.convertAndSend("/topic/"+receivedParticipant.getId()+"/participant:update",
+                receivedParticipant);
+        return StatusEntity.ok("participant:update " + receivedParticipant.getId());
     }
 
     /**
      * Handles delete websocket endpoint for participant
-     * @param principal connection data about user
-     * @param payload content of a websocket message
      */
     @MessageMapping("/participant:delete")
-    public void deleteParticipant(Principal principal, @Payload Object payload)
+    @SendToUser("/queue/reply")
+    public StatusEntity<String> deleteParticipant(Participant receivedParticipant)
     {
-        if(payload.getClass() != Participant.class) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Payload should be a participant", true));
-            return;
-        }
-
-        Participant receivedParticipant = (Participant) payload;
         if(!participantRepository.existsById(receivedParticipant.getId()))
         {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.notFound("Participant not found", true));
-            return;
+            return StatusEntity.notFound("Participant not found", true);
         }
 
         Participant participant = participantRepository.getReferenceById(receivedParticipant.getId());
         participantRepository.delete(participant);
 
-        template.convertAndSend("/topic/"+receivedParticipant.getId(), participant);
-        template.convertAndSendToUser(principal.getName(), "/queue/reply",
-                StatusEntity.ok("participant:delete " + participant.getId()));
+        template.convertAndSend("/topic/"+receivedParticipant.getId()+"/participant:delete", participant);
+        return StatusEntity.ok("participant:delete " + participant.getId());
     }
 }
