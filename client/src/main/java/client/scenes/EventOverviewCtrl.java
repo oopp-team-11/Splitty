@@ -180,14 +180,25 @@ public class EventOverviewCtrl {
         eventNameLabel.setText(eventName);
     }
 
+    /**
+     * Function to add expenses, it takes you to a different screen to make the expense
+     */
     public void addExpense() {
         mainCtrl.showAddExpense();
         setEvent(event);
     }
+    /**
+     * Function to edit expenses, it takes you to a different screen to edit the expense
+     * @param expense - the expense to edit
+     */
     public void editExpense(Expense expense) {
         mainCtrl.showEditExpense(expense);
         setEvent(event);
     }
+    /**
+     * Function to delete expenses
+     * @param expense - expense to delete
+     */
     public void deleteExpense(Expense expense) {
         mainCtrl.getSessionHandler().sendExpense(expense, "delete");
         setEvent(event);
