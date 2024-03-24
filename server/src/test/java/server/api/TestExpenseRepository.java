@@ -59,6 +59,7 @@ public class TestExpenseRepository implements ExpenseRepository {
      * @param uuid
      * @deprecated
      */
+    @Deprecated
     @Override
     public Expense getOne(UUID uuid) {
         return null;
@@ -68,6 +69,7 @@ public class TestExpenseRepository implements ExpenseRepository {
      * @param uuid
      * @deprecated
      */
+    @Deprecated
     @Override
     public Expense getById(UUID uuid) {
         return null;
