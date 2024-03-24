@@ -7,6 +7,11 @@ import client.utils.ServerUtils;
 import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
 import commons.Event;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,11 +24,15 @@ import org.springframework.messaging.simp.stomp.StompSessionHandler;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
-
+import javafx.application.Platform;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.UUID;
+import java.util.stream.Collectors;
 /**
  * Start Screen controller for showing start screen and entering to events
  */
@@ -64,6 +73,7 @@ public class StartScreenCtrl implements Initializable {
     private final ServerUtils serverUtils;
     private StompSessionHandler sessionHandler;
     private TranslationSupplier translationSupplier;
+    private Thread pollingThread;
 
     /**
      * @param mainCtrl main Controller, for displaying this scene.
@@ -73,6 +83,7 @@ public class StartScreenCtrl implements Initializable {
         this.mainCtrl = mainCtrl;
         fileSystemUtils = new FileSystemUtils();
         serverUtils = new ServerUtils();
+        pollingThread = null;
     }
 
     @Override
@@ -137,17 +148,13 @@ public class StartScreenCtrl implements Initializable {
         System.out.println("REFRESH");
         try {
             var events = serverUtils.getRecentEvents("http://127.0.0.1:8080", "config.json");
-
-//            for(Event event : events) {
-//                System.out.println(event.getTitle() + " " + event.getId());
-//            }
-
             ObservableList<Event> data = FXCollections.observableList(events);
             eventTable.setItems(data);
+            List<UUID> eventIds = eventTable.getItems().stream().map(Event::getId).collect(Collectors.toList());
+            startLongPolling(eventIds);
         } catch (IOException | InterruptedException e) {
-            // Handle exception
+            System.out.println("Failed to get recent events: " + e.getMessage());
         } catch (org.json.JSONException e) {
-            // Handle JSON parsing exception
             System.out.println("Failed to parse server response: " + e.getMessage());
         }
     }
@@ -251,5 +258,63 @@ public class StartScreenCtrl implements Initializable {
                 "\nError: " +
                 (exception.getMessage() != null ? exception.getMessage() : "No error message available."));
         alert.showAndWait();
+    }
+
+    private void startLongPolling(List<UUID> eventIds) {
+        if (pollingThread != null) {
+            pollingThread.interrupt();
+        }
+
+        pollingThread = new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    String eventIdsParam = String.join(",", eventIds.stream().map(UUID::toString)
+                            .collect(Collectors.toList()));
+                    Client client = ClientBuilder.newClient();
+                    Response response = client.target("http://localhost:8080/events/updates")
+                            .queryParam("query", "updates")
+                            .queryParam("invitationCodes", eventIdsParam)
+                            .request(MediaType.APPLICATION_JSON)
+                            .get();
+
+                    System.out.println(response.getStatus());
+
+                    if (response.getStatus() == 200) {
+                        System.out.println("Got updated events");
+                        Map<UUID, String> updatedEvents = response.readEntity(new GenericType<Map<UUID, String>>() {});
+                        if (!updatedEvents.isEmpty()) {
+                            updateUI(updatedEvents);
+                        }
+                    }
+                } catch (Exception e) {
+                    System.out.println("Failed to get updated events: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        pollingThread.start();
+    }
+
+    private void updateUI(Map<UUID, String> updatedEvents) {
+        Platform.runLater(() -> {
+            for (Map.Entry<UUID, String> entry : updatedEvents.entrySet()) {
+                UUID invitationCode = entry.getKey();
+                String updatedTitle = entry.getValue();
+
+                for (Event event : eventTable.getItems()) {
+                    if (event.getId().equals(invitationCode)) {
+                        if (updatedTitle == null || updatedTitle.isEmpty()) {
+                            eventTable.getItems().remove(event);
+                        } else {
+                            event.setTitle(updatedTitle);
+                            eventTable.refresh();
+                        }
+
+                        break;
+                    }
+                }
+            }
+        });
     }
 }
