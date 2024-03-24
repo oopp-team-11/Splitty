@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -101,70 +102,48 @@ public class EventController {
 
     /**
      * Handles update websocket endpoint for event
-     * @param principal connection data about user
-     * @param payload content of a websocket message
+     *
+     * @param receivedEvent Event received from the client
      */
     @MessageMapping("/event:update")
-    public void updateEvent(Principal principal, @Payload Object payload)
+    @SendToUser("/queue/reply")
+    public StatusEntity<String> updateEvent(Event receivedEvent)
     {
-        if(payload.getClass() != Event.class) {
-            template.convertAndSendToUser(principal.getName(), "/queue/reply",
-                    StatusEntity.badRequest("Payload should be an Event", true));
-            return;
-        }
+        if(receivedEvent == null)
+            return StatusEntity.badRequest("Event object not found in message body", true);
 
-        Event receivedEvent = (Event) payload;
-
-        if (isNullOrEmpty(receivedEvent.getTitle())) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Title should not be empty"));
-            return;
-        }
+        if (isNullOrEmpty(receivedEvent.getTitle()))
+            return StatusEntity.badRequest("Event title should not be empty", true);
 
         if(!repo.existsById(receivedEvent.getId()))
-        {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.notFound("Event not found", true));
-            return;
-        }
+            return StatusEntity.notFound("Event not found", true);
 
         Event event = repo.getReferenceById(receivedEvent.getId());
         event.setTitle(receivedEvent.getTitle());
+        //TODO: Call update last activity service
         repo.save(event);
 
-        template.convertAndSend("/topic/"+receivedEvent.getId(), event);
-        template.convertAndSendToUser(principal.getName(), "/queue/reply",
-                StatusEntity.ok("event:update " + event.getId()));
+        template.convertAndSend("/topic/" + receivedEvent.getId() + "/event:update", event);
+        return StatusEntity.ok("event:update " + event.getId());
     }
 
     /**
      * Handles read websocket endpoint for event
-     * @param principal connection data about user
-     * @param payload content of a websocket message
+     *
+     * @param invitationCode invitationCode of the requested event
      */
     @MessageMapping("/event:read")
-    public void readEvent(Principal principal, @Payload Object payload)
+    @SendToUser("/queue/event:read")
+    public StatusEntity<Event> readEvent(UUID invitationCode)
     {
-        if(payload.getClass() != UUID.class) {
-            template.convertAndSendToUser(principal.getName(), "/queue/reply",
-                    StatusEntity.badRequest("Payload should be a UUID", true));
-            return;
-        }
-
-        UUID invitationCode = (UUID) payload;
-
+        if(invitationCode == null)
+            return StatusEntity.badRequest(null, true);
         if(!repo.existsById(invitationCode))
-        {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.notFound("Event not found", true));
-            return;
-        }
+            return StatusEntity.notFound(null, true);
 
         Event event = repo.getReferenceById(invitationCode);
 
-        template.convertAndSend("/topic/"+invitationCode, event);
-        template.convertAndSendToUser(principal.getName(), "/queue/reply",
-                StatusEntity.ok("event:read " + event.getId()));
+        return StatusEntity.ok(event);
     }
 
     /**
