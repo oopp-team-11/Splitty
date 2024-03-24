@@ -71,7 +71,6 @@ public class StartScreenCtrl implements Initializable {
 
     private final FileSystemUtils fileSystemUtils;
     private final ServerUtils serverUtils;
-    private StompSessionHandler sessionHandler;
     private TranslationSupplier translationSupplier;
     private Thread pollingThread;
 
@@ -227,19 +226,7 @@ public class StartScreenCtrl implements Initializable {
             serverErrorAlert(e);
         }
 
-        startWebSocket(invitationCode);
-    }
-
-    //TODO: Potentially move this method to a more appropriate class
-    private void startWebSocket(UUID invitationCode) {
-        WebSocketClient client = new StandardWebSocketClient();
-
-        WebSocketStompClient stompClient = new WebSocketStompClient(client);
-        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-
-        //TODO:Change new EventDataHandler to the actual reference
-        sessionHandler = new EventStompSessionHandler(invitationCode, new EventDataHandler(), mainCtrl);
-        stompClient.connectAsync("ws://localhost:8080/v1", sessionHandler);
+        mainCtrl.startWebSocket(invitationCode);
     }
 
     private static void serverErrorAlert(Exception exception) {

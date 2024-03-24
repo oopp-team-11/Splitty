@@ -15,6 +15,7 @@
  */
 package client.scenes;
 
+import client.utils.EventDataHandler;
 import client.utils.EventStompSessionHandler;
 import commons.Event;
 import commons.Expense;
@@ -23,6 +24,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompSessionHandler;
+import org.springframework.web.socket.client.WebSocketClient;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
+
+import java.util.UUID;
 
 /**
  * Main scene controller. It oversights currently active scenes, switches between them,
@@ -49,6 +57,9 @@ public class MainCtrl {
 
     private EventOverviewCtrl eventOverviewCtrl;
     private Scene eventOverviewScene;
+
+    private StompSessionHandler sessionHandler;
+    private EventDataHandler dataHandler;
 
     /**
      * Initializes javafx scenes and their controllers, sets start screen as the currently shown screen
@@ -173,4 +184,46 @@ public class MainCtrl {
         eventOverviewCtrl.setEvent(event);
     }
 
+    public void startWebSocket(UUID invitationCode) {
+        WebSocketClient client = new StandardWebSocketClient();
+
+        WebSocketStompClient stompClient = new WebSocketStompClient(client);
+        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+
+        //TODO:Change new EventDataHandler to the actual reference
+        sessionHandler = new EventStompSessionHandler(invitationCode, new EventDataHandler(), this);
+        stompClient.connectAsync("ws://localhost:8080/v1", sessionHandler);
+    }
+
+    /**
+     * Standard getter for sessionHandler
+     * @return current sessionHandler
+     */
+    public StompSessionHandler getSessionHandler() {
+        return sessionHandler;
+    }
+
+    /**
+     * Standard setter for sessionHandler
+     * @param sessionHandler new sessionHandler to use
+     */
+    public void setSessionHandler(StompSessionHandler sessionHandler) {
+        this.sessionHandler = sessionHandler;
+    }
+
+    /**
+     * Standard getter for dataHandler
+     * @return current dataHandler
+     */
+    public EventDataHandler getDataHandler() {
+        return dataHandler;
+    }
+
+    /**
+     * Standard setter for dataHandler
+     * @param dataHandler new dataHandler to use
+     */
+    public void setDataHandler(EventDataHandler dataHandler) {
+        this.dataHandler = dataHandler;
+    }
 }
