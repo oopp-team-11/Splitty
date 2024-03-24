@@ -6,7 +6,6 @@ import commons.StatusEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import commons.Event;
 import server.database.EventRepository;
 
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -151,6 +149,8 @@ public class EventController {
 
     /**
      * Handles delete websocket endpoint for event
+     * @param receivedEvent Event that we want to delete
+     * @return StatusEntity<String> body contains description of success/failure
      */
     @MessageMapping("/event:delete")
     @SendToUser("/queue/reply")

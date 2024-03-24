@@ -26,6 +26,7 @@ public class ParticipantController {
     /**
      * Constructor
      * @param participantRepository participant repository
+     * @param eventRepository event repository
      * @param template SimpMessagingTemplate
      */
     public ParticipantController(ParticipantRepository participantRepository, EventRepository eventRepository,
@@ -41,6 +42,8 @@ public class ParticipantController {
 
     /**
      * Handles create websocket endpoint for participant
+     * @param receivedParticipant Participant we want to create
+     * @return StatusEntity<String> body contains description of success/failure
      */
     @MessageMapping("/participant:create")
     @SendToUser("/queue/reply")
@@ -59,11 +62,6 @@ public class ParticipantController {
             return StatusEntity.badRequest("Provided email is invalid");
         }
 
-//        Participant participant = new Participant(
-//                eventRepository.getReferenceById(receivedParticipant.getEventId()),
-//                receivedParticipant.getFirstName(), receivedParticipant.getLastName(), receivedParticipant.getEmail(),
-//                receivedParticipant.getIban(), receivedParticipant.getBic()
-//        );
         receivedParticipant.setEvent(eventRepository.getReferenceById(receivedParticipant.getEventId()));
         participantRepository.save(receivedParticipant);
 
@@ -74,6 +72,9 @@ public class ParticipantController {
 
     /**
      * Handles read websocket endpoint for participant
+     * @param id UUID of a participant we want to read
+     * @return returns a StatusEntity<Event> body contains Participant if status code is OK
+     * returns null in body otherwise
      */
     @MessageMapping("/participant:read")
     @SendToUser("/queue/event:read")
@@ -92,6 +93,8 @@ public class ParticipantController {
 
     /**
      * Handles update websocket endpoint for participant
+     * @param receivedParticipant Participant that we want to update
+     * @return StatusEntity<String> body contains description of success/failure
      */
     @MessageMapping("/participant:update")
     @SendToUser("/queue/reply")
@@ -126,6 +129,8 @@ public class ParticipantController {
 
     /**
      * Handles delete websocket endpoint for participant
+     * @param receivedParticipant Participant that we want to delete
+     * @return StatusEntity<String> body contains description of success/failure
      */
     @MessageMapping("/participant:delete")
     @SendToUser("/queue/reply")
