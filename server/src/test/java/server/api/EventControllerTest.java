@@ -172,22 +172,10 @@ public class EventControllerTest {
 
         assertTrue(eventRepo.existsById(event.getId()));
 
-        sut.deleteEvent(principal, event);
+        assertEquals(StatusEntity.ok("event:delete " + event.getId()), sut.deleteEvent(event));
 
-        verify(messagingTemplate).convertAndSend("/topic/"+event.getId(), event);
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()), eq("/queue/reply"),
-                eq(StatusEntity.ok("event:delete "+event.getId())));
+        verify(messagingTemplate).convertAndSend("/topic/"+event.getId()+"/event:delete", event);
         assertFalse(eventRepo.existsById(event.getId()));
-    }
-
-    @Test
-    void checkDeleteEventWrongClass() {
-        Participant participant = new Participant();
-
-        sut.deleteEvent(principal, participant);
-
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()) ,eq("/queue/reply"),
-                eq(StatusEntity.badRequest("Payload should be an Event",true)));
     }
 
     @Test
@@ -198,10 +186,8 @@ public class EventControllerTest {
             setId(event, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        sut.deleteEvent(principal, event);
+        assertEquals(StatusEntity.notFound("Event not found", true), sut.deleteEvent(event));
 
-        verify(messagingTemplate).convertAndSendToUser(eq(principal.getName()),eq("/queue/reply"),
-                eq(StatusEntity.notFound("Event not found",true)));
         assertFalse(eventRepo.existsById(event.getId()));
     }
 

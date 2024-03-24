@@ -151,40 +151,23 @@ public class EventController {
 
     /**
      * Handles delete websocket endpoint for event
-     * @param principal connection data about user
-     * @param payload content of a websocket message
      */
     @MessageMapping("/event:delete")
-    public void deleteEvent(Principal principal, @Payload Object payload)
+    @SendToUser("/queue/reply")
+    public StatusEntity<String> deleteEvent(Event receivedEvent)
     {
-        if(payload.getClass() != Event.class) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Payload should be an Event", true));
-            return;
-        }
-
         /*TODO: Implement admin passcode verification*/
-//        if()
-//        {
-//            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-//                    new ErrorMessage(new IllegalAccessException()));
-//            return;
-//        }
 
-        Event receivedEvent = (Event) payload;
         if(!repo.existsById(receivedEvent.getId()))
         {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.notFound("Event not found", true));
-            return;
+            return StatusEntity.notFound("Event not found", true);
         }
 
         Event event = repo.getReferenceById(receivedEvent.getId());
         repo.delete(event);
 
-        template.convertAndSend("/topic/"+receivedEvent.getId(), event);
-        template.convertAndSendToUser(principal.getName(), "/queue/reply",
-                StatusEntity.ok("event:delete " + event.getId()));
+        template.convertAndSend("/topic/" + receivedEvent.getId() + "/event:delete", event);
+        return StatusEntity.ok("event:delete " + event.getId());
     }
 
 }
