@@ -18,7 +18,7 @@
          <children>
             <VBox prefHeight="247.0" prefWidth="208.0">
                <children>
-                  <Label prefHeight="17.0" prefWidth="157.0" style="-fx-padding: 10;" text="Create a new event">
+                  <Label fx:id="newEventLabel" prefHeight="17.0" prefWidth="157.0" style="-fx-padding: 10;" text="Create a new event">
                      <font>
                         <Font size="17.0" />
                      </font>
@@ -27,10 +27,10 @@
                      <children>
                         <TextField id="newEventName" fx:id="newEventName" prefHeight="76.0"
                                    prefWidth="134.0" promptText="Event name" />
-                        <Button id="createBtn" mnemonicParsing="false" onAction="#onCreate" text="Create" />
+                        <Button id="createBtn" fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate" text="Create" />
                      </children>
                   </HBox>
-                  <Label style="-fx-padding: 10;" text="Join event by invite">
+                  <Label fx:id="joinEventLabel" style="-fx-padding: 10;" text="Join event by invite">
                      <font>
                         <Font size="17.0" />
                      </font>
@@ -39,7 +39,7 @@
                      <children>
                         <TextField id="joinInvitationCode" fx:id="joinInvitationCode" prefHeight="26.0"
                                    prefWidth="134.0" promptText="Invitation code" />
-                        <Button id="joinBtn" mnemonicParsing="false" onAction="#onJoin" prefHeight="26.0"
+                        <Button fx:id="joinBtn" id="joinBtn" mnemonicParsing="false" onAction="#onJoin" prefHeight="26.0"
                                 prefWidth="55.0" text="Join" />
                      </children>
                   </HBox>
@@ -47,7 +47,7 @@
             </VBox>
             <VBox prefHeight="247.0" prefWidth="303.0">
                <children>
-                  <Label style="-fx-padding: 10;" text="Join recent events (double click)">
+                  <Label fx:id="recentEventsLabel" style="-fx-padding: 10;" text="Join recent events (double click)">
                      <font>
                         <Font size="17.0" />
                      </font>

@@ -164,6 +164,7 @@ class ParticipantTest {
     @Test
     void addExpense() {
         Expense expense = new Expense(participant, "Expense", 69.);
+        participant.addExpense(expense);
         assertEquals(expense, participant.getMadeExpenses().getLast());
     }
 
@@ -175,6 +176,7 @@ class ParticipantTest {
     @Test
     void getMadeExpenses() {
         Expense expense = new Expense(participant, "Expense", 69.);
+        participant.addExpense(expense);
         assertEquals(expense, participant.getMadeExpenses().getFirst());
     }
 }

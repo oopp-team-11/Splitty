@@ -50,6 +50,20 @@ public class ExpenseTest {
     }
 
     @Test
+    void setInvitationCode() {
+        UUID invitationCode = UUID.randomUUID();
+        expense.setInvitationCode(invitationCode);
+        assertEquals(invitationCode, expense.getInvitationCode());
+    }
+
+    @Test
+    void setPaidById() {
+        UUID paidById = UUID.randomUUID();
+        expense.setPaidById(paidById);
+        assertEquals(paidById, expense.getPaidById());
+    }
+
+    @Test
     void testGetId() {
         assertEquals(expense.getId(), shouldBeId);
         assertEquals(expenseEqual.getId(), shouldBeId);

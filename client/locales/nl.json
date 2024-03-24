@@ -1,0 +1,17 @@
+{
+  "CreateNewEventLabel": "Nieuw evenement aanmaken",
+  "JoinEventLabel": "Deelnemen aan evenement",
+  "RecentEventsLabel": "Neem deel aan recent evenement",
+  "Create": "Maak aan",
+  "Join": "Deelnemen",
+  "EventName":"Evenement naam",
+  "InvitationCode":"Uitnodgingscode",
+  "Email": "Email",
+  "FirstName": "Voornaam",
+  "LastName": "Achternaam",
+  "AddAParticipant": "Voeg een deelnemer toe",
+  "EditAParticipant": "Bewerk een deelnemer",
+  "Edit": "Bewerk",
+  "SendInvites": "Stuur uitnodigingen",
+  "Participants": "Deelnemers"
+}

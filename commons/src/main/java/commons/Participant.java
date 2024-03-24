@@ -79,7 +79,6 @@ public class Participant {
         this.iban = iban;
         this.bic = bic;
         this.madeExpenses = new ArrayList<>();
-        event.addParticipant(this);
         this.eventId = event.getId();
     }
 

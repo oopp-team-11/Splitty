@@ -82,7 +82,6 @@ public class Expense {
         this.paidBy = paidBy;
         this.title = title;
         this.amount = amount;
-        paidBy.addExpense(this);
         this.paidById = paidBy.getId();
         this.invitationCode = paidBy.getEventId();
     }
