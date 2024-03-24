@@ -310,7 +310,6 @@ public class StartScreenCtrl implements Initializable {
                 for (Event event : eventTable.getItems()) {
                     if (event.getId().equals(invitationCode)) {
                         if (updatedTitle == null || updatedTitle.isEmpty()) {
-                            // Remove the event from the table if the title is empty or null
                             eventTable.getItems().remove(event);
                         } else {
                             event.setTitle(updatedTitle);
