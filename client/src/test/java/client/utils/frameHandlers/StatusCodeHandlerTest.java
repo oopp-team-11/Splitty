@@ -1,8 +1,6 @@
 package client.utils.frameHandlers;
 
 import client.scenes.MainCtrl;
-import client.utils.EventDataHandler;
-import commons.Event;
 import commons.StatusEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,33 +9,29 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
 
-class ReadEventHandlerTest {
-    private EventDataHandler dataHandler;
-    private ReadEventHandler handler;
-    private StompHeaders headers;
+class StatusCodeHandlerTest {
     private MainCtrl mainCtrl;
+    private StatusCodeHandler handler;
+    private StompHeaders headers;
 
     @BeforeEach
     void setUp() {
         mainCtrl = Mockito.mock(MainCtrl.class);
-        dataHandler = Mockito.mock(EventDataHandler.class);
-        handler = new ReadEventHandler(dataHandler, mainCtrl);
+        handler = new StatusCodeHandler(mainCtrl);
         headers = new StompHeaders();
     }
 
     @Test
     void getPayloadType() {
-        assertEquals(new ParameterizedTypeReference<StatusEntity<Event>>() {}.getType(),
+        assertEquals(new ParameterizedTypeReference<StatusEntity<String>>() {}.getType(),
                 handler.getPayloadType(headers));
     }
 
     @Test
-    void handleFrameOK() {
-        Event event = new Event("testEvent");
-        StatusEntity<Event> status = StatusEntity.ok(event);
+    void handleFrame() {
+        StatusEntity<String> status = StatusEntity.ok("testMessage");
         handler.handleFrame(headers, status);
-        verify(dataHandler).setEvent(event);
+        //TODO: verify(mainCtrl).notifyAboutResponse(status);
     }
 }

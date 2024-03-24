@@ -177,7 +177,7 @@ public class StartScreenCtrl implements Initializable {
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
         //TODO:Change new EventDataHandler to the actual reference
-        sessionHandler = new EventStompSessionHandler(invitationCode, new EventDataHandler());
+        sessionHandler = new EventStompSessionHandler(invitationCode, new EventDataHandler(), mainCtrl);
         stompClient.connectAsync("ws://localhost:8080/v1", sessionHandler);
     }
 
