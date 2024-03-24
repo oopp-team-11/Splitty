@@ -1,15 +1,19 @@
 package server.api;
 
+import commons.Event;
 import commons.Expense;
+import commons.Participant;
 import commons.StatusEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
+import server.database.EventRepository;
 import server.database.ExpenseRepository;
+import server.database.ParticipantRepository;
 
-import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -17,18 +21,23 @@ import java.util.UUID;
  */
 @Controller
 public class ExpenseController {
+    private final EventRepository eventRepository;
     private final ExpenseRepository expenseRepository;
-    @Autowired
-    private SimpMessagingTemplate template;
+    private final ParticipantRepository participantRepository;
+    private final SimpMessagingTemplate template;
 
     /**
      * Constructor
      * @param expenseRepository expense repository
      * @param template SimpMessagingTemplate
      */
-    public ExpenseController(ExpenseRepository expenseRepository,
+    public ExpenseController(EventRepository eventRepository,
+                             ExpenseRepository expenseRepository,
+                             ParticipantRepository participantRepository,
                              SimpMessagingTemplate template) {
+        this.eventRepository = eventRepository;
         this.expenseRepository = expenseRepository;
+        this.participantRepository = participantRepository;
         this.template = template;
     }
 
@@ -37,168 +46,137 @@ public class ExpenseController {
     }
 
     /**
-     * Handles create websocket endpoint for expense
-     * @param principal connection data about user
-     * @param payload content of a websocket message
+     * Evaluates whether the received Expense object has all the correct field values
+     *
+     * @param receivedExpense received Expense object
+     * @return Returns a statusEntity with an error message, if it is a bad request
+     * Returns an OK status with null body otherwise
+     */
+    public StatusEntity<String> isExpenseBadRequest(Expense receivedExpense) {
+        if(receivedExpense == null)
+            return StatusEntity.badRequest("Expense object not found in message body", true);
+        if (isNullOrEmpty(receivedExpense.getTitle()))
+            return StatusEntity.badRequest("Expense title should not be empty", true);
+        if (receivedExpense.getAmount() <= 0)
+            return StatusEntity.badRequest("Amount should be positive", true);
+        if (receivedExpense.getPaidById() == null)
+            return StatusEntity.badRequest("Id of participant who paid should be provided", true);
+        return StatusEntity.ok(null);
+    }
+
+    /**
+     * Handles the /topic/expense:delete endpoint messages
+     *
+     * @param receivedExpense The received expense object
+     * @return returns a StatusEntity with an error message
      */
     @MessageMapping("/expense:create")
-    public void createExpense(Principal principal, @Payload Object payload)
+    @SendToUser("/queue/reply")
+    public StatusEntity<String> createExpense(Expense receivedExpense)
     {
-        if(payload.getClass() != Expense.class) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Payload should be an expense", true));
-            return;
-        }
+        StatusEntity<String> badRequest = isExpenseBadRequest(receivedExpense);
+        if (badRequest.isUnsolvable())
+            return badRequest;
+        if (!participantRepository.existsById(receivedExpense.getPaidById()))
+            return StatusEntity.notFound("Provided participant who paid for the expense does not exist");
 
-        Expense receivedExpense = (Expense) payload;
+        Participant paidBy = participantRepository.getReferenceById(receivedExpense.getPaidById());
+        Expense expense = new Expense(paidBy, receivedExpense.getTitle(), receivedExpense.getAmount());
+        paidBy.addExpense(expense);
 
-        if (isNullOrEmpty(receivedExpense.getTitle())) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Title should not be empty"));
-            return;
-        }
-        if (receivedExpense.getPaidBy() == null) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Did not receive who made the expense"));
-            return;
-        }
-        if (receivedExpense.getAmount() <= 0) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Amount should be positive"));
-            return;
-        }
+        UUID invitationCode = receivedExpense.getInvitationCode();
+        receivedExpense = expenseRepository.save(receivedExpense);
+        participantRepository.save(paidBy);
 
-        expenseRepository.save(receivedExpense);
+        receivedExpense.setPaidById(paidBy.getId());
+        receivedExpense.setInvitationCode(invitationCode);
 
-        template.convertAndSend("/topic/"+receivedExpense.getId(), receivedExpense);
-        template.convertAndSendToUser(principal.getName(), "/queue/reply",
-                StatusEntity.ok("expense:create " + receivedExpense.getId()));
+        template.convertAndSend("/topic/" + invitationCode + "/expense:create",
+                receivedExpense);
+        return StatusEntity.ok("expense:create " + receivedExpense.getId());
     }
 
     /**
-     * Handles read websocket endpoint for expense
-     * @param principal connection data about user
-     * @param payload content of a websocket message
+     * Handles read expenses websocket endpoint
+     *
+     * @param invitationCode invitationCode of parent Event
+     * @return StatusEntity containing a list of all Event's expenses in body
      */
-    @MessageMapping("/expense:read")
-    public void readExpense(Principal principal, @Payload Object payload)
+    @MessageMapping("/expenses:read")
+    @SendToUser("/queue/expenses:read")
+    public StatusEntity<List<Expense>> readExpenses(UUID invitationCode)
     {
-        if(payload.getClass() != UUID.class) {
-            template.convertAndSendToUser(principal.getName(), "/queue/reply",
-                    StatusEntity.badRequest("Payload should be a UUID", true));
-            return;
+        if(invitationCode == null)
+            return StatusEntity.badRequest(null, true);
+        if(!eventRepository.existsById(invitationCode))
+            return StatusEntity.notFound(null, true);
+
+        Event event = eventRepository.getReferenceById(invitationCode);
+        List<Participant> participants = event.getParticipants();
+        List<Expense> expenses = new ArrayList<>();
+
+        for (Participant participant : participants) {
+            List<Expense> participantExpenses = participant.getMadeExpenses();
+            for (Expense expense : participantExpenses) {
+                expense.setInvitationCode(invitationCode);
+                expense.setPaidById(participant.getId());
+                expenses.add(expense);
+            }
         }
 
-        UUID invitationCode = (UUID) payload;
-
-        if(!expenseRepository.existsById(invitationCode))
-        {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.notFound("Expense not found", true));
-            return;
-        }
-
-        Expense expense = expenseRepository.getReferenceById(invitationCode);
-
-        template.convertAndSend("/topic/"+invitationCode, expense);
-        template.convertAndSendToUser(principal.getName(), "/queue/reply",
-                StatusEntity.ok("expense:read " + expense.getId()));
+        return StatusEntity.ok(expenses);
     }
 
     /**
-     * Handles update websocket endpoint for participant
-     * @param principal connection data about user
-     * @param payload content of a websocket message
+     * Handles the /topic/expense:update endpoint messages
+     *
+     * @param receivedExpense The received expense object
+     * @return returns a StatusEntity with an error message
      */
     @MessageMapping("/expense:update")
-    public void updateExpense(Principal principal, @Payload Object payload)
+    @SendToUser("/queue/reply")
+    public StatusEntity<String> updateExpense(Expense receivedExpense)
     {
-        if(payload.getClass() != Expense.class) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Payload should be an expense", true));
-            return;
-        }
-
-        Expense receivedExpense = (Expense) payload;
-
-        if (isNullOrEmpty(receivedExpense.getTitle())) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Title should not be empty"));
-            return;
-        }
-        if (receivedExpense.getPaidBy() == null) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Did not receive who made the expense"));
-            return;
-        }
-        if (receivedExpense.getAmount() <= 0) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Amount should be positive"));
-            return;
-        }
+        StatusEntity<String> badRequest = isExpenseBadRequest(receivedExpense);
+        if (badRequest.isUnsolvable())
+            return badRequest;
 
         if(!expenseRepository.existsById(receivedExpense.getId()))
-        {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.notFound("Expense not found", true));
-            return;
-        }
+            return StatusEntity.notFound("Expense with provided ID does not exist", true);
 
         Expense expense = expenseRepository.getReferenceById(receivedExpense.getId());
         expense.setAmount(receivedExpense.getAmount());
         expense.setTitle(receivedExpense.getTitle());
-        expense.setPaidById(receivedExpense.getPaidById());
-        expenseRepository.save(expense);
+        expense = expenseRepository.save(expense);
 
-        template.convertAndSend("/topic/"+receivedExpense.getId(), expense);
-        template.convertAndSendToUser(principal.getName(), "/queue/reply",
-                StatusEntity.ok("expense:update " + expense.getId()));
+        expense.setInvitationCode(receivedExpense.getInvitationCode());
+        expense.setPaidById(expense.getPaidBy().getId());
+
+        template.convertAndSend("/topic/" + expense.getInvitationCode() + "/expense:update", expense);
+        return StatusEntity.ok("expense:update " + expense.getId());
     }
 
     /**
-     * Handles delete websocket endpoint for expense
-     * @param principal connection data about user
-     * @param payload content of a websocket message
+     * Handles the /topic/expense:delete endpoint messages
+     *
+     * @param receivedExpense The received expense object
+     * @return returns a StatusEntity with an error message
      */
     @MessageMapping("/expense:delete")
-    public void deleteExpense(Principal principal, @Payload Object payload)
+    @SendToUser("/queue/reply")
+    public StatusEntity<String> deleteExpense(Expense receivedExpense)
     {
-        if(payload.getClass() != Expense.class) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Payload should be an expense", true));
-            return;
-        }
-
-        Expense receivedExpense = (Expense) payload;
-
-        if (isNullOrEmpty(receivedExpense.getTitle())) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Title should not be empty"));
-            return;
-        }
-        if (receivedExpense.getPaidBy() == null) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Did not receive who made the expense"));
-            return;
-        }
-        if (receivedExpense.getAmount() <= 0) {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.badRequest("Amount should be positive"));
-            return;
-        }
+        if (receivedExpense == null)
+            return StatusEntity.badRequest("Expense object not found in message body");
 
         if(!expenseRepository.existsById(receivedExpense.getId()))
-        {
-            template.convertAndSendToUser(principal.getName(),"/queue/reply",
-                    StatusEntity.notFound("Expense not found", true));
-            return;
-        }
+            return StatusEntity.notFound("Expense with provided ID does not exist", true);
 
         Expense expense = expenseRepository.getReferenceById(receivedExpense.getId());
         expenseRepository.delete(expense);
 
-        template.convertAndSend("/topic/"+receivedExpense.getId(), expense);
-        template.convertAndSendToUser(principal.getName(), "/queue/reply",
-                StatusEntity.ok("expense:delete " + expense.getId()));
+        template.convertAndSend("/topic/" + receivedExpense.getInvitationCode() + "/expense:delete",
+                receivedExpense);
+        return StatusEntity.ok("expense:delete " + expense.getId());
     }
 }
