@@ -46,7 +46,7 @@ public class AddExpenseCtrl {
      */
     public void setFields() {
         this.event = mainCtrl.getDataHandler().getEvent();
-        var participantList = event.getParticipants();
+        var participantList = mainCtrl.getDataHandler().getParticipants();
 
         ObservableList<String> participants = FXCollections.observableArrayList(
                 participantList.stream().map(participant ->
@@ -62,7 +62,7 @@ public class AddExpenseCtrl {
     public void addExpense() {
         Participant person = null;
         String[] names = expensePaidBy.getValue().toString().split(" ");
-        for (Participant participant : event.getParticipants()){
+        for (Participant participant : mainCtrl.getDataHandler().getParticipants()){
             if(Objects.equals(participant.getFirstName(), names[0])
                     && Objects.equals(participant.getLastName(), names[1])){
                 person = participant;
