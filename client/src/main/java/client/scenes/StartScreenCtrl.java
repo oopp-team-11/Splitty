@@ -4,6 +4,7 @@ import client.utils.EventDataHandler;
 import client.utils.EventStompSessionHandler;
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
+import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
 import commons.Event;
 import javafx.beans.property.SimpleStringProperty;
@@ -21,14 +22,28 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Start Screen controller for showing start screen and entering to events
  */
 public class StartScreenCtrl implements Initializable {
     private final MainCtrl mainCtrl;
+
+    @FXML
+    private Button createBtn;
+
+    @FXML
+    private Button joinBtn;
+
+    @FXML
+    private Label newEventLabel;
+
+    @FXML
+    private Label joinEventLabel;
+
+    @FXML
+    private Label recentEventsLabel;
 
     @FXML
     private TextField newEventName;
@@ -48,6 +63,7 @@ public class StartScreenCtrl implements Initializable {
     private final FileSystemUtils fileSystemUtils;
     private final ServerUtils serverUtils;
     private StompSessionHandler sessionHandler;
+    private TranslationSupplier translationSupplier;
 
     /**
      * @param mainCtrl main Controller, for displaying this scene.
@@ -73,6 +89,44 @@ public class StartScreenCtrl implements Initializable {
                 }
             });
             return row;
+        });
+    }
+
+    /**
+     * Sets the translation supplier for this controller
+     * @param tl the translation supplier that should be used
+     */
+    public void setTranslationSupplier(TranslationSupplier tl) {
+        this.translationSupplier = tl;
+        this.translate();
+    }
+
+    private void translate() {
+        if (this.translationSupplier == null) return;
+        Map<Control, String> labels = new HashMap<>();
+        labels.put(this.newEventLabel, "CreateNewEventLabel");
+        labels.put(this.joinEventLabel, "JoinEventLabel");
+        labels.put(this.recentEventsLabel, "RecentEventsLabel");
+        labels.put(this.createBtn, "Create");
+        labels.put(this.joinBtn, "Join");
+        labels.put(this.newEventName, "EventName");
+        labels.put(this.joinInvitationCode, "InvitationCode");
+        labels.forEach((key, val) -> {
+            var translation = this.translationSupplier.getTranslation(val);
+            if (translation == null) return;
+            if (key instanceof Labeled)
+                ((Labeled) key).setText(translation.replaceAll("\"", ""));
+            if (key instanceof TextField)
+                ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
+        });
+
+        Map<TableColumn<Event, String>, String> tableColumns = new HashMap<>();
+        tableColumns.put(this.eventNameColumn, "EventName");
+        tableColumns.put(this.invitationCodeColumn, "InvitationCode");
+        tableColumns.forEach((key, val) -> {
+            var translation = this.translationSupplier.getTranslation(val);
+            if (translation == null) return;
+            key.setText(translation.replaceAll("\"", ""));
         });
     }
 
@@ -177,7 +231,7 @@ public class StartScreenCtrl implements Initializable {
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
         //TODO:Change new EventDataHandler to the actual reference
-        sessionHandler = new EventStompSessionHandler(invitationCode, new EventDataHandler());
+        sessionHandler = new EventStompSessionHandler(invitationCode, new EventDataHandler(), mainCtrl);
         stompClient.connectAsync("ws://localhost:8080/v1", sessionHandler);
     }
 

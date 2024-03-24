@@ -14,7 +14,7 @@
    <children>
       <VBox layoutX="19.0" prefHeight="403.0" prefWidth="564.0">
          <children>
-            <Label prefHeight="42.0" prefWidth="176.0" style="-fx-padding: 10;" text="Add a participant">
+            <Label prefHeight="42.0" prefWidth="176.0" style="-fx-padding: 10;" fx:id="addParticipantLabel" text="Add a participant">
                <font>
                   <Font size="17.0" />
                </font>
@@ -32,7 +32,7 @@
                      <children>
                         <TextField fx:id="lastName" promptText="Last name" />
                         <TextField fx:id="email" promptText="Email" />
-                        <Button id="CreateParticipant" mnemonicParsing="false" onAction="#onCreate"
+                        <Button id="CreateParticipant" fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate"
                                 prefHeight="25.0" prefWidth="305.0" text="Add" />
                      </children>
                   </VBox>

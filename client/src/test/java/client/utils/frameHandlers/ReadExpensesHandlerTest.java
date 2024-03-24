@@ -1,7 +1,10 @@
 package client.utils.frameHandlers;
 
+import client.Main;
+import client.scenes.MainCtrl;
 import client.utils.EventDataHandler;
 import commons.Expense;
+import commons.StatusEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,25 +21,29 @@ class ReadExpensesHandlerTest {
     private EventDataHandler dataHandler;
     private ReadExpensesHandler handler;
     private StompHeaders headers;
+    private MainCtrl mainCtrl;
 
     @BeforeEach
     void setUp() {
+        mainCtrl = Mockito.mock(MainCtrl.class);
         dataHandler = Mockito.mock(EventDataHandler.class);
-        handler = new ReadExpensesHandler(dataHandler);
+        handler = new ReadExpensesHandler(dataHandler, mainCtrl);
         headers = new StompHeaders();
     }
 
     @Test
     void getPayloadType() {
-        assertEquals(new ParameterizedTypeReference<List<Expense>>() {}.getType(), handler.getPayloadType(headers));
+        assertEquals(new ParameterizedTypeReference<StatusEntity<List<Expense>>>() {}.getType(),
+                handler.getPayloadType(headers));
     }
 
     @Test
-    void handleFrame() {
+    void handleFrameOK() {
         List<Expense> expenses = new ArrayList<>();
         expenses.add(new Expense());
         expenses.add(new Expense());
-        handler.handleFrame(headers, expenses);
+        StatusEntity<List<Expense>> status = StatusEntity.ok(expenses);
+        handler.handleFrame(headers, status);
         verify(dataHandler).setExpenses(expenses);
     }
 }
