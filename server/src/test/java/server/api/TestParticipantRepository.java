@@ -135,6 +135,9 @@ public class TestParticipantRepository implements ParticipantRepository {
     @Override
     public <S extends Participant> S save(S entity) {
         call("save");
+        try {
+            setId(entity, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
         participants.add(entity);
         return entity;
     }

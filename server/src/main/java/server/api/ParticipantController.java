@@ -65,7 +65,7 @@ public class ParticipantController {
         receivedParticipant.setEvent(eventRepository.getReferenceById(receivedParticipant.getEventId()));
         participantRepository.save(receivedParticipant);
 
-        template.convertAndSend("/topic/"+receivedParticipant.getId()+"/participant:create",
+        template.convertAndSend("/topic/"+receivedParticipant.getEventId()+"/participant:create",
                 receivedParticipant);
         return StatusEntity.ok("participant:create " + receivedParticipant.getId());
     }
@@ -122,7 +122,7 @@ public class ParticipantController {
 
         participantRepository.save(receivedParticipant);
 
-        template.convertAndSend("/topic/"+receivedParticipant.getId()+"/participant:update",
+        template.convertAndSend("/topic/"+receivedParticipant.getEventId()+"/participant:update",
                 receivedParticipant);
         return StatusEntity.ok("participant:update " + receivedParticipant.getId());
     }
@@ -144,7 +144,7 @@ public class ParticipantController {
         Participant participant = participantRepository.getReferenceById(receivedParticipant.getId());
         participantRepository.delete(participant);
 
-        template.convertAndSend("/topic/"+receivedParticipant.getId()+"/participant:delete", participant);
+        template.convertAndSend("/topic/"+receivedParticipant.getEventId()+"/participant:delete", participant);
         return StatusEntity.ok("participant:delete " + participant.getId());
     }
 }

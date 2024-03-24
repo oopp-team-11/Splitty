@@ -24,14 +24,12 @@ public class ParticipantControllerTest {
     private EventRepository eventRepository;
     private ParticipantController participantController;
     private SimpMessagingTemplate messagingTemplate;
-    private Principal principal;
 
     @BeforeEach
     public void setup() {
         participantRepository = new TestParticipantRepository();
         eventRepository = new TestEventRepository();
         messagingTemplate = mock(SimpMessagingTemplate.class);
-        principal = mock(Principal.class);
         participantController = new ParticipantController(participantRepository, eventRepository, messagingTemplate);
     }
 
@@ -61,15 +59,14 @@ public class ParticipantControllerTest {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        assertEquals(StatusEntity.ok("participant:create " + participant.getId()),
-                participantController.createParticipant(participant));
+        assertEquals(StatusEntity.StatusCode.OK, participantController.createParticipant(participant).getStatusCode());
 
         assertTrue(participantRepository.existsById(participant.getId()));
         assertEquals(event, participantRepository.getReferenceById(participant.getId()).getEvent());
 
         participant.setEvent(event);
 
-        verify(messagingTemplate).convertAndSend("/topic/"+participant.getId()+"/participant:create",
+        verify(messagingTemplate).convertAndSend("/topic/"+participant.getEventId()+"/participant:create",
                 participant);
     }
 
@@ -141,10 +138,10 @@ public class ParticipantControllerTest {
         participant.setEmail("foo@foo.com");
         participant.setEventId(event.getId());
 
-        assertEquals(StatusEntity.ok("participant:update " + participant.getId()),
-                participantController.updateParticipant(participant));
+        assertEquals(StatusEntity.StatusCode.OK, participantController.updateParticipant(participant).getStatusCode());
 
-        verify(messagingTemplate).convertAndSend("/topic/"+participant.getId()+"/participant:update",
+
+        verify(messagingTemplate).convertAndSend("/topic/"+participant.getEventId()+"/participant:update",
                 participant);
 
         assertTrue(participantRepository.existsById(participant.getId()));
@@ -237,7 +234,7 @@ public class ParticipantControllerTest {
         assertEquals(StatusEntity.ok("participant:delete " + participant.getId()),
                 participantController.deleteParticipant(participant));
 
-        verify(messagingTemplate).convertAndSend("/topic/"+participant.getId()+"/participant:delete",
+        verify(messagingTemplate).convertAndSend("/topic/"+participant.getEventId()+"/participant:delete",
                 participant);
         assertFalse(participantRepository.existsById(participant.getId()));
     }
