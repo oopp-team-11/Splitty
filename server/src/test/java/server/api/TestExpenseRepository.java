@@ -1,6 +1,7 @@
 package server.api;
 
 import commons.Expense;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,10 @@ public class TestExpenseRepository implements ExpenseRepository {
     public final List<Expense> expenses = new ArrayList<>();
 
     public final List<String> calledMethods = new ArrayList<>();
+
+    private static void setId(Expense toSet, UUID newID) throws IllegalAccessException {
+        FieldUtils.writeField(toSet, "id", newID, true);
+    }
 
     private void call(String name) {
         calledMethods.add(name);
@@ -129,6 +134,9 @@ public class TestExpenseRepository implements ExpenseRepository {
                 return entity;
             }
         }
+        try {
+            setId(entity, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
         expenses.add(entity);
         return entity;
     }

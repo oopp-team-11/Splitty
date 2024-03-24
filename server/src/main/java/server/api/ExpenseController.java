@@ -61,6 +61,23 @@ public class ExpenseController {
             return StatusEntity.badRequest("Amount should be positive", true);
         if (receivedExpense.getPaidById() == null)
             return StatusEntity.badRequest("Id of participant who paid should be provided", true);
+        if (receivedExpense.getInvitationCode() == null)
+            return StatusEntity.badRequest("InvitationCode of event should be provided", true);
+        return StatusEntity.ok(null);
+    }
+
+    /**
+     * Evaluates whether the received existing Expense object has the correct field values
+     *
+     * @param receivedExpense received Expense object
+     * @return Returns a statusEntity with an error message, if it is a bad request
+     * Returns an OK status with null body otherwise
+     */
+    public StatusEntity<String> isExistingExpenseBadRequest(Expense receivedExpense) {
+        if(receivedExpense.getId() == null)
+            return StatusEntity.badRequest("Expense ID should be provided", true);
+        if(!expenseRepository.existsById(receivedExpense.getId()))
+            return StatusEntity.notFound("Expense with provided ID does not exist", true);
         return StatusEntity.ok(null);
     }
 
@@ -140,9 +157,9 @@ public class ExpenseController {
         StatusEntity<String> badRequest = isExpenseBadRequest(receivedExpense);
         if (badRequest.isUnsolvable())
             return badRequest;
-
-        if(!expenseRepository.existsById(receivedExpense.getId()))
-            return StatusEntity.notFound("Expense with provided ID does not exist", true);
+        badRequest = isExistingExpenseBadRequest(receivedExpense);
+        if (badRequest.isUnsolvable())
+            return badRequest;
 
         Expense expense = expenseRepository.getReferenceById(receivedExpense.getId());
         expense.setAmount(receivedExpense.getAmount());
@@ -169,8 +186,9 @@ public class ExpenseController {
         if (receivedExpense == null)
             return StatusEntity.badRequest("Expense object not found in message body");
 
-        if(!expenseRepository.existsById(receivedExpense.getId()))
-            return StatusEntity.notFound("Expense with provided ID does not exist", true);
+        StatusEntity<String> badRequest = isExistingExpenseBadRequest(receivedExpense);
+        if (badRequest.isUnsolvable())
+            return badRequest;
 
         Expense expense = expenseRepository.getReferenceById(receivedExpense.getId());
         expenseRepository.delete(expense);
