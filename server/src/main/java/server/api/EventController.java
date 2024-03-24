@@ -1,9 +1,8 @@
 package server.api;
-
-
 import com.fasterxml.jackson.annotation.JsonView;
 import commons.StatusEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -11,13 +10,14 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import commons.Event;
+import org.springframework.web.context.request.async.DeferredResult;
 import server.database.EventRepository;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import commons.Views;
 
@@ -28,6 +28,7 @@ import commons.Views;
 @Controller
 public class EventController {
     private final EventRepository repo;
+    private final Map<UUID, List<DeferredResult<ResponseEntity<Map<UUID, String>>>>> deferredResults;
 
     @Autowired
     private SimpMessagingTemplate template;
@@ -41,6 +42,7 @@ public class EventController {
     public EventController(SimpMessagingTemplate template, EventRepository repo) {
         this.template = template;
         this.repo = repo;
+        this.deferredResults = new ConcurrentHashMap<>();
     }
 
 
@@ -185,6 +187,99 @@ public class EventController {
         template.convertAndSend("/topic/"+receivedEvent.getId(), event);
         template.convertAndSendToUser(principal.getName(), "/queue/reply",
                 StatusEntity.ok("event:delete " + event.getId()));
+    }
+
+    /**
+     * Handles the PUT: /{invitationCode} endpoint
+     * @param invitationCode The invitationCode of an Event.
+     * @param newTitle The new title of the Event from the RequestBody.
+     * @return Returns a 200 OK status code when the Event title was successfully updated.
+     * Returns a 400 Bad Request status code when no invitationCode or newTitle was provided.
+     */
+    @PutMapping(path = {"/{invitationCode}/", "/{invitationCode}"})
+    public ResponseEntity<Void> updateEventTitle(@PathVariable("invitationCode") UUID invitationCode,
+                                                 @RequestBody String newTitle) {
+        Optional<Event> eventOptional = repo.findById(invitationCode);
+        if (eventOptional.isEmpty() || newTitle == null || newTitle.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Event event = eventOptional.get();
+        event.setTitle(newTitle);
+        repo.save(event);
+
+        eventUpdated(invitationCode, newTitle);
+
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Handles the DELETE: /{invitationCode} endpoint
+     * @param invitationCode The invitationCode of an Event.
+     * @return Returns a 200 OK status code when the Event was successfully deleted.
+     * Returns a 400 Bad Request status code when no invitationCode was provided.
+     */
+    @DeleteMapping(path = "/{invitationCode}")
+    public ResponseEntity<Void> deleteEvent(@PathVariable("invitationCode") UUID invitationCode) {
+        if (!repo.existsById(invitationCode)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        repo.deleteById(invitationCode);
+
+        eventUpdated(invitationCode, null);
+
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Handles the GET: /updates endpoint
+     * @param query The query parameter provided by the client.
+     * @param invitationCodes The List of invitationCodes provided by the client from their config.json
+     * @return Returns a DeferredResult with a 200 OK status code and a Map of updated Events.
+     * Returns a 400 Bad Request status code when no invitationCodes were provided.
+     */
+    @GetMapping(path = {"/updates", "/updates/"})
+    public DeferredResult<ResponseEntity<Map<UUID, String>>> getUpdatedEvents(@RequestParam("query") String query,
+                                                                              @RequestParam("invitationCodes")
+                                                                              List<UUID> invitationCodes) {
+        if (invitationCodes == null || !"updates".equals(query)) {
+            DeferredResult<ResponseEntity<Map<UUID, String>>> badRequestResult = new DeferredResult<>();
+            badRequestResult.setResult(ResponseEntity.badRequest().build());
+            return badRequestResult;
+        }
+
+        DeferredResult<ResponseEntity<Map<UUID, String>>> deferredResult = new DeferredResult<>(5000L);
+
+        deferredResult.onTimeout(() -> {
+            deferredResult.setErrorResult(ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body("Request timed out."));
+        });
+
+        deferredResult.onCompletion(() -> {
+            for (UUID invitationCode : invitationCodes) {
+                deferredResults.remove(invitationCode, deferredResult);
+            }
+        });
+
+        for (UUID invitationCode : invitationCodes) {
+            deferredResults.computeIfAbsent(invitationCode, key -> new ArrayList<>()).add(deferredResult);
+        }
+
+        return deferredResult;
+    }
+
+    private void eventUpdated(UUID invitationCode, String updatedTitle) {
+        List<DeferredResult<ResponseEntity<Map<UUID, String>>>> results = deferredResults.get(invitationCode);
+        if (results != null) {
+            Iterator<DeferredResult<ResponseEntity<Map<UUID, String>>>> iterator = results.iterator();
+            while (iterator.hasNext()) {
+                DeferredResult<ResponseEntity<Map<UUID, String>>> deferredResult = iterator.next();
+                Map<UUID, String> updatedEvent = new HashMap<>();
+                updatedEvent.put(invitationCode, updatedTitle);
+                deferredResult.setResult(ResponseEntity.ok(updatedEvent));
+                iterator.remove();
+            }
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package client.utils;
 
+import client.scenes.MainCtrl;
 import client.utils.frameHandlers.*;
 import commons.Event;
 import commons.Expense;
@@ -18,6 +19,7 @@ import java.util.UUID;
 public class EventStompSessionHandler extends StompSessionHandlerAdapter {
     private final UUID invitationCode;
     private final EventDataHandler dataHandler;
+    private final MainCtrl mainCtrl;
     private StompSession session;
 
     /**
@@ -25,10 +27,12 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
      *
      * @param invitationCode invitationCode for the event
      * @param dataHandler    dataHandler of the client
+     * @param mainCtrl       mainCtrl of the client
      */
-    public EventStompSessionHandler(UUID invitationCode, EventDataHandler dataHandler) {
+    public EventStompSessionHandler(UUID invitationCode, EventDataHandler dataHandler, MainCtrl mainCtrl) {
         this.dataHandler = dataHandler;
         this.invitationCode = invitationCode;
+        this.mainCtrl = mainCtrl;
         dataHandler.setSessionHandler(this);
     }
 
@@ -45,17 +49,20 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
         //We want to track event deletion as soon as possible
         session.subscribe("/topic/" + invitationCode + "/event:delete",
                 new DeleteEventHandler(dataHandler));
+        //Subscribe to receive status codes
+        session.subscribe("/user/queue/reply", new StatusCodeHandler(mainCtrl));
+
         //Initial event read
-        session.subscribe("/user/topic/" + invitationCode + "/event:read",
-                new ReadEventHandler(dataHandler));
+        session.subscribe("/user/queue/event:read",
+                new ReadEventHandler(dataHandler, mainCtrl));
         session.send("/app/event:read", invitationCode);
         //Track event updates
         session.subscribe("/topic/" + invitationCode + "/event:update",
                 new UpdateEventHandler(dataHandler));
 
         //Initial participants read
-        session.subscribe("/user/topic/" + invitationCode + "/participants:read",
-                new ReadParticipantsHandler(dataHandler));
+        session.subscribe("/user/queue/participants:read",
+                new ReadParticipantsHandler(dataHandler, mainCtrl));
         session.send("/app/participants:read", invitationCode);
         //Track participants updates
         session.subscribe("/topic/" + invitationCode + "/participant:delete",
@@ -66,8 +73,8 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
                 new CreateParticipantHandler(dataHandler));
 
         //Initial expenses read
-        session.subscribe("/user/topic/" + invitationCode + "/expenses:read",
-                new ReadEventHandler(dataHandler));
+        session.subscribe("/user/queue/expenses:read",
+                new ReadEventHandler(dataHandler, mainCtrl));
         session.send("/app/expenses:read", invitationCode);
         //Track expenses updates
         session.subscribe("/topic/" + invitationCode + "/expense:delete",

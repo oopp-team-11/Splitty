@@ -97,10 +97,10 @@ public class MainCtrl {
         }
     }
 
-            /**
-             * Show create participant UI
-             * @param event Event, which the participant will belong to
-             */
+    /**
+     * Show create participant UI
+     * @param event Event, which the participant will belong to
+     */
     public void showCreateParticipant(Event event) {
         primaryStage.setTitle("Add participant ui");
         primaryStage.setScene(createParticipantScene);

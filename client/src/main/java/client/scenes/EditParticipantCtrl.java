@@ -1,17 +1,25 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
+import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
 import commons.Participant;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Client controller for the EditParticipant.fxml scene
  */
 public class EditParticipantCtrl {
+    @FXML
+    private Button editBtn;
+
+    @FXML
+    private Label editParticipantLabel;
 
     @FXML
     private TextField email;
@@ -31,6 +39,7 @@ public class EditParticipantCtrl {
     private Participant participant;
     private final MainCtrl mainCtrl;
     private final ServerUtils serverUtils;
+    private TranslationSupplier translationSupplier;
 
     /**
      * Constructor for the EditParticipant.fxml scene controller.
@@ -49,6 +58,33 @@ public class EditParticipantCtrl {
      */
     public void setParticipant(Participant participant) {
         this.participant = participant;
+    }
+
+    /**
+     * Sets the translation supplier for this controller
+     * @param tl the translation supplier that should be used
+     */
+    public void setTranslationSupplier(TranslationSupplier tl) {
+        this.translationSupplier = tl;
+        this.translate();
+    }
+
+    private void translate() {
+        if (this.translationSupplier == null) return;
+        Map<Control, String> labels = new HashMap<>();
+        labels.put(this.email, "Email");
+        labels.put(this.firstName, "FirstName");
+        labels.put(this.lastName, "LastName");
+        labels.put(this.editParticipantLabel, "EditAParticipant");
+        labels.put(this.editBtn, "Edit");
+        labels.forEach((key, val) -> {
+            var translation = this.translationSupplier.getTranslation(val);
+            if (translation == null) return;
+            if (key instanceof Labeled)
+                ((Labeled) key).setText(translation.replaceAll("\"", ""));
+            if (key instanceof TextField)
+                ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
+        });
     }
 
     /**

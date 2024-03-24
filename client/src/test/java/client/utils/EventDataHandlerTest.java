@@ -1,5 +1,6 @@
 package client.utils;
 
+import client.scenes.MainCtrl;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
@@ -159,7 +160,8 @@ class EventDataHandlerTest {
 
     @Test
     void setSessionHandler() {
-        EventStompSessionHandler sessionHandler = new EventStompSessionHandler(UUID.randomUUID(), handler);
+        EventStompSessionHandler sessionHandler = new EventStompSessionHandler(UUID.randomUUID(), handler,
+                new MainCtrl());
         handler.setSessionHandler(sessionHandler);
         assertEquals(sessionHandler, handler.getSessionHandler());
     }
