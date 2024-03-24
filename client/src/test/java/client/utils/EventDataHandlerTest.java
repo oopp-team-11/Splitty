@@ -7,12 +7,15 @@ import commons.Participant;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 class EventDataHandlerTest {
 
@@ -24,6 +27,7 @@ class EventDataHandlerTest {
     Expense e2;
     List<Participant> participants;
     List<Expense> expenses;
+    EventStompSessionHandler sessionMock;
 
     @BeforeEach
     public void setup() throws IllegalAccessException {
@@ -44,6 +48,8 @@ class EventDataHandlerTest {
         expenses.add(e1);
         expenses.add(e2);
         this.handler = new EventDataHandler(event, participants, expenses);
+        this.sessionMock = Mockito.mock(EventStompSessionHandler.class);
+        this.handler.setSessionHandler(this.sessionMock);
     }
 
     private static void setId(Event toSet, UUID newId) throws IllegalAccessException {
@@ -58,22 +64,66 @@ class EventDataHandlerTest {
         FieldUtils.writeField(toSet, "id", newId, true);
     }
 
+
+
+    @Test
+    void noExpenseToDelete() {
+        handler.getDeleteExpense(new Expense(p1, "Hype Train", 1.5));
+        verify(sessionMock, times(1)).refreshExpenses();
+    }
+    @Test
+    void noExpenseToUpdate() {
+        handler.getUpdateExpense(new Expense(p1, "Hype Train", 1.5));
+        verify(sessionMock, times(1)).refreshExpenses();
+    }
+    @Test
+    void expenseAlreadyCreated() {
+        handler.getCreateExpense(e1);
+        verify(sessionMock, times(1)).refreshExpenses();
+    }
+
+    @Test
+    void noEventToUpdate() {
+        handler.setEvent(null);
+        handler.getUpdateEvent(event);
+        verify(sessionMock, times(1)).refreshEvent();
+    }
+
+    @Test
+    void noParticipantForUpdate() {
+        handler.getUpdateParticipant(new Participant(event, "a", "b", "c", "d", "e"));
+        verify(sessionMock, times(1)).refreshParticipants();
+    }
+
+    @Test
+    void participantAlreadyDeleted() {
+        handler.getDeleteParticipant(new Participant(event, "a", "b", "c", "d", "e"));
+        verify(sessionMock, times(1)).refreshParticipants();
+    }
+
+    @Test
+    void participantAlreadyCreated() {
+        handler.getCreateParticipant(p1);
+        verify(sessionMock, times(1)).refreshParticipants();
+    }
+
     @Test
     void receiveParticipantCreate() {
-        handler.receiveParticipant(p1, "create");
-        assertEquals(handler.getParticipants().getLast(), p1);
+        var p3 = new Participant(event, "A", "B", "C", "D", "E");
+        handler.getCreateParticipant(p3);
+        assertEquals(handler.getParticipants().getLast(), p3);
     }
 
     @Test
     void receiveParticipantUpdate() {
         p1.setFirstName("Antihype");
-        handler.receiveParticipant(p1, "update");
+        handler.getUpdateParticipant(p1);
         assertEquals(handler.getParticipants().getFirst().getFirstName(), p1.getFirstName());
     }
 
     @Test
     void receiveParticipantDelete() {
-        handler.receiveParticipant(p1, "delete");
+        handler.getDeleteParticipant(p1);
         assertEquals(1, handler.getParticipants().size());
         assertEquals(p2, handler.getParticipants().getFirst());
         assertEquals(1, handler.getExpenses().size());
@@ -83,26 +133,27 @@ class EventDataHandlerTest {
     @Test
     void receiveEventUpdate() {
         event.setTitle("Antihype");
-        handler.receiveEvent(event, "update");
+        handler.getUpdateEvent(event);
         assertEquals(event, handler.getEvent());
     }
 
     @Test
     void receiveExpenseCreate() {
-        handler.receiveExpense(e1, "create");
-        assertEquals(e1, handler.getExpenses().getLast());
+        var e3 = new Expense(p2, "Antihypetrain", 3.0);
+        handler.getCreateExpense(e3);
+        assertEquals(e3, handler.getExpenses().getLast());
     }
 
     @Test
     void receiveExpenseUpdate() {
         e1.setTitle("Antihype");
-        handler.receiveExpense(e1, "update");
+        handler.getUpdateExpense(e1);
         assertEquals(e1, handler.getExpenses().getFirst());
     }
 
     @Test
     void receiveExpenseDelete() {
-        handler.receiveExpense(e1, "delete");
+        handler.getDeleteExpense(e1);
         assertEquals(1, handler.getExpenses().size());
         assertEquals(e2, handler.getExpenses().getFirst());
     }
@@ -113,5 +164,10 @@ class EventDataHandlerTest {
                 new MainCtrl());
         handler.setSessionHandler(sessionHandler);
         assertEquals(sessionHandler, handler.getSessionHandler());
+    }
+
+    @Test
+    void checkAlreadyCreatedParticipant() {
+
     }
 }
