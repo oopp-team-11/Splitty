@@ -58,7 +58,7 @@ public class MainCtrl {
     private EventOverviewCtrl eventOverviewCtrl;
     private Scene eventOverviewScene;
 
-    private StompSessionHandler sessionHandler;
+    private EventStompSessionHandler sessionHandler;
     private EventDataHandler dataHandler;
 
     /**
@@ -199,7 +199,7 @@ public class MainCtrl {
      * Standard getter for sessionHandler
      * @return current sessionHandler
      */
-    public StompSessionHandler getSessionHandler() {
+    public EventStompSessionHandler getSessionHandler() {
         return sessionHandler;
     }
 
@@ -207,7 +207,7 @@ public class MainCtrl {
      * Standard setter for sessionHandler
      * @param sessionHandler new sessionHandler to use
      */
-    public void setSessionHandler(StompSessionHandler sessionHandler) {
+    public void setSessionHandler(EventStompSessionHandler sessionHandler) {
         this.sessionHandler = sessionHandler;
     }
 
