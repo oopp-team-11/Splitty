@@ -19,7 +19,7 @@
             <Font name="System Bold" size="16.0" />
          </font>
       </Button>
-      <Label alignment="TOP_LEFT" contentDisplay="CENTER" layoutX="35.0" layoutY="86.0" prefHeight="48.0" prefWidth="108.0" text="Participants " textAlignment="CENTER">
+      <Label fx:id="participantsLabel" alignment="TOP_LEFT" contentDisplay="CENTER" layoutX="35.0" layoutY="86.0" prefHeight="48.0" prefWidth="108.0" text="Participants " textAlignment="CENTER">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
