@@ -1,7 +1,5 @@
 package client.scenes;
 
-import client.utils.EventDataHandler;
-import client.utils.EventStompSessionHandler;
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
 import client.utils.TranslationSupplier;
@@ -19,11 +17,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.simp.stomp.StompSessionHandler;
-import org.springframework.web.socket.client.WebSocketClient;
-import org.springframework.web.socket.client.standard.StandardWebSocketClient;
-import org.springframework.web.socket.messaging.WebSocketStompClient;
 import javafx.application.Platform;
 import java.io.IOException;
 import java.net.URL;
@@ -71,7 +64,6 @@ public class StartScreenCtrl implements Initializable {
 
     private final FileSystemUtils fileSystemUtils;
     private final ServerUtils serverUtils;
-    private StompSessionHandler sessionHandler;
     private TranslationSupplier translationSupplier;
     private Thread pollingThread;
 
@@ -227,19 +219,7 @@ public class StartScreenCtrl implements Initializable {
             serverErrorAlert(e);
         }
 
-        startWebSocket(invitationCode);
-    }
-
-    //TODO: Potentially move this method to a more appropriate class
-    private void startWebSocket(UUID invitationCode) {
-        WebSocketClient client = new StandardWebSocketClient();
-
-        WebSocketStompClient stompClient = new WebSocketStompClient(client);
-        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-
-        //TODO:Change new EventDataHandler to the actual reference
-        sessionHandler = new EventStompSessionHandler(invitationCode, new EventDataHandler(), mainCtrl);
-        stompClient.connectAsync("ws://localhost:8080/v1", sessionHandler);
+        mainCtrl.startWebSocket(invitationCode);
     }
 
     private static void serverErrorAlert(Exception exception) {
