@@ -53,16 +53,16 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
         session.subscribe("/user/queue/reply", new StatusCodeHandler(mainCtrl));
 
         //Initial event read
-        session.subscribe("/user/topic/" + invitationCode + "/event:read",
-                new ReadEventHandler(dataHandler));
+        session.subscribe("/user/queue/event:read",
+                new ReadEventHandler(dataHandler, mainCtrl));
         session.send("/app/event:read", invitationCode);
         //Track event updates
         session.subscribe("/topic/" + invitationCode + "/event:update",
                 new UpdateEventHandler(dataHandler));
 
         //Initial participants read
-        session.subscribe("/user/topic/" + invitationCode + "/participants:read",
-                new ReadParticipantsHandler(dataHandler));
+        session.subscribe("/user/queue/participants:read",
+                new ReadParticipantsHandler(dataHandler, mainCtrl));
         session.send("/app/participants:read", invitationCode);
         //Track participants updates
         session.subscribe("/topic/" + invitationCode + "/participant:delete",
@@ -73,8 +73,8 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
                 new CreateParticipantHandler(dataHandler));
 
         //Initial expenses read
-        session.subscribe("/user/topic/" + invitationCode + "/expenses:read",
-                new ReadEventHandler(dataHandler));
+        session.subscribe("/user/queue/expenses:read",
+                new ReadEventHandler(dataHandler, mainCtrl));
         session.send("/app/expenses:read", invitationCode);
         //Track expenses updates
         session.subscribe("/topic/" + invitationCode + "/expense:delete",

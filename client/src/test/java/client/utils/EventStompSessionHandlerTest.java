@@ -57,13 +57,13 @@ class EventStompSessionHandlerTest {
 
         assertEquals("/topic/" + invitationCode + "/event:delete", destinations.get(0));
         assertEquals("/user/queue/reply", destinations.get(1));
-        assertEquals("/user/topic/" + invitationCode + "/event:read", destinations.get(2));
+        assertEquals("/user/queue/event:read", destinations.get(2));
         assertEquals("/topic/" + invitationCode + "/event:update", destinations.get(3));
-        assertEquals("/user/topic/" + invitationCode + "/participants:read", destinations.get(4));
+        assertEquals("/user/queue/participants:read", destinations.get(4));
         assertEquals("/topic/" + invitationCode + "/participant:delete", destinations.get(5));
         assertEquals("/topic/" + invitationCode + "/participant:update", destinations.get(6));
         assertEquals("/topic/" + invitationCode + "/participant:create", destinations.get(7));
-        assertEquals("/user/topic/" + invitationCode + "/expenses:read", destinations.get(8));
+        assertEquals("/user/queue/expenses:read", destinations.get(8));
         assertEquals("/topic/" + invitationCode + "/expense:delete", destinations.get(9));
         assertEquals("/topic/" + invitationCode + "/expense:update", destinations.get(10));
         assertEquals("/topic/" + invitationCode + "/expense:create", destinations.get(11));
