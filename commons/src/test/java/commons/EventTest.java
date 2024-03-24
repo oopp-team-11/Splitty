@@ -22,60 +22,60 @@ public class EventTest {
         event = new Event("The Event we need to pay for");
         event.setCreationDate(LocalDateTime.of(2024, 2, 12, 12, 0));
         event.setLastActivity(LocalDateTime.of(2024, 2, 14, 12, 0));
-        new Participant(
+        event.addParticipant(new Participant(
                 event,
                 "John",
                 "Doe",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123"
-        );
-        new Participant(
+        ));
+        event.addParticipant(new Participant(
                 event,
                 "Lorem",
                 "Ipsum",
                 "l.ipsum@domain.com",
                 "NL69 XING 4269 2137 00",
                 "CDNANL2A666"
-        );
+        ));
         eventEqual = new Event("The Event we need to pay for");
         eventEqual.setCreationDate(LocalDateTime.of(2024, 2, 12, 12, 0));
         eventEqual.setLastActivity(LocalDateTime.of(2024, 2, 14, 12, 0));
-        new Participant(
+        eventEqual.addParticipant(new Participant(
                 eventEqual,
                 "John",
                 "Doe",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123"
-        );
-        new Participant(
+        ));
+        eventEqual.addParticipant(new Participant(
                 eventEqual,
                 "Lorem",
                 "Ipsum",
                 "l.ipsum@domain.com",
                 "NL69 XING 4269 2137 00",
                 "CDNANL2A666"
-        );
+        ));
         eventNotEqual = new Event("The Event we do not need to pay for");
         eventNotEqual.setCreationDate(LocalDateTime.of(2024, 2, 12, 12, 0));
         eventNotEqual.setLastActivity(LocalDateTime.of(2024, 2, 14, 12, 0));
-        new Participant(
+        eventNotEqual.addParticipant(new Participant(
                 eventNotEqual,
                 "John",
                 "Doe",
                 "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A124"
-        );
-        new Participant(
+        ));
+        eventNotEqual.addParticipant(new Participant(
                 eventNotEqual,
                 "Lorem",
                 "Ipsum",
                 "l.ipsum@domain.com",
                 "NL69 XING 4269 2157 00",
                 "CDNANL2A666"
-        );
+        ));
         try {
             UUID id = UUID.randomUUID();
             setId(event, id);
@@ -141,6 +141,7 @@ public class EventTest {
             "NL69 AJOE 4269 2137 00",
             "CDNANL2A666"
         );
+        event.addParticipant(participant);
         assertEquals(participant, event.getParticipants().getLast());
     }
 

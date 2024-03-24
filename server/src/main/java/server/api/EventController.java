@@ -1,12 +1,18 @@
 package server.api;
 import com.fasterxml.jackson.annotation.JsonView;
-import commons.Participant;
+import commons.StatusEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import commons.Event;
 import org.springframework.web.context.request.async.DeferredResult;
 import server.database.EventRepository;
+
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,36 +23,24 @@ import commons.Views;
  * Server-side EventController for the Event entity.
  * Handles the CRUD operations under all /events endpoints.
  */
-@RestController
-@RequestMapping("/events")
+@Controller
 public class EventController {
     private final EventRepository repo;
     private final Map<UUID, List<DeferredResult<ResponseEntity<Map<UUID, String>>>>> deferredResults;
 
+    @Autowired
+    private SimpMessagingTemplate template;
+
     /**
      * Constructor for the EventController.
      * Constructed automatically by Spring Boot.
+     * @param template SimpMessagingTemplate
      * @param repo The EventRepository provided automatically by JPA
      */
-    public EventController(EventRepository repo) {
+    public EventController(SimpMessagingTemplate template, EventRepository repo) {
+        this.template = template;
         this.repo = repo;
         this.deferredResults = new ConcurrentHashMap<>();
-    }
-
-    /**
-     * Handles the GET: /events/{invitationCode} endpoint
-     * @param invitationCode The invitationCode of an Event.
-     * @return Returns a 200 OK status code and the Event object when the invitationCode exists in the DB.
-     * Returns a 400 Bad Request status code when no invitationCode was provided.
-     * Returns a 404 Not Found status code when no Event was found with the provided invitationCode.
-     */
-    @GetMapping (path = {"/{invitationCode}", "/{invitationCode}/"})
-    public ResponseEntity<Event> getEventByInvitationCode(@PathVariable("invitationCode") UUID invitationCode) {
-        if (invitationCode == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        Optional<Event> event = repo.findById(invitationCode);
-        return event.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
 
@@ -66,7 +60,7 @@ public class EventController {
      * @return Returns a 200 OK status code and the invitationCode when the Event was successfully saved.
      * Returns a 400 Bad Request status code when no title was provided.
      */
-    @PostMapping (path = {"", "/"})
+    @PostMapping (path = {"events", "events/"})
     public ResponseEntity<Event> createEventWithTitle(@RequestBody String title) {
         if (isNullOrEmpty(title)) {
             return ResponseEntity.badRequest().build();
@@ -88,7 +82,7 @@ public class EventController {
      * Returns a 400 Bad Request status code when no codes were provided.
      */
     @JsonView(Views.UpdateInvitationsCodes.class)
-    @GetMapping(path = {"", "/"})
+    @GetMapping(path = {"events", "events/"})
     public ResponseEntity<List<Event>> updateRecentlyAccessedEvents(@RequestParam("query") String query,
                                                                     @RequestParam("invitationCodes") UUID[] codes) {
         if (codes == null || !"titles".equals(query)) {
@@ -107,24 +101,75 @@ public class EventController {
     }
 
     /**
-     * Handles the GET: /{invitationCode}/participants endpoint
-     * @param invitationCode The invitationCode of an Event.
-     * @return Returns a 200 OK status code and the Participants list when the invitationCode exists in the DB.
-     * Returns a 400 Bad Request status code when no invitationCode was provided.
-     * Returns a 404 Not Found status code when no Event was found with the provided invitationCode.
+     * Handles update websocket endpoint for event
+     *
+     * @param receivedEvent Event received from the client
+     * @return returns statusEntity<String> to user with status code and error message
      */
-    @GetMapping (path = {"/{invitationCode}/participants"})
-    public ResponseEntity<List<Participant>> getParticipantsByInvitationCode(
-            @PathVariable("invitationCode") UUID invitationCode)
+    @MessageMapping("/event:update")
+    @SendToUser("/queue/reply")
+    public StatusEntity<String> updateEvent(Event receivedEvent)
     {
-        if (invitationCode == null) {
-            return ResponseEntity.badRequest().build();
+        if(receivedEvent == null)
+            return StatusEntity.badRequest("Event object not found in message body", true);
+
+        if (isNullOrEmpty(receivedEvent.getTitle()))
+            return StatusEntity.badRequest("Event title should not be empty", true);
+
+        if(!repo.existsById(receivedEvent.getId()))
+            return StatusEntity.notFound("Event not found", true);
+
+        Event event = repo.getReferenceById(receivedEvent.getId());
+        event.setTitle(receivedEvent.getTitle());
+        //TODO: Call update last activity service
+        repo.save(event);
+
+        template.convertAndSend("/topic/" + receivedEvent.getId() + "/event:update", event);
+        return StatusEntity.ok("event:update " + event.getId());
+    }
+
+    /**
+     * Handles read websocket endpoint for event
+     *
+     * @param invitationCode invitationCode of the requested event
+     * @return returns a StatusEntity<Event> body contains Event if status code is OK
+     * returns null in body otherwise
+     */
+    @MessageMapping("/event:read")
+    @SendToUser("/queue/event:read")
+    public StatusEntity<Event> readEvent(UUID invitationCode)
+    {
+        if(invitationCode == null)
+            return StatusEntity.badRequest(null, true);
+        if(!repo.existsById(invitationCode))
+            return StatusEntity.notFound(null, true);
+
+        Event event = repo.getReferenceById(invitationCode);
+
+        return StatusEntity.ok(event);
+    }
+
+    /**
+     * Handles delete websocket endpoint for event
+     * @param receivedEvent Event that we want to delete
+     * @return StatusEntity<String> body contains description of success/failure
+     */
+    @MessageMapping("/event:delete")
+    @SendToUser("/queue/reply")
+    public StatusEntity<String> deleteEvent(Event receivedEvent)
+    {
+        /*TODO: Implement admin passcode verification*/
+
+        if(!repo.existsById(receivedEvent.getId()))
+        {
+            return StatusEntity.notFound("Event not found", true);
         }
 
-        if(!repo.existsById(invitationCode))
-            return ResponseEntity.notFound().build();
+        Event event = repo.getReferenceById(receivedEvent.getId());
+        repo.delete(event);
 
-        return ResponseEntity.ok(repo.getReferenceById(invitationCode).getParticipants());
+        template.convertAndSend("/topic/" + receivedEvent.getId() + "/event:delete", event);
+        return StatusEntity.ok("event:delete " + event.getId());
     }
 
     /**

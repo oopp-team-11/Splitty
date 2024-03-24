@@ -59,7 +59,7 @@ public class Participant {
      * Constructor
      */
     public Participant() {
-
+        this.madeExpenses = new ArrayList<>();
     }
 
     /**
@@ -79,7 +79,6 @@ public class Participant {
         this.iban = iban;
         this.bic = bic;
         this.madeExpenses = new ArrayList<>();
-        event.addParticipant(this);
         this.eventId = event.getId();
     }
 
@@ -185,6 +184,22 @@ public class Participant {
      */
     public void setBic(String bic) {
         this.bic = bic;
+    }
+
+    /**
+     * Setter for id of the parent
+     * @param eventId id of the parent event
+     */
+    public void setEventId(UUID eventId) {
+        this.eventId = eventId;
+    }
+
+    /**
+     * Setter for event
+     * @param event parent event
+     */
+    public void setEvent(Event event) {
+        this.event = event;
     }
 
     @Override

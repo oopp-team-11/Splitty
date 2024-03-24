@@ -1,34 +1,39 @@
 package server.api;
 
-import commons.Event;
-import commons.Expense;
 import commons.Participant;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import commons.StatusEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.stereotype.Controller;
 import server.database.EventRepository;
 import server.database.ParticipantRepository;
 
-import java.net.URI;
-import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * Class that represents the participant controller
  */
-@RestController
-@RequestMapping("/participants")
+@Controller
 public class ParticipantController {
     private final ParticipantRepository participantRepository;
     private final EventRepository eventRepository;
+    @Autowired
+    private SimpMessagingTemplate template;
 
     /**
      * Constructor
      * @param participantRepository participant repository
      * @param eventRepository event repository
+     * @param template SimpMessagingTemplate
      */
-    public ParticipantController(ParticipantRepository participantRepository, EventRepository eventRepository) {
+    public ParticipantController(ParticipantRepository participantRepository, EventRepository eventRepository,
+                                 SimpMessagingTemplate template) {
         this.participantRepository = participantRepository;
         this.eventRepository = eventRepository;
+        this.template = template;
     }
 
     private static boolean isNullOrEmpty(String str) {
@@ -36,107 +41,110 @@ public class ParticipantController {
     }
 
     /**
-     * Method that creates a participant
-     * @param invitationCode invitation code of the event
-     * @param firstName first name of the participant
-     * @param lastName last name of the participant
-     * @param email email of the participant
-     * @param iban IBAN of the participant
-     * @param bic BIC of the participant
-     * @return response entity of the participant
+     * Handles create websocket endpoint for participant
+     * @param receivedParticipant Participant we want to create
+     * @return StatusEntity<String> body contains description of success/failure
      */
-    @PostMapping (path = {"", "/"})
-    public ResponseEntity<Participant> createParticipant(@RequestBody UUID invitationCode,
-                                                         @RequestBody String firstName,
-                                                         @RequestBody String lastName,
-                                                         @RequestBody String email,
-                                                         @RequestBody String iban,
-                                                         @RequestBody String bic) {
-        if (!eventRepository.existsById(invitationCode)) {
-            return ResponseEntity.notFound().build();
-        }
-        if (isNullOrEmpty(firstName) || isNullOrEmpty(lastName)) {
-            return ResponseEntity.badRequest().build();
-        }
-        Event event = eventRepository.getReferenceById(invitationCode);
-        Participant participant = new Participant(event,
-                firstName,
-                lastName,
-                email,
-                iban,
-                bic
-        );
-        eventRepository.save(event); //saves participant reference in event model
-        participantRepository.save(participant);
-        return ResponseEntity.created(URI.create("/participants/" + participant.getId())).body(participant);
-    }
-
-    /**
-     * Method that updates a participant
-     * @param participantId id of the participant
-     * @param firstName first name of the participant
-     * @param lastName last name of the participant
-     * @param email email of the participant
-     * @param iban IBAN of the participant
-     * @param bic BIC of the participant
-     * @return response entity of the participant
-     */
-    @PutMapping (path = {"/{participantId}", "/{participantId}"})
-    public ResponseEntity<Participant> updateParticipant(@PathVariable("participantId") UUID participantId,
-                                                         @RequestBody String firstName,
-                                                         @RequestBody String lastName,
-                                                         @RequestBody String email,
-                                                         @RequestBody String iban,
-                                                         @RequestBody String bic) {
-        if (!participantRepository.existsById(participantId)) {
-            return ResponseEntity.notFound().build();
-        }
-        if (isNullOrEmpty(firstName) || isNullOrEmpty(lastName)) {
-            return ResponseEntity.badRequest().build();
-        }
-        Participant participant = participantRepository.getReferenceById(participantId);
-        participant.setFirstName(firstName);
-        participant.setLastName(lastName);
-        participant.setEmail(email);
-        participant.setIban(iban);
-        participant.setBic(bic);
-        participantRepository.save(participant);
-        return ResponseEntity.ok(participant);
-    }
-
-    /**
-     * Method that deletes a participant
-     * @param participantId id of the participant
-     * @return response entity of the participant
-     */
-    @DeleteMapping (path = {"/{participantId}", "/{participantId}"})
-    public ResponseEntity<Participant> deleteParticipant(@PathVariable("participantId") UUID participantId) {
-        if (!participantRepository.existsById(participantId)) {
-            return ResponseEntity.notFound().build();
-        }
-        Participant participant = participantRepository.getReferenceById(participantId);
-        //automatically removes participant from Event and its expenses due to CascadeType.REMOVE
-        participantRepository.delete(participant);
-        return ResponseEntity.ok(participant);
-    }
-
-    /**
-     * Handles the GET: /{participantId}/expenses endpoint
-     * @param participantId The id of a participant.
-     * @return Returns a 200 OK status code and the Participants list when the participant exists in the DB.
-     * Returns a 400 Bad Request status code when no participantId was provided.
-     * Returns a 404 Not Found status code when no Participant was found with the provided participantId.
-     */
-    @GetMapping (path = {"/{participantId}/expenses"})
-    public ResponseEntity<List<Expense>> getExpensesByParticipantId(@PathVariable("participantId") UUID participantId)
+    @MessageMapping("/participant:create")
+    @SendToUser("/queue/reply")
+    public StatusEntity<String> createParticipant(Participant receivedParticipant)
     {
-        if (participantId == null) {
-            return ResponseEntity.badRequest().build();
+        if (isNullOrEmpty(receivedParticipant.getFirstName())) {
+            return StatusEntity.badRequest("First name should not be empty");
+        }
+        if (isNullOrEmpty(receivedParticipant.getLastName())) {
+            return StatusEntity.badRequest("Last name should not be empty");
+        }
+        if(!receivedParticipant.getEmail().isEmpty() &&
+                !Pattern.compile("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$").
+                        matcher(receivedParticipant.getEmail()).matches())
+        {
+            return StatusEntity.badRequest("Provided email is invalid");
         }
 
-        if(!participantRepository.existsById(participantId))
-            return ResponseEntity.notFound().build();
+        receivedParticipant.setEvent(eventRepository.getReferenceById(receivedParticipant.getEventId()));
+        participantRepository.save(receivedParticipant);
 
-        return ResponseEntity.ok(participantRepository.getReferenceById(participantId).getMadeExpenses());
+        template.convertAndSend("/topic/"+receivedParticipant.getEventId()+"/participant:create",
+                receivedParticipant);
+        return StatusEntity.ok("participant:create " + receivedParticipant.getId());
+    }
+
+    /**
+     * Handles read websocket endpoint for participant
+     * @param id UUID of a participant we want to read
+     * @return returns a StatusEntity<Event> body contains Participant if status code is OK
+     * returns null in body otherwise
+     */
+    @MessageMapping("/participant:read")
+    @SendToUser("/queue/event:read")
+    public StatusEntity<Participant> readParticipant(UUID id)
+    {
+        if(!participantRepository.existsById(id))
+        {
+            return StatusEntity.notFound(null, true);
+        }
+
+        Participant participant = participantRepository.getReferenceById(id);
+        participant.setEventId(participant.getEvent().getId());
+
+        return StatusEntity.ok(participant);
+    }
+
+    /**
+     * Handles update websocket endpoint for participant
+     * @param receivedParticipant Participant that we want to update
+     * @return StatusEntity<String> body contains description of success/failure
+     */
+    @MessageMapping("/participant:update")
+    @SendToUser("/queue/reply")
+    public StatusEntity<String> updateParticipant(Participant receivedParticipant)
+    {
+        if (isNullOrEmpty(receivedParticipant.getFirstName())) {
+            return StatusEntity.badRequest("First name should not be empty");
+        }
+        if (isNullOrEmpty(receivedParticipant.getLastName())) {
+            return StatusEntity.badRequest("Last name should not be empty");
+        }
+        if(!receivedParticipant.getEmail().isEmpty() &&
+                !Pattern.compile("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$").
+                        matcher(receivedParticipant.getEmail()).matches())
+        {
+            return StatusEntity.badRequest("Provided email is invalid");
+        }
+
+        if(!participantRepository.existsById(receivedParticipant.getId()))
+        {
+            return StatusEntity.notFound("Participant not found", true);
+        }
+
+        receivedParticipant.setEvent(eventRepository.getReferenceById(receivedParticipant.getEventId()));
+
+        participantRepository.save(receivedParticipant);
+
+        template.convertAndSend("/topic/"+receivedParticipant.getEventId()+"/participant:update",
+                receivedParticipant);
+        return StatusEntity.ok("participant:update " + receivedParticipant.getId());
+    }
+
+    /**
+     * Handles delete websocket endpoint for participant
+     * @param receivedParticipant Participant that we want to delete
+     * @return StatusEntity<String> body contains description of success/failure
+     */
+    @MessageMapping("/participant:delete")
+    @SendToUser("/queue/reply")
+    public StatusEntity<String> deleteParticipant(Participant receivedParticipant)
+    {
+        if(!participantRepository.existsById(receivedParticipant.getId()))
+        {
+            return StatusEntity.notFound("Participant not found", true);
+        }
+
+        Participant participant = participantRepository.getReferenceById(receivedParticipant.getId());
+        participantRepository.delete(participant);
+
+        template.convertAndSend("/topic/"+receivedParticipant.getEventId()+"/participant:delete", participant);
+        return StatusEntity.ok("participant:delete " + participant.getId());
     }
 }

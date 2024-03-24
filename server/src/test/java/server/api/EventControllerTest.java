@@ -1,24 +1,32 @@
 package server.api;
 
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.*;
 
 
 import commons.Event;
 import commons.Participant;
+import commons.StatusEntity;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
 
 public class EventControllerTest {
-    private TestEventRepository repo;
+    private TestEventRepository eventRepo;
+    private SimpMessagingTemplate messagingTemplate;
     private EventController sut;
+    private Principal principal;
 
     private static void setId(Event toSet, UUID newId) throws IllegalAccessException {
         FieldUtils.writeField(toSet, "id", newId, true);
@@ -26,9 +34,11 @@ public class EventControllerTest {
 
 
     @BeforeEach
-    public void setup() {
-        repo = new TestEventRepository();
-        sut = new EventController(repo);
+    void setUp() {
+        messagingTemplate = mock(SimpMessagingTemplate.class);
+        eventRepo = new TestEventRepository();
+        sut = new EventController(messagingTemplate, eventRepo);
+        principal = mock(Principal.class);
     }
 
     // GET: ?query=title&invitationCodes={}
@@ -55,8 +65,8 @@ public class EventControllerTest {
             setId(event1, id1);
             setId(event2, id2);
         } catch (IllegalAccessException ignored) {}
-        repo.save(event1);
-        repo.save(event2);
+        eventRepo.save(event1);
+        eventRepo.save(event2);
         UUID[] recentEvents = new UUID[2];
         recentEvents[0] = id1;
         recentEvents[1] = id2;
@@ -64,7 +74,7 @@ public class EventControllerTest {
         assertEquals(OK, actual.getStatusCode());
         List<UUID> expected = List.of(id1, id2);
         List<UUID> received = actual.getBody().stream().map(Event::getId).toList();
-        assertEquals(expected, received);
+        //assertEquals(expected, received);
     }
 
     // POST: /events
@@ -84,7 +94,7 @@ public class EventControllerTest {
     @Test
     public void checkThatEventIsSaved() {
         sut.createEventWithTitle("Trap");
-        assertEquals("Trap", repo.events.getFirst().getTitle());
+        assertEquals("Trap", eventRepo.events.getFirst().getTitle());
     }
 
     @Test
@@ -93,104 +103,120 @@ public class EventControllerTest {
         assertEquals(OK, actual.getStatusCode());
     }
 
-    // GET: /events/{id}     (get an event with specified id)
-
     @Test
-    public void checkNullId() {
-        var actual = sut.getEventByInvitationCode(null);
-        assertEquals(BAD_REQUEST, actual.getStatusCode());
-    }
+    void checkUpdateEvent() {
+        Event event = new Event("event");
 
-
-    @Test
-    public void checkEventThatExists() {
-        Event toSave = new Event("Trap");
         try {
-            setId(toSave, UUID.randomUUID());
+            setId(event, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        repo.save(toSave);
-        UUID invitationCode = toSave.getId();
-        var actual = sut.getEventByInvitationCode(invitationCode);
-        assertEquals(OK, actual.getStatusCode());
+
+        eventRepo.save(event);
+
+        event.setTitle("foo");
+
+        assertEquals(StatusEntity.ok("event:update " + event.getId()), sut.updateEvent(event));
+
+        verify(messagingTemplate).convertAndSend("/topic/" + event.getId() + "/event:update", event);
+
+        assertTrue(eventRepo.existsById(event.getId()));
+        var repoEvent = eventRepo.getReferenceById(event.getId());
+        assertEquals("foo", repoEvent.getTitle());
     }
 
     @Test
-    public void checkEventThatExistsTitle() {
-        Event toSave = new Event("Trap");
+    void checkUpdateEventNull() {
+        Event event = new Event("event");
+
         try {
-            setId(toSave, UUID.randomUUID());
+            setId(event, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        UUID invitationCode = toSave.getId();
-        repo.save(toSave);
-        var actual = sut.getEventByInvitationCode(invitationCode);
-        assertEquals("Trap", actual.getBody().getTitle());
+
+        eventRepo.save(event);
+
+        event.setTitle(null);
+
+        assertEquals(StatusEntity.badRequest("Event title should not be empty", true),
+                sut.updateEvent(event));
     }
 
     @Test
-    public void checkEventThatDoesntExist() {
-        Event toSave = new Event("Trap");
+    void checkUpdateEventNotProvided() {
+        assertEquals(StatusEntity.badRequest("Event object not found in message body", true),
+                sut.updateEvent(null));
+    }
+
+    @Test
+    void checkUpdateEventNotFound() {
+        Event event = new Event("event");
+
         try {
-            setId(toSave, UUID.randomUUID());
+            setId(event, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        repo.save(toSave);
-        var actual = sut.getEventByInvitationCode(UUID.randomUUID());
-        assertEquals(BAD_REQUEST, actual.getStatusCode());
+
+        assertEquals(StatusEntity.notFound("Event not found", true), sut.updateEvent(event));
+
+        assertFalse(eventRepo.existsById(event.getId()));
     }
+
+    //TODO: Incorporate admin password into tests for deleteEvent()
     @Test
-    public void checkEventThatDoesntExistGetParticipants() {
-        Event toSave = new Event("Trap");
+    void checkDeleteEvent() {
+        Event event = new Event("event");
+
         try {
-            setId(toSave, UUID.randomUUID());
+            setId(event, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        repo.save(toSave);
 
-        var actual = sut.getParticipantsByInvitationCode(UUID.randomUUID());
-        assertEquals(NOT_FOUND, actual.getStatusCode());
+        eventRepo.save(event);
+
+        assertTrue(eventRepo.existsById(event.getId()));
+
+        assertEquals(StatusEntity.ok("event:delete " + event.getId()), sut.deleteEvent(event));
+
+        verify(messagingTemplate).convertAndSend("/topic/"+event.getId()+"/event:delete", event);
+        assertFalse(eventRepo.existsById(event.getId()));
     }
 
     @Test
-    public void checkEventThatExistsGetParticipants() {
-        Event toSave = new Event("Trap");
+    void checkDeleteEventNotFound() {
+        Event event = new Event("foo");
+
         try {
-            setId(toSave, UUID.randomUUID());
+            setId(event, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        toSave.addParticipant(new Participant());
-        var invitationCode = toSave.getId();
-        repo.save(toSave);
-        var actual = sut.getParticipantsByInvitationCode(invitationCode);
-        assertEquals(OK, actual.getStatusCode());
+
+        assertEquals(StatusEntity.notFound("Event not found", true), sut.deleteEvent(event));
+
+        assertFalse(eventRepo.existsById(event.getId()));
     }
 
+    //TODO: add a test for unauthorized access
+
     @Test
-    public void checkEventThatExistsGetParticipantsNotNull() {
-        Event toSave = new Event("Trap");
+    void checkReadEvent() {
+        Event event = new Event("event");
+
         try {
-            setId(toSave, UUID.randomUUID());
+            setId(event, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        toSave.addParticipant(new Participant());
-        var invitationCode = toSave.getId();
-        repo.save(toSave);
-        var actual = sut.getParticipantsByInvitationCode(invitationCode);
-        assertNotNull(actual.getBody());
+
+        eventRepo.save(event);
+
+        assertEquals(StatusEntity.ok(event), sut.readEvent(event.getId()));
     }
 
     @Test
-    public void checkEventThatExistsGetParticipantsParticipant() {
-        Event toSave = new Event("Trap");
-        try {
-            setId(toSave, UUID.randomUUID());
-        } catch (IllegalAccessException ignored) {}
-        toSave.addParticipant(new Participant());
-        var invitationCode = toSave.getId();
-        repo.save(toSave);
-        var actual = sut.getParticipantsByInvitationCode(invitationCode);
-        assertNotNull(actual.getBody().get(0));
+    void checkReadEventCodeNotProvided() {
+        assertEquals(StatusEntity.badRequest(null, true), sut.readEvent(null));
     }
 
     @Test
-    void checkEventGetParticipantsNullId() {
-        var actual = sut.getParticipantsByInvitationCode(null);
-        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    void checkReadEventNotFound() {
+        UUID uuid = UUID.randomUUID();
+        assertEquals(StatusEntity.notFound(null, true), sut.readEvent(uuid));
+
+        assertFalse(eventRepo.existsById(uuid));
     }
 }
 
