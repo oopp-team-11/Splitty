@@ -1,6 +1,5 @@
 package client.scenes;
 
-import client.utils.EventStompSessionHandler;
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
@@ -29,7 +28,6 @@ public class AddExpenseCtrl {
     private MainCtrl mainCtrl;
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
-    private EventStompSessionHandler sessionHandler;
     private Event event;
 
     /***
@@ -44,12 +42,10 @@ public class AddExpenseCtrl {
     }
 
     /**
-     * Setter for event
-     * @param event
-     * @param sessionHandler
+     * Setter for fields
      */
-    public void setEvent(Event event, EventStompSessionHandler sessionHandler) {
-        this.event = event;
+    public void setFields() {
+        this.event = mainCtrl.getDataHandler().getEvent();
         var participantList = event.getParticipants();
 
         ObservableList<String> participants = FXCollections.observableArrayList(
@@ -58,7 +54,6 @@ public class AddExpenseCtrl {
         expensePaidBy.setItems(participants);
         expenseTitle.clear();
         expenseAmount.clear();
-        this.sessionHandler = sessionHandler;
     }
 
     /**
@@ -76,7 +71,7 @@ public class AddExpenseCtrl {
         Expense newExpense = new Expense(person,
                 expenseTitle.getText(),
                 Double.parseDouble(expenseAmount.getText()));
-        sessionHandler.sendExpense(newExpense, "create");
+        mainCtrl.getSessionHandler().sendExpense(newExpense, "create");
 
         mainCtrl.showEventOverview(event);
     }

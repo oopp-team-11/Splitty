@@ -5,6 +5,7 @@ import client.utils.ServerUtils;
 import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
 import commons.Event;
+import commons.Expense;
 import commons.Participant;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -18,13 +19,19 @@ import java.util.Map;
  */
 public class EventOverviewCtrl {
     @FXML
+    public Label expensesLabel;
+    @FXML
+    public VBox expenseTitlesVbox;
+    @FXML
+    public VBox expenseEditVbox;
+    @FXML
+    public VBox expenseDeleteVbox;
+    @FXML
     private Label participantsLabel;
     @FXML
     private Label eventNameLabel;
     @FXML
     private Button sendInvitesButton;
-    @FXML
-    private Label addParticipantLabel;
     @FXML
     private VBox namesVbox;
     @FXML
@@ -76,12 +83,34 @@ public class EventOverviewCtrl {
             editLabel.onMouseClickedProperty()
                 .set(event1 -> editParticipant(participant));
 
-            addParticipantLabel.onMouseClickedProperty()
-                .set(event1 -> addParticipant());
-
             namesVbox.getChildren().add(label);
             deleteVbox.getChildren().add(deleteLabel);
             editVbox.getChildren().add(editLabel);
+        }
+
+        expenseTitlesVbox.getChildren().clear();
+        expenseEditVbox.getChildren().clear();
+        expenseDeleteVbox.getChildren().clear();
+        for (Expense expense : mainCtrl.getDataHandler().getExpenses()) {
+
+            Label label = new Label(expense.getTitle());
+            label.setFont(new javafx.scene.text.Font("Arial", 16));
+            Label deleteLabel = new Label("❌");
+            deleteLabel.setAlignment(javafx.geometry.Pos.CENTER);
+            deleteLabel.setFont(new javafx.scene.text.Font("Arial", 16));
+            Label editLabel = new Label("✎");
+            editLabel.setFont(new javafx.scene.text.Font("Arial", 16));
+            editLabel.setAlignment(javafx.geometry.Pos.CENTER);
+
+            deleteLabel.onMouseClickedProperty()
+                    .set(event1 -> deleteExpense(expense));
+
+            editLabel.onMouseClickedProperty()
+                    .set(event1 -> editExpense(expense));
+
+            expenseTitlesVbox.getChildren().add(label);
+            expenseEditVbox.getChildren().add(editLabel);
+            expenseDeleteVbox.getChildren().add(deleteLabel);
         }
     }
 
@@ -149,5 +178,18 @@ public class EventOverviewCtrl {
      */
     public void setEventNameLabel(String eventName) {
         eventNameLabel.setText(eventName);
+    }
+
+    public void addExpense() {
+        mainCtrl.showAddExpense();
+        setEvent(event);
+    }
+    public void editExpense(Expense expense) {
+        mainCtrl.showEditExpense(expense);
+        setEvent(event);
+    }
+    public void deleteExpense(Expense expense) {
+        mainCtrl.getSessionHandler().sendExpense(expense, "delete");
+        setEvent(event);
     }
 }

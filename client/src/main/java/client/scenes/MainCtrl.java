@@ -29,6 +29,7 @@ import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 /**
@@ -107,6 +108,15 @@ public class MainCtrl {
 
         //showCreateParticipant(null);
         //showEditParticipant(null);
+
+//        var event = new Event("My Event");
+//        var person = new Participant(event, "boaz", "bakhuijzen", null, null, null);
+//        var expense = new Expense(person, "My Expense", 12.1);
+//        dataHandler = new EventDataHandler(event, null, null);
+//        dataHandler.setExpenses(new ArrayList<>());
+//        dataHandler.getCreateExpense(expense);
+//        showEventOverview(event);
+
         primaryStage.show();
     }
 
@@ -150,26 +160,22 @@ public class MainCtrl {
     /**
      * Show edit expense ui
      * @param expense expense that will be edited
-     * @param event corresponding with expense
-     * @param sessionHandler shared session handler
      */
-    public void showEditExpense(Expense expense, Event event, EventStompSessionHandler sessionHandler) {
+    public void showEditExpense(Expense expense) {
         primaryStage.setTitle("Edit expense ui");
         primaryStage.setScene(editExpenseScene);
         primaryStage.setResizable(false);
-        editExpenseCtrl.setEventAndExpense(event, expense, sessionHandler);
+        editExpenseCtrl.setExpense(expense);
     }
 
     /**
      * Show edit expense ui
-     * @param event corresponding with expense
-     * @param sessionHandler shared session handler
      */
-    public void showAddExpense(Event event, EventStompSessionHandler sessionHandler) {
+    public void showAddExpense() {
         primaryStage.setTitle("Edit expense ui");
         primaryStage.setScene(addExpenseScene);
         primaryStage.setResizable(false);
-        addExpenseCtrl.setEvent(event, sessionHandler);
+        addExpenseCtrl.setFields();
     }
 
     /**
@@ -187,7 +193,7 @@ public class MainCtrl {
      * Start websocket using invitationCode of event
      * @param invitationCode of event to start websocket on
      */
-    public void startWebSocket(UUID invitationCode) {
+    public void startWebSocket(UUID invitationCode){
         WebSocketClient client = new StandardWebSocketClient();
 
         WebSocketStompClient stompClient = new WebSocketStompClient(client);

@@ -1,6 +1,5 @@
 package client.scenes;
 
-import client.utils.EventStompSessionHandler;
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
@@ -29,7 +28,6 @@ public class EditExpenseCtrl {
     private MainCtrl mainCtrl;
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
-    private EventStompSessionHandler sessionHandler;
     private Event event;
 
     /***
@@ -45,12 +43,10 @@ public class EditExpenseCtrl {
 
     /**
      * Setter for event
-     * @param event
      * @param expense
-     * @param sessionHandler
      */
-    public void setEventAndExpense(Event event, Expense expense, EventStompSessionHandler sessionHandler) {
-        this.event = event;
+    public void setExpense(Expense expense) {
+        this.event = expense.getPaidBy().getEvent();
         var participantList = event.getParticipants();
 
         ObservableList<String> participants = FXCollections.observableArrayList(
@@ -60,7 +56,6 @@ public class EditExpenseCtrl {
         expensePaidBy.setValue((expense.getPaidBy().getFirstName() + " " + expense.getPaidBy().getLastName()));
         expenseTitle.setText(expense.getTitle());
         expenseAmount.setText(String.valueOf(expense.getAmount()));
-        this.sessionHandler = sessionHandler;
     }
 
     /**
@@ -68,17 +63,17 @@ public class EditExpenseCtrl {
      */
     public void editExpense() {
         Participant person = null;
-        String[] names = expensePaidBy.getValue().toString().split(" ");
+        String[] fullName = expensePaidBy.getValue().toString().split(" ");
         for (Participant participant : event.getParticipants()){
-            if(Objects.equals(participant.getFirstName(), names[0])
-                    && Objects.equals(participant.getLastName(), names[1])){
+            if(Objects.equals(participant.getFirstName(), fullName[0])
+                    && Objects.equals(participant.getLastName(), fullName[1])){
                 person = participant;
             }
         }
         Expense newExpense = new Expense(person,
                 expenseTitle.getText(),
                 Double.parseDouble(expenseAmount.getText()));
-        sessionHandler.sendExpense(newExpense, "update");
+        mainCtrl.getSessionHandler().sendExpense(newExpense, "update");
 
         mainCtrl.showEventOverview(event);
     }
