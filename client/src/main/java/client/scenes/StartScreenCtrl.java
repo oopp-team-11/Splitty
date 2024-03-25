@@ -219,7 +219,7 @@ public class StartScreenCtrl implements Initializable {
             serverErrorAlert(e);
         }
 
-        mainCtrl.startWebSocket(invitationCode);
+        mainCtrl.getSessionHandler().subscribeToEvent(invitationCode);
     }
 
     private static void serverErrorAlert(Exception exception) {
