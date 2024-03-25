@@ -28,7 +28,7 @@ public class EventController {
     private final EventRepository repo;
     private final Map<UUID, List<DeferredResult<ResponseEntity<Map<UUID, String>>>>> deferredResults;
 
-    private SimpMessagingTemplate template;
+    private final SimpMessagingTemplate template;
 
     /**
      * Constructor for the EventController.
@@ -106,7 +106,7 @@ public class EventController {
      * @return returns statusEntity<String> to user with status code and error message
      */
     @MessageMapping("/event:update")
-    @SendToUser("/queue/reply")
+    @SendToUser(value = "/queue/reply", broadcast = false)
     public StatusEntity<String> updateEvent(Event receivedEvent)
     {
         if(receivedEvent == null)
@@ -135,7 +135,7 @@ public class EventController {
      * returns null in body otherwise
      */
     @MessageMapping("/event:read")
-    @SendToUser("/queue/event:read")
+    @SendToUser(value = "/queue/event:read", broadcast = false)
     public StatusEntity<Event> readEvent(UUID invitationCode)
     {
         if(invitationCode == null)
@@ -154,7 +154,7 @@ public class EventController {
      * @return StatusEntity<String> body contains description of success/failure
      */
     @MessageMapping("/event:delete")
-    @SendToUser("/queue/reply")
+    @SendToUser(value = "/queue/reply", broadcast = false)
     public StatusEntity<String> deleteEvent(Event receivedEvent)
     {
         /*TODO: Implement admin passcode verification*/
