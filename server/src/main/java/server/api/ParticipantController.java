@@ -1,8 +1,8 @@
 package server.api;
 
+import commons.Event;
 import commons.Participant;
 import commons.StatusEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import server.database.EventRepository;
 import server.database.ParticipantRepository;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -60,7 +61,7 @@ public class ParticipantController {
         if (isNullOrEmpty(receivedParticipant.getLastName())) {
             return StatusEntity.badRequest("Last name should not be empty");
         }
-        if(!receivedParticipant.getEmail().isEmpty() &&
+        if(isNullOrEmpty(receivedParticipant.getEmail()) ||
                 !Pattern.compile("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$").
                         matcher(receivedParticipant.getEmail()).matches())
         {
@@ -87,22 +88,25 @@ public class ParticipantController {
     /**
      * Handles read websocket endpoint for participant
      * @param id UUID of a participant we want to read
-     * @return returns a StatusEntity<Event> body contains Participant if status code is OK
+     * @return returns a StatusEntity<Event> body contains List<Participant> if status code is OK
      * returns null in body otherwise
      */
     @MessageMapping("/participants:read")
-    @SendToUser("/queue/event:read")
-    public StatusEntity<Participant> readParticipant(UUID id)
+    @SendToUser(value = "/queue/event:read", broadcast = false)
+    public StatusEntity<List<Participant>> readParticipants(UUID invitationCode)
     {
-        if(!participantRepository.existsById(id))
-        {
+        if(!eventRepository.existsById(invitationCode))
             return StatusEntity.notFound(null, true);
+
+        Event event = eventRepository.getReferenceById(invitationCode);
+        List<Participant> participants = event.getParticipants();
+
+        for(Participant participant : participants)
+        {
+            participant.setEventId(participant.getEvent().getId());
         }
 
-        Participant participant = participantRepository.getReferenceById(id);
-        participant.setEventId(participant.getEvent().getId());
-
-        return StatusEntity.ok(participant);
+        return StatusEntity.ok(participants);
     }
 
     /**

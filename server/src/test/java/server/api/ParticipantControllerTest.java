@@ -1,7 +1,6 @@
 package server.api;
 
 import commons.Event;
-import commons.Expense;
 import commons.Participant;
 import commons.StatusEntity;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -12,7 +11,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.database.EventRepository;
 import server.database.ParticipantRepository;
 
-import java.security.Principal;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -291,34 +290,37 @@ public class ParticipantControllerTest {
     }
 
     @Test
-    void checkReadParticipant() {
+    void checkReadParticipants() {
         Event event = new Event("event");
         try {
             setId(event, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        eventRepository.save(event);
-
-        Participant participant = new Participant();
-//        participant.setEvent(event);
+        Participant participant = new Participant(
+                event,
+                "foo",
+                "fooman",
+                null,
+                null,
+                null
+        );
 
         try {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        participantRepository.save(participant);
+        event.addParticipant(participant);
 
-        participant.setEventId(event.getId());
+        eventRepository.save(event);
+        participantController.createParticipant(participant);
 
-        assertEquals(StatusEntity.ok(participant), participantController.readParticipant(participant.getId()));
+        assertEquals(StatusEntity.ok(List.of(participant)), participantController.readParticipants(event.getId()));
     }
 
     @Test
-    void checkReadParticipantNotFound() {
+    void checkReadParticipantsEventNotFound() {
         UUID uuid = UUID.randomUUID();
 
-        assertEquals(StatusEntity.notFound(null, true), participantController.readParticipant(uuid));
-
-        assertFalse(participantRepository.existsById(uuid));
+        assertEquals(StatusEntity.notFound(null, true), participantController.readParticipants(uuid));
     }
 }
