@@ -28,7 +28,6 @@ public class EventController {
     private final EventRepository repo;
     private final Map<UUID, List<DeferredResult<ResponseEntity<Map<UUID, String>>>>> deferredResults;
 
-    @Autowired
     private SimpMessagingTemplate template;
 
     /**
@@ -159,6 +158,8 @@ public class EventController {
     public StatusEntity<String> deleteEvent(Event receivedEvent)
     {
         /*TODO: Implement admin passcode verification*/
+        if(receivedEvent == null)
+            return StatusEntity.badRequest("Event should not be null", true);
 
         if(!repo.existsById(receivedEvent.getId()))
         {
