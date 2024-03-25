@@ -34,6 +34,7 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
     public EventStompSessionHandler(EventDataHandler dataHandler, MainCtrl mainCtrl) {
         this.dataHandler = dataHandler;
         this.mainCtrl = mainCtrl;
+        this.eventSubscriptions = new ArrayList<>();
         dataHandler.setSessionHandler(this);
     }
 
@@ -68,9 +69,10 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
      *
      * @param invitationCode invitationCode of the event to subscribe to
      */
-    public void subscribeToEvent(UUID invitationCode) {
+    public void subscribeToEvent(UUID invitationCode) throws IllegalStateException {
+        if (!eventSubscriptions.isEmpty())
+            throw new IllegalStateException("User did not unsubscribe before subscribing to a new event.");
         this.invitationCode = invitationCode;
-        eventSubscriptions = new ArrayList<>();
         //We want to track event deletion as soon as possible
         eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/event:delete",
                 new DeleteEventHandler(dataHandler)));

@@ -29,8 +29,6 @@ import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
-import java.util.UUID;
-
 /**
  * Main scene controller. It oversights currently active scenes, switches between them,
  * loads them with the initialize() method
