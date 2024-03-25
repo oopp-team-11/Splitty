@@ -73,6 +73,8 @@ Possible points:
 ### Questions for the TA (5 min)
 - Any things we need to look out for in the upcoming weeks
 - Will the oral exam be individual or group-based?
+- Integration tests, how should we approach this?
+- Is it possible to debug 2 clients at the same time using intellij?
 
 
 ### Question round (3 min)
