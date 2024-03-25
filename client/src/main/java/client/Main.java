@@ -48,7 +48,7 @@ public class Main extends Application {
         launch();
         var threads = Thread.getAllStackTraces().keySet();
         var pollingThread = threads.stream()
-                .filter(a -> a.getName().equals("Polling thread"))
+                .filter(thread -> thread.getName().equals("Polling thread"))
                 .toList();
         if (!pollingThread.isEmpty()){
             pollingThread.getFirst().interrupt();

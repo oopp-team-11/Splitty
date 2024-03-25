@@ -300,8 +300,4 @@ public class StartScreenCtrl implements Initializable {
             }
         });
     }
-
-    public void stopPolling(){
-        pollingThread.interrupt();
-    }
 }
