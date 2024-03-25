@@ -55,7 +55,7 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
         session.subscribe("/user/queue/participants:read",
                 new ReadParticipantsHandler(dataHandler, mainCtrl));
         session.subscribe("/user/queue/expenses:read",
-                new ReadEventHandler(dataHandler, mainCtrl));
+                new ReadExpensesHandler(dataHandler, mainCtrl));
     }
 
     @Override
