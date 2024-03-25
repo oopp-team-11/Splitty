@@ -16,7 +16,7 @@
 package client.scenes;
 
 import client.utils.EventDataHandler;
-import client.utils.EventStompSessionHandler;
+import client.utils.WebsocketSessionHandler;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
@@ -55,7 +55,7 @@ public class MainCtrl {
     private EventOverviewCtrl eventOverviewCtrl;
     private Scene eventOverviewScene;
 
-    private EventStompSessionHandler sessionHandler;
+    private WebsocketSessionHandler sessionHandler;
     private EventDataHandler dataHandler;
 
     /**
@@ -199,7 +199,7 @@ public class MainCtrl {
         WebSocketStompClient stompClient = new WebSocketStompClient(client);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
-        sessionHandler = new EventStompSessionHandler(dataHandler, this);
+        sessionHandler = new WebsocketSessionHandler(dataHandler, this);
         stompClient.connectAsync("ws://localhost:8080/v1", sessionHandler);
     }
 
@@ -207,7 +207,7 @@ public class MainCtrl {
      * Standard getter for sessionHandler
      * @return current sessionHandler
      */
-    public EventStompSessionHandler getSessionHandler() {
+    public WebsocketSessionHandler getSessionHandler() {
         return sessionHandler;
     }
 
@@ -215,7 +215,7 @@ public class MainCtrl {
      * Standard setter for sessionHandler
      * @param sessionHandler new sessionHandler to use
      */
-    public void setSessionHandler(EventStompSessionHandler sessionHandler) {
+    public void setSessionHandler(WebsocketSessionHandler sessionHandler) {
         this.sessionHandler = sessionHandler;
     }
 

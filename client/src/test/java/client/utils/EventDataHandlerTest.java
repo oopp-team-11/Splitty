@@ -27,7 +27,7 @@ class EventDataHandlerTest {
     Expense e2;
     List<Participant> participants;
     List<Expense> expenses;
-    EventStompSessionHandler sessionMock;
+    WebsocketSessionHandler sessionMock;
 
     @BeforeEach
     public void setup() throws IllegalAccessException {
@@ -48,7 +48,7 @@ class EventDataHandlerTest {
         expenses.add(e1);
         expenses.add(e2);
         this.handler = new EventDataHandler(event, participants, expenses);
-        this.sessionMock = Mockito.mock(EventStompSessionHandler.class);
+        this.sessionMock = Mockito.mock(WebsocketSessionHandler.class);
         this.handler.setSessionHandler(this.sessionMock);
     }
 
@@ -160,7 +160,7 @@ class EventDataHandlerTest {
 
     @Test
     void setSessionHandler() {
-        EventStompSessionHandler sessionHandler = new EventStompSessionHandler(handler,
+        WebsocketSessionHandler sessionHandler = new WebsocketSessionHandler(handler,
                 new MainCtrl());
         handler.setSessionHandler(sessionHandler);
         assertEquals(sessionHandler, handler.getSessionHandler());
