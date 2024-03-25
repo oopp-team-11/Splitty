@@ -179,7 +179,7 @@ public class EventController {
      * @return Returns a 200 OK status code when the Event title was successfully updated.
      * Returns a 400 Bad Request status code when no invitationCode or newTitle was provided.
      */
-    @PutMapping(path = {"/{invitationCode}/", "/{invitationCode}"})
+    @PutMapping(path = {"/events/{invitationCode}/", "/events/{invitationCode}"})
     public ResponseEntity<Void> updateEventTitle(@PathVariable("invitationCode") UUID invitationCode,
                                                  @RequestBody String newTitle) {
         Optional<Event> eventOptional = repo.findById(invitationCode);
@@ -202,7 +202,7 @@ public class EventController {
      * @return Returns a 200 OK status code when the Event was successfully deleted.
      * Returns a 400 Bad Request status code when no invitationCode was provided.
      */
-    @DeleteMapping(path = "/{invitationCode}")
+    @DeleteMapping(path = "/events/{invitationCode}")
     public ResponseEntity<Void> deleteEvent(@PathVariable("invitationCode") UUID invitationCode) {
         if (!repo.existsById(invitationCode)) {
             return ResponseEntity.badRequest().build();
@@ -222,7 +222,7 @@ public class EventController {
      * @return Returns a DeferredResult with a 200 OK status code and a Map of updated Events.
      * Returns a 400 Bad Request status code when no invitationCodes were provided.
      */
-    @GetMapping(path = {"/updates", "/updates/"})
+    @GetMapping(path = {"/events/updates", "/events/updates/"})
     public DeferredResult<ResponseEntity<Map<UUID, String>>> getUpdatedEvents(@RequestParam("query") String query,
                                                                               @RequestParam("invitationCodes")
                                                                               List<UUID> invitationCodes) {
