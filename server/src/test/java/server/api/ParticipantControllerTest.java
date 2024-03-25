@@ -92,15 +92,6 @@ public class ParticipantControllerTest {
     }
 
     @Test
-    void checkCreateParticipantNullId() {
-        Participant participant = new Participant();
-        participant.setEventId(UUID.randomUUID());
-
-        assertEquals(StatusEntity.badRequest("Id of the participant should be provided", true),
-                participantController.createParticipant(participant));
-    }
-
-    @Test
     void checkCreateParticipantNullFirstName() {
         Participant participant = new Participant();
 
@@ -230,6 +221,9 @@ public class ParticipantControllerTest {
     @Test
     void checkUpdateParticipantNullId() {
         Participant participant = new Participant();
+        participant.setFirstName("foo");
+        participant.setLastName("fooman");
+        participant.setEmail("foo@foomail.com");
         participant.setEventId(UUID.randomUUID());
 
         assertEquals(StatusEntity.badRequest("Id of the participant should be provided", true),
@@ -315,6 +309,19 @@ public class ParticipantControllerTest {
 
         verify(messagingTemplate).convertAndSend("/topic/"+participant.getEventId()+"/participant:delete",
                 participant);
+        assertFalse(participantRepository.existsById(participant.getId()));
+    }
+    @Test
+    void checkDeleteParticipantNullId() {
+        Participant participant = new Participant();
+
+        participant.setFirstName("foo");
+        participant.setLastName("fooman");
+        participant.setEmail("foo@foomail.com");
+
+        assertEquals(StatusEntity.badRequest("Id of the participant should be provided", true),
+                participantController.deleteParticipant(participant));
+
         assertFalse(participantRepository.existsById(participant.getId()));
     }
 
