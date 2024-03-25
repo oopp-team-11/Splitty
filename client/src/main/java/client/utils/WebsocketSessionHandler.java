@@ -18,7 +18,7 @@ import java.util.UUID;
  * StompSessionHandler for handling a WebSocket client connection.
  * Listens to /event/{invitationCode} topic.
  */
-public class EventStompSessionHandler extends StompSessionHandlerAdapter {
+public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
     private UUID invitationCode;
     private List<StompSession.Subscription> eventSubscriptions;
     private final EventDataHandler dataHandler;
@@ -26,12 +26,12 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
     private StompSession session;
 
     /**
-     * Custom constructor for EventStompSessionHandler
+     * Custom constructor for WebsocketSessionHandler
      *
      * @param dataHandler    dataHandler of the client
      * @param mainCtrl       mainCtrl of the client
      */
-    public EventStompSessionHandler(EventDataHandler dataHandler, MainCtrl mainCtrl) {
+    public WebsocketSessionHandler(EventDataHandler dataHandler, MainCtrl mainCtrl) {
         this.dataHandler = dataHandler;
         this.mainCtrl = mainCtrl;
         this.eventSubscriptions = new ArrayList<>();

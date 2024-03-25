@@ -23,14 +23,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-class EventStompSessionHandlerTest {
+class WebsocketSessionHandlerTest {
 
     private UUID invitationCode;
-    private EventStompSessionHandler handler;
+    private WebsocketSessionHandler handler;
     private StompHeaders headers;
     private StompSession session;
 
-    private static void setSubscriptions(EventStompSessionHandler handler,
+    private static void setSubscriptions(WebsocketSessionHandler handler,
                                          List<StompSession.Subscription> subscriptions) throws IllegalAccessException {
         FieldUtils.writeField(handler, "eventSubscriptions", subscriptions, true);
     }
@@ -38,7 +38,7 @@ class EventStompSessionHandlerTest {
     @BeforeEach
     void setUp() {
         invitationCode = UUID.randomUUID();
-        handler = new EventStompSessionHandler(new EventDataHandler(), new MainCtrl());
+        handler = new WebsocketSessionHandler(new EventDataHandler(), new MainCtrl());
         headers = new StompHeaders();
         session = Mockito.mock(StompSession.class);
     }

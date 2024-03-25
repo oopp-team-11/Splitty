@@ -16,7 +16,7 @@ public class EventDataHandler {
     private Event event;
     private List<Participant> participants;
     private List<Expense> expenses;
-    private EventStompSessionHandler sessionHandler;
+    private WebsocketSessionHandler sessionHandler;
 
     /***
      * default constructor
@@ -40,7 +40,7 @@ public class EventDataHandler {
      * Getter for sessionHandler
      * @return returns a reference to sessionHandler
      */
-    public EventStompSessionHandler getSessionHandler() {
+    public WebsocketSessionHandler getSessionHandler() {
         return sessionHandler;
     }
 
@@ -48,7 +48,7 @@ public class EventDataHandler {
      * Setter for sessionHandler used by sessionHandler constructor
      * @param sessionHandler sessionHandler
      */
-    public void setSessionHandler(EventStompSessionHandler sessionHandler) {
+    public void setSessionHandler(WebsocketSessionHandler sessionHandler) {
         this.sessionHandler = sessionHandler;
     }
 
