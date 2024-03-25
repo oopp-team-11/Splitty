@@ -246,6 +246,7 @@ public class StartScreenCtrl implements Initializable {
         }
 
         pollingThread = new Thread(() -> {
+            int prevStatusCode = -1;
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     String eventIdsParam = String.join(",", eventIds.stream().map(UUID::toString)
@@ -257,7 +258,8 @@ public class StartScreenCtrl implements Initializable {
                             .request(MediaType.APPLICATION_JSON)
                             .get();
 
-                    System.out.println(response.getStatus());
+                    if(prevStatusCode != response.getStatus()) System.out.println(response.getStatus());
+                    prevStatusCode = response.getStatus();
 
                     if (response.getStatus() == 200) {
                         System.out.println("Got updated events");
@@ -272,6 +274,7 @@ public class StartScreenCtrl implements Initializable {
                 }
             }
         });
+        pollingThread.setName("Polling thread");
 
         pollingThread.start();
     }
@@ -296,5 +299,9 @@ public class StartScreenCtrl implements Initializable {
                 }
             }
         });
+    }
+
+    public void stopPolling(){
+        pollingThread.interrupt();
     }
 }
