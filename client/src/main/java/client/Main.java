@@ -25,6 +25,8 @@ import com.google.inject.Injector;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import client.scenes.StartScreenCtrl;
+import client.scenes.MainCtrl;
 
 /**
  * The Main class for the client.
@@ -44,6 +46,13 @@ public class Main extends Application {
      */
     public static void main(String[] args) throws URISyntaxException, IOException {
         launch();
+        var threads = Thread.getAllStackTraces().keySet();
+        var pollingThread = threads.stream()
+                .filter(thread -> thread.getName().equals("Polling thread"))
+                .toList();
+        if (!pollingThread.isEmpty()){
+            pollingThread.getFirst().interrupt();
+        }
     }
 
     /**
