@@ -1,7 +1,6 @@
 package server.api;
 
 import commons.Event;
-import commons.Expense;
 import commons.Participant;
 import commons.StatusEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -41,6 +40,13 @@ public class ParticipantController {
         return str == null || str.isEmpty();
     }
 
+    /**
+     * Evaluates whether the received Participant object has all the correct field values
+     *
+     * @param receivedParticipant received Participant object
+     * @return Returns a statusEntity with an error message, if it is a bad request
+     * Returns an OK status with null body otherwise
+     */
     public StatusEntity<String> isParticipantBadRequest(Participant receivedParticipant)
     {
         if (receivedParticipant == null)
@@ -63,6 +69,13 @@ public class ParticipantController {
         return StatusEntity.ok(null);
     }
 
+    /**
+     * Evaluates whether the received existing Participant object has the correct field values
+     *
+     * @param receivedParticipant received Participant object
+     * @return Returns a statusEntity with an error message, if it is a bad request
+     * Returns an OK status with null body otherwise
+     */
     public StatusEntity<String> isExistingParticipantBadRequest(Participant receivedParticipant) {
         if(receivedParticipant.getId() == null)
             return StatusEntity.badRequest("Id of the participant should be provided", true);
