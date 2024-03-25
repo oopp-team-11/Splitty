@@ -158,43 +158,74 @@ public class ParticipantControllerTest {
 
         eventRepository.save(event);
 
-        Participant participant = new Participant();
+        Participant participant = new Participant(
+                event,
+                "foo",
+                "fooman",
+                "foo@foomail.com",
+                null,
+                null
+        );
+        participant.setEventId(event.getId());
 
         try {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        participantRepository.save(participant);
+        participant = participantRepository.save(participant);
 
-        participant.setFirstName("foo");
-        participant.setLastName("fooman");
-        participant.setEmail("foo@foo.com");
+        participant.setLastName("foowoman");
+        participant.setEmail("foo42@foo.com");
         participant.setEventId(event.getId());
 
         assertEquals(StatusEntity.StatusCode.OK, participantController.updateParticipant(participant).getStatusCode());
 
+        ArgumentCaptor<Participant> argumentCaptor = ArgumentCaptor.forClass(Participant.class);
+        verify(messagingTemplate).convertAndSend(eq("/topic/"+participant.getEventId()+"/participant:update"),
+                argumentCaptor.capture());
+        Participant capturedParticipant = argumentCaptor.getValue();
+        assertEquals(event, capturedParticipant.getEvent());
+        assertEquals(participant.getEventId(), capturedParticipant.getEventId());
+        assertEquals(participant.getFirstName(), capturedParticipant.getFirstName());
+        assertEquals(participant.getLastName(), capturedParticipant.getLastName());
+        assertEquals(participant.getEmail(), capturedParticipant.getEmail());
+        assertEquals(participant.getIban(), capturedParticipant.getIban());
+        assertEquals(participant.getBic(), capturedParticipant.getBic());
+    }
 
-        verify(messagingTemplate).convertAndSend("/topic/"+participant.getEventId()+"/participant:update",
-                participant);
+    @Test
+    void checkUpdateParticipantNullParticipant() {
+        Participant participant = null;
 
-        assertTrue(participantRepository.existsById(participant.getId()));
-        var repoParticipant = participantRepository.getReferenceById(participant.getId());
-        assertEquals("foo", repoParticipant.getFirstName());
-        assertEquals("fooman", repoParticipant.getLastName());
-        assertEquals("foo@foo.com", repoParticipant.getEmail());
-        assertEquals(event, repoParticipant.getEvent());
+        assertEquals(StatusEntity.badRequest("Participant should not be null", true),
+                participantController.updateParticipant(participant));
+    }
 
+    @Test
+    void checkUpdateParticipantNullEventId() {
+        Participant participant = new Participant();
+
+        assertEquals(StatusEntity.badRequest("InvitationCode of event should be provided", true),
+                participantController.updateParticipant(participant));
+    }
+
+    @Test
+    void checkUpdateParticipantNullId() {
+        Participant participant = new Participant();
+        participant.setEventId(UUID.randomUUID());
+
+        assertEquals(StatusEntity.badRequest("Id of the participant should be provided", true),
+                participantController.updateParticipant(participant));
     }
 
     @Test
     void checkUpdateParticipantNullFirstName() {
         Participant participant = new Participant();
 
+        participant.setEventId(UUID.randomUUID());
         try {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-
-        participantRepository.save(participant);
 
         assertEquals(StatusEntity.badRequest("First name should not be empty"),
                 participantController.updateParticipant(participant));
@@ -204,12 +235,11 @@ public class ParticipantControllerTest {
     void checkUpdateParticipantNullLastName() {
         Participant participant = new Participant();
 
+        participant.setEventId(UUID.randomUUID());
         participant.setFirstName("foo");
         try {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-
-        participantRepository.save(participant);
 
         assertEquals(StatusEntity.badRequest("Last name should not be empty"),
                 participantController.updateParticipant(participant));
@@ -219,14 +249,13 @@ public class ParticipantControllerTest {
     void checkUpdateParticipantInvalidEmail() {
         Participant participant = new Participant();
 
+        participant.setEventId(UUID.randomUUID());
         participant.setFirstName("foo");
         participant.setLastName("fooman");
         participant.setEmail("foomail");
         try {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-
-        participantRepository.save(participant);
 
         assertEquals(StatusEntity.badRequest("Provided email is invalid"),
                 participantController.updateParticipant(participant));
@@ -239,14 +268,13 @@ public class ParticipantControllerTest {
         participant.setFirstName("foo");
         participant.setLastName("fooman");
         participant.setEmail("foo@foomail.com");
+        participant.setEventId(UUID.randomUUID());
         try {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
         assertEquals(StatusEntity.notFound("Participant not found", true),
                 participantController.updateParticipant(participant));
-
-        assertFalse(participantRepository.existsById(participant.getId()));
     }
 
     @Test

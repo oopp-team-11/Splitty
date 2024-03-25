@@ -87,7 +87,7 @@ public class ParticipantController {
 
     /**
      * Handles read websocket endpoint for participant
-     * @param id UUID of a participant we want to read
+     * @param invitationCode invitation code of the event which we want to read participants from
      * @return returns a StatusEntity<Event> body contains List<Participant> if status code is OK
      * returns null in body otherwise
      */
@@ -115,16 +115,22 @@ public class ParticipantController {
      * @return StatusEntity<String> body contains description of success/failure
      */
     @MessageMapping("/participant:update")
-    @SendToUser("/queue/reply")
+    @SendToUser(value = "/queue/reply", broadcast = false)
     public StatusEntity<String> updateParticipant(Participant receivedParticipant)
     {
+        if (receivedParticipant == null)
+            return StatusEntity.badRequest("Participant should not be null", true);
+        if(receivedParticipant.getEventId() == null)
+            return StatusEntity.badRequest("InvitationCode of event should be provided", true);
+        if(receivedParticipant.getId() == null)
+            return StatusEntity.badRequest("Id of the participant should be provided", true);
         if (isNullOrEmpty(receivedParticipant.getFirstName())) {
             return StatusEntity.badRequest("First name should not be empty");
         }
         if (isNullOrEmpty(receivedParticipant.getLastName())) {
             return StatusEntity.badRequest("Last name should not be empty");
         }
-        if(!receivedParticipant.getEmail().isEmpty() &&
+        if(isNullOrEmpty(receivedParticipant.getEmail()) ||
                 !Pattern.compile("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$").
                         matcher(receivedParticipant.getEmail()).matches())
         {
@@ -136,13 +142,19 @@ public class ParticipantController {
             return StatusEntity.notFound("Participant not found", true);
         }
 
-//        receivedParticipant.setEvent(eventRepository.getReferenceById(receivedParticipant.getEventId()));
+        Participant participant = participantRepository.getReferenceById(receivedParticipant.getId());
+        participant.setFirstName(receivedParticipant.getFirstName());
+        participant.setLastName(receivedParticipant.getLastName());
+        participant.setEmail(receivedParticipant.getEmail());
+        participant.setIban(receivedParticipant.getIban());
+        participant.setBic(receivedParticipant.getBic());
+        participant = participantRepository.save(participant);
 
-        participantRepository.save(receivedParticipant);
+        participant.setEventId(receivedParticipant.getEventId());
 
-        template.convertAndSend("/topic/"+receivedParticipant.getEventId()+"/participant:update",
-                receivedParticipant);
-        return StatusEntity.ok("participant:update " + receivedParticipant.getId());
+        template.convertAndSend("/topic/"+participant.getEventId()+"/participant:update",
+                participant);
+        return StatusEntity.ok("participant:update " + participant.getId());
     }
 
     /**
