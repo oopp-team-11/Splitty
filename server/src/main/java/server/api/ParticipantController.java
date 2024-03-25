@@ -67,6 +67,8 @@ public class ParticipantController {
         {
             return StatusEntity.badRequest("Provided email is invalid");
         }
+        if(!eventRepository.existsById(receivedParticipant.getEventId()))
+            return StatusEntity.notFound("Provided participant has an invalid invitation code");
 
         Participant participant = new Participant(
                 eventRepository.getReferenceById(receivedParticipant.getEventId()),

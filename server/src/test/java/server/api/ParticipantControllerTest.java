@@ -150,6 +150,24 @@ public class ParticipantControllerTest {
     }
 
     @Test
+    void checkCreateParticipantEventNotFound() {
+        Participant participant = new Participant();
+
+        participant.setEventId(UUID.randomUUID());
+        participant.setFirstName("foo");
+        participant.setLastName("fooman");
+        participant.setEmail("foomail@mail.com");
+        try {
+            setId(participant, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
+
+        assertEquals(StatusEntity.notFound("Provided participant has an invalid invitation code"),
+                participantController.createParticipant(participant));
+
+        assertFalse(participantRepository.existsById(participant.getId()));
+    }
+
+    @Test
     void checkUpdateParticipant() {
         Event event = new Event("event");
         try {
