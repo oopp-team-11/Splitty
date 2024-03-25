@@ -20,8 +20,7 @@ import java.util.regex.Pattern;
 public class ParticipantController {
     private final ParticipantRepository participantRepository;
     private final EventRepository eventRepository;
-    @Autowired
-    private SimpMessagingTemplate template;
+    private final SimpMessagingTemplate template;
 
     /**
      * Constructor
@@ -46,9 +45,15 @@ public class ParticipantController {
      * @return StatusEntity<String> body contains description of success/failure
      */
     @MessageMapping("/participant:create")
-    @SendToUser("/queue/reply")
+    @SendToUser(value = "/queue/reply", broadcast = false)
     public StatusEntity<String> createParticipant(Participant receivedParticipant)
     {
+        if (receivedParticipant == null)
+            return StatusEntity.badRequest("Participant should not be null", true);
+        if(receivedParticipant.getEventId() == null)
+            return StatusEntity.badRequest("InvitationCode of event should be provided", true);
+        if(receivedParticipant.getId() == null)
+            return StatusEntity.badRequest("Id of the participant should be provided", true);
         if (isNullOrEmpty(receivedParticipant.getFirstName())) {
             return StatusEntity.badRequest("First name should not be empty");
         }
@@ -62,12 +67,21 @@ public class ParticipantController {
             return StatusEntity.badRequest("Provided email is invalid");
         }
 
-        receivedParticipant.setEvent(eventRepository.getReferenceById(receivedParticipant.getEventId()));
-        participantRepository.save(receivedParticipant);
+        Participant participant = new Participant(
+                eventRepository.getReferenceById(receivedParticipant.getEventId()),
+                receivedParticipant.getFirstName(),
+                receivedParticipant.getLastName(),
+                receivedParticipant.getEmail(),
+                receivedParticipant.getIban(),
+                receivedParticipant.getBic()
+        );
+        participant = participantRepository.save(participant);
 
-        template.convertAndSend("/topic/"+receivedParticipant.getEventId()+"/participant:create",
-                receivedParticipant);
-        return StatusEntity.ok("participant:create " + receivedParticipant.getId());
+        participant.setEventId(receivedParticipant.getEventId());
+
+        template.convertAndSend("/topic/"+participant.getEventId()+"/participant:create",
+                participant);
+        return StatusEntity.ok("participant:create " + participant.getId());
     }
 
     /**
@@ -76,7 +90,7 @@ public class ParticipantController {
      * @return returns a StatusEntity<Event> body contains Participant if status code is OK
      * returns null in body otherwise
      */
-    @MessageMapping("/participant:read")
+    @MessageMapping("/participants:read")
     @SendToUser("/queue/event:read")
     public StatusEntity<Participant> readParticipant(UUID id)
     {
@@ -118,7 +132,7 @@ public class ParticipantController {
             return StatusEntity.notFound("Participant not found", true);
         }
 
-        receivedParticipant.setEvent(eventRepository.getReferenceById(receivedParticipant.getEventId()));
+//        receivedParticipant.setEvent(eventRepository.getReferenceById(receivedParticipant.getEventId()));
 
         participantRepository.save(receivedParticipant);
 

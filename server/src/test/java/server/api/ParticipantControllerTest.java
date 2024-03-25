@@ -1,11 +1,13 @@
 package server.api;
 
 import commons.Event;
+import commons.Expense;
 import commons.Participant;
 import commons.StatusEntity;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.database.EventRepository;
 import server.database.ParticipantRepository;
@@ -61,19 +63,49 @@ public class ParticipantControllerTest {
 
         assertEquals(StatusEntity.StatusCode.OK, participantController.createParticipant(participant).getStatusCode());
 
-        assertTrue(participantRepository.existsById(participant.getId()));
-        assertEquals(event, participantRepository.getReferenceById(participant.getId()).getEvent());
+        ArgumentCaptor<Participant> argumentCaptor = ArgumentCaptor.forClass(Participant.class);
+        verify(messagingTemplate).convertAndSend(eq("/topic/"+participant.getEventId()+"/participant:create"),
+                argumentCaptor.capture());
+        Participant capturedParticipant = argumentCaptor.getValue();
+        assertEquals(event, capturedParticipant.getEvent());
+        assertEquals(participant.getEventId(), capturedParticipant.getEventId());
+        assertEquals(participant.getFirstName(), capturedParticipant.getFirstName());
+        assertEquals(participant.getLastName(), capturedParticipant.getLastName());
+        assertEquals(participant.getEmail(), capturedParticipant.getEmail());
+        assertEquals(participant.getIban(), capturedParticipant.getIban());
+        assertEquals(participant.getBic(), capturedParticipant.getBic());
+    }
 
-        participant.setEvent(event);
+    @Test
+    void checkCreateParticipantNullParticipant() {
+        Participant participant = null;
 
-        verify(messagingTemplate).convertAndSend("/topic/"+participant.getEventId()+"/participant:create",
-                participant);
+        assertEquals(StatusEntity.badRequest("Participant should not be null", true),
+                participantController.createParticipant(participant));
+    }
+
+    @Test
+    void checkCreateParticipantNullEventId() {
+        Participant participant = new Participant();
+
+        assertEquals(StatusEntity.badRequest("InvitationCode of event should be provided", true),
+                participantController.createParticipant(participant));
+    }
+
+    @Test
+    void checkCreateParticipantNullId() {
+        Participant participant = new Participant();
+        participant.setEventId(UUID.randomUUID());
+
+        assertEquals(StatusEntity.badRequest("Id of the participant should be provided", true),
+                participantController.createParticipant(participant));
     }
 
     @Test
     void checkCreateParticipantNullFirstName() {
         Participant participant = new Participant();
 
+        participant.setEventId(UUID.randomUUID());
         try {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
@@ -88,6 +120,7 @@ public class ParticipantControllerTest {
     void checkCreateParticipantNullLastName() {
         Participant participant = new Participant();
 
+        participant.setEventId(UUID.randomUUID());
         participant.setFirstName("foo");
         try {
             setId(participant, UUID.randomUUID());
@@ -103,6 +136,7 @@ public class ParticipantControllerTest {
     void checkCreateParticipantInvalidEmail() {
         Participant participant = new Participant();
 
+        participant.setEventId(UUID.randomUUID());
         participant.setFirstName("foo");
         participant.setLastName("fooman");
         participant.setEmail("foomail");
@@ -266,7 +300,7 @@ public class ParticipantControllerTest {
         eventRepository.save(event);
 
         Participant participant = new Participant();
-        participant.setEvent(event);
+//        participant.setEvent(event);
 
         try {
             setId(participant, UUID.randomUUID());
