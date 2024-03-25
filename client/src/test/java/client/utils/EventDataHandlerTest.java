@@ -160,7 +160,7 @@ class EventDataHandlerTest {
 
     @Test
     void setSessionHandler() {
-        EventStompSessionHandler sessionHandler = new EventStompSessionHandler(UUID.randomUUID(), handler,
+        EventStompSessionHandler sessionHandler = new EventStompSessionHandler(handler,
                 new MainCtrl());
         handler.setSessionHandler(sessionHandler);
         assertEquals(sessionHandler, handler.getSessionHandler());

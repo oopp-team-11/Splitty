@@ -97,6 +97,10 @@ public class MainCtrl {
         this.eventOverviewCtrl = eventOverview.getKey();
         this.eventOverviewScene = new Scene(eventOverview.getValue());
 
+        this.dataHandler = new EventDataHandler();
+
+        startWebSocket();
+
         showStartScreen();
 
         //showEventOverview(event);
@@ -189,17 +193,15 @@ public class MainCtrl {
     }
 
     /**
-     * Start websocket using invitationCode of event
-     * @param invitationCode of event to start websocket on
+     * Start websocket connection
      */
-    public void startWebSocket(UUID invitationCode){
+    public void startWebSocket(){
         WebSocketClient client = new StandardWebSocketClient();
 
         WebSocketStompClient stompClient = new WebSocketStompClient(client);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
-        //TODO:Change new EventDataHandler to the actual reference
-        sessionHandler = new EventStompSessionHandler(invitationCode, new EventDataHandler(), this);
+        sessionHandler = new EventStompSessionHandler(dataHandler, this);
         stompClient.connectAsync("ws://localhost:8080/v1", sessionHandler);
     }
 
