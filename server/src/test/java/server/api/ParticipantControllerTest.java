@@ -2,6 +2,7 @@ package server.api;
 
 import commons.Event;
 import commons.Participant;
+import commons.ParticipantList;
 import commons.StatusEntity;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -79,7 +80,7 @@ public class ParticipantControllerTest {
     void checkCreateParticipantNullParticipant() {
         Participant participant = null;
 
-        assertEquals(StatusEntity.badRequest("Participant should not be null", true),
+        assertEquals(StatusEntity.badRequest(true, "Participant should not be null"),
                 participantController.createParticipant(participant));
     }
 
@@ -87,7 +88,7 @@ public class ParticipantControllerTest {
     void checkCreateParticipantNullEventId() {
         Participant participant = new Participant();
 
-        assertEquals(StatusEntity.badRequest("InvitationCode of event should be provided", true),
+        assertEquals(StatusEntity.badRequest(true, "InvitationCode of event should be provided"),
                 participantController.createParticipant(participant));
     }
 
@@ -100,7 +101,7 @@ public class ParticipantControllerTest {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        assertEquals(StatusEntity.badRequest("First name should not be empty"),
+        assertEquals(StatusEntity.badRequest(false, "First name should not be empty"),
                 participantController.createParticipant(participant));
 
         assertFalse(participantRepository.existsById(participant.getId()));
@@ -116,7 +117,7 @@ public class ParticipantControllerTest {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        assertEquals(StatusEntity.badRequest("Last name should not be empty"),
+        assertEquals(StatusEntity.badRequest(false, "Last name should not be empty"),
                 participantController.createParticipant(participant));
 
         assertFalse(participantRepository.existsById(participant.getId()));
@@ -134,7 +135,7 @@ public class ParticipantControllerTest {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        assertEquals(StatusEntity.badRequest("Provided email is invalid"),
+        assertEquals(StatusEntity.badRequest(false, "Provided email is invalid"),
                 participantController.createParticipant(participant));
 
         assertFalse(participantRepository.existsById(participant.getId()));
@@ -152,7 +153,7 @@ public class ParticipantControllerTest {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        assertEquals(StatusEntity.notFound("Provided participant has an invalid invitation code"),
+        assertEquals(StatusEntity.notFound(false, "Provided participant has an invalid invitation code"),
                 participantController.createParticipant(participant));
 
         assertFalse(participantRepository.existsById(participant.getId()));
@@ -206,7 +207,7 @@ public class ParticipantControllerTest {
     void checkUpdateParticipantNullParticipant() {
         Participant participant = null;
 
-        assertEquals(StatusEntity.badRequest("Participant should not be null", true),
+        assertEquals(StatusEntity.badRequest(true, "Participant should not be null"),
                 participantController.updateParticipant(participant));
     }
 
@@ -214,7 +215,7 @@ public class ParticipantControllerTest {
     void checkUpdateParticipantNullEventId() {
         Participant participant = new Participant();
 
-        assertEquals(StatusEntity.badRequest("InvitationCode of event should be provided", true),
+        assertEquals(StatusEntity.badRequest(true, "InvitationCode of event should be provided"),
                 participantController.updateParticipant(participant));
     }
 
@@ -226,7 +227,7 @@ public class ParticipantControllerTest {
         participant.setEmail("foo@foomail.com");
         participant.setEventId(UUID.randomUUID());
 
-        assertEquals(StatusEntity.badRequest("Id of the participant should be provided", true),
+        assertEquals(StatusEntity.badRequest(true, "Id of the participant should be provided"),
                 participantController.updateParticipant(participant));
     }
 
@@ -239,7 +240,7 @@ public class ParticipantControllerTest {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        assertEquals(StatusEntity.badRequest("First name should not be empty"),
+        assertEquals(StatusEntity.badRequest(false, "First name should not be empty"),
                 participantController.updateParticipant(participant));
     }
 
@@ -253,7 +254,7 @@ public class ParticipantControllerTest {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        assertEquals(StatusEntity.badRequest("Last name should not be empty"),
+        assertEquals(StatusEntity.badRequest(false, "Last name should not be empty"),
                 participantController.updateParticipant(participant));
     }
 
@@ -269,7 +270,7 @@ public class ParticipantControllerTest {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        assertEquals(StatusEntity.badRequest("Provided email is invalid"),
+        assertEquals(StatusEntity.badRequest(false, "Provided email is invalid"),
                 participantController.updateParticipant(participant));
     }
 
@@ -285,7 +286,7 @@ public class ParticipantControllerTest {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        assertEquals(StatusEntity.notFound("Participant not found", true),
+        assertEquals(StatusEntity.notFound(true, "Participant not found"),
                 participantController.updateParticipant(participant));
     }
 
@@ -319,7 +320,7 @@ public class ParticipantControllerTest {
         participant.setLastName("fooman");
         participant.setEmail("foo@foomail.com");
 
-        assertEquals(StatusEntity.badRequest("Id of the participant should be provided", true),
+        assertEquals(StatusEntity.badRequest(true, "Id of the participant should be provided"),
                 participantController.deleteParticipant(participant));
 
         assertFalse(participantRepository.existsById(participant.getId()));
@@ -336,7 +337,7 @@ public class ParticipantControllerTest {
             setId(participant, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        assertEquals(StatusEntity.notFound("Participant not found", true),
+        assertEquals(StatusEntity.notFound(true, "Participant not found"),
                 participantController.deleteParticipant(participant));
 
         assertFalse(participantRepository.existsById(participant.getId()));
@@ -367,13 +368,13 @@ public class ParticipantControllerTest {
         eventRepository.save(event);
         participantController.createParticipant(participant);
 
-        assertEquals(StatusEntity.ok(List.of(participant)), participantController.readParticipants(event.getId()));
+        assertEquals(StatusEntity.ok((ParticipantList) List.of(participant)), participantController.readParticipants(event.getId()));
     }
 
     @Test
     void checkReadParticipantsEventNotFound() {
         UUID uuid = UUID.randomUUID();
 
-        assertEquals(StatusEntity.notFound(null, true), participantController.readParticipants(uuid));
+        assertEquals(StatusEntity.notFound(true, (ParticipantList) null), participantController.readParticipants(uuid));
     }
 }
