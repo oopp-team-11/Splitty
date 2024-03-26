@@ -114,7 +114,7 @@ public class CreateParticipantCtrl {
 
         try {
             serverUtils.createParticipant(event.getId(), firstNameString, lastNameString, emailString,
-                    ibanString, bicString, "http://localhost:8080");
+                    ibanString, bicString, "http://" + mainCtrl.getServerIp());
         }
         catch (IOException | InterruptedException e)
         {

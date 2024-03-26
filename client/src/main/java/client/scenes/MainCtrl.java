@@ -16,6 +16,7 @@
 package client.scenes;
 
 import client.utils.EventDataHandler;
+import client.utils.FileSystemUtils;
 import client.utils.WebsocketSessionHandler;
 import commons.Event;
 import commons.Expense;
@@ -28,6 +29,9 @@ import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Main scene controller. It oversights currently active scenes, switches between them,
@@ -57,6 +61,7 @@ public class MainCtrl {
 
     private WebsocketSessionHandler sessionHandler;
     private EventDataHandler dataHandler;
+    private String serverIp;
 
     /**
      * Initializes javafx scenes and their controllers, sets start screen as the currently shown screen
@@ -96,6 +101,9 @@ public class MainCtrl {
         this.eventOverviewScene = new Scene(eventOverview.getValue());
 
         this.dataHandler = new EventDataHandler();
+
+        // Needs to be before the start websocket method
+        setServerIp();
 
         startWebSocket();
 
@@ -200,7 +208,7 @@ public class MainCtrl {
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
         sessionHandler = new WebsocketSessionHandler(dataHandler, this);
-        stompClient.connectAsync("ws://localhost:8080/v1", sessionHandler);
+        stompClient.connectAsync("ws://" + this.serverIp + "/v1", sessionHandler);
     }
 
     /**
@@ -233,5 +241,23 @@ public class MainCtrl {
      */
     public void setDataHandler(EventDataHandler dataHandler) {
         this.dataHandler = dataHandler;
+    }
+
+    private void setServerIp(){
+        FileSystemUtils utils = new FileSystemUtils();
+        try {
+            this.serverIp = utils.getServerIP("client-config.json");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Did not find client config file." + e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Standard Getter for server ip
+     */
+    public String getServerIp(){
+        return this.serverIp;
     }
 }

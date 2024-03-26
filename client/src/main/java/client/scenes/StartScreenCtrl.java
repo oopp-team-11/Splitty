@@ -139,7 +139,7 @@ public class StartScreenCtrl implements Initializable {
     public void refresh() {
         System.out.println("REFRESH");
         try {
-            var events = serverUtils.getRecentEvents("http://127.0.0.1:8080", "config.json");
+            var events = serverUtils.getRecentEvents("http://" + mainCtrl.getServerIp(), "config.json");
             ObservableList<Event> data = FXCollections.observableList(events);
             eventTable.setItems(data);
             List<UUID> eventIds = eventTable.getItems().stream().map(Event::getId).collect(Collectors.toList());
@@ -161,7 +161,7 @@ public class StartScreenCtrl implements Initializable {
         // TODO: validate eventName first
         UUID invitationCode;
         try {
-            invitationCode = serverUtils.createEvent(eventName, "http://localhost:8080");
+            invitationCode = serverUtils.createEvent(eventName, "http://" + mainCtrl.getServerIp());
         } catch (IOException | InterruptedException e) {
             serverErrorAlert(e);
             return;
@@ -241,7 +241,7 @@ public class StartScreenCtrl implements Initializable {
                     String eventIdsParam = String.join(",", eventIds.stream().map(UUID::toString)
                             .collect(Collectors.toList()));
                     Client client = ClientBuilder.newClient();
-                    Response response = client.target("http://localhost:8080/events/updates")
+                    Response response = client.target("http://" + mainCtrl.getServerIp() + "/events/updates")
                             .queryParam("query", "updates")
                             .queryParam("invitationCodes", eventIdsParam)
                             .request(MediaType.APPLICATION_JSON)
