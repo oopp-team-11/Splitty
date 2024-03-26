@@ -131,6 +131,7 @@ public class FileSystemUtils {
 
     /**
      * Gets the server ip from the client-config.json
+     * @param path path to client config file
      * @return String of server ip address
      */
     public String getServerIP(String path) throws IOException {

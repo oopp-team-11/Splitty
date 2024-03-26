@@ -256,6 +256,7 @@ public class MainCtrl {
 
     /**
      * Standard Getter for server ip
+     * @return String of serverIp
      */
     public String getServerIp(){
         return this.serverIp;
