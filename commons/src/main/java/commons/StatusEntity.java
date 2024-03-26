@@ -146,6 +146,46 @@ public class StatusEntity {
     }
 
     /**
+     * Getter for message
+     * @return Message
+     */
+    public String getMessage() {
+        return message;
+    }
+
+    /**
+     * Getter for event
+     * @return Event
+     */
+    public Event getEvent() {
+        return event;
+    }
+
+    /**
+     * Getter for eventList
+     * @return eventList
+     */
+    public EventList getEventList() {
+        return eventList;
+    }
+
+    /**
+     * Getter for participantList
+     * @return participantList
+     */
+    public ParticipantList getParticipantList() {
+        return participantList;
+    }
+
+    /**
+     * Getter for expenseList
+     * @return expenseList
+     */
+    public ExpenseList getExpenseList() {
+        return expenseList;
+    }
+
+    /**
      * Equals method for StatusEntity
      * @param obj Object that we compare the StatusEntity to
      * @return true/false
