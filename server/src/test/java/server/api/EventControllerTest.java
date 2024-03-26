@@ -26,7 +26,6 @@ public class EventControllerTest {
     private TestEventRepository eventRepo;
     private SimpMessagingTemplate messagingTemplate;
     private EventController sut;
-    private Principal principal;
 
     private static void setId(Event toSet, UUID newId) throws IllegalAccessException {
         FieldUtils.writeField(toSet, "id", newId, true);
@@ -38,7 +37,6 @@ public class EventControllerTest {
         messagingTemplate = mock(SimpMessagingTemplate.class);
         eventRepo = new TestEventRepository();
         sut = new EventController(messagingTemplate, eventRepo);
-        principal = mock(Principal.class);
     }
 
     // GET: ?query=title&invitationCodes={}
@@ -136,13 +134,13 @@ public class EventControllerTest {
 
         event.setTitle(null);
 
-        assertEquals(StatusEntity.badRequest("Event title should not be empty", true),
+        assertEquals(StatusEntity.badRequest(true, "Event title should not be empty"),
                 sut.updateEvent(event));
     }
 
     @Test
     void checkUpdateEventNotProvided() {
-        assertEquals(StatusEntity.badRequest("Event object not found in message body", true),
+        assertEquals(StatusEntity.badRequest(true, "Event object not found in message body"),
                 sut.updateEvent(null));
     }
 
@@ -154,7 +152,7 @@ public class EventControllerTest {
             setId(event, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        assertEquals(StatusEntity.notFound("Event not found", true), sut.updateEvent(event));
+        assertEquals(StatusEntity.notFound(true, "Event not found"), sut.updateEvent(event));
 
         assertFalse(eventRepo.existsById(event.getId()));
     }
@@ -186,7 +184,7 @@ public class EventControllerTest {
             setId(event, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
 
-        assertEquals(StatusEntity.notFound("Event not found", true), sut.deleteEvent(event));
+        assertEquals(StatusEntity.notFound(true, "Event not found"), sut.deleteEvent(event));
 
         assertFalse(eventRepo.existsById(event.getId()));
     }
@@ -195,7 +193,7 @@ public class EventControllerTest {
     void checkDeleteEventNull() {
         Event event = null;
 
-        assertEquals(StatusEntity.badRequest("Event should not be null", true), sut.deleteEvent(event));
+        assertEquals(StatusEntity.badRequest(true, "Event should not be null"), sut.deleteEvent(event));
     }
 
     //TODO: add a test for unauthorized access
@@ -215,13 +213,13 @@ public class EventControllerTest {
 
     @Test
     void checkReadEventCodeNotProvided() {
-        assertEquals(StatusEntity.badRequest(null, true), sut.readEvent(null));
+        assertEquals(StatusEntity.badRequest(true, (Event) null), sut.readEvent(null));
     }
 
     @Test
     void checkReadEventNotFound() {
         UUID uuid = UUID.randomUUID();
-        assertEquals(StatusEntity.notFound(null, true), sut.readEvent(uuid));
+        assertEquals(StatusEntity.notFound(true, (Event) null), sut.readEvent(uuid));
 
         assertFalse(eventRepo.existsById(uuid));
     }
