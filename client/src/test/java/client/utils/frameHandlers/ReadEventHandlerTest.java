@@ -29,14 +29,14 @@ class ReadEventHandlerTest {
 
     @Test
     void getPayloadType() {
-        assertEquals(new ParameterizedTypeReference<StatusEntity<Event>>() {}.getType(),
+        assertEquals(new ParameterizedTypeReference<StatusEntity>() {}.getType(),
                 handler.getPayloadType(headers));
     }
 
     @Test
     void handleFrameOK() {
         Event event = new Event("testEvent");
-        StatusEntity<Event> status = StatusEntity.ok(event);
+        StatusEntity status = StatusEntity.ok(event);
         handler.handleFrame(headers, status);
         verify(dataHandler).setEvent(event);
     }

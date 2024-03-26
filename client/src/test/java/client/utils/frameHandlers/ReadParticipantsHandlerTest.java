@@ -4,6 +4,7 @@ import client.scenes.MainCtrl;
 import client.utils.EventDataHandler;
 import commons.Expense;
 import commons.Participant;
+import commons.ParticipantList;
 import commons.StatusEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,16 +34,16 @@ class ReadParticipantsHandlerTest {
 
     @Test
     void getPayloadType() {
-        assertEquals(new ParameterizedTypeReference<StatusEntity<List<Participant>>>() {}.getType(),
+        assertEquals(new ParameterizedTypeReference<StatusEntity>() {}.getType(),
                 handler.getPayloadType(headers));
     }
 
     @Test
     void handleFrame() {
-        List<Participant> participants = new ArrayList<>();
+        ParticipantList participants = new ParticipantList();
         participants.add(new Participant());
         participants.add(new Participant());
-        StatusEntity<List<Participant>> status = StatusEntity.ok(participants);
+        StatusEntity status = StatusEntity.ok(participants);
         handler.handleFrame(headers, status);
         verify(dataHandler).setParticipants(participants);
     }

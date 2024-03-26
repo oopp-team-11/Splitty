@@ -24,13 +24,13 @@ class StatusCodeHandlerTest {
 
     @Test
     void getPayloadType() {
-        assertEquals(new ParameterizedTypeReference<StatusEntity<String>>() {}.getType(),
+        assertEquals(new ParameterizedTypeReference<StatusEntity>() {}.getType(),
                 handler.getPayloadType(headers));
     }
 
     @Test
     void handleFrame() {
-        StatusEntity<String> status = StatusEntity.ok("testMessage");
+        StatusEntity status = StatusEntity.ok("testMessage");
         handler.handleFrame(headers, status);
         //TODO: verify(mainCtrl).notifyAboutResponse(status);
     }

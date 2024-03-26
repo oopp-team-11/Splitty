@@ -115,7 +115,7 @@ public class EventController {
             return StatusEntity.badRequest(true, "Event title should not be empty");
 
         if(!repo.existsById(receivedEvent.getId()))
-            return StatusEntity.badRequest(true, "Event not found");
+            return StatusEntity.notFound(true, "Event not found");
 
         Event event = repo.getReferenceById(receivedEvent.getId());
         event.setTitle(receivedEvent.getTitle());

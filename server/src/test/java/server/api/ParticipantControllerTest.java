@@ -368,7 +368,10 @@ public class ParticipantControllerTest {
         eventRepository.save(event);
         participantController.createParticipant(participant);
 
-        assertEquals(StatusEntity.ok((ParticipantList) List.of(participant)), participantController.readParticipants(event.getId()));
+        ParticipantList participantList = new ParticipantList();
+        participantList.add(participant);
+
+        assertEquals(StatusEntity.ok(participantList), participantController.readParticipants(event.getId()));
     }
 
     @Test

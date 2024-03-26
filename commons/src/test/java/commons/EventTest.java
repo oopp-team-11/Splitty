@@ -126,7 +126,7 @@ public class EventTest {
 
     @Test
     void getParticipantsTest() {
-        List<Participant> participants = event.getParticipants();
+        var participants = event.getParticipants();
         assertEquals(2, participants.size());
         assertEquals("John", participants.getFirst().getFirstName());
     }
