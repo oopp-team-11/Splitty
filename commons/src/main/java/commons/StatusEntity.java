@@ -65,84 +65,162 @@ public class StatusEntity {
 
     /**
      * Static method that builds a status entity with the OK status code.
-     * Choose one of the last five parameters and pass null to the rest of those four
      * @param message String message for create/update/delete endpoints
-     * @param event Event for event:read endpoint
-     * @param eventList EventList for admin endpoints
-     * @param participantList ParticipantList for participants:read endpoint
-     * @param expenseList ExpenseList for expenses:read endpoint
      * @return Status entity holding status code, models, and boolean unsolvable
      */
-    public static StatusEntity ok(String message, Event event,
-                                  EventList eventList, ParticipantList participantList, ExpenseList expenseList)
+    public static StatusEntity ok(String message)
     {
-        return new StatusEntity(OK, false, message, event, eventList, participantList, expenseList);
+        return new StatusEntity(OK, false, message, null, null, null, null);
     }
 
     /**
-     * Static method that builds a status entity with the BAD_REQUEST status code and unsolvable = false.
-     * Choose one of the last five parameters and pass null to the rest of those four
-     * @param message String message for create/update/delete endpoints
+     * Static method that builds a status entity with the OK status code.
      * @param event Event for event:read endpoint
+     * @return Status entity holding status code, models, and boolean unsolvable
+     */
+    public static StatusEntity ok(Event event)
+    {
+        return new StatusEntity(OK, false, null, event, null, null, null);
+    }
+
+    /**
+     * Static method that builds a status entity with the OK status code.
      * @param eventList EventList for admin endpoints
+     * @return Status entity holding status code, models, and boolean unsolvable
+     */
+    public static StatusEntity ok(EventList eventList)
+    {
+        return new StatusEntity(OK, false, null, null, eventList, null, null);
+    }
+
+    /**
+     * Static method that builds a status entity with the OK status code.
      * @param participantList ParticipantList for participants:read endpoint
+     * @return Status entity holding status code, models, and boolean unsolvable
+     */
+    public static StatusEntity ok(ParticipantList participantList)
+    {
+        return new StatusEntity(OK, false, null, null, null, participantList, null);
+    }
+
+    /**
+     * Static method that builds a status entity with the OK status code.
      * @param expenseList ExpenseList for expenses:read endpoint
      * @return Status entity holding status code, models, and boolean unsolvable
      */
-    public static StatusEntity badRequest(String message, Event event,
-                                  EventList eventList, ParticipantList participantList, ExpenseList expenseList)
+    public static StatusEntity ok(ExpenseList expenseList)
     {
-        return new StatusEntity(BAD_REQUEST, false, message, event, eventList, participantList, expenseList);
+        return new StatusEntity(OK, false, null, null, null, null, expenseList);
     }
 
     /**
      * Static method that builds a status entity with the BAD_REQUEST status code.
-     * Choose one of the last five parameters and pass null to the rest of those four
      * @param unsolvable Boolean that indicates whether the conflict is unsolvable (info might be needed by the client)
      * @param message String message for create/update/delete endpoints
-     * @param event Event for event:read endpoint
-     * @param eventList EventList for admin endpoints
-     * @param participantList ParticipantList for participants:read endpoint
-     * @param expenseList ExpenseList for expenses:read endpoint
      * @return Status entity holding status code, models, and boolean unsolvable
      */
-    public static StatusEntity badRequest(boolean unsolvable, String message, Event event,
-                                          EventList eventList, ParticipantList participantList, ExpenseList expenseList)
+    public static StatusEntity badRequest(boolean unsolvable, String message)
     {
-        return new StatusEntity(BAD_REQUEST, unsolvable, message, event, eventList, participantList, expenseList);
+        return new StatusEntity(BAD_REQUEST, unsolvable, message, null, null, null, null);
     }
 
     /**
-     * Static method that builds a status entity with the NOT_FOUND status code and unsolvable = false.
-     * Choose one of the last five parameters and pass null to the rest of those four
-     * @param message String message for create/update/delete endpoints
+     * Static method that builds a status entity with the BAD_REQUEST status code.
+     * @param unsolvable Boolean that indicates whether the conflict is unsolvable (info might be needed by the client)
      * @param event Event for event:read endpoint
+     * @return Status entity holding status code, models, and boolean unsolvable
+     */
+    public static StatusEntity badRequest(boolean unsolvable, Event event)
+    {
+        return new StatusEntity(BAD_REQUEST, unsolvable, null, event, null, null, null);
+    }
+
+    /**
+     * Static method that builds a status entity with the BAD_REQUEST status code.
+     * @param unsolvable Boolean that indicates whether the conflict is unsolvable (info might be needed by the client)
      * @param eventList EventList for admin endpoints
+     * @return Status entity holding status code, models, and boolean unsolvable
+     */
+    public static StatusEntity badRequest(boolean unsolvable, EventList eventList)
+    {
+        return new StatusEntity(BAD_REQUEST, unsolvable, null, null, eventList, null, null);
+    }
+
+    /**
+     * Static method that builds a status entity with the BAD_REQUEST status code.
+     * @param unsolvable Boolean that indicates whether the conflict is unsolvable (info might be needed by the client)
      * @param participantList ParticipantList for participants:read endpoint
+     * @return Status entity holding status code, models, and boolean unsolvable
+     */
+    public static StatusEntity badRequest(boolean unsolvable, ParticipantList participantList)
+    {
+        return new StatusEntity(BAD_REQUEST, unsolvable, null, null, null, participantList, null);
+    }
+
+    /**
+     * Static method that builds a status entity with the BAD_REQUEST status code.
+     * @param unsolvable Boolean that indicates whether the conflict is unsolvable (info might be needed by the client)
      * @param expenseList ExpenseList for expenses:read endpoint
      * @return Status entity holding status code, models, and boolean unsolvable
      */
-    public static StatusEntity notFound(String message, Event event,
-                                          EventList eventList, ParticipantList participantList, ExpenseList expenseList)
+    public static StatusEntity badRequest(boolean unsolvable, ExpenseList expenseList)
     {
-        return new StatusEntity(NOT_FOUND, false, message, event, eventList, participantList, expenseList);
+        return new StatusEntity(BAD_REQUEST, unsolvable, null, null, null, null, expenseList);
     }
 
     /**
      * Static method that builds a status entity with the NOT_FOUND status code.
-     * Choose one of the last five parameters and pass null to the rest of those four
      * @param unsolvable Boolean that indicates whether the conflict is unsolvable (info might be needed by the client)
      * @param message String message for create/update/delete endpoints
+     * @return Status entity holding status code, models, and boolean unsolvable
+     */
+    public static StatusEntity notFound(boolean unsolvable, String message)
+    {
+        return new StatusEntity(NOT_FOUND, unsolvable, message, null, null, null, null);
+    }
+
+    /**
+     * Static method that builds a status entity with the NOT_FOUND status code.
+     * @param unsolvable Boolean that indicates whether the conflict is unsolvable (info might be needed by the client)
      * @param event Event for event:read endpoint
+     * @return Status entity holding status code, models, and boolean unsolvable
+     */
+    public static StatusEntity notFound(boolean unsolvable, Event event)
+    {
+        return new StatusEntity(NOT_FOUND, unsolvable, null, event, null, null, null);
+    }
+
+    /**
+     * Static method that builds a status entity with the NOT_FOUND status code.
+     * @param unsolvable Boolean that indicates whether the conflict is unsolvable (info might be needed by the client)
      * @param eventList EventList for admin endpoints
+     * @return Status entity holding status code, models, and boolean unsolvable
+     */
+    public static StatusEntity notFound(boolean unsolvable, EventList eventList)
+    {
+        return new StatusEntity(NOT_FOUND, unsolvable, null, null, eventList, null, null);
+    }
+
+    /**
+     * Static method that builds a status entity with the NOT_FOUND status code.
+     * @param unsolvable Boolean that indicates whether the conflict is unsolvable (info might be needed by the client)
      * @param participantList ParticipantList for participants:read endpoint
+     * @return Status entity holding status code, models, and boolean unsolvable
+     */
+    public static StatusEntity notFound(boolean unsolvable, ParticipantList participantList)
+    {
+        return new StatusEntity(NOT_FOUND, unsolvable, null, null, null, participantList, null);
+    }
+
+    /**
+     * Static method that builds a status entity with the NOT_FOUND status code.
+     * @param unsolvable Boolean that indicates whether the conflict is unsolvable (info might be needed by the client)
      * @param expenseList ExpenseList for expenses:read endpoint
      * @return Status entity holding status code, models, and boolean unsolvable
      */
-    public static StatusEntity notFound(boolean unsolvable, String message, Event event,
-                                          EventList eventList, ParticipantList participantList, ExpenseList expenseList)
+    public static StatusEntity notFound(boolean unsolvable, ExpenseList expenseList)
     {
-        return new StatusEntity(NOT_FOUND, unsolvable, message, event, eventList, participantList, expenseList);
+        return new StatusEntity(NOT_FOUND, unsolvable, null, null, null, null, expenseList);
     }
 
     /**

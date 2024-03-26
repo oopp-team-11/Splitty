@@ -16,8 +16,7 @@ public class StatusEntityTest {
 
     @Test
     void checkOk() {
-        StatusEntity statusEntity = StatusEntity.ok(
-                null, event, null, null, null);
+        StatusEntity statusEntity = StatusEntity.ok(event);
         assertNull(statusEntity.getMessage());
         assertNull(statusEntity.getEventList());
         assertNull(statusEntity.getParticipantList());
@@ -29,8 +28,7 @@ public class StatusEntityTest {
 
     @Test
     void checkBadRequestSolvable() {
-        StatusEntity statusEntity = StatusEntity.badRequest(
-                null, event, null, null, null);
+        StatusEntity statusEntity = StatusEntity.badRequest(false, event);
         assertNull(statusEntity.getMessage());
         assertNull(statusEntity.getEventList());
         assertNull(statusEntity.getParticipantList());
@@ -42,8 +40,7 @@ public class StatusEntityTest {
 
     @Test
     void checkBadRequestUnsolvable() {
-        StatusEntity statusEntity = StatusEntity.badRequest(
-                true, null, event, null, null, null);
+        StatusEntity statusEntity = StatusEntity.badRequest(true, event);
         assertNull(statusEntity.getMessage());
         assertNull(statusEntity.getEventList());
         assertNull(statusEntity.getParticipantList());
@@ -55,8 +52,7 @@ public class StatusEntityTest {
 
     @Test
     void checkNotFoundSolvable() {
-        StatusEntity statusEntity = StatusEntity.notFound(
-                null, event, null, null, null);
+        StatusEntity statusEntity = StatusEntity.notFound(false, event);
         assertNull(statusEntity.getMessage());
         assertNull(statusEntity.getEventList());
         assertNull(statusEntity.getParticipantList());
@@ -68,9 +64,7 @@ public class StatusEntityTest {
 
     @Test
     void checkNotFoundUnsolvable() {
-        StatusEntity statusEntity = StatusEntity.notFound(
-                true, null, event, null, null, null
-        );
+        StatusEntity statusEntity = StatusEntity.notFound(true, event);
         assertNull(statusEntity.getMessage());
         assertNull(statusEntity.getEventList());
         assertNull(statusEntity.getParticipantList());
@@ -82,8 +76,7 @@ public class StatusEntityTest {
 
     @Test
     void getStatusCode() {
-        StatusEntity statusEntity = StatusEntity.badRequest(
-                true, null, event, null, null, null);
+        StatusEntity statusEntity = StatusEntity.badRequest(true, event);
         assertEquals(statusEntity.getStatusCode(), BAD_REQUEST);
     }
 
@@ -91,7 +84,7 @@ public class StatusEntityTest {
     void isUnsolvable()
     {
         StatusEntity statusEntity = StatusEntity.badRequest(
-                true, null, event, null, null, null);
+                true, event);
         assertTrue(statusEntity.isUnsolvable());
     }
 
@@ -99,7 +92,7 @@ public class StatusEntityTest {
     void getMessage()
     {
         StatusEntity statusEntity = StatusEntity.badRequest(
-                true, new String("string"), null, null, null, null);
+                true, new String("string"));
         assertEquals(new String("string"), statusEntity.getMessage());
     }
 
@@ -107,7 +100,7 @@ public class StatusEntityTest {
     void getEvent()
     {
         StatusEntity statusEntity = StatusEntity.badRequest(
-                true, null, event, null, null, null);
+                true, event);
         assertEquals(event, statusEntity.getEvent());
     }
 
@@ -115,7 +108,7 @@ public class StatusEntityTest {
     void getEventList()
     {
         StatusEntity statusEntity = StatusEntity.badRequest(
-                true, null, null, new EventList(), null, null);
+                true, new EventList());
         assertEquals(new EventList(), statusEntity.getEventList());
     }
 
@@ -123,7 +116,7 @@ public class StatusEntityTest {
     void getParticipantList()
     {
         StatusEntity statusEntity = StatusEntity.badRequest(
-                true, null, null, null, new ParticipantList(), null);
+                true, new ParticipantList());
         assertEquals(new ParticipantList(), statusEntity.getParticipantList());
     }
 
@@ -131,7 +124,7 @@ public class StatusEntityTest {
     void getExpenseList()
     {
         StatusEntity statusEntity = StatusEntity.badRequest(
-                true, null, null, null, null, new ExpenseList());
+                true, new ExpenseList());
         assertEquals(new ExpenseList(), statusEntity.getExpenseList());
     }
 }
