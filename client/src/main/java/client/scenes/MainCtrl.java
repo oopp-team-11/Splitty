@@ -16,7 +16,7 @@
 package client.scenes;
 
 import client.utils.EventDataHandler;
-import client.utils.EventStompSessionHandler;
+import client.utils.WebsocketSessionHandler;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
@@ -28,8 +28,6 @@ import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
-
-import java.util.UUID;
 
 /**
  * Main scene controller. It oversights currently active scenes, switches between them,
@@ -57,7 +55,7 @@ public class MainCtrl {
     private EventOverviewCtrl eventOverviewCtrl;
     private Scene eventOverviewScene;
 
-    private EventStompSessionHandler sessionHandler;
+    private WebsocketSessionHandler sessionHandler;
     private EventDataHandler dataHandler;
 
     /**
@@ -96,6 +94,10 @@ public class MainCtrl {
 
         this.eventOverviewCtrl = eventOverview.getKey();
         this.eventOverviewScene = new Scene(eventOverview.getValue());
+
+        this.dataHandler = new EventDataHandler();
+
+        startWebSocket();
 
         showStartScreen();
 
@@ -189,17 +191,15 @@ public class MainCtrl {
     }
 
     /**
-     * Start websocket using invitationCode of event
-     * @param invitationCode of event to start websocket on
+     * Start websocket connection
      */
-    public void startWebSocket(UUID invitationCode){
+    public void startWebSocket(){
         WebSocketClient client = new StandardWebSocketClient();
 
         WebSocketStompClient stompClient = new WebSocketStompClient(client);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
-        //TODO:Change new EventDataHandler to the actual reference
-        sessionHandler = new EventStompSessionHandler(invitationCode, new EventDataHandler(), this);
+        sessionHandler = new WebsocketSessionHandler(dataHandler, this);
         stompClient.connectAsync("ws://localhost:8080/v1", sessionHandler);
     }
 
@@ -207,7 +207,7 @@ public class MainCtrl {
      * Standard getter for sessionHandler
      * @return current sessionHandler
      */
-    public EventStompSessionHandler getSessionHandler() {
+    public WebsocketSessionHandler getSessionHandler() {
         return sessionHandler;
     }
 
@@ -215,7 +215,7 @@ public class MainCtrl {
      * Standard setter for sessionHandler
      * @param sessionHandler new sessionHandler to use
      */
-    public void setSessionHandler(EventStompSessionHandler sessionHandler) {
+    public void setSessionHandler(WebsocketSessionHandler sessionHandler) {
         this.sessionHandler = sessionHandler;
     }
 

@@ -174,12 +174,7 @@ public class StartScreenCtrl implements Initializable {
             fileSaveErrorAlert(e);
             return;
         }
-
-        try {
-            serverUtils.getEvent(invitationCode, "http://localhost:8080");
-        } catch (IOException | InterruptedException e) {
-            serverErrorAlert(e);
-        }
+        mainCtrl.getSessionHandler().subscribeToEvent(invitationCode);
     }
 
     /**
@@ -213,13 +208,7 @@ public class StartScreenCtrl implements Initializable {
             return;
         }
 
-        try {
-            serverUtils.getEvent(invitationCode, "http://localhost:8080");
-        } catch (IOException | InterruptedException e) {
-            serverErrorAlert(e);
-        }
-
-        mainCtrl.startWebSocket(invitationCode);
+        mainCtrl.getSessionHandler().subscribeToEvent(invitationCode);
     }
 
     private static void serverErrorAlert(Exception exception) {

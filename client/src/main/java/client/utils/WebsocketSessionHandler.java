@@ -10,29 +10,31 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
  * StompSessionHandler for handling a WebSocket client connection.
  * Listens to /event/{invitationCode} topic.
  */
-public class EventStompSessionHandler extends StompSessionHandlerAdapter {
-    private final UUID invitationCode;
+public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
+    private UUID invitationCode;
+    private List<StompSession.Subscription> eventSubscriptions;
     private final EventDataHandler dataHandler;
     private final MainCtrl mainCtrl;
     private StompSession session;
 
     /**
-     * Custom constructor for EventStompSessionHandler
+     * Custom constructor for WebsocketSessionHandler
      *
-     * @param invitationCode invitationCode for the event
      * @param dataHandler    dataHandler of the client
      * @param mainCtrl       mainCtrl of the client
      */
-    public EventStompSessionHandler(UUID invitationCode, EventDataHandler dataHandler, MainCtrl mainCtrl) {
+    public WebsocketSessionHandler(EventDataHandler dataHandler, MainCtrl mainCtrl) {
         this.dataHandler = dataHandler;
-        this.invitationCode = invitationCode;
         this.mainCtrl = mainCtrl;
+        this.eventSubscriptions = new ArrayList<>();
         dataHandler.setSessionHandler(this);
     }
 
@@ -45,50 +47,70 @@ public class EventStompSessionHandler extends StompSessionHandlerAdapter {
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
         this.session = session;
-
-        //We want to track event deletion as soon as possible
-        session.subscribe("/topic/" + invitationCode + "/event:delete",
-                new DeleteEventHandler(dataHandler));
         //Subscribe to receive status codes
         session.subscribe("/user/queue/reply", new StatusCodeHandler(mainCtrl));
-
-        //Initial event read
+        //Subscribe to user specific endpoints
         session.subscribe("/user/queue/event:read",
                 new ReadEventHandler(dataHandler, mainCtrl));
-        session.send("/app/event:read", invitationCode);
-        //Track event updates
-        session.subscribe("/topic/" + invitationCode + "/event:update",
-                new UpdateEventHandler(dataHandler));
-
-        //Initial participants read
         session.subscribe("/user/queue/participants:read",
                 new ReadParticipantsHandler(dataHandler, mainCtrl));
-        session.send("/app/participants:read", invitationCode);
-        //Track participants updates
-        session.subscribe("/topic/" + invitationCode + "/participant:delete",
-                new DeleteParticipantHandler(dataHandler));
-        session.subscribe("/topic/" + invitationCode + "/participant:update",
-                new UpdateParticipantHandler(dataHandler));
-        session.subscribe("/topic/" + invitationCode + "/participant:create",
-                new CreateParticipantHandler(dataHandler));
-
-        //Initial expenses read
         session.subscribe("/user/queue/expenses:read",
-                new ReadEventHandler(dataHandler, mainCtrl));
-        session.send("/app/expenses:read", invitationCode);
-        //Track expenses updates
-        session.subscribe("/topic/" + invitationCode + "/expense:delete",
-                new DeleteExpenseHandler(dataHandler));
-        session.subscribe("/topic/" + invitationCode + "/expense:update",
-                new UpdateExpenseHandler(dataHandler));
-        session.subscribe("/topic/" + invitationCode + "/expense:create",
-                new CreateExpenseHandler(dataHandler));
+                new ReadExpensesHandler(dataHandler, mainCtrl));
     }
 
     @Override
     public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload,
                                 Throwable exception) {
         throw new RuntimeException("Failure in WebSocket handling", exception);
+    }
+
+    /**
+     * Subscribe to event specific endpoints
+     *
+     * @param invitationCode invitationCode of the event to subscribe to
+     */
+    public void subscribeToEvent(UUID invitationCode) throws IllegalStateException {
+        if (!eventSubscriptions.isEmpty())
+            throw new IllegalStateException("User did not unsubscribe before subscribing to a new event.");
+        this.invitationCode = invitationCode;
+        //We want to track event deletion as soon as possible
+        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/event:delete",
+                new DeleteEventHandler(dataHandler)));
+        //Initial event read
+        session.send("/app/event:read", invitationCode);
+        //Track event updates
+        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/event:update",
+                new UpdateEventHandler(dataHandler)));
+
+        //Initial participants read
+        session.send("/app/participants:read", invitationCode);
+        //Track participants updates
+        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/participant:delete",
+                new DeleteParticipantHandler(dataHandler)));
+        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/participant:update",
+                new UpdateParticipantHandler(dataHandler)));
+        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/participant:create",
+                new CreateParticipantHandler(dataHandler)));
+
+        //Initial expenses read
+        session.send("/app/expenses:read", invitationCode);
+        //Track expenses updates
+        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/expense:delete",
+                new DeleteExpenseHandler(dataHandler)));
+        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/expense:update",
+                new UpdateExpenseHandler(dataHandler)));
+        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/expense:create",
+                new CreateExpenseHandler(dataHandler)));
+    }
+
+    /**
+     * Unsubscribes from current event's specific topics and sets current invitationCode to null
+     */
+    public void unsubscribeFromCurrentEvent() {
+        this.invitationCode = null;
+        for (var subscription : eventSubscriptions)
+            subscription.unsubscribe();
+        eventSubscriptions.clear();
     }
 
     /**
