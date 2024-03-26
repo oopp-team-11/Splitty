@@ -59,7 +59,7 @@ public class Participant {
      * Constructor
      */
     public Participant() {
-        this.madeExpenses = new ArrayList<>();
+
     }
 
     /**
@@ -192,14 +192,6 @@ public class Participant {
      */
     public void setEventId(UUID eventId) {
         this.eventId = eventId;
-    }
-
-    /**
-     * Setter for event
-     * @param event parent event
-     */
-    public void setEvent(Event event) {
-        this.event = event;
     }
 
     @Override

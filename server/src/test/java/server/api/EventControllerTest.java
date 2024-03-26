@@ -191,6 +191,13 @@ public class EventControllerTest {
         assertFalse(eventRepo.existsById(event.getId()));
     }
 
+    @Test
+    void checkDeleteEventNull() {
+        Event event = null;
+
+        assertEquals(StatusEntity.badRequest("Event should not be null", true), sut.deleteEvent(event));
+    }
+
     //TODO: add a test for unauthorized access
 
     @Test

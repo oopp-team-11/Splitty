@@ -46,7 +46,14 @@ public class ExpenseControllerTest {
 
     @Test
     void checkCreateExpense() {
-        Participant participant = participantRepository.save(new Participant());
+        Participant participant = participantRepository.save(new Participant(
+                new Event(),
+                "abc",
+                "def",
+                "a@b.c",
+                null,
+                null
+        ));
         Expense expense = new Expense(participant, "expense", 21.37);
         UUID invitationCode = UUID.randomUUID();
         expense.setPaidById(participant.getId());

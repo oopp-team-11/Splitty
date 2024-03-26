@@ -90,7 +90,7 @@ public class ExpenseController {
      * @return returns a StatusEntity with an error message
      */
     @MessageMapping("/expense:create")
-    @SendToUser("/queue/reply")
+    @SendToUser(value = "/queue/reply", broadcast = false)
     public StatusEntity<String> createExpense(Expense receivedExpense)
     {
         StatusEntity<String> badRequest = isExpenseBadRequest(receivedExpense);
@@ -122,7 +122,7 @@ public class ExpenseController {
      * @return StatusEntity containing a list of all Event's expenses in body
      */
     @MessageMapping("/expenses:read")
-    @SendToUser("/queue/expenses:read")
+    @SendToUser(value = "/queue/expenses:read", broadcast = false)
     public StatusEntity<List<Expense>> readExpenses(UUID invitationCode)
     {
         if(invitationCode == null)
@@ -153,7 +153,7 @@ public class ExpenseController {
      * @return returns a StatusEntity with an error message
      */
     @MessageMapping("/expense:update")
-    @SendToUser("/queue/reply")
+    @SendToUser(value = "/queue/reply", broadcast = false)
     public StatusEntity<String> updateExpense(Expense receivedExpense)
     {
         StatusEntity<String> badRequest = isExpenseBadRequest(receivedExpense);
@@ -182,7 +182,7 @@ public class ExpenseController {
      * @return returns a StatusEntity with an error message
      */
     @MessageMapping("/expense:delete")
-    @SendToUser("/queue/reply")
+    @SendToUser(value = "/queue/reply", broadcast = false)
     public StatusEntity<String> deleteExpense(Expense receivedExpense)
     {
         if (receivedExpense == null)

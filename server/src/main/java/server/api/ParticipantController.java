@@ -1,8 +1,8 @@
 package server.api;
 
+import commons.Event;
 import commons.Participant;
 import commons.StatusEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import server.database.EventRepository;
 import server.database.ParticipantRepository;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -20,8 +21,7 @@ import java.util.regex.Pattern;
 public class ParticipantController {
     private final ParticipantRepository participantRepository;
     private final EventRepository eventRepository;
-    @Autowired
-    private SimpMessagingTemplate template;
+    private final SimpMessagingTemplate template;
 
     /**
      * Constructor
@@ -41,54 +41,106 @@ public class ParticipantController {
     }
 
     /**
-     * Handles create websocket endpoint for participant
-     * @param receivedParticipant Participant we want to create
-     * @return StatusEntity<String> body contains description of success/failure
+     * Evaluates whether the received Participant object has all the correct field values
+     *
+     * @param receivedParticipant received Participant object
+     * @return Returns a statusEntity with an error message, if it is a bad request
+     * Returns an OK status with null body otherwise
      */
-    @MessageMapping("/participant:create")
-    @SendToUser("/queue/reply")
-    public StatusEntity<String> createParticipant(Participant receivedParticipant)
+    public StatusEntity<String> isParticipantBadRequest(Participant receivedParticipant)
     {
+        if (receivedParticipant == null)
+            return StatusEntity.badRequest("Participant should not be null", true);
+        if(receivedParticipant.getEventId() == null)
+            return StatusEntity.badRequest("InvitationCode of event should be provided", true);
         if (isNullOrEmpty(receivedParticipant.getFirstName())) {
             return StatusEntity.badRequest("First name should not be empty");
         }
         if (isNullOrEmpty(receivedParticipant.getLastName())) {
             return StatusEntity.badRequest("Last name should not be empty");
         }
-        if(!receivedParticipant.getEmail().isEmpty() &&
+        if(isNullOrEmpty(receivedParticipant.getEmail()) ||
                 !Pattern.compile("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$").
                         matcher(receivedParticipant.getEmail()).matches())
         {
             return StatusEntity.badRequest("Provided email is invalid");
         }
 
-        receivedParticipant.setEvent(eventRepository.getReferenceById(receivedParticipant.getEventId()));
-        participantRepository.save(receivedParticipant);
+        return StatusEntity.ok(null);
+    }
 
-        template.convertAndSend("/topic/"+receivedParticipant.getEventId()+"/participant:create",
-                receivedParticipant);
-        return StatusEntity.ok("participant:create " + receivedParticipant.getId());
+    /**
+     * Evaluates whether the received existing Participant object has the correct field values
+     *
+     * @param receivedParticipant received Participant object
+     * @return Returns a statusEntity with an error message, if it is a bad request
+     * Returns an OK status with null body otherwise
+     */
+    public StatusEntity<String> isExistingParticipantBadRequest(Participant receivedParticipant) {
+        if(receivedParticipant.getId() == null)
+            return StatusEntity.badRequest("Id of the participant should be provided", true);
+        if(!participantRepository.existsById(receivedParticipant.getId()))
+        {
+            return StatusEntity.notFound("Participant not found", true);
+        }
+        return StatusEntity.ok(null);
+    }
+
+    /**
+     * Handles create websocket endpoint for participant
+     * @param receivedParticipant Participant we want to create
+     * @return StatusEntity<String> body contains description of success/failure
+     */
+    @MessageMapping("/participant:create")
+    @SendToUser(value = "/queue/reply", broadcast = false)
+    public StatusEntity<String> createParticipant(Participant receivedParticipant)
+    {
+        var isBadRequest = isParticipantBadRequest(receivedParticipant);
+        if(isBadRequest.getStatusCode() != StatusEntity.StatusCode.OK)
+            return isBadRequest;
+
+        if(!eventRepository.existsById(receivedParticipant.getEventId()))
+            return StatusEntity.notFound("Provided participant has an invalid invitation code");
+
+        Participant participant = new Participant(
+                eventRepository.getReferenceById(receivedParticipant.getEventId()),
+                receivedParticipant.getFirstName(),
+                receivedParticipant.getLastName(),
+                receivedParticipant.getEmail(),
+                receivedParticipant.getIban(),
+                receivedParticipant.getBic()
+        );
+        participant = participantRepository.save(participant);
+
+        participant.setEventId(receivedParticipant.getEventId());
+
+        template.convertAndSend("/topic/"+participant.getEventId()+"/participant:create",
+                participant);
+        return StatusEntity.ok("participant:create " + participant.getId());
     }
 
     /**
      * Handles read websocket endpoint for participant
-     * @param id UUID of a participant we want to read
-     * @return returns a StatusEntity<Event> body contains Participant if status code is OK
+     * @param invitationCode invitation code of the event which we want to read participants from
+     * @return returns a StatusEntity<Event> body contains List<Participant> if status code is OK
      * returns null in body otherwise
      */
-    @MessageMapping("/participant:read")
-    @SendToUser("/queue/event:read")
-    public StatusEntity<Participant> readParticipant(UUID id)
+    @MessageMapping("/participants:read")
+    @SendToUser(value = "/queue/event:read", broadcast = false)
+    public StatusEntity<List<Participant>> readParticipants(UUID invitationCode)
     {
-        if(!participantRepository.existsById(id))
-        {
+        if(!eventRepository.existsById(invitationCode))
             return StatusEntity.notFound(null, true);
+
+        Event event = eventRepository.getReferenceById(invitationCode);
+        List<Participant> participants = event.getParticipants();
+
+        for(Participant participant : participants)
+        {
+            participant.setEventId(participant.getEvent().getId());
         }
 
-        Participant participant = participantRepository.getReferenceById(id);
-        participant.setEventId(participant.getEvent().getId());
-
-        return StatusEntity.ok(participant);
+        return StatusEntity.ok(participants);
     }
 
     /**
@@ -97,34 +149,30 @@ public class ParticipantController {
      * @return StatusEntity<String> body contains description of success/failure
      */
     @MessageMapping("/participant:update")
-    @SendToUser("/queue/reply")
+    @SendToUser(value = "/queue/reply", broadcast = false)
     public StatusEntity<String> updateParticipant(Participant receivedParticipant)
     {
-        if (isNullOrEmpty(receivedParticipant.getFirstName())) {
-            return StatusEntity.badRequest("First name should not be empty");
-        }
-        if (isNullOrEmpty(receivedParticipant.getLastName())) {
-            return StatusEntity.badRequest("Last name should not be empty");
-        }
-        if(!receivedParticipant.getEmail().isEmpty() &&
-                !Pattern.compile("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$").
-                        matcher(receivedParticipant.getEmail()).matches())
-        {
-            return StatusEntity.badRequest("Provided email is invalid");
-        }
+        var isBadRequest = isParticipantBadRequest(receivedParticipant);
+        if (isBadRequest.getStatusCode() != StatusEntity.StatusCode.OK)
+            return isBadRequest;
 
-        if(!participantRepository.existsById(receivedParticipant.getId()))
-        {
-            return StatusEntity.notFound("Participant not found", true);
-        }
+        var isExistingBadRequest = isExistingParticipantBadRequest(receivedParticipant);
+        if (isExistingBadRequest.getStatusCode() != StatusEntity.StatusCode.OK)
+            return isExistingBadRequest;
 
-        receivedParticipant.setEvent(eventRepository.getReferenceById(receivedParticipant.getEventId()));
+        Participant participant = participantRepository.getReferenceById(receivedParticipant.getId());
+        participant.setFirstName(receivedParticipant.getFirstName());
+        participant.setLastName(receivedParticipant.getLastName());
+        participant.setEmail(receivedParticipant.getEmail());
+        participant.setIban(receivedParticipant.getIban());
+        participant.setBic(receivedParticipant.getBic());
+        participant = participantRepository.save(participant);
 
-        participantRepository.save(receivedParticipant);
+        participant.setEventId(receivedParticipant.getEventId());
 
-        template.convertAndSend("/topic/"+receivedParticipant.getEventId()+"/participant:update",
-                receivedParticipant);
-        return StatusEntity.ok("participant:update " + receivedParticipant.getId());
+        template.convertAndSend("/topic/"+participant.getEventId()+"/participant:update",
+                participant);
+        return StatusEntity.ok("participant:update " + participant.getId());
     }
 
     /**
@@ -133,13 +181,12 @@ public class ParticipantController {
      * @return StatusEntity<String> body contains description of success/failure
      */
     @MessageMapping("/participant:delete")
-    @SendToUser("/queue/reply")
+    @SendToUser(value = "/queue/reply", broadcast = false)
     public StatusEntity<String> deleteParticipant(Participant receivedParticipant)
     {
-        if(!participantRepository.existsById(receivedParticipant.getId()))
-        {
-            return StatusEntity.notFound("Participant not found", true);
-        }
+        var isExistingBadRequest = isExistingParticipantBadRequest(receivedParticipant);
+        if (isExistingBadRequest.getStatusCode() != StatusEntity.StatusCode.OK)
+            return isExistingBadRequest;
 
         Participant participant = participantRepository.getReferenceById(receivedParticipant.getId());
         participantRepository.delete(participant);
