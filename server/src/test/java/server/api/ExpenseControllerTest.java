@@ -10,8 +10,6 @@ import server.database.EventRepository;
 import server.database.ExpenseRepository;
 import server.database.ParticipantRepository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -223,9 +221,9 @@ public class ExpenseControllerTest {
         expense1 = expenseRepository.save(expense1);
         expense2 = expenseRepository.save(expense2);
 
-        StatusEntity<List<Expense>> status = expenseController.readExpenses(event.getId());
+        StatusEntity status = expenseController.readExpenses(event.getId());
         assertEquals(StatusEntity.StatusCode.OK, status.getStatusCode());
-        List<Expense> readExpenses = status.getBody();
+        ExpenseList readExpenses = status.getExpenseList();
         Expense readExpense1 = readExpenses.getFirst();
         Expense readExpense2 = readExpenses.getLast();
         assertEquals(expense1.getId(), readExpense1.getId());
@@ -254,7 +252,7 @@ public class ExpenseControllerTest {
 
     @Test
     void deleteExpenseNullObject() {
-        assertEquals(StatusEntity.badRequest("Expense object not found in message body"),
+        assertEquals(StatusEntity.badRequest(false, "Expense object not found in message body"),
                 expenseController.deleteExpense(null));
     }
 }

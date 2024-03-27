@@ -137,15 +137,16 @@ public class ParticipantController {
 
         Event event = eventRepository.getReferenceById(invitationCode);
         ParticipantList participants = (ParticipantList) event.getParticipants();
+        ParticipantList sentParticipants = new ParticipantList();
 
-        for(Participant participant : event.getParticipants()) {
+        for(Participant participant : participants) {
             Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
                     participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
                     invitationCode);
-            participants.add(sentParticipant);
+            sentParticipants.add(sentParticipant);
         }
 
-        return StatusEntity.ok(participants);
+        return StatusEntity.ok(sentParticipants);
     }
 
     /**

@@ -3,21 +3,17 @@ package server.api;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.*;
 
 
 import commons.Event;
-import commons.Participant;
 import commons.StatusEntity;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 

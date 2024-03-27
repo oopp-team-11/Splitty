@@ -1,11 +1,9 @@
 package server.api;
 
 import commons.Event;
-import commons.Expense;
 import commons.Participant;
 import commons.ParticipantList;
 import commons.StatusEntity;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -13,7 +11,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.database.EventRepository;
 import server.database.ParticipantRepository;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -146,7 +143,7 @@ public class ParticipantControllerTest {
         Participant participant = new Participant(null, "name", "surname",
                 "email@email.com", "iban", "bic", event.getId());
 
-        assertEquals(StatusEntity.badRequest("Id of the participant should be provided", true),
+        assertEquals(StatusEntity.badRequest(true, "Id of the participant should be provided"),
                 participantController.isExistingParticipantBadRequest(participant));
     }
 
@@ -201,9 +198,9 @@ public class ParticipantControllerTest {
         event.addParticipant(participant1);
         event.addParticipant(participant2);
 
-        StatusEntity<List<Participant>> status = participantController.readParticipants(event.getId());
+        StatusEntity status = participantController.readParticipants(event.getId());
         assertEquals(StatusEntity.StatusCode.OK, status.getStatusCode());
-        List<Participant> readParticipants = status.getBody();
+        ParticipantList readParticipants = status.getParticipantList();
         Participant readParticipant1 = readParticipants.getFirst();
         Participant readParticipant2 = readParticipants.getLast();
         assertEquals(participant1.getEventId(), readParticipant1.getEventId());

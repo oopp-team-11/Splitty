@@ -8,7 +8,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import java.util.List;
 import java.util.UUID;
 
 //Adjustment
@@ -34,7 +33,7 @@ public class Participant {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "paidBy", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-    List<Expense> madeExpenses;
+    ExpenseList madeExpenses;
 
     @Transient
     private UUID eventId;
@@ -125,7 +124,7 @@ public class Participant {
      * Method that returns the list of expenses the participant has made
      * @return list of expenses the participant has made
      */
-    public List<Expense> getMadeExpenses() {
+    public ExpenseList getMadeExpenses() {
         return madeExpenses;
     }
 
