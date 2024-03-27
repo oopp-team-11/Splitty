@@ -97,6 +97,10 @@ public class EventController {
             event.ifPresent(updatedEvents::add);
         }
 
+        if(updatedEvents.size() != codes.length)
+            return ResponseEntity.status(206).body(updatedEvents);
+
+
         return ResponseEntity.ok(updatedEvents);
     }
 
