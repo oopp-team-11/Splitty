@@ -131,12 +131,40 @@ public class EventDataHandler {
     }
 
     /**
+     * contains by id for participants
+     * @param receivedParticipant
+     * @return
+     */
+    private boolean containsParticipantById(Participant receivedParticipant) {
+        for (var participant : participants) {
+            if (participant.getId().equals(receivedParticipant.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * contains by id for expenses
+     * @param receivedExpense
+     * @return
+     */
+    private boolean containsExpenseById(Expense receivedExpense) {
+        for (var expense : expenses) {
+            if (expense.getId().equals(receivedExpense.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Adds a new Participant to the list of Participants
      *
      * @param receivedParticipant the new Participant
      */
     public void getCreateParticipant(Participant receivedParticipant) {
-        if (participants.contains(receivedParticipant)) {
+        if (containsParticipantById(receivedParticipant)) {
             // logic of refetching list of participants
             sessionHandler.refreshParticipants();
             // TODO: logic of pop-up
@@ -151,7 +179,7 @@ public class EventDataHandler {
      * @param receivedParticipant the participant to be deleted
      */
     public void getDeleteParticipant(Participant receivedParticipant) {
-        if (!participants.contains(receivedParticipant)) {
+        if (!containsParticipantById(receivedParticipant)) {
             //logic of refetching
             sessionHandler.refreshParticipants();
             // TODO: logic of pop-up
@@ -176,7 +204,7 @@ public class EventDataHandler {
      * @param receivedParticipant new data for the already existing participant
      */
     public void getUpdateParticipant(Participant receivedParticipant) {
-        if (!participants.contains(receivedParticipant)) {
+        if (!containsParticipantById(receivedParticipant)) {
             //logic of refetching
             sessionHandler.refreshParticipants();
             // TODO: logic of pop-up
@@ -218,7 +246,7 @@ public class EventDataHandler {
      * @param receivedExpense the new Expense
      */
     public void getCreateExpense(Expense receivedExpense) {
-        if (expenses.contains(receivedExpense)) {
+        if (containsExpenseById(receivedExpense)) {
             // logic of refetching expenses from server
             sessionHandler.refreshExpenses();
             // TODO: logic of pop-up
@@ -234,7 +262,7 @@ public class EventDataHandler {
      * @param receivedExpense an expense object containing updated fields
      */
     public void getUpdateExpense(Expense receivedExpense) {
-        if (!expenses.contains(receivedExpense)) {
+        if (!containsExpenseById(receivedExpense)) {
             // logic of refetching expenses
             sessionHandler.refreshExpenses();
             // TODO: logic of pop-up
@@ -250,14 +278,14 @@ public class EventDataHandler {
      * @param receivedExpense the Expense that should be deleted
      */
     public void getDeleteExpense(Expense receivedExpense) {
-        if (!expenses.contains(receivedExpense)) {
+        if (!containsExpenseById(receivedExpense)) {
             // logic of refetching expenses
             sessionHandler.refreshExpenses();
             // TODO: logic of pop-up
             return;
         }
 
-        expenses.remove(receivedExpense);
+        expenses.remove(getExpenseById(receivedExpense.getId()));
     }
 
     /**

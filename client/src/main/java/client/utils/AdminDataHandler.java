@@ -3,7 +3,6 @@ package client.utils;
 import commons.Event;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Class that handles the messages from server and adjust data on client
@@ -62,12 +61,12 @@ public class AdminDataHandler {
 
     /**
      * checks if event is in the list of events on the client-side by the id
-     * @param event
+     * @param receivedEvent
      * @return
      */
-    private boolean containsById(Event event) {
-        for (var e : events) {
-            if (e.getId().equals(event.getId())) {
+    private boolean containsById(Event receivedEvent) {
+        for (var event : events) {
+            if (event.getId().equals(receivedEvent.getId())) {
                 return true;
             }
         }
@@ -90,12 +89,12 @@ public class AdminDataHandler {
 
     /**
      * gets event by id from list of events on the client side
-     * @param e
+     * @param receivedEvent
      * @return
      */
-    private Event getEventById(Event e) {
+    private Event getEventById(Event receivedEvent) {
         for (var event : events) {
-            if (event.getId().equals(e.getId())) {
+            if (event.getId().equals(receivedEvent.getId())) {
                 return event;
             }
         }
