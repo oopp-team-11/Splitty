@@ -130,7 +130,7 @@ public class ParticipantController {
      * returns null in body otherwise
      */
     @MessageMapping("/participants:read")
-    @SendToUser(value = "/queue/event:read", broadcast = false)
+    @SendToUser(value = "/queue/participants:read", broadcast = false)
     public StatusEntity readParticipants(UUID invitationCode)
     {
         if(!eventRepository.existsById(invitationCode))
