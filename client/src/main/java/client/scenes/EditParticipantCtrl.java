@@ -120,6 +120,9 @@ public class EditParticipantCtrl {
 
     }
 
+    /**
+     * Method for aborting creating participant
+     */
     public void abort() {
         mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
     }

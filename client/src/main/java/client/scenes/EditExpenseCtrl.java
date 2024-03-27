@@ -3,7 +3,6 @@ package client.scenes;
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-import commons.Event;
 import commons.Expense;
 import commons.Participant;
 import javafx.collections.FXCollections;

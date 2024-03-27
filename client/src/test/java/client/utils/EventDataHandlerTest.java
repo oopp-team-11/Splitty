@@ -1,14 +1,20 @@
 package client.utils;
 
+import client.Main;
 import client.scenes.MainCtrl;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
+import javafx.application.Application;
+import javafx.application.Platform;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +34,12 @@ class EventDataHandlerTest {
     List<Participant> participants;
     List<Expense> expenses;
     WebsocketSessionHandler sessionMock;
+    Application app;
+
+    @BeforeAll
+    public static void start(){
+        Platform.startup(()->{});
+    }
 
     @BeforeEach
     public void setup() throws IllegalAccessException {

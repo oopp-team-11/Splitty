@@ -8,15 +8,12 @@ import commons.Event;
 import commons.Expense;
 import commons.Participant;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
 import java.util.HashMap;
@@ -212,13 +209,22 @@ public class EventOverviewCtrl {
         });
     }
 
+    /**
+     * Method for updating data in scene
+     */
     public void refreshEventData(){
         this.event = mainCtrl.getDataHandler().getEvent();
         setEventNameLabel(event.getTitle());
     }
+    /**
+     * Method for updating data in scene
+     */
     public void refreshParticipantsData(){
         participantsList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
     }
+    /**
+     * Method for updating data in scene
+     */
     public void refreshExpensesData(){
         expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));
     }

@@ -32,8 +32,6 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Main scene controller. It oversights currently active scenes, switches between them,
@@ -249,18 +247,27 @@ public class MainCtrl {
         return this.serverIp;
     }
 
+    /**
+     * Method for updating data in scenes
+     */
     public void refreshEventData() {
         if(primaryStage.getTitle().equals("Event overview")){
             eventOverviewCtrl.refreshEventData();
         }
     }
 
+    /**
+     * Method for updating data in scenes
+     */
     public void refreshParticipantsData() {
         if(primaryStage.getTitle().equals("Event overview")){
             eventOverviewCtrl.refreshParticipantsData();
         }
     }
 
+    /**
+     * Method for updating data in scenes
+     */
     public void refreshExpensesData() {
         if(primaryStage.getTitle().equals("Event overview")){
             eventOverviewCtrl.refreshExpensesData();

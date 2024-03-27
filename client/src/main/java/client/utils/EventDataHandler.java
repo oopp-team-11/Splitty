@@ -5,8 +5,6 @@ import commons.Expense;
 import commons.Participant;
 import javafx.application.Platform;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -198,6 +196,11 @@ public class EventDataHandler {
         }
 
         participants.remove(getParticipantById(receivedParticipant.getId()));
+        for (Expense expense : expenses){
+            if(expense.getPaidById() == receivedParticipant.getId()){
+                expenses.remove(expense);
+            }
+        }
         sessionHandler.refreshExpenses();
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshParticipantsData());
     }
