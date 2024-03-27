@@ -105,15 +105,18 @@ public class ParticipantController {
         if(!eventRepository.existsById(receivedParticipant.getEventId()))
             return StatusEntity.notFound(false, "Provided participant has an invalid invitation code");
 
+        Event event = eventRepository.getReferenceById(receivedParticipant.getEventId());
         Participant participant = new Participant(
-                eventRepository.getReferenceById(receivedParticipant.getEventId()),
+                event,
                 receivedParticipant.getFirstName(),
                 receivedParticipant.getLastName(),
                 receivedParticipant.getEmail(),
                 receivedParticipant.getIban(),
                 receivedParticipant.getBic()
         );
+        event.addParticipant(participant);
         participant = participantRepository.save(participant);
+        eventRepository.save(event);
 
         Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
                 participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
