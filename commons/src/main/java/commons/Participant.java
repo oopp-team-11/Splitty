@@ -8,7 +8,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -86,7 +85,7 @@ public class Participant {
         this.email = email;
         this.iban = iban;
         this.bic = bic;
-        this.madeExpenses = new ArrayList<>();
+        this.madeExpenses = new ExpenseList();
         this.eventId = event.getId();
     }
 

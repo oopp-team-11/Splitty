@@ -2,14 +2,12 @@ package client.utils.frameHandlers;
 
 import client.scenes.MainCtrl;
 import client.utils.EventDataHandler;
-import commons.Expense;
 import commons.StatusEntity;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
 import java.lang.reflect.Type;
-import java.util.List;
 
 /**
  * Frame handler for /user/queue/expenses:read endpoint
@@ -31,15 +29,15 @@ public class ReadExpensesHandler implements StompFrameHandler {
 
     @Override
     public Type getPayloadType(StompHeaders headers) {
-        return new ParameterizedTypeReference<StatusEntity<List<Expense>>>() {}.getType();
+        return new ParameterizedTypeReference<StatusEntity>() {}.getType();
     }
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        StatusEntity<List<Expense>> status = (StatusEntity<List<Expense>>) payload;
+        StatusEntity status = (StatusEntity) payload;
         switch (status.getStatusCode()) {
             case OK -> {
-                dataHandler.setExpenses(status.getBody());
+                dataHandler.setExpenses(status.getExpenseList());
             }
             case BAD_REQUEST -> {
                 System.out.println("Server did not find invitationCode in the message. This should never happen.");

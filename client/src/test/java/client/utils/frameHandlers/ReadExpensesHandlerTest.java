@@ -4,6 +4,7 @@ import client.Main;
 import client.scenes.MainCtrl;
 import client.utils.EventDataHandler;
 import commons.Expense;
+import commons.ExpenseList;
 import commons.StatusEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,16 +34,16 @@ class ReadExpensesHandlerTest {
 
     @Test
     void getPayloadType() {
-        assertEquals(new ParameterizedTypeReference<StatusEntity<List<Expense>>>() {}.getType(),
+        assertEquals(new ParameterizedTypeReference<StatusEntity>() {}.getType(),
                 handler.getPayloadType(headers));
     }
 
     @Test
     void handleFrameOK() {
-        List<Expense> expenses = new ArrayList<>();
+        ExpenseList expenses = new ExpenseList();
         expenses.add(new Expense());
         expenses.add(new Expense());
-        StatusEntity<List<Expense>> status = StatusEntity.ok(expenses);
+        StatusEntity status = StatusEntity.ok(expenses);
         handler.handleFrame(headers, status);
         verify(dataHandler).setExpenses(expenses);
     }

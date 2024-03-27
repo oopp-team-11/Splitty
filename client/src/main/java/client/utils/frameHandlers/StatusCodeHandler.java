@@ -25,13 +25,13 @@ public class StatusCodeHandler implements StompFrameHandler {
 
     @Override
     public Type getPayloadType(StompHeaders headers) {
-        return new ParameterizedTypeReference<StatusEntity<String>>() {
+        return new ParameterizedTypeReference<StatusEntity>() {
         }.getType();
     }
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        StatusEntity<String> status = (StatusEntity<String>) payload;
+        StatusEntity status = (StatusEntity) payload;
         //TODO: mainCtrl.notifyAboutResponse(status)
     }
 }

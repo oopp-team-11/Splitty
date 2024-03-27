@@ -108,16 +108,16 @@ public class EventController {
      */
     @MessageMapping("/event:update")
     @SendToUser(value = "/queue/reply", broadcast = false)
-    public StatusEntity<String> updateEvent(Event receivedEvent)
+    public StatusEntity updateEvent(Event receivedEvent)
     {
         if(receivedEvent == null)
-            return StatusEntity.badRequest("Event object not found in message body", true);
+            return StatusEntity.badRequest(true, "Event object not found in message body");
 
         if (isNullOrEmpty(receivedEvent.getTitle()))
-            return StatusEntity.badRequest("Event title should not be empty", true);
+            return StatusEntity.badRequest(true, "Event title should not be empty");
 
         if(!repo.existsById(receivedEvent.getId()))
-            return StatusEntity.notFound("Event not found", true);
+            return StatusEntity.notFound(true, "Event not found");
 
         Event event = repo.getReferenceById(receivedEvent.getId());
         event.setTitle(receivedEvent.getTitle());
@@ -137,12 +137,12 @@ public class EventController {
      */
     @MessageMapping("/event:read")
     @SendToUser(value = "/queue/event:read", broadcast = false)
-    public StatusEntity<Event> readEvent(UUID invitationCode)
+    public StatusEntity readEvent(UUID invitationCode)
     {
         if(invitationCode == null)
-            return StatusEntity.badRequest(null, true);
+            return StatusEntity.badRequest(true, (Event) null);
         if(!repo.existsById(invitationCode))
-            return StatusEntity.notFound(null, true);
+            return StatusEntity.notFound(true, (Event) null);
 
         Event event = repo.getReferenceById(invitationCode);
 
@@ -157,15 +157,15 @@ public class EventController {
      */
     @MessageMapping("/event:delete")
     @SendToUser(value = "/queue/reply", broadcast = false)
-    public StatusEntity<String> deleteEvent(Event receivedEvent)
+    public StatusEntity deleteEvent(Event receivedEvent)
     {
         /*TODO: Implement admin passcode verification*/
         if(receivedEvent == null)
-            return StatusEntity.badRequest("Event should not be null", true);
+            return StatusEntity.badRequest(true, "Event should not be null");
 
         if(!repo.existsById(receivedEvent.getId()))
         {
-            return StatusEntity.notFound("Event not found", true);
+            return StatusEntity.notFound(true, "Event not found");
         }
 
         Event event = repo.getReferenceById(receivedEvent.getId());

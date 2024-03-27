@@ -1,9 +1,6 @@
 package server.api;
 
-import commons.Event;
-import commons.Expense;
-import commons.Participant;
-import commons.StatusEntity;
+import commons.*;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -78,13 +75,13 @@ public class ExpenseControllerTest {
         Expense expense = new Expense(sentParticipant, "expense", 21.37);
         expense = expenseRepository.save(expense);
 
-        assertEquals(StatusEntity.notFound("Provided participant who paid for the expense does not exist"),
+        assertEquals(StatusEntity.notFound(false, "Provided participant who paid for the expense does not exist"),
                 expenseController.createExpense(expense));
     }
 
     @Test
     void ExpenseNull() {
-        assertEquals(StatusEntity.badRequest("Expense object not found in message body", true),
+        assertEquals(StatusEntity.badRequest(true, "Expense object not found in message body"),
                 expenseController.isExpenseBadRequest(null));
     }
 
@@ -96,7 +93,7 @@ public class ExpenseControllerTest {
         try {
             setId(expense, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        assertEquals(StatusEntity.badRequest("Expense title should not be empty", true),
+        assertEquals(StatusEntity.badRequest(true, "Expense title should not be empty"),
                 expenseController.isExpenseBadRequest(expense));
     }
 
@@ -108,7 +105,7 @@ public class ExpenseControllerTest {
         try {
             setId(expense, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        assertEquals(StatusEntity.badRequest("Amount should be positive", true),
+        assertEquals(StatusEntity.badRequest(true, "Amount should be positive"),
                 expenseController.isExpenseBadRequest(expense));
     }
 
@@ -120,7 +117,7 @@ public class ExpenseControllerTest {
         try {
             setId(expense, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        assertEquals(StatusEntity.badRequest("Id of participant who paid should be provided", true),
+        assertEquals(StatusEntity.badRequest(true, "Id of participant who paid should be provided"),
                 expenseController.isExpenseBadRequest(expense));
     }
 
@@ -132,7 +129,7 @@ public class ExpenseControllerTest {
         try {
             setId(expense, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        assertEquals(StatusEntity.badRequest("InvitationCode of event should be provided", true),
+        assertEquals(StatusEntity.badRequest(true, "InvitationCode of event should be provided"),
                 expenseController.isExpenseBadRequest(expense));
     }
 
@@ -144,7 +141,7 @@ public class ExpenseControllerTest {
         try {
             setId(expense, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        assertEquals(StatusEntity.ok(null), expenseController.isExpenseBadRequest(expense));
+        assertEquals(StatusEntity.ok((ExpenseList) null), expenseController.isExpenseBadRequest(expense));
     }
 
     @Test
@@ -170,7 +167,7 @@ public class ExpenseControllerTest {
 
     @Test
     void noExpenseID() {
-        assertEquals(StatusEntity.badRequest("Expense ID should be provided", true),
+        assertEquals(StatusEntity.badRequest(true, "Expense ID should be provided"),
                 expenseController.isExistingExpenseBadRequest(new Expense()));
     }
 
@@ -180,7 +177,7 @@ public class ExpenseControllerTest {
         try {
             setId(expense, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        assertEquals(StatusEntity.notFound("Expense with provided ID does not exist", true),
+        assertEquals(StatusEntity.notFound(true, "Expense with provided ID does not exist"),
                 expenseController.isExistingExpenseBadRequest(expense));
     }
 
@@ -188,7 +185,7 @@ public class ExpenseControllerTest {
     void ExistingExpenseOK() {
         Expense expense = new Expense();
         expense = expenseRepository.save(expense);
-        assertEquals(StatusEntity.ok(null), expenseController.isExistingExpenseBadRequest(expense));
+        assertEquals(StatusEntity.ok((ExpenseList) null), expenseController.isExistingExpenseBadRequest(expense));
     }
 
     @Test
@@ -245,13 +242,13 @@ public class ExpenseControllerTest {
 
     @Test
     void readExpenseNull() {
-        assertEquals(StatusEntity.badRequest(null, true),
+        assertEquals(StatusEntity.badRequest(true, (ExpenseList) null),
                 expenseController.readExpenses(null));
     }
 
     @Test
     void readExpenseEventNotExists() {
-        assertEquals(StatusEntity.notFound(null, true),
+        assertEquals(StatusEntity.notFound(true, (ExpenseList) null),
                 expenseController.readExpenses(UUID.randomUUID()));
     }
 

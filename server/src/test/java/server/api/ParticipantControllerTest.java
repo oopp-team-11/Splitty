@@ -3,6 +3,7 @@ package server.api;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
+import commons.ParticipantList;
 import commons.StatusEntity;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +61,7 @@ public class ParticipantControllerTest {
 
     @Test
     void checkNullParticipant() {
-        assertEquals(StatusEntity.badRequest("Participant should not be null", true),
+        assertEquals(StatusEntity.badRequest(true, "Participant should not be null"),
                 participantController.isParticipantBadRequest(null));
     }
 
@@ -69,7 +70,7 @@ public class ParticipantControllerTest {
         Participant participant = new Participant(UUID.randomUUID(), null, "surname",
                 "email@email.com", "iban", "bic", null);
 
-        assertEquals(StatusEntity.badRequest("InvitationCode of event should be provided", true),
+        assertEquals(StatusEntity.badRequest(true, "InvitationCode of event should be provided"),
                 participantController.isParticipantBadRequest(participant));
     }
 
@@ -79,7 +80,7 @@ public class ParticipantControllerTest {
         Participant participant = new Participant(UUID.randomUUID(), null, "surname",
                 "email@email.com", "iban", "bic", event.getId());
 
-        assertEquals(StatusEntity.badRequest("First name should not be empty"),
+        assertEquals(StatusEntity.badRequest(false, "First name should not be empty"),
                 participantController.isParticipantBadRequest(participant));
     }
 
@@ -89,7 +90,7 @@ public class ParticipantControllerTest {
         Participant participant = new Participant(UUID.randomUUID(), "name", null,
                 "email@email.com", "iban", "bic", event.getId());
 
-        assertEquals(StatusEntity.badRequest("Last name should not be empty"),
+        assertEquals(StatusEntity.badRequest(false, "Last name should not be empty"),
                 participantController.isParticipantBadRequest(participant));
     }
 
@@ -99,7 +100,7 @@ public class ParticipantControllerTest {
         Participant participant = new Participant(UUID.randomUUID(), "name", "surname",
                 "email", "iban", "bic", event.getId());
 
-        assertEquals(StatusEntity.badRequest("Provided email is of invalid format"),
+        assertEquals(StatusEntity.badRequest(false, "Provided email is of invalid format"),
                 participantController.isParticipantBadRequest(participant));
     }
 
@@ -108,7 +109,7 @@ public class ParticipantControllerTest {
         Participant participant = new Participant(UUID.randomUUID(), "name", "surname",
                 "email@email.com", "iban", "bic", UUID.randomUUID());
 
-        assertEquals(StatusEntity.notFound("Provided participant has an invalid invitation code"),
+        assertEquals(StatusEntity.notFound(false, "Provided participant has an invalid invitation code"),
                 participantController.createParticipant(participant));
     }
 
@@ -156,7 +157,7 @@ public class ParticipantControllerTest {
         Participant participant = new Participant(UUID.randomUUID(), "name", "surname",
                 "email@email.com", "iban", "bic", event.getId());
 
-        assertEquals(StatusEntity.notFound("Participant not found", true),
+        assertEquals(StatusEntity.notFound(true, "Participant not found"),
                 participantController.updateParticipant(participant));
     }
 
@@ -225,6 +226,6 @@ public class ParticipantControllerTest {
     void checkReadParticipantsEventNotFound() {
         UUID uuid = UUID.randomUUID();
 
-        assertEquals(StatusEntity.notFound(null, true), participantController.readParticipants(uuid));
+        assertEquals(StatusEntity.notFound(true, (ParticipantList) null), participantController.readParticipants(uuid));
     }
 }
