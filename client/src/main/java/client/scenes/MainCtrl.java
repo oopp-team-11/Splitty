@@ -15,22 +15,23 @@
  */
 package client.scenes;
 
-import client.utils.EventStompSessionHandler;
+import client.utils.EventDataHandler;
+import client.utils.FileSystemUtils;
+import client.utils.WebsocketSessionHandler;
 import commons.Event;
+import commons.Expense;
 import commons.Participant;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-//import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.simp.stomp.StompSessionHandler;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.UUID;
 
 /**
  * Main scene controller. It oversights currently active scenes, switches between them,
@@ -49,9 +50,18 @@ public class MainCtrl {
     private EditParticipantCtrl editParticipantCtrl;
     private Scene editParticipantScene;
 
+    private AddExpenseCtrl addExpenseCtrl;
+    private Scene addExpenseScene;
+
+    private EditExpenseCtrl editExpenseCtrl;
+    private Scene editExpenseScene;
+
     private EventOverviewCtrl eventOverviewCtrl;
     private Scene eventOverviewScene;
-    private EventStompSessionHandler sessionHandler;
+
+    private WebsocketSessionHandler sessionHandler;
+    private EventDataHandler dataHandler;
+    private String serverIp;
 
     /**
      * Initializes javafx scenes and their controllers, sets start screen as the currently shown screen
@@ -60,12 +70,16 @@ public class MainCtrl {
      * @param createParticipant a pair of create participant controller and javafx create participant scene
      * @param editParticipant a pair of edit participant controller and javafx edit participant scene
      * @param eventOverview a pair of event overview controller and javafx event overview scene
+     * @param editExpense a pair of edit expense controller and javafx edit expense scene
+     * @param addExpense a pair of add expense controller and javafx add expense scene
      */
 
     public void initialize(Stage primaryStage, Pair<StartScreenCtrl, Parent> startScreen,
                            Pair<CreateParticipantCtrl, Parent> createParticipant,
                            Pair<EditParticipantCtrl, Parent> editParticipant,
-                           Pair<EventOverviewCtrl, Parent> eventOverview) {
+                           Pair<EventOverviewCtrl, Parent> eventOverview,
+                           Pair<EditExpenseCtrl, Parent> editExpense,
+                           Pair<AddExpenseCtrl, Parent> addExpense) {
         this.primaryStage = primaryStage;
 
         this.startScreenCtrl = startScreen.getKey();
@@ -77,18 +91,25 @@ public class MainCtrl {
         this.editParticipantCtrl = editParticipant.getKey();
         this.editParticipantScene = new Scene(editParticipant.getValue());
 
+        this.addExpenseCtrl = addExpense.getKey();
+        this.addExpenseScene = new Scene(addExpense.getValue());
+
+        this.editExpenseCtrl = editExpense.getKey();
+        this.editExpenseScene = new Scene(editExpense.getValue());
+
         this.eventOverviewCtrl = eventOverview.getKey();
         this.eventOverviewScene = new Scene(eventOverview.getValue());
 
-//        Event event = new Event("My Event");
-//        Participant part = new Participant(event, "Boaz", "Bakhuijzen", "bbboaz.bb@gmail.com", null, null);
-//        try {
-//            FieldUtils.writeField(event, "id", UUID.fromString("748d9079-8450-4b6d-adb3-736afd312ad7"), true);
-//        }
-//        catch (IllegalAccessException e){
-//
-//        }
-//        showEventOverview(event);
+        this.dataHandler = new EventDataHandler();
+
+        // Needs to be before the start websocket method
+        setServerIp();
+
+        startWebSocket();
+
+        showStartScreen();
+
+        //showEventOverview(event);
 
         // showStartScreen() should be used in the final version.
         // Comment out showStartScreen() above and uncomment a scene below to
@@ -96,6 +117,15 @@ public class MainCtrl {
 
         //showCreateParticipant(null);
         //showEditParticipant(null);
+
+//        var event = new Event("My Event");
+//        var person = new Participant(event, "boaz", "bakhuijzen", null, null, null);
+//        var expense = new Expense(person, "My Expense", 12.1);
+//        dataHandler = new EventDataHandler(event, null, null);
+//        dataHandler.setExpenses(new ArrayList<>());
+//        dataHandler.getCreateExpense(expense);
+//        showEventOverview(event);
+
         primaryStage.show();
     }
 
@@ -108,7 +138,10 @@ public class MainCtrl {
         primaryStage.setResizable(false);
         try {
             startScreenCtrl.refresh();
-        } catch (IOException | InterruptedException ignored) {}
+        } catch (org.json.JSONException e) {
+            // Handle JSON parsing exception
+            System.out.println("Failed to parse server response: " + e.getMessage());
+        }
     }
 
     /**
@@ -119,7 +152,7 @@ public class MainCtrl {
         primaryStage.setTitle("Add participant ui");
         primaryStage.setScene(createParticipantScene);
         primaryStage.setResizable(false);
-        createParticipantCtrl.setEvent(event, sessionHandler);
+        createParticipantCtrl.setEvent(event);
     }
 
     /**
@@ -130,7 +163,28 @@ public class MainCtrl {
         primaryStage.setTitle("Edit participant ui");
         primaryStage.setScene(editParticipantScene);
         primaryStage.setResizable(false);
-        editParticipantCtrl.setParticipant(participant, sessionHandler);
+        editParticipantCtrl.setParticipant(participant);
+    }
+
+    /**
+     * Show edit expense ui
+     * @param expense expense that will be edited
+     */
+    public void showEditExpense(Expense expense) {
+        primaryStage.setTitle("Edit expense ui");
+        primaryStage.setScene(editExpenseScene);
+        primaryStage.setResizable(false);
+        editExpenseCtrl.setExpense(expense);
+    }
+
+    /**
+     * Show edit expense ui
+     */
+    public void showAddExpense() {
+        primaryStage.setTitle("Edit expense ui");
+        primaryStage.setScene(addExpenseScene);
+        primaryStage.setResizable(false);
+        addExpenseCtrl.setFields();
     }
 
     /**
@@ -141,24 +195,72 @@ public class MainCtrl {
         primaryStage.setTitle("Event overview");
         primaryStage.setScene(eventOverviewScene);
         primaryStage.setResizable(false);
-        eventOverviewCtrl.setEvent(event, sessionHandler);
+        eventOverviewCtrl.setEvent(event);
     }
-
 
     /**
      * Start websocket connection
-     * @param invitationCode for setting correct event
-     * @return Stomp session handler, so you can share the websocket connection between scenes
      */
-    public StompSessionHandler startWebSocket(UUID invitationCode) {
+    public void startWebSocket(){
         WebSocketClient client = new StandardWebSocketClient();
 
         WebSocketStompClient stompClient = new WebSocketStompClient(client);
-        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+        MappingJackson2MessageConverter jackson2MessageConverter = new MappingJackson2MessageConverter();
+        jackson2MessageConverter.getObjectMapper().findAndRegisterModules();
+        stompClient.setMessageConverter(jackson2MessageConverter);
 
-        sessionHandler = new EventStompSessionHandler(invitationCode);
-        stompClient.connectAsync("ws://localhost:8080/event", sessionHandler);
+        sessionHandler = new WebsocketSessionHandler(dataHandler, this);
+        stompClient.connectAsync("ws://" + this.serverIp + "/v1", sessionHandler);
+    }
+
+    /**
+     * Standard getter for sessionHandler
+     * @return current sessionHandler
+     */
+    public WebsocketSessionHandler getSessionHandler() {
         return sessionHandler;
     }
 
+    /**
+     * Standard setter for sessionHandler
+     * @param sessionHandler new sessionHandler to use
+     */
+    public void setSessionHandler(WebsocketSessionHandler sessionHandler) {
+        this.sessionHandler = sessionHandler;
+    }
+
+    /**
+     * Standard getter for dataHandler
+     * @return current dataHandler
+     */
+    public EventDataHandler getDataHandler() {
+        return dataHandler;
+    }
+
+    /**
+     * Standard setter for dataHandler
+     * @param dataHandler new dataHandler to use
+     */
+    public void setDataHandler(EventDataHandler dataHandler) {
+        this.dataHandler = dataHandler;
+    }
+
+    private void setServerIp(){
+        FileSystemUtils utils = new FileSystemUtils();
+        try {
+            this.serverIp = utils.getServerIP("client-config.json");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Did not find client config file." + e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Standard Getter for server ip
+     * @return String of serverIp
+     */
+    public String getServerIp(){
+        return this.serverIp;
+    }
 }

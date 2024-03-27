@@ -1,5 +1,6 @@
 package commons;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -18,6 +19,7 @@ public class Expense {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PARTICIPANT_ID")
     private Participant paidBy;
@@ -27,15 +29,10 @@ public class Expense {
     private double amount;
 
     @Transient
-    private UUID participantId;
+    private UUID paidById;
 
-    /***
-     * std getter
-     * @return UUID of parent participant
-     */
-    public UUID getParticipantId() {
-        return participantId;
-    }
+    @Transient
+    private UUID invitationCode;
 
     /**
      * An empty Expense constructor for object mappers.
@@ -44,7 +41,25 @@ public class Expense {
     }
 
     /**
-     * Constructor for the Expense entity.
+     * Expense constructor for sending an Expense object to the client
+     *
+     * @param id id of the Expense
+     * @param title title of the Expense
+     * @param amount amount paid of the Expense
+     * @param paidById ID of the Participant who paid for the expense
+     * @param invitationCode Event invitationCode of the Expense
+     */
+    public Expense(UUID id, String title, double amount, UUID paidById, UUID invitationCode) {
+        this.id = id;
+        this.title = title;
+        this.amount = amount;
+        this.paidById = paidById;
+        this.invitationCode = invitationCode;
+    }
+
+    /**
+     * Default constructor for the Expense entity.
+     *
      * @param paidBy Participant (i.e. the parent entity) who created this Expense
      * @param title String representation of the title of this Expense
      * @param amount A double storing the amount spent on this Expense
@@ -53,8 +68,24 @@ public class Expense {
         this.paidBy = paidBy;
         this.title = title;
         this.amount = amount;
-        paidBy.addExpense(this);
-        this.participantId = paidBy.getId();
+        this.paidById = paidBy.getId();
+        this.invitationCode = paidBy.getEventId();
+    }
+
+    /***
+     * std getter
+     * @return UUID of participant who paid for expense
+     */
+    public UUID getPaidById() {
+        return paidById;
+    }
+
+    /***
+     * std getter
+     * @return invitation code of event
+     */
+    public UUID getInvitationCode() {
+        return invitationCode;
     }
 
     /**
@@ -108,28 +139,28 @@ public class Expense {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-
         if (obj == null || getClass() != obj.getClass()) return false;
-
         Expense expense = (Expense) obj;
 
-        return new EqualsBuilder().append(id, expense.id).append(paidBy.getId(), expense.paidBy.getId())
-                .append(title, expense.title).append(amount, expense.amount).isEquals();
+        return new EqualsBuilder().append(amount, expense.amount).append(id, expense.id)
+                .append(title, expense.title).append(paidById, expense.paidById)
+                .append(invitationCode, expense.invitationCode).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(id).append(paidBy.getId())
-                .append(title).append(amount).toHashCode();
+        return new HashCodeBuilder(17, 37).append(id).append(title)
+                .append(amount).append(paidById).append(invitationCode).toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("id", id)
-                .append("paidByID", paidBy.getId())
                 .append("title", title)
                 .append("amount", amount)
+                .append("paidById", paidById)
+                .append("invitationCode", invitationCode)
                 .toString();
     }
 }

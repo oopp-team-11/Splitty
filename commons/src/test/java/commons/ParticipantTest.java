@@ -33,14 +33,7 @@ class ParticipantTest {
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123"
         );
-        participantNotEqual = new Participant(
-                event,
-                "John",
-                "Burger",
-                "j.doe@domain.com",
-                "NL91 ABNA 0417 1643 00",
-                "ABNANL2A123"
-        );
+        participantNotEqual = new Participant();
         try {
             UUID id = UUID.randomUUID();
             setId(participant, id);
@@ -51,6 +44,20 @@ class ParticipantTest {
 
     private static void setId(Participant toSet, UUID newId) throws IllegalAccessException {
         FieldUtils.writeField(toSet, "id", newId, true);
+    }
+
+    @Test
+    void server2ClientConstructor() {
+        Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
+                participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
+                participant.getEventId());
+        assertEquals(participant.getId(), sentParticipant.getId());
+        assertEquals(participant.getFirstName(), sentParticipant.getFirstName());
+        assertEquals(participant.getLastName(), sentParticipant.getLastName());
+        assertEquals(participant.getEmail(), sentParticipant.getEmail());
+        assertEquals(participant.getIban(), sentParticipant.getIban());
+        assertEquals(participant.getBic(), sentParticipant.getBic());
+        assertEquals(participant.getEventId(), sentParticipant.getEventId());
     }
 
     @Test
@@ -88,7 +95,7 @@ class ParticipantTest {
         assertTrue(clientToString.contains("email"));
         assertTrue(clientToString.contains("iban"));
         assertTrue(clientToString.contains("bic"));
-        assertTrue(clientToString.contains("invitationCode"));
+        assertTrue(clientToString.contains("eventId"));
         assertTrue(clientToString.contains("madeExpenses"));
     }
 
@@ -150,6 +157,7 @@ class ParticipantTest {
     @Test
     void addExpense() {
         Expense expense = new Expense(participant, "Expense", 69.);
+        participant.addExpense(expense);
         assertEquals(expense, participant.getMadeExpenses().getLast());
     }
 
@@ -161,6 +169,7 @@ class ParticipantTest {
     @Test
     void getMadeExpenses() {
         Expense expense = new Expense(participant, "Expense", 69.);
+        participant.addExpense(expense);
         assertEquals(expense, participant.getMadeExpenses().getFirst());
     }
 }

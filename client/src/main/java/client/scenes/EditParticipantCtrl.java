@@ -1,15 +1,25 @@
 package client.scenes;
 
-import client.utils.EventStompSessionHandler;
+import client.utils.ServerUtils;
+import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
 import commons.Participant;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Client controller for the EditParticipant.fxml scene
  */
 public class EditParticipantCtrl {
+    @FXML
+    private Button editBtn;
+
+    @FXML
+    private Label editParticipantLabel;
 
     @FXML
     private TextField email;
@@ -28,7 +38,8 @@ public class EditParticipantCtrl {
 
     private Participant participant;
     private final MainCtrl mainCtrl;
-    private EventStompSessionHandler sessionHandler;
+    private final ServerUtils serverUtils;
+    private TranslationSupplier translationSupplier;
 
     /**
      * Constructor for the EditParticipant.fxml scene controller.
@@ -38,21 +49,42 @@ public class EditParticipantCtrl {
     @Inject
     public EditParticipantCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
+        this.serverUtils = new ServerUtils();
     }
 
     /**
      * Setter for participant
      * @param participant reference to participant object that is edited
-     * @param sessionHandler current session handler with websocket connection
      */
-    public void setParticipant(Participant participant, EventStompSessionHandler sessionHandler) {
-        this.sessionHandler = sessionHandler;
+    public void setParticipant(Participant participant) {
         this.participant = participant;
-        firstName.setText(participant.getFirstName());
-        lastName.setText(participant.getLastName());
-        email.setText(participant.getEmail());
-        bic.setText(participant.getBic());
-        iban.setText(participant.getIban());
+    }
+
+    /**
+     * Sets the translation supplier for this controller
+     * @param tl the translation supplier that should be used
+     */
+    public void setTranslationSupplier(TranslationSupplier tl) {
+        this.translationSupplier = tl;
+        this.translate();
+    }
+
+    private void translate() {
+        if (this.translationSupplier == null) return;
+        Map<Control, String> labels = new HashMap<>();
+        labels.put(this.email, "Email");
+        labels.put(this.firstName, "FirstName");
+        labels.put(this.lastName, "LastName");
+        labels.put(this.editParticipantLabel, "EditAParticipant");
+        labels.put(this.editBtn, "Edit");
+        labels.forEach((key, val) -> {
+            var translation = this.translationSupplier.getTranslation(val);
+            if (translation == null) return;
+            if (key instanceof Labeled)
+                ((Labeled) key).setText(translation.replaceAll("\"", ""));
+            if (key instanceof TextField)
+                ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
+        });
     }
 
     /**
@@ -66,29 +98,18 @@ public class EditParticipantCtrl {
         String bicString = bic.getText();
         String emailString = email.getText();
 
-        this.participant.setFirstName(firstNameString);
-        this.participant.setLastName(lastNameString);
-        this.participant.setIban(ibanString);
-        this.participant.setBic(bicString);
-        this.participant.setEmail(emailString);
 
         try {
-            sessionHandler.sendParticipant(participant, "update");
+            serverUtils.editParticipant(participant.getId(), firstNameString, lastNameString,
+                    emailString, ibanString, bicString, "http://" + mainCtrl.getServerIp());
         }
-        catch (Exception e)
+        catch (IOException | InterruptedException e)
         {
             System.err.println("Error while sending edit request to server");
             return;
         }
 
-        mainCtrl.showEventOverview(participant.getEvent()); // todo: Change that to event screen when there is one
+        mainCtrl.showStartScreen(); // todo: Change that to event screen when there is one
 
-    }
-
-    /**
-     * Button function to abort editing participant
-     */
-    public void abort() {
-        mainCtrl.showEventOverview(participant.getEvent());
     }
 }

@@ -36,7 +36,7 @@ public class ExpenseTest {
         );
         expense = new Expense(participant1, "Cookies", 69.69);
         expenseEqual = new Expense(participant1, "Cookies", 69.69);
-        expenseNotEqual = new Expense(participant2, "Chocolate", 69.69);
+        expenseNotEqual = new Expense();
         try {
             UUID id = UUID.randomUUID();
             setId(expense, id);
@@ -47,6 +47,17 @@ public class ExpenseTest {
 
     private static void setId(Expense toSet, UUID newId) throws IllegalAccessException {
         FieldUtils.writeField(toSet, "id", newId, true);
+    }
+
+    @Test
+    void server2ClientConstructor() {
+        Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
+                expense.getPaidById(), expense.getInvitationCode());
+        assertEquals(expense.getId(), sentExpense.getId());
+        assertEquals(expense.getTitle(), sentExpense.getTitle());
+        assertEquals(expense.getAmount(), sentExpense.getAmount());
+        assertEquals(expense.getPaidById(), sentExpense.getPaidById());
+        assertEquals(expense.getInvitationCode(), sentExpense.getInvitationCode());
     }
 
     @Test
@@ -79,9 +90,10 @@ public class ExpenseTest {
     void testToString() {
         String expenseToString = expense.toString();
         assertTrue(expenseToString.contains("id="));
-        assertTrue(expenseToString.contains("paidByID="));
         assertTrue(expenseToString.contains("title="));
         assertTrue(expenseToString.contains("amount="));
+        assertTrue(expenseToString.contains("paidById="));
+        assertTrue(expenseToString.contains("invitationCode="));
     }
 
     @Test

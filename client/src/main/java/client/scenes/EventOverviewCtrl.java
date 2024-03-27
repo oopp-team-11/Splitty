@@ -1,27 +1,37 @@
 package client.scenes;
 
-import client.utils.EventStompSessionHandler;
 import client.utils.FileSystemUtils;
+import client.utils.ServerUtils;
+import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
 import commons.Event;
+import commons.Expense;
 import commons.Participant;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
+import java.util.HashMap;
+import java.util.Map;
 
 /***
  * class CreateParticipantController
  */
 public class EventOverviewCtrl {
     @FXML
-    public Label invitationCode;
+    public Label expensesLabel;
+    @FXML
+    public VBox expenseTitlesVbox;
+    @FXML
+    public VBox expenseEditVbox;
+    @FXML
+    public VBox expenseDeleteVbox;
+    @FXML
+    private Label participantsLabel;
     @FXML
     private Label eventNameLabel;
     @FXML
-    private Label addParticipantLabel;
+    private Button sendInvitesButton;
     @FXML
     private VBox namesVbox;
     @FXML
@@ -30,8 +40,9 @@ public class EventOverviewCtrl {
     private VBox deleteVbox;
     private MainCtrl mainCtrl;
     private FileSystemUtils fileSystemUtils;
+    private ServerUtils serverUtils;
     private Event event;
-    private EventStompSessionHandler sessionHandler;
+    private TranslationSupplier translationSupplier;
 
     /***
      * constructor with injection
@@ -41,16 +52,15 @@ public class EventOverviewCtrl {
     public EventOverviewCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.fileSystemUtils = new FileSystemUtils();
+        this.serverUtils = new ServerUtils();
     }
 
     /**
      * Setter for event name
      * @param event event object
-     * @param sessionHandler current session handler with websocket connection
      */
-    public void setEvent(Event event, EventStompSessionHandler sessionHandler) {
+    public void setEvent(Event event) {
         this.event = event;
-        this.sessionHandler = sessionHandler;
 
         setEventNameLabel(event.getTitle());
         namesVbox.getChildren().clear();
@@ -58,8 +68,8 @@ public class EventOverviewCtrl {
         deleteVbox.getChildren().clear();
         for (Participant participant : event.getParticipants()) {
 
-            Label nameLabel = new Label(participant.getFirstName() + " " + participant.getLastName());
-            nameLabel.setFont(new javafx.scene.text.Font("Arial", 16));
+            Label label = new Label(participant.getFirstName() + " " + participant.getLastName());
+            label.setFont(new javafx.scene.text.Font("Arial", 16));
             Label deleteLabel = new Label("❌");
             deleteLabel.setAlignment(javafx.geometry.Pos.CENTER);
             deleteLabel.setFont(new javafx.scene.text.Font("Arial", 16));
@@ -73,30 +83,66 @@ public class EventOverviewCtrl {
             editLabel.onMouseClickedProperty()
                 .set(event1 -> editParticipant(participant));
 
-            addParticipantLabel.onMouseClickedProperty()
-                .set(event1 -> addParticipant());
-
-            namesVbox.getChildren().add(nameLabel);
+            namesVbox.getChildren().add(label);
             deleteVbox.getChildren().add(deleteLabel);
             editVbox.getChildren().add(editLabel);
         }
+
+        expenseTitlesVbox.getChildren().clear();
+        expenseEditVbox.getChildren().clear();
+        expenseDeleteVbox.getChildren().clear();
+        for (Expense expense : mainCtrl.getDataHandler().getExpenses()) {
+
+            Label label = new Label(expense.getTitle());
+            label.setFont(new javafx.scene.text.Font("Arial", 16));
+            Label deleteLabel = new Label("❌");
+            deleteLabel.setAlignment(javafx.geometry.Pos.CENTER);
+            deleteLabel.setFont(new javafx.scene.text.Font("Arial", 16));
+            Label editLabel = new Label("✎");
+            editLabel.setFont(new javafx.scene.text.Font("Arial", 16));
+            editLabel.setAlignment(javafx.geometry.Pos.CENTER);
+
+            deleteLabel.onMouseClickedProperty()
+                    .set(event1 -> deleteExpense(expense));
+
+            editLabel.onMouseClickedProperty()
+                    .set(event1 -> editExpense(expense));
+
+            expenseTitlesVbox.getChildren().add(label);
+            expenseEditVbox.getChildren().add(editLabel);
+            expenseDeleteVbox.getChildren().add(deleteLabel);
+        }
+    }
+
+    /**
+     * Sets the translation supplier for this controller
+     * @param tl the translation supplier that should be used
+     */
+    public void setTranslationSupplier(TranslationSupplier tl) {
+        this.translationSupplier = tl;
+        this.translate();
+    }
+
+    private void translate() {
+        if (this.translationSupplier == null) return;
+        Map<Control, String> labels = new HashMap<>();
+        labels.put(this.sendInvitesButton, "SendInvites");
+        labels.put(this.participantsLabel, "Participants");
+        labels.forEach((key, val) -> {
+            var translation = this.translationSupplier.getTranslation(val);
+            if (translation == null) return;
+            if (key instanceof Labeled)
+                ((Labeled) key).setText(translation.replaceAll("\"", ""));
+            if (key instanceof TextField)
+                ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
+        });
     }
 
     /**
      * When button gets clicked, trigger send invites method
      */
     public void sendInvites() {
-        Clipboard clipboard = Clipboard.getSystemClipboard();
-        ClipboardContent content = new ClipboardContent();
-        content.putString(event.getId().toString());
-        clipboard.setContent(content);
-        invitationCode.setText("Code moved to \nClipboard.");
-    }
-    /**
-     * When button gets clicked, trigger go to homeScreen method
-     */
-    public void goToHomeScreen() {
-        mainCtrl.showStartScreen();
+        System.out.println("SEND INVITES");
     }
 
     /**
@@ -106,7 +152,7 @@ public class EventOverviewCtrl {
     public void deleteParticipant(Participant participant) {
         event.getParticipants().remove(participant);
         //serverUtils.deleteParticipant(participant);
-        setEvent(event, sessionHandler);
+        setEvent(event);
     }
 
     /**
@@ -114,7 +160,7 @@ public class EventOverviewCtrl {
      */
     public void addParticipant() {
         mainCtrl.showCreateParticipant(event);
-        setEvent(event, sessionHandler);
+        setEvent(event);
     }
 
     /**
@@ -123,7 +169,7 @@ public class EventOverviewCtrl {
      */
     public void editParticipant(Participant participant) {
         mainCtrl.showEditParticipant(participant);
-        setEvent(event, sessionHandler);
+        setEvent(event);
     }
 
     /**
@@ -131,7 +177,30 @@ public class EventOverviewCtrl {
      * @param eventName event name
      */
     public void setEventNameLabel(String eventName) {
-        eventNameLabel.setText("Title: " + eventName);
+        eventNameLabel.setText(eventName);
     }
 
+    /**
+     * Function to add expenses, it takes you to a different screen to make the expense
+     */
+    public void addExpense() {
+        mainCtrl.showAddExpense();
+        setEvent(event);
+    }
+    /**
+     * Function to edit expenses, it takes you to a different screen to edit the expense
+     * @param expense - the expense to edit
+     */
+    public void editExpense(Expense expense) {
+        mainCtrl.showEditExpense(expense);
+        setEvent(event);
+    }
+    /**
+     * Function to delete expenses
+     * @param expense - expense to delete
+     */
+    public void deleteExpense(Expense expense) {
+        mainCtrl.getSessionHandler().sendExpense(expense, "delete");
+        setEvent(event);
+    }
 }

@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import commons.Event;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,9 @@ public class TestEventRepository implements EventRepository {
 
     public final List<String> calledMethods = new ArrayList<>();
 
+    private static void setId(Event toSet, UUID newID) throws IllegalAccessException {
+        FieldUtils.writeField(toSet, "id", newID, true);
+    }
 
     private void call(String name) {
         calledMethods.add(name);
@@ -125,6 +129,9 @@ public class TestEventRepository implements EventRepository {
                 return entity;
             }
         }
+        try {
+            setId(entity, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
         events.add(entity);
         return entity;
     }
@@ -172,7 +179,7 @@ public class TestEventRepository implements EventRepository {
 
     @Override
     public void delete(Event entity) {
-
+        events.remove(entity);
     }
 
     @Override

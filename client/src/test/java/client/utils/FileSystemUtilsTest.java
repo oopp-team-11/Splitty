@@ -228,4 +228,82 @@ class FileSystemUtilsTest {
         assertEquals(codes, fileSystemUtils.extractInvitationCodesFromEventList(events));
     }
 
+    @Test
+    void checkClientConfigCreationErrorEmptyFile() {
+        FileSystemUtils utils = new FileSystemUtils();
+        assertThrows(FileNotFoundException.class, () -> utils.getServerIP("test-client-config.json"));
+        if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
+            new File("test-client-config.json").delete();
+        }
+    }
+
+    @Test
+    void checkClientConfigCreationErrorEmptyIP() throws IOException {
+        FileSystemUtils utils = new FileSystemUtils();
+
+        if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
+            new File("test-client-config.json").delete();
+        }
+
+        JsonObject json = Json.createObjectBuilder()
+                .add("server-ip", "SERVER_URL")
+                .build();
+
+        FileWriter file = new FileWriter("test-client-config.json");
+        file.write(json.toString());
+        file.flush();
+        file.close();
+
+        assertThrows(RuntimeException.class, () -> utils.getServerIP("test-client-config.json"));
+        if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
+            new File("test-client-config.json").delete();
+        }
+    }
+
+    @Test
+    void checkClientConfigCreationCorrect() throws IOException {
+        FileSystemUtils utils = new FileSystemUtils();
+
+        if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
+            new File("test-client-config.json").delete();
+        }
+
+        JsonObject json = Json.createObjectBuilder()
+                .add("server-ip", "localhost:8080")
+                .build();
+
+        FileWriter file = new FileWriter("test-client-config.json");
+        file.write(json.toString());
+        file.flush();
+        file.close();
+
+        assertEquals(utils.getServerIP("test-client-config.json"), "localhost:8080");
+        if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
+            new File("test-client-config.json").delete();
+        }
+    }
+
+    @Test
+    void checkClientConfigCreationWrongFormat() throws IOException {
+        FileSystemUtils utils = new FileSystemUtils();
+
+        if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
+            new File("test-client-config.json").delete();
+        }
+
+        JsonObject json = Json.createObjectBuilder()
+                .add("server-ip", "http://localhost:8080")
+                .build();
+
+        FileWriter file = new FileWriter("test-client-config.json");
+        file.write(json.toString());
+        file.flush();
+        file.close();
+
+        assertEquals(utils.getServerIP("test-client-config.json"), "localhost:8080");
+        if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
+            new File("test-client-config.json").delete();
+        }
+    }
+
 }
