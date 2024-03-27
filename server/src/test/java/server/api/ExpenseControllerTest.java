@@ -54,15 +54,15 @@ public class ExpenseControllerTest {
                 null,
                 null
         ));
-        Expense expense = new Expense(participant, "expense", 21.37);
-        UUID invitationCode = UUID.randomUUID();
-        expense.setPaidById(participant.getId());
-        expense.setInvitationCode(invitationCode);
+        Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
+                participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
+                UUID.randomUUID());
+        Expense expense = new Expense(sentParticipant, "expense", 21.37);
 
         assertEquals(StatusEntity.StatusCode.OK, expenseController.createExpense(expense).getStatusCode());
 
         ArgumentCaptor<Expense> expenseArgumentCaptor = ArgumentCaptor.forClass(Expense.class);
-        verify(messagingTemplate).convertAndSend(eq("/topic/" + invitationCode + "/expense:create"),
+        verify(messagingTemplate).convertAndSend(eq("/topic/" + expense.getInvitationCode() + "/expense:create"),
                 expenseArgumentCaptor.capture());
         Expense sentExpense = expenseArgumentCaptor.getValue();
         assertEquals(expense.getTitle(), sentExpense.getTitle());
@@ -73,10 +73,9 @@ public class ExpenseControllerTest {
 
     @Test
     void checkCreateExpenseParticipantNotFound() {
-        Expense expense = new Expense(new Participant(), "expense", 21.37);
-        UUID invitationCode = UUID.randomUUID();
-        expense.setPaidById(UUID.randomUUID());
-        expense.setInvitationCode(invitationCode);
+        Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
+                "abcd@gmail.com", null, null, UUID.randomUUID());
+        Expense expense = new Expense(sentParticipant, "expense", 21.37);
         expense = expenseRepository.save(expense);
 
         assertEquals(StatusEntity.notFound("Provided participant who paid for the expense does not exist"),
@@ -91,68 +90,68 @@ public class ExpenseControllerTest {
 
     @Test
     void ExpenseTitleNull() {
-        Expense expense = new Expense(new Participant(), null, 69);
+        Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
+                "abcd@gmail.com", null, null, UUID.randomUUID());
+        Expense expense = new Expense(sentParticipant, null, 69);
         try {
             setId(expense, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        expense.setPaidById(UUID.randomUUID());
-        expense.setInvitationCode(UUID.randomUUID());
         assertEquals(StatusEntity.badRequest("Expense title should not be empty", true),
                 expenseController.isExpenseBadRequest(expense));
     }
 
     @Test
     void ExpenseAmountNotPositive() {
-        Expense expense = new Expense(new Participant(), "expense", 0);
+        Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
+                "abcd@gmail.com", null, null, UUID.randomUUID());
+        Expense expense = new Expense(sentParticipant, "expense", 0);
         try {
             setId(expense, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        expense.setPaidById(UUID.randomUUID());
-        expense.setInvitationCode(UUID.randomUUID());
         assertEquals(StatusEntity.badRequest("Amount should be positive", true),
                 expenseController.isExpenseBadRequest(expense));
     }
 
     @Test
     void ExpenseGetPaidByIDNull() {
-        Expense expense = new Expense(new Participant(), "expense", 69);
+        Participant sentParticipant = new Participant(null, "name", "surname",
+                "abcd@gmail.com", null, null, UUID.randomUUID());
+        Expense expense = new Expense(sentParticipant, "expense", 69);
         try {
             setId(expense, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        expense.setInvitationCode(UUID.randomUUID());
         assertEquals(StatusEntity.badRequest("Id of participant who paid should be provided", true),
                 expenseController.isExpenseBadRequest(expense));
     }
 
     @Test
     void ExpenseInvitationCodeNull() {
-        Expense expense = new Expense(new Participant(), "expense", 69);
+        Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
+                "abcd@gmail.com", null, null, null);
+        Expense expense = new Expense(sentParticipant, "expense", 69);
         try {
             setId(expense, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        expense.setPaidById(UUID.randomUUID());
         assertEquals(StatusEntity.badRequest("InvitationCode of event should be provided", true),
                 expenseController.isExpenseBadRequest(expense));
     }
 
     @Test
     void ExpenseOKRequest() {
-        Expense expense = new Expense(new Participant(), "expense", 69);
+        Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
+                "abcd@gmail.com", null, null, UUID.randomUUID());
+        Expense expense = new Expense(sentParticipant, "expense", 69);
         try {
             setId(expense, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        expense.setPaidById(UUID.randomUUID());
-        expense.setInvitationCode(UUID.randomUUID());
         assertEquals(StatusEntity.ok(null), expenseController.isExpenseBadRequest(expense));
     }
 
     @Test
     void checkUpdateExpense() {
-        Participant participant = participantRepository.save(new Participant());
+        Participant participant = participantRepository.save(new Participant(UUID.randomUUID(), "name",
+                "surname", "abcd@gmail.com", null, null, UUID.randomUUID()));
         Expense expense = new Expense(participant, "expense", 21.37);
-        UUID invitationCode = UUID.randomUUID();
-        expense.setPaidById(participant.getId());
-        expense.setInvitationCode(invitationCode);
         expense = expenseRepository.save(expense);
         expense.setTitle("NewTitle");
         expense.setAmount(69.42);
@@ -160,7 +159,7 @@ public class ExpenseControllerTest {
         assertEquals(StatusEntity.StatusCode.OK, expenseController.updateExpense(expense).getStatusCode());
 
         ArgumentCaptor<Expense> expenseArgumentCaptor = ArgumentCaptor.forClass(Expense.class);
-        verify(messagingTemplate).convertAndSend(eq("/topic/" + invitationCode + "/expense:update"),
+        verify(messagingTemplate).convertAndSend(eq("/topic/" + expense.getInvitationCode() + "/expense:update"),
                 expenseArgumentCaptor.capture());
         Expense sentExpense = expenseArgumentCaptor.getValue();
         assertEquals(expense.getTitle(), sentExpense.getTitle());
@@ -194,18 +193,16 @@ public class ExpenseControllerTest {
 
     @Test
     void checkDeleteExpense() {
-        Participant participant = participantRepository.save(new Participant());
+        Participant participant = participantRepository.save(new Participant(UUID.randomUUID(), "name",
+                "surname", "abcd@gmail.com", null, null, UUID.randomUUID()));
         Expense expense = new Expense(participant, "expense", 21.37);
-        UUID invitationCode = UUID.randomUUID();
-        expense.setPaidById(participant.getId());
-        expense.setInvitationCode(invitationCode);
         expense = expenseRepository.save(expense);
 
         assertEquals(StatusEntity.StatusCode.OK, expenseController.deleteExpense(expense).getStatusCode());
         assertFalse(expenseRepository.existsById(expense.getId()));
 
         ArgumentCaptor<Expense> expenseArgumentCaptor = ArgumentCaptor.forClass(Expense.class);
-        verify(messagingTemplate).convertAndSend(eq("/topic/" + invitationCode + "/expense:delete"),
+        verify(messagingTemplate).convertAndSend(eq("/topic/" + expense.getInvitationCode() + "/expense:delete"),
                 expenseArgumentCaptor.capture());
         assertEquals(expense, expenseArgumentCaptor.getValue());
     }
@@ -213,30 +210,37 @@ public class ExpenseControllerTest {
     @Test
     void checkReadExpenses() {
         Event event = new Event("testEvent");
+        event = eventRepository.save(event);
         Participant participant1 = new Participant(event, "name1",
                 "surname1", "abc@gmail.com", "ibanTest", "bicTest");
         Participant participant2 = new Participant(event, "name2",
                 "surname2", "abc@gmail.com", "ibanTest", "bicTest");
+        participant1 = participantRepository.save(participant1);
+        participant2 = participantRepository.save(participant2);
         event.addParticipant(participant1);
         event.addParticipant(participant2);
         Expense expense1 = new Expense(participant1, "expense1", 1.1);
         participant1.addExpense(expense1);
         Expense expense2 = new Expense(participant2, "expense2", 2.2);
         participant2.addExpense(expense2);
-        event = eventRepository.save(event);
-        participant1 = participantRepository.save(participant1);
-        participant2 = participantRepository.save(participant2);
         expense1 = expenseRepository.save(expense1);
         expense2 = expenseRepository.save(expense2);
-        expense1.setInvitationCode(event.getId());
-        expense2.setInvitationCode(event.getId());
-        expense1.setPaidById(participant1.getId());
-        expense2.setPaidById(participant2.getId());
-        List<Expense> expenses = new ArrayList<>();
-        expenses.add(expense1);
-        expenses.add(expense2);
 
-        assertEquals(StatusEntity.ok(expenses), expenseController.readExpenses(event.getId()));
+        StatusEntity<List<Expense>> status = expenseController.readExpenses(event.getId());
+        assertEquals(StatusEntity.StatusCode.OK, status.getStatusCode());
+        List<Expense> readExpenses = status.getBody();
+        Expense readExpense1 = readExpenses.getFirst();
+        Expense readExpense2 = readExpenses.getLast();
+        assertEquals(expense1.getId(), readExpense1.getId());
+        assertEquals(expense1.getTitle(), readExpense1.getTitle());
+        assertEquals(expense1.getAmount(), readExpense1.getAmount());
+        assertEquals(expense1.getInvitationCode(), readExpense1.getInvitationCode());
+        assertEquals(expense1.getPaidById(), readExpense1.getPaidById());
+        assertEquals(expense2.getId(), readExpense2.getId());
+        assertEquals(expense2.getTitle(), readExpense2.getTitle());
+        assertEquals(expense2.getAmount(), readExpense2.getAmount());
+        assertEquals(expense2.getInvitationCode(), readExpense2.getInvitationCode());
+        assertEquals(expense2.getPaidById(), readExpense2.getPaidById());
     }
 
     @Test
@@ -249,5 +253,11 @@ public class ExpenseControllerTest {
     void readExpenseEventNotExists() {
         assertEquals(StatusEntity.notFound(null, true),
                 expenseController.readExpenses(UUID.randomUUID()));
+    }
+
+    @Test
+    void deleteExpenseNullObject() {
+        assertEquals(StatusEntity.badRequest("Expense object not found in message body"),
+                expenseController.deleteExpense(null));
     }
 }

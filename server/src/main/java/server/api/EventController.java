@@ -7,6 +7,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import commons.Event;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -22,6 +23,7 @@ import commons.Views;
  * Server-side EventController for the Event entity.
  * Handles the CRUD operations under all /events endpoints.
  */
+@Transactional
 @Controller
 public class EventController {
     private final EventRepository repo;
@@ -119,11 +121,11 @@ public class EventController {
 
         Event event = repo.getReferenceById(receivedEvent.getId());
         event.setTitle(receivedEvent.getTitle());
-        //TODO: Call update last activity service
-        repo.save(event);
+        event = repo.save(event);
 
-        template.convertAndSend("/topic/" + receivedEvent.getId() + "/event:update", event);
-        return StatusEntity.ok("event:update " + event.getId());
+        Event sentEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(), event.getLastActivity());
+        template.convertAndSend("/topic/" + sentEvent.getId() + "/event:update", sentEvent);
+        return StatusEntity.ok("event:update " + sentEvent.getId());
     }
 
     /**
@@ -144,7 +146,8 @@ public class EventController {
 
         Event event = repo.getReferenceById(invitationCode);
 
-        return StatusEntity.ok(event);
+        Event sentEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(), event.getLastActivity());
+        return StatusEntity.ok(sentEvent);
     }
 
     /**
@@ -168,8 +171,9 @@ public class EventController {
         Event event = repo.getReferenceById(receivedEvent.getId());
         repo.delete(event);
 
-        template.convertAndSend("/topic/" + receivedEvent.getId() + "/event:delete", event);
-        return StatusEntity.ok("event:delete " + event.getId());
+        Event sentEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(), event.getLastActivity());
+        template.convertAndSend("/topic/" + sentEvent.getId() + "/event:delete", sentEvent);
+        return StatusEntity.ok("event:delete " + sentEvent.getId());
     }
 
     /**

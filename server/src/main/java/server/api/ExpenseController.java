@@ -8,6 +8,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import server.database.EventRepository;
 import server.database.ExpenseRepository;
 import server.database.ParticipantRepository;
@@ -19,6 +20,7 @@ import java.util.UUID;
 /**
  * Class that represents the participant controller
  */
+@Transactional
 @Controller
 public class ExpenseController {
     private final EventRepository eventRepository;
@@ -103,16 +105,14 @@ public class ExpenseController {
         Expense expense = new Expense(paidBy, receivedExpense.getTitle(), receivedExpense.getAmount());
         paidBy.addExpense(expense);
 
-        UUID invitationCode = receivedExpense.getInvitationCode();
-        receivedExpense = expenseRepository.save(receivedExpense);
-        participantRepository.save(paidBy);
+        expense = expenseRepository.save(expense);
+        paidBy = participantRepository.save(paidBy);
 
-        receivedExpense.setPaidById(paidBy.getId());
-        receivedExpense.setInvitationCode(invitationCode);
-
-        template.convertAndSend("/topic/" + invitationCode + "/expense:create",
-                receivedExpense);
-        return StatusEntity.ok("expense:create " + receivedExpense.getId());
+        Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(), paidBy.getId(),
+                receivedExpense.getInvitationCode());
+        template.convertAndSend("/topic/" + sentExpense.getInvitationCode() + "/expense:create",
+                sentExpense);
+        return StatusEntity.ok("expense:create " + sentExpense.getId());
     }
 
     /**
@@ -137,9 +137,9 @@ public class ExpenseController {
         for (Participant participant : participants) {
             List<Expense> participantExpenses = participant.getMadeExpenses();
             for (Expense expense : participantExpenses) {
-                expense.setInvitationCode(invitationCode);
-                expense.setPaidById(participant.getId());
-                expenses.add(expense);
+                Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount()
+                        , participant.getId(), invitationCode);
+                expenses.add(sentExpense);
             }
         }
 
@@ -168,11 +168,10 @@ public class ExpenseController {
         expense.setTitle(receivedExpense.getTitle());
         expense = expenseRepository.save(expense);
 
-        expense.setInvitationCode(receivedExpense.getInvitationCode());
-        expense.setPaidById(expense.getPaidBy().getId());
-
-        template.convertAndSend("/topic/" + expense.getInvitationCode() + "/expense:update", expense);
-        return StatusEntity.ok("expense:update " + expense.getId());
+        Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
+                receivedExpense.getPaidById(), receivedExpense.getInvitationCode());
+        template.convertAndSend("/topic/" + sentExpense.getInvitationCode() + "/expense:update", sentExpense);
+        return StatusEntity.ok("expense:update " + sentExpense.getId());
     }
 
     /**
@@ -195,8 +194,10 @@ public class ExpenseController {
         Expense expense = expenseRepository.getReferenceById(receivedExpense.getId());
         expenseRepository.delete(expense);
 
-        template.convertAndSend("/topic/" + receivedExpense.getInvitationCode() + "/expense:delete",
-                receivedExpense);
-        return StatusEntity.ok("expense:delete " + expense.getId());
+        Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
+                receivedExpense.getPaidById(), receivedExpense.getInvitationCode());
+        template.convertAndSend("/topic/" + sentExpense.getInvitationCode() + "/expense:delete",
+                sentExpense);
+        return StatusEntity.ok("expense:delete " + sentExpense.getId());
     }
 }

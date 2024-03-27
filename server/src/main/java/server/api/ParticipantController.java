@@ -7,9 +7,11 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import server.database.EventRepository;
 import server.database.ParticipantRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -17,6 +19,7 @@ import java.util.regex.Pattern;
 /**
  * Class that represents the participant controller
  */
+@Transactional
 @Controller
 public class ParticipantController {
     private final ParticipantRepository participantRepository;
@@ -63,7 +66,7 @@ public class ParticipantController {
                 !Pattern.compile("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$").
                         matcher(receivedParticipant.getEmail()).matches())
         {
-            return StatusEntity.badRequest("Provided email is invalid");
+            return StatusEntity.badRequest("Provided email is of invalid format");
         }
 
         return StatusEntity.ok(null);
@@ -112,11 +115,12 @@ public class ParticipantController {
         );
         participant = participantRepository.save(participant);
 
-        participant.setEventId(receivedParticipant.getEventId());
-
-        template.convertAndSend("/topic/"+participant.getEventId()+"/participant:create",
-                participant);
-        return StatusEntity.ok("participant:create " + participant.getId());
+        Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
+                participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
+                receivedParticipant.getEventId());
+        template.convertAndSend("/topic/" + sentParticipant.getEventId() + "/participant:create",
+                sentParticipant);
+        return StatusEntity.ok("participant:create " + sentParticipant.getId());
     }
 
     /**
@@ -133,11 +137,13 @@ public class ParticipantController {
             return StatusEntity.notFound(null, true);
 
         Event event = eventRepository.getReferenceById(invitationCode);
-        List<Participant> participants = event.getParticipants();
+        List<Participant> participants = new ArrayList<>();
 
-        for(Participant participant : participants)
-        {
-            participant.setEventId(participant.getEvent().getId());
+        for(Participant participant : event.getParticipants()) {
+            Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
+                    participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
+                    invitationCode);
+            participants.add(sentParticipant);
         }
 
         return StatusEntity.ok(participants);
@@ -168,11 +174,12 @@ public class ParticipantController {
         participant.setBic(receivedParticipant.getBic());
         participant = participantRepository.save(participant);
 
-        participant.setEventId(receivedParticipant.getEventId());
-
-        template.convertAndSend("/topic/"+participant.getEventId()+"/participant:update",
-                participant);
-        return StatusEntity.ok("participant:update " + participant.getId());
+        Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
+                participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
+                receivedParticipant.getEventId());
+        template.convertAndSend("/topic/" + sentParticipant.getEventId() + "/participant:update",
+                sentParticipant);
+        return StatusEntity.ok("participant:update " + sentParticipant.getId());
     }
 
     /**
@@ -191,7 +198,11 @@ public class ParticipantController {
         Participant participant = participantRepository.getReferenceById(receivedParticipant.getId());
         participantRepository.delete(participant);
 
-        template.convertAndSend("/topic/"+receivedParticipant.getEventId()+"/participant:delete", participant);
-        return StatusEntity.ok("participant:delete " + participant.getId());
+        Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
+                participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
+                receivedParticipant.getEventId());
+        template.convertAndSend("/topic/" + sentParticipant.getEventId() + "/participant:delete",
+                sentParticipant);
+        return StatusEntity.ok("participant:delete " + sentParticipant.getId());
     }
 }

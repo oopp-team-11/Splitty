@@ -135,6 +135,10 @@ public class TestParticipantRepository implements ParticipantRepository {
     @Override
     public <S extends Participant> S save(S entity) {
         call("save");
+        for (Participant participant : participants) {
+            if (participant.getId().equals(entity.getId()))
+                return entity;
+        }
         try {
             setId(entity, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}

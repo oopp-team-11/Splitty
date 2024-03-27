@@ -57,25 +57,7 @@ public class EventTest {
                 "NL69 XING 4269 2137 00",
                 "CDNANL2A666"
         ));
-        eventNotEqual = new Event("The Event we do not need to pay for");
-        eventNotEqual.setCreationDate(LocalDateTime.of(2024, 2, 12, 12, 0));
-        eventNotEqual.setLastActivity(LocalDateTime.of(2024, 2, 14, 12, 0));
-        eventNotEqual.addParticipant(new Participant(
-                eventNotEqual,
-                "John",
-                "Doe",
-                "j.doe@domain.com",
-                "NL91 ABNA 0417 1643 00",
-                "ABNANL2A124"
-        ));
-        eventNotEqual.addParticipant(new Participant(
-                eventNotEqual,
-                "Lorem",
-                "Ipsum",
-                "l.ipsum@domain.com",
-                "NL69 XING 4269 2157 00",
-                "CDNANL2A666"
-        ));
+        eventNotEqual = new Event();
         try {
             UUID id = UUID.randomUUID();
             setId(event, id);
@@ -86,6 +68,15 @@ public class EventTest {
 
     private static void setId(Event toSet, UUID newId) throws IllegalAccessException {
         FieldUtils.writeField(toSet, "id", newId, true);
+    }
+
+    @Test
+    void server2ClientConstructor() {
+        Event sentEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(), event.getLastActivity());
+        assertEquals(event.getId(), sentEvent.getId());
+        assertEquals(event.getTitle(), sentEvent.getTitle());
+        assertEquals(event.getCreationDate(), sentEvent.getCreationDate());
+        assertEquals(event.getLastActivity(), sentEvent.getLastActivity());
     }
 
     @Test
