@@ -205,7 +205,9 @@ public class MainCtrl {
         WebSocketClient client = new StandardWebSocketClient();
 
         WebSocketStompClient stompClient = new WebSocketStompClient(client);
-        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+        MappingJackson2MessageConverter jackson2MessageConverter = new MappingJackson2MessageConverter();
+        jackson2MessageConverter.getObjectMapper().findAndRegisterModules();
+        stompClient.setMessageConverter(jackson2MessageConverter);
 
         sessionHandler = new WebsocketSessionHandler(dataHandler, this);
         stompClient.connectAsync("ws://" + this.serverIp + "/v1", sessionHandler);

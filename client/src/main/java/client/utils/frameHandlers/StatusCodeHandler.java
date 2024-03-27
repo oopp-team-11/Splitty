@@ -2,7 +2,6 @@ package client.utils.frameHandlers;
 
 import client.scenes.MainCtrl;
 import commons.StatusEntity;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
@@ -25,13 +24,12 @@ public class StatusCodeHandler implements StompFrameHandler {
 
     @Override
     public Type getPayloadType(StompHeaders headers) {
-        return new ParameterizedTypeReference<StatusEntity<String>>() {
-        }.getType();
+        return StatusEntity.class;
     }
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        StatusEntity<String> status = (StatusEntity<String>) payload;
+        StatusEntity status = (StatusEntity) payload;
         //TODO: mainCtrl.notifyAboutResponse(status)
     }
 }

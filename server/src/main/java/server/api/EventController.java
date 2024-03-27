@@ -7,6 +7,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import commons.Event;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -22,6 +23,7 @@ import commons.Views;
  * Server-side EventController for the Event entity.
  * Handles the CRUD operations under all /events endpoints.
  */
+@Transactional
 @Controller
 public class EventController {
     private final EventRepository repo;
@@ -106,24 +108,24 @@ public class EventController {
      */
     @MessageMapping("/event:update")
     @SendToUser(value = "/queue/reply", broadcast = false)
-    public StatusEntity<String> updateEvent(Event receivedEvent)
+    public StatusEntity updateEvent(Event receivedEvent)
     {
         if(receivedEvent == null)
-            return StatusEntity.badRequest("Event object not found in message body", true);
+            return StatusEntity.badRequest(true, "Event object not found in message body");
 
         if (isNullOrEmpty(receivedEvent.getTitle()))
-            return StatusEntity.badRequest("Event title should not be empty", true);
+            return StatusEntity.badRequest(true, "Event title should not be empty");
 
         if(!repo.existsById(receivedEvent.getId()))
-            return StatusEntity.notFound("Event not found", true);
+            return StatusEntity.notFound(true, "Event not found");
 
         Event event = repo.getReferenceById(receivedEvent.getId());
         event.setTitle(receivedEvent.getTitle());
-        //TODO: Call update last activity service
-        repo.save(event);
+        event = repo.save(event);
 
-        template.convertAndSend("/topic/" + receivedEvent.getId() + "/event:update", event);
-        return StatusEntity.ok("event:update " + event.getId());
+        Event sentEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(), event.getLastActivity());
+        template.convertAndSend("/topic/" + sentEvent.getId() + "/event:update", sentEvent);
+        return StatusEntity.ok("event:update " + sentEvent.getId());
     }
 
     /**
@@ -135,16 +137,17 @@ public class EventController {
      */
     @MessageMapping("/event:read")
     @SendToUser(value = "/queue/event:read", broadcast = false)
-    public StatusEntity<Event> readEvent(UUID invitationCode)
+    public StatusEntity readEvent(UUID invitationCode)
     {
         if(invitationCode == null)
-            return StatusEntity.badRequest(null, true);
+            return StatusEntity.badRequest(true, (Event) null);
         if(!repo.existsById(invitationCode))
-            return StatusEntity.notFound(null, true);
+            return StatusEntity.notFound(true, (Event) null);
 
         Event event = repo.getReferenceById(invitationCode);
 
-        return StatusEntity.ok(event);
+        Event sentEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(), event.getLastActivity());
+        return StatusEntity.ok(sentEvent);
     }
 
     /**
@@ -154,22 +157,23 @@ public class EventController {
      */
     @MessageMapping("/event:delete")
     @SendToUser(value = "/queue/reply", broadcast = false)
-    public StatusEntity<String> deleteEvent(Event receivedEvent)
+    public StatusEntity deleteEvent(Event receivedEvent)
     {
         /*TODO: Implement admin passcode verification*/
         if(receivedEvent == null)
-            return StatusEntity.badRequest("Event should not be null", true);
+            return StatusEntity.badRequest(true, "Event should not be null");
 
         if(!repo.existsById(receivedEvent.getId()))
         {
-            return StatusEntity.notFound("Event not found", true);
+            return StatusEntity.notFound(true, "Event not found");
         }
 
         Event event = repo.getReferenceById(receivedEvent.getId());
         repo.delete(event);
 
-        template.convertAndSend("/topic/" + receivedEvent.getId() + "/event:delete", event);
-        return StatusEntity.ok("event:delete " + event.getId());
+        Event sentEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(), event.getLastActivity());
+        template.convertAndSend("/topic/" + sentEvent.getId() + "/event:delete", sentEvent);
+        return StatusEntity.ok("event:delete " + sentEvent.getId());
     }
 
     /**

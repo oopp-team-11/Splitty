@@ -2,9 +2,7 @@ package client.utils.frameHandlers;
 
 import client.scenes.MainCtrl;
 import client.utils.EventDataHandler;
-import commons.Event;
 import commons.StatusEntity;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
@@ -30,16 +28,15 @@ public class ReadEventHandler implements StompFrameHandler {
 
     @Override
     public Type getPayloadType(StompHeaders headers) {
-        return new ParameterizedTypeReference<StatusEntity<Event>>() {
-        }.getType();
+        return StatusEntity.class;
     }
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        StatusEntity<Event> status = (StatusEntity<Event>) payload;
+        StatusEntity status = (StatusEntity) payload;
         switch (status.getStatusCode()) {
             case OK -> {
-                dataHandler.setEvent(status.getBody());
+                dataHandler.setEvent(status.getEvent());
             }
             case BAD_REQUEST -> {
                 System.out.println("Server did not find invitationCode in the message. This should never happen.");

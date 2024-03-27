@@ -1,6 +1,6 @@
 package commons;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -9,7 +9,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,18 +33,34 @@ public class Event {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime lastActivity;
 
-    @JsonIgnore
+    @JsonManagedReference
     @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Participant> participants;
 
     /**
-     * Constructor for the Event entity.
+     * Event constructor for sending Event to client using WebSockets
+     *
+     * @param id id of the Event
+     * @param title title of the Event
+     * @param creationDate creationDate of the Event
+     * @param lastActivity lastActivity of the Event
+     */
+    public Event(UUID id, String title, LocalDateTime creationDate, LocalDateTime lastActivity) {
+        this.id = id;
+        this.title = title;
+        this.creationDate = creationDate;
+        this.lastActivity = lastActivity;
+    }
+
+    /**
+     * Default constructor for the Event entity.
+     *
      * Initialises the participants list with a new ArrayList.
      * @param title The title of the event
      */
     public Event(String title) {
         this.title = title;
-        this.participants = new ArrayList<>();
+        this.participants = new ParticipantList();
     }
 
     /**

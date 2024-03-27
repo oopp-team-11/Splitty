@@ -1,18 +1,14 @@
 package client.utils.frameHandlers;
 
-import client.Main;
 import client.scenes.MainCtrl;
 import client.utils.EventDataHandler;
 import commons.Expense;
+import commons.ExpenseList;
 import commons.StatusEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.messaging.simp.stomp.StompHeaders;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -33,16 +29,15 @@ class ReadExpensesHandlerTest {
 
     @Test
     void getPayloadType() {
-        assertEquals(new ParameterizedTypeReference<StatusEntity<List<Expense>>>() {}.getType(),
-                handler.getPayloadType(headers));
+        assertEquals(StatusEntity.class, handler.getPayloadType(headers));
     }
 
     @Test
     void handleFrameOK() {
-        List<Expense> expenses = new ArrayList<>();
+        ExpenseList expenses = new ExpenseList();
         expenses.add(new Expense());
         expenses.add(new Expense());
-        StatusEntity<List<Expense>> status = StatusEntity.ok(expenses);
+        StatusEntity status = StatusEntity.ok(expenses);
         handler.handleFrame(headers, status);
         verify(dataHandler).setExpenses(expenses);
     }

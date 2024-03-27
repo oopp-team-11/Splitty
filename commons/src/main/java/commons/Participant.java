@@ -1,13 +1,13 @@
 package commons;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,31 +29,15 @@ public class Participant {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "EVENT_ID")
-    @JsonIgnore
+    @JsonBackReference
     private Event event;
 
-    @JsonIgnore
+    @JsonManagedReference
     @OneToMany(mappedBy = "paidBy", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     List<Expense> madeExpenses;
 
     @Transient
     private UUID eventId;
-
-    /***
-     * std getter
-     * @return UUID of parent event
-     */
-    public UUID getEventId() {
-        return eventId;
-    }
-
-    /**
-     * Method that adds an expense to the list of expenses
-     * @param expense expense to be added
-     */
-    public void addExpense(Expense expense) {
-        madeExpenses.add(expense);
-    }
 
     /**
      * Constructor
@@ -63,7 +47,30 @@ public class Participant {
     }
 
     /**
-     * Constructor
+     * Constructor for sending Participant from server to client
+     *
+     * @param id ID of the Participant
+     * @param firstName firstName of the Participant
+     * @param lastName lastName of the Participant
+     * @param email email of the Participant
+     * @param iban iban of the Participant
+     * @param bic bic of the Participant
+     * @param eventId eventID of the Participant
+     */
+    public Participant(UUID id, String firstName, String lastName, String email, String iban, String bic,
+                       UUID eventId) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.iban = iban;
+        this.bic = bic;
+        this.eventId = eventId;
+    }
+
+    /**
+     * Default constructor for Participant
+     *
      * @param event event the participant is participating in
      * @param firstName first name of the participant
      * @param lastName last name of the participant
@@ -78,8 +85,24 @@ public class Participant {
         this.email = email;
         this.iban = iban;
         this.bic = bic;
-        this.madeExpenses = new ArrayList<>();
+        this.madeExpenses = new ExpenseList();
         this.eventId = event.getId();
+    }
+
+    /**
+     * Method that adds an expense to the list of expenses
+     * @param expense expense to be added
+     */
+    public void addExpense(Expense expense) {
+        madeExpenses.add(expense);
+    }
+
+    /***
+     * std getter
+     * @return UUID of parent event
+     */
+    public UUID getEventId() {
+        return eventId;
     }
 
     /**
@@ -186,14 +209,6 @@ public class Participant {
         this.bic = bic;
     }
 
-    /**
-     * Setter for id of the parent
-     * @param eventId id of the parent event
-     */
-    public void setEventId(UUID eventId) {
-        this.eventId = eventId;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -203,18 +218,16 @@ public class Participant {
         Participant that = (Participant) obj;
 
         return new EqualsBuilder().append(id, that.id).append(firstName, that.firstName)
-                .append(lastName, that.lastName).append(email, that.email)
-                .append(iban, that.iban).append(bic, that.bic)
-                .append(event.getId(), that.event.getId())
-                .append(madeExpenses, that.madeExpenses).isEquals();
+                .append(lastName, that.lastName).append(email, that.email).append(iban, that.iban)
+                .append(bic, that.bic).append(madeExpenses, that.madeExpenses)
+                .append(eventId, that.eventId).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(id)
-                .append(firstName).append(lastName).append(email)
-                .append(iban).append(bic).append(event.getId())
-                .append(madeExpenses).toHashCode();
+        return new HashCodeBuilder(17, 37).append(id).append(firstName)
+                .append(lastName).append(email).append(iban).append(bic).append(madeExpenses)
+                .append(eventId).toHashCode();
     }
 
     @Override
@@ -226,8 +239,8 @@ public class Participant {
                 .append("email", email)
                 .append("iban", iban)
                 .append("bic", bic)
-                .append("invitationCode", event.getId())
                 .append("madeExpenses", madeExpenses)
+                .append("eventId", eventId)
                 .toString();
     }
 }
