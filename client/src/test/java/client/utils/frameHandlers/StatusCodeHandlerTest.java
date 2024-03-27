@@ -5,7 +5,6 @@ import commons.StatusEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,8 +23,7 @@ class StatusCodeHandlerTest {
 
     @Test
     void getPayloadType() {
-        assertEquals(new ParameterizedTypeReference<StatusEntity>() {}.getType(),
-                handler.getPayloadType(headers));
+        assertEquals(StatusEntity.class, handler.getPayloadType(headers));
     }
 
     @Test

@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -34,7 +35,7 @@ public class Event {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private ParticipantList participants;
+    private List<Participant> participants;
 
     /**
      * Event constructor for sending Event to client using WebSockets
@@ -80,7 +81,7 @@ public class Event {
      * Getter for the list of Participants that are part of the Event.
      * @return Returns a List of Participant objects (i.e. children of this Event entity)
      */
-    public ParticipantList getParticipants() {
+    public List<Participant> getParticipants() {
         return participants;
     }
 

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import server.database.EventRepository;
 import server.database.ParticipantRepository;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -136,7 +137,7 @@ public class ParticipantController {
             return StatusEntity.notFound(true, (ParticipantList) null);
 
         Event event = eventRepository.getReferenceById(invitationCode);
-        ParticipantList participants = (ParticipantList) event.getParticipants();
+        List<Participant> participants = event.getParticipants();
         ParticipantList sentParticipants = new ParticipantList();
 
         for(Participant participant : participants) {
