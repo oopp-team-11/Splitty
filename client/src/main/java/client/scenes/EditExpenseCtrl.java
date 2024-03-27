@@ -28,7 +28,6 @@ public class EditExpenseCtrl {
     private MainCtrl mainCtrl;
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
-    private Event event;
 
     /***
      * constructor with injection
@@ -46,14 +45,18 @@ public class EditExpenseCtrl {
      * @param expense
      */
     public void setExpense(Expense expense) {
-        this.event = expense.getPaidBy().getEvent();
         var participantList = mainCtrl.getDataHandler().getParticipants();
 
         ObservableList<String> participants = FXCollections.observableArrayList(
                 participantList.stream().map(participant ->
                         (participant.getFirstName() + " " + participant.getLastName())).toList());
         expensePaidBy.setItems(participants);
-        expensePaidBy.setValue((expense.getPaidBy().getFirstName() + " " + expense.getPaidBy().getLastName()));
+
+        expensePaidBy.setValue(
+                participantList.stream()
+                        .filter(person -> person.getId().equals(expense.getPaidById())).map(participant ->
+                                (participant.getFirstName() + " " + participant.getLastName()))
+                        .toList().getFirst());
         expenseTitle.setText(expense.getTitle());
         expenseAmount.setText(String.valueOf(expense.getAmount()));
     }
@@ -75,13 +78,13 @@ public class EditExpenseCtrl {
                 Double.parseDouble(expenseAmount.getText()));
         mainCtrl.getSessionHandler().sendExpense(newExpense, "update");
 
-        mainCtrl.showEventOverview(event);
+        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
     }
 
     /**
      * Abort adding expense
      */
     public void abort() {
-        mainCtrl.showEventOverview(event);
+        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
     }
 }

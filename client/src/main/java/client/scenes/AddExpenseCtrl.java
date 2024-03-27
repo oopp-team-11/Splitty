@@ -23,7 +23,7 @@ public class AddExpenseCtrl {
     @FXML
     public TextField expenseAmount;
     @FXML
-    public ChoiceBox expensePaidBy;
+    public ChoiceBox<String> expensePaidBy;
 
     private MainCtrl mainCtrl;
     private FileSystemUtils fileSystemUtils;
@@ -61,7 +61,7 @@ public class AddExpenseCtrl {
      */
     public void addExpense() {
         Participant person = null;
-        String[] names = expensePaidBy.getValue().toString().split(" ");
+        String[] names = expensePaidBy.getValue().split(" ");
         for (Participant participant : mainCtrl.getDataHandler().getParticipants()){
             if(Objects.equals(participant.getFirstName(), names[0])
                     && Objects.equals(participant.getLastName(), names[1])){
@@ -73,13 +73,13 @@ public class AddExpenseCtrl {
                 Double.parseDouble(expenseAmount.getText()));
         mainCtrl.getSessionHandler().sendExpense(newExpense, "create");
 
-        mainCtrl.showEventOverview(event);
+        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
     }
 
     /**
      * Abort adding expense
      */
     public void abort() {
-        mainCtrl.showEventOverview(event);
+        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
     }
 }

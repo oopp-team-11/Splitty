@@ -16,7 +16,9 @@ import java.util.Map;
  */
 public class EditParticipantCtrl {
     @FXML
-    private Button editBtn;
+    public Button abortEditButton;
+    @FXML
+    public Button editParticipantButton;
 
     @FXML
     private Label editParticipantLabel;
@@ -58,6 +60,11 @@ public class EditParticipantCtrl {
      */
     public void setParticipant(Participant participant) {
         this.participant = participant;
+        firstName.setText(participant.getFirstName());
+        lastName.setText(participant.getLastName());
+        email.setText(participant.getEmail());
+        iban.setText(participant.getIban());
+        bic.setText(participant.getBic());
     }
 
     /**
@@ -76,7 +83,7 @@ public class EditParticipantCtrl {
         labels.put(this.firstName, "FirstName");
         labels.put(this.lastName, "LastName");
         labels.put(this.editParticipantLabel, "EditAParticipant");
-        labels.put(this.editBtn, "Edit");
+        labels.put(this.editParticipantButton, "Edit");
         labels.forEach((key, val) -> {
             var translation = this.translationSupplier.getTranslation(val);
             if (translation == null) return;
@@ -109,7 +116,11 @@ public class EditParticipantCtrl {
             return;
         }
 
-        mainCtrl.showStartScreen(); // todo: Change that to event screen when there is one
+        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
 
+    }
+
+    public void abort() {
+        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
     }
 }

@@ -5,6 +5,7 @@ import client.utils.ServerUtils;
 import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
 import commons.Event;
+import commons.Participant;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
@@ -112,17 +113,22 @@ public class CreateParticipantCtrl {
         }
 
 
-        try {
-            serverUtils.createParticipant(event.getId(), firstNameString, lastNameString, emailString,
-                    ibanString, bicString, "http://" + mainCtrl.getServerIp());
-        }
-        catch (IOException | InterruptedException e)
-        {
-            System.err.println("Error while sending create request to server");
-            return;
-        }
+        mainCtrl.getSessionHandler().sendParticipant(
+                new Participant(mainCtrl.getDataHandler().getEvent(),
+                        firstNameString,
+                        lastNameString,
+                        emailString,
+                        ibanString,
+                        bicString
+                ),
+                "create"
+        );
 
-        mainCtrl.showStartScreen(); // todo: Change that to event screen when there is one
+        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
 
+    }
+
+    public void abort() {
+        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
     }
 }

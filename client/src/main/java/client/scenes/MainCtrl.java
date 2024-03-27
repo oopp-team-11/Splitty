@@ -32,6 +32,8 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Main scene controller. It oversights currently active scenes, switches between them,
@@ -108,23 +110,6 @@ public class MainCtrl {
         startWebSocket();
 
         showStartScreen();
-
-        //showEventOverview(event);
-
-        // showStartScreen() should be used in the final version.
-        // Comment out showStartScreen() above and uncomment a scene below to
-        // get it to launch as a start screen for debugging reasons.
-
-        //showCreateParticipant(null);
-        //showEditParticipant(null);
-
-//        var event = new Event("My Event");
-//        var person = new Participant(event, "boaz", "bakhuijzen", null, null, null);
-//        var expense = new Expense(person, "My Expense", 12.1);
-//        dataHandler = new EventDataHandler(event, null, null);
-//        dataHandler.setExpenses(new ArrayList<>());
-//        dataHandler.getCreateExpense(expense);
-//        showEventOverview(event);
 
         primaryStage.show();
     }
@@ -262,5 +247,23 @@ public class MainCtrl {
      */
     public String getServerIp(){
         return this.serverIp;
+    }
+
+    public void refreshEventData() {
+        if(primaryStage.getTitle().equals("Event overview")){
+            eventOverviewCtrl.refreshEventData();
+        }
+    }
+
+    public void refreshParticipantsData() {
+        if(primaryStage.getTitle().equals("Event overview")){
+            eventOverviewCtrl.refreshParticipantsData();
+        }
+    }
+
+    public void refreshExpensesData() {
+        if(primaryStage.getTitle().equals("Event overview")){
+            eventOverviewCtrl.refreshExpensesData();
+        }
     }
 }

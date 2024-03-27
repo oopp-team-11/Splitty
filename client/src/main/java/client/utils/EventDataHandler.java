@@ -3,8 +3,10 @@ package client.utils;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
+import javafx.application.Platform;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -58,7 +60,13 @@ public class EventDataHandler {
      * @param event the initial event object
      */
     public void setEvent(Event event) {
-        this.event = event;
+        if (this.event == null) {
+            this.event = event;
+            Platform.runLater(() -> sessionHandler.getMainCtrl().showEventOverview(event));
+        } else {
+            this.event = event;
+            Platform.runLater(() -> sessionHandler.getMainCtrl().refreshEventData());
+        }
     }
 
     /**
@@ -68,6 +76,7 @@ public class EventDataHandler {
      */
     public void setParticipants(List<Participant> participants) {
         this.participants = participants;
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshParticipantsData());
     }
 
     /**
@@ -77,6 +86,7 @@ public class EventDataHandler {
      */
     public void setExpenses(List<Expense> expenses) {
         this.expenses = expenses;
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
     }
 
     /***
@@ -171,6 +181,7 @@ public class EventDataHandler {
             return;
         }
         participants.add(receivedParticipant);
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshParticipantsData());
     }
 
     /**
@@ -187,15 +198,8 @@ public class EventDataHandler {
         }
 
         participants.remove(getParticipantById(receivedParticipant.getId()));
-        List<Expense> toRemove = new ArrayList<>();
-        for (var expense : expenses) {
-            if (receivedParticipant.getId().equals(expense.getPaidById())) {
-                toRemove.add(expense);
-            }
-        }
-        for (var expense : toRemove) {
-            expenses.remove(expense);
-        }
+        sessionHandler.refreshExpenses();
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshParticipantsData());
     }
 
     /**
@@ -212,6 +216,7 @@ public class EventDataHandler {
         }
 
         updateParticipant(getParticipantById(receivedParticipant.getId()), receivedParticipant);
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshParticipantsData());
     }
 
     /**
@@ -228,6 +233,7 @@ public class EventDataHandler {
         }
 
         event.setTitle(receivedEvent.getTitle());
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshEventData());
     }
 
     /**
@@ -238,6 +244,7 @@ public class EventDataHandler {
         event = null;
         participants = null;
         expenses = null;
+        Platform.runLater(() -> sessionHandler.getMainCtrl().showStartScreen());
     }
 
     /**
@@ -254,6 +261,7 @@ public class EventDataHandler {
         }
 
         expenses.add(receivedExpense);
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
     }
 
     /**
@@ -270,6 +278,7 @@ public class EventDataHandler {
         }
 
         updateExpense(getExpenseById(receivedExpense.getId()), receivedExpense);
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
     }
 
     /**
@@ -286,6 +295,7 @@ public class EventDataHandler {
         }
 
         expenses.remove(getExpenseById(receivedExpense.getId()));
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
     }
 
     /**

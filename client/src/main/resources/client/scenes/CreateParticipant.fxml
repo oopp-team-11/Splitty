@@ -1,44 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CreateParticipantCtrl">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CreateParticipantCtrl">
    <children>
-      <VBox layoutX="19.0" prefHeight="403.0" prefWidth="564.0">
+      <VBox prefHeight="640.0" prefWidth="600.0">
          <children>
-            <Label prefHeight="42.0" prefWidth="176.0" style="-fx-padding: 10;" text="Add a participant">
+            <Label alignment="CENTER" prefHeight="50.0" prefWidth="570.0" style="-fx-padding: 10;" text="Add a participant">
                <font>
                   <Font size="17.0" />
                </font>
             </Label>
-            <HBox prefHeight="407.0" prefWidth="605.0">
+            <GridPane prefHeight="560.0" prefWidth="570.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
                <children>
-                  <VBox prefHeight="241.0" prefWidth="306.0">
-                     <children>
-                        <TextField fx:id="firstName" layoutX="10.0" layoutY="10.0" promptText="First name" />
-                        <TextField fx:id="iban" layoutX="10.0" layoutY="35.0" promptText="IBAN" />
-                        <TextField fx:id="bic" promptText="BIC" />
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="361.0" prefWidth="294.0">
-                     <children>
-                        <TextField fx:id="lastName" promptText="Last name" />
-                        <TextField fx:id="email" promptText="Email" />
-                        <Button id="CreateParticipant" mnemonicParsing="false" onAction="#onCreate"
-                                prefHeight="25.0" prefWidth="305.0" text="Add" />
-                     </children>
-                  </VBox>
+                  <TextField fx:id="firstName" promptText="First name" GridPane.columnIndex="1" />
+                  <TextField fx:id="lastName" promptText="Last name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField fx:id="email" promptText="Email" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <TextField fx:id="iban" promptText="IBAN" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <TextField fx:id="bic" promptText="BIC" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+                  <Label alignment="CENTER" prefHeight="173.0" prefWidth="987.0" text="Participants First Name:">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Label>
+
+                  <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants Last Name:" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Label>
+
+                  <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants Email Adress:" GridPane.rowIndex="2">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Label>
+
+                  <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants IBAN:" GridPane.rowIndex="3">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Label>
+
+                  <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants BIC:" GridPane.rowIndex="4">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Label>
+
+                  <Button id="CreateParticipant" layoutX="310.0" layoutY="492.0" mnemonicParsing="false" onAction="#abort" prefHeight="660.0" prefWidth="1357.0" text="Abort" GridPane.rowIndex="5">
+                     <GridPane.margin>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </GridPane.margin>
+                  </Button>
+
+                  <Button id="CreateParticipant" mnemonicParsing="false" onAction="#onCreate" prefHeight="660.0" prefWidth="1357.0" text="Add" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                     <GridPane.margin>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </GridPane.margin></Button>
                </children>
-            </HBox>
+            </GridPane>
          </children>
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
       </VBox>
    </children>
 </AnchorPane>

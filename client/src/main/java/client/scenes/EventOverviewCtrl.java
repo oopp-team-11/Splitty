@@ -7,9 +7,17 @@ import com.google.inject.Inject;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,23 +29,37 @@ public class EventOverviewCtrl {
     @FXML
     public Label expensesLabel;
     @FXML
-    public VBox expenseTitlesVbox;
+    public Label sendInvitesConfirmation;
     @FXML
-    public VBox expenseEditVbox;
+    public TableView<Participant> participantsList;
     @FXML
-    public VBox expenseDeleteVbox;
+    public TableColumn<Participant, String> firstNameColumn;
+    @FXML
+    public TableColumn<Participant, String> lastNameColumn;
+    @FXML
+    public TableColumn<Participant, String> editColumn;
+    @FXML
+    public TableColumn<Participant, String> deleteColumn;
+    @FXML
+    public TableView<Expense> expensesList;
+    @FXML
+    public TableColumn<Expense, String> titleColumn;
+    @FXML
+    public TableColumn<Expense, String> amountColumn;
+    @FXML
+    public TableColumn<Expense, String> editColumn1;
+    @FXML
+    public TableColumn<Expense, String> deleteColumn1;
+    @FXML
+    public Label editTitle;
+    @FXML
+    public TextField editEventTextField;
     @FXML
     private Label participantsLabel;
     @FXML
     private Label eventNameLabel;
     @FXML
     private Button sendInvitesButton;
-    @FXML
-    private VBox namesVbox;
-    @FXML
-    private VBox editVbox;
-    @FXML
-    private VBox deleteVbox;
     private MainCtrl mainCtrl;
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
@@ -63,55 +85,157 @@ public class EventOverviewCtrl {
         this.event = event;
 
         setEventNameLabel(event.getTitle());
-        namesVbox.getChildren().clear();
-        editVbox.getChildren().clear();
-        deleteVbox.getChildren().clear();
-        for (Participant participant : event.getParticipants()) {
 
-            Label label = new Label(participant.getFirstName() + " " + participant.getLastName());
-            label.setFont(new javafx.scene.text.Font("Arial", 16));
-            Label deleteLabel = new Label("❌");
-            deleteLabel.setAlignment(javafx.geometry.Pos.CENTER);
-            deleteLabel.setFont(new javafx.scene.text.Font("Arial", 16));
-            Label editLabel = new Label("✎");
-            editLabel.setFont(new javafx.scene.text.Font("Arial", 16));
-            editLabel.setAlignment(javafx.geometry.Pos.CENTER);
+        firstNameColumn.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getFirstName()));
+        lastNameColumn.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getLastName()));
 
-            deleteLabel.onMouseClickedProperty()
-                .set(event1 -> deleteParticipant(participant));
+        Callback<TableColumn<Participant, String>, TableCell<Participant, String>> cellFactoryEditButton
+                = //
+                new Callback<>() {
+                    @Override
+                    public TableCell call(final TableColumn<Participant, String> param) {
+                        return new TableCell<Participant, String>() {
 
-            editLabel.onMouseClickedProperty()
-                .set(event1 -> editParticipant(participant));
+                            final Button btn = new Button("✎");
 
-            namesVbox.getChildren().add(label);
-            deleteVbox.getChildren().add(deleteLabel);
-            editVbox.getChildren().add(editLabel);
-        }
+                            @Override
+                            public void updateItem(String item, boolean empty) {
+                                super.updateItem(item, empty);
+                                if (empty) {
+                                    setGraphic(null);
+                                    setText(null);
+                                } else {
+                                    btn.setOnAction(event1 ->
+                                            editParticipant(getTableView().getItems().get(getIndex())));
+                                    setGraphic(btn);
+                                    setText(null);
+                                }
+                            }
+                        };
+                    }
+                };
+        editColumn.setCellFactory(cellFactoryEditButton);
 
-        expenseTitlesVbox.getChildren().clear();
-        expenseEditVbox.getChildren().clear();
-        expenseDeleteVbox.getChildren().clear();
-        for (Expense expense : mainCtrl.getDataHandler().getExpenses()) {
+        Callback<TableColumn<Participant, String>, TableCell<Participant, String>> cellFactoryDeleteButton
+                = //
+                new Callback<>() {
+                    @Override
+                    public TableCell call(final TableColumn<Participant, String> param) {
+                        return new TableCell<Participant, String>() {
 
-            Label label = new Label(expense.getTitle());
-            label.setFont(new javafx.scene.text.Font("Arial", 16));
-            Label deleteLabel = new Label("❌");
-            deleteLabel.setAlignment(javafx.geometry.Pos.CENTER);
-            deleteLabel.setFont(new javafx.scene.text.Font("Arial", 16));
-            Label editLabel = new Label("✎");
-            editLabel.setFont(new javafx.scene.text.Font("Arial", 16));
-            editLabel.setAlignment(javafx.geometry.Pos.CENTER);
+                            final Button btn = new Button("X");
 
-            deleteLabel.onMouseClickedProperty()
-                    .set(event1 -> deleteExpense(expense));
+                            @Override
+                            public void updateItem(String item, boolean empty) {
+                                super.updateItem(item, empty);
+                                if (empty) {
+                                    setGraphic(null);
+                                    setText(null);
+                                } else {
+                                    btn.setOnAction(event1 ->
+                                            deleteParticipant(getTableView().getItems().get(getIndex())));
+                                    setGraphic(btn);
+                                    setText(null);
+                                }
+                            }
+                        };
+                    }
+                };
 
-            editLabel.onMouseClickedProperty()
-                    .set(event1 -> editExpense(expense));
+        deleteColumn.setCellFactory(cellFactoryDeleteButton);
+        participantsList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
 
-            expenseTitlesVbox.getChildren().add(label);
-            expenseEditVbox.getChildren().add(editLabel);
-            expenseDeleteVbox.getChildren().add(deleteLabel);
-        }
+        titleColumn.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getTitle()));
+        amountColumn.setCellValueFactory(col -> new SimpleStringProperty(String.valueOf(col.getValue().getAmount())));
+
+        Callback<TableColumn<Expense, String>, TableCell<Expense, String>> cellFactoryEditButton1
+                = //
+                new Callback<>() {
+                    @Override
+                    public TableCell call(final TableColumn<Expense, String> param) {
+                        return new TableCell<Expense, String>() {
+
+                            final Button btn = new Button("✎");
+
+                            @Override
+                            public void updateItem(String item, boolean empty) {
+                                super.updateItem(item, empty);
+                                if (empty) {
+                                    setGraphic(null);
+                                    setText(null);
+                                } else {
+                                    btn.setOnAction(event1 ->
+                                            editExpense(getTableView().getItems().get(getIndex())));
+                                    setGraphic(btn);
+                                    setText(null);
+                                }
+                            }
+                        };
+                    }
+                };
+        editColumn1.setCellFactory(cellFactoryEditButton1);
+
+        Callback<TableColumn<Expense, String>, TableCell<Expense, String>> cellFactoryDeleteButton1
+                = //
+                new Callback<>() {
+                    @Override
+                    public TableCell call(final TableColumn<Expense, String> param) {
+                        return new TableCell<Expense, String>() {
+
+                            final Button btn = new Button("X");
+
+                            @Override
+                            public void updateItem(String item, boolean empty) {
+                                super.updateItem(item, empty);
+                                if (empty) {
+                                    setGraphic(null);
+                                    setText(null);
+                                } else {
+                                    btn.setOnAction(event1 ->
+                                            deleteExpense(getTableView().getItems().get(getIndex())));
+                                    setGraphic(btn);
+                                    setText(null);
+                                }
+                            }
+                        };
+                    }
+                };
+
+        deleteColumn1.setCellFactory(cellFactoryDeleteButton1);
+        expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));
+
+        editTitle.onMouseClickedProperty().set(event1 -> editingTitle());
+        editEventTextField.onKeyPressedProperty().set(keyEvent -> {
+            if(keyEvent.getCode().equals(KeyCode.ENTER)){
+                stopEditingTitle();
+            }
+        });
+    }
+
+    public void refreshEventData(){
+        this.event = mainCtrl.getDataHandler().getEvent();
+        setEventNameLabel(event.getTitle());
+    }
+    public void refreshParticipantsData(){
+        participantsList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
+    }
+    public void refreshExpensesData(){
+        expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));
+    }
+
+    private void editingTitle(){
+        editEventTextField.setText(mainCtrl.getDataHandler().getEvent().getTitle());
+        editEventTextField.setVisible(true);
+        editEventTextField.setDisable(false);
+        eventNameLabel.setVisible(false);
+    }
+    private void stopEditingTitle(){
+        Event updatedEvent = mainCtrl.getDataHandler().getEvent();
+        updatedEvent.setTitle(editEventTextField.getText());
+        mainCtrl.getSessionHandler().sendEvent(updatedEvent, "update");
+        eventNameLabel.setVisible(true);
+        editEventTextField.setDisable(true);
+        editEventTextField.setVisible(false);
     }
 
     /**
@@ -142,7 +266,12 @@ public class EventOverviewCtrl {
      * When button gets clicked, trigger send invites method
      */
     public void sendInvites() {
-        System.out.println("SEND INVITES");
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putString(mainCtrl.getDataHandler().getEvent().getId().toString());
+        clipboard.setContent(content);
+        sendInvitesConfirmation.setText("Code is put on the clipboard." +
+                " Invite Code:\n" + mainCtrl.getDataHandler().getEvent().getId());
     }
 
     /**
@@ -150,9 +279,7 @@ public class EventOverviewCtrl {
      * @param participant participant object
      */
     public void deleteParticipant(Participant participant) {
-        event.getParticipants().remove(participant);
-        //serverUtils.deleteParticipant(participant);
-        setEvent(event);
+        mainCtrl.getSessionHandler().sendParticipant(participant, "delete");
     }
 
     /**
@@ -160,7 +287,6 @@ public class EventOverviewCtrl {
      */
     public void addParticipant() {
         mainCtrl.showCreateParticipant(event);
-        setEvent(event);
     }
 
     /**
@@ -169,7 +295,6 @@ public class EventOverviewCtrl {
      */
     public void editParticipant(Participant participant) {
         mainCtrl.showEditParticipant(participant);
-        setEvent(event);
     }
 
     /**
@@ -185,7 +310,6 @@ public class EventOverviewCtrl {
      */
     public void addExpense() {
         mainCtrl.showAddExpense();
-        setEvent(event);
     }
     /**
      * Function to edit expenses, it takes you to a different screen to edit the expense
@@ -193,7 +317,6 @@ public class EventOverviewCtrl {
      */
     public void editExpense(Expense expense) {
         mainCtrl.showEditExpense(expense);
-        setEvent(event);
     }
     /**
      * Function to delete expenses
@@ -201,6 +324,14 @@ public class EventOverviewCtrl {
      */
     public void deleteExpense(Expense expense) {
         mainCtrl.getSessionHandler().sendExpense(expense, "delete");
-        setEvent(event);
+    }
+
+    /**
+     * Method for going back to home screen
+     */
+    public void goToHome() {
+        mainCtrl.getSessionHandler().unsubscribeFromCurrentEvent();
+        mainCtrl.getDataHandler().setEvent(null);
+        mainCtrl.showStartScreen();
     }
 }

@@ -15,12 +15,10 @@
  */
 package client;
 
+import client.scenes.*;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
-
-import client.scenes.MainCtrl;
-import client.scenes.StartScreenCtrl;
 
 /**
  * Class that binds the controllers
@@ -31,5 +29,10 @@ public class MyModule implements Module {
     public void configure(Binder binder) {
         binder.bind(MainCtrl.class).in(Scopes.SINGLETON);
         binder.bind(StartScreenCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(AddExpenseCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(EditExpenseCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(CreateParticipantCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(EditParticipantCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(EventOverviewCtrl.class).in(Scopes.SINGLETON);
     }
 }
