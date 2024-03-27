@@ -116,7 +116,7 @@ public class ServerUtils {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
-                .header("Accept", "application/json")
+                //.header("Accept", "application/json")
                 .GET()
                 .build();
 
@@ -145,9 +145,12 @@ public class ServerUtils {
             events.add(event);
         }
 
-        if(response.statusCode() == 205)
+        if(response.statusCode() == 206) {
+            System.out.println("Invitation codes are invalid. Updating config file.");
             fileSystemUtils.updateConfigFile("config.json",
                     fileSystemUtils.extractInvitationCodesFromEventList(events));
+        }
+
 
         return events;
     }
