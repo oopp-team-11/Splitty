@@ -97,6 +97,14 @@ public class EventController {
             event.ifPresent(updatedEvents::add);
         }
 
+        if(updatedEvents.size() != codes.length) {
+            System.out.println("Some events not found");
+            System.out.println("Found: " + updatedEvents.size() + " events");
+            System.out.println(ResponseEntity.status(205).body(updatedEvents).getBody());
+            return ResponseEntity.status(206).body(updatedEvents);
+        }
+
+
         return ResponseEntity.ok(updatedEvents);
     }
 
