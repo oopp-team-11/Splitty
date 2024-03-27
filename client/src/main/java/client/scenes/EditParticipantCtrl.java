@@ -101,7 +101,7 @@ public class EditParticipantCtrl {
 
         try {
             serverUtils.editParticipant(participant.getId(), firstNameString, lastNameString,
-                    emailString, ibanString, bicString, "http://localhost:8080");
+                    emailString, ibanString, bicString, "http://" + mainCtrl.getServerIp());
         }
         catch (IOException | InterruptedException e)
         {

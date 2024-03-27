@@ -36,10 +36,6 @@ import org.json.*;
  */
 public class ServerUtils {
 
-    //private static final String SERVER = "http://localhost:8080/";
-    //private static final String SERVER = "https://test.requestcatcher.com/";
-
-
     /**
      * Method that sends a get request to the server to get the event
      * @param invitationCode invitation code of the event
