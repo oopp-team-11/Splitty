@@ -61,6 +61,8 @@ public class ExpenseController {
             return StatusEntity.badRequest(true, "Amount should be positive");
         if (receivedExpense.getPaidById() == null)
             return StatusEntity.badRequest(true, "Id of participant who paid should be provided");
+        if (!participantRepository.existsById(receivedExpense.getPaidById()))
+            return StatusEntity.notFound(true, "Provided participant who paid for the expense does not exist");
         if (receivedExpense.getInvitationCode() == null)
             return StatusEntity.badRequest(true, "InvitationCode of event should be provided");
         return StatusEntity.ok((String) null);
@@ -94,8 +96,6 @@ public class ExpenseController {
         StatusEntity badRequest = isExpenseBadRequest(receivedExpense);
         if (badRequest.isUnsolvable())
             return badRequest;
-        if (!participantRepository.existsById(receivedExpense.getPaidById()))
-            return StatusEntity.notFound(false, "Provided participant who paid for the expense does not exist");
 
         Participant paidBy = participantRepository.getReferenceById(receivedExpense.getPaidById());
         Expense expense = new Expense(paidBy, receivedExpense.getTitle(), receivedExpense.getAmount());
