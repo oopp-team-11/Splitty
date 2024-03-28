@@ -19,8 +19,8 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
-      <Button layoutX="358.0" layoutY="325.0" mnemonicParsing="false" text="Delete Event" />
-      <Button layoutX="143.0" layoutY="325.0" mnemonicParsing="false" text="JSON Dump" />
-      <Button layoutX="269.0" layoutY="325.0" mnemonicParsing="false" text="Button" />
+      <Button layoutX="393.0" layoutY="325.0" mnemonicParsing="false" text="Delete Event" />
+      <Button layoutX="109.0" layoutY="325.0" mnemonicParsing="false" text="JSON Dump" />
+      <Button fx:id="jsonImport" layoutX="251.0" layoutY="325.0" mnemonicParsing="false" text="JSON Import" />
    </children>
 </AnchorPane>
