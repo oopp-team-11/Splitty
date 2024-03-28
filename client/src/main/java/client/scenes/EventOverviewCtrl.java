@@ -222,12 +222,16 @@ public class EventOverviewCtrl {
      * Method for updating data in scene
      */
     public void refreshParticipantsData(){
+        participantsList.getColumns().getFirst().setVisible(false);
+        participantsList.getColumns().getFirst().setVisible(true);
         participantsList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
     }
     /**
      * Method for updating data in scene
      */
     public void refreshExpensesData(){
+        expensesList.getColumns().getFirst().setVisible(false);
+        expensesList.getColumns().getFirst().setVisible(true);
         expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));
     }
 
