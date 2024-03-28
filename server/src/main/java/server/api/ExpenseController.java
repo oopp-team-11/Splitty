@@ -99,10 +99,8 @@ public class ExpenseController {
 
         Participant paidBy = participantRepository.getReferenceById(receivedExpense.getPaidById());
         Expense expense = new Expense(paidBy, receivedExpense.getTitle(), receivedExpense.getAmount());
-        paidBy.addExpense(expense);
 
         expense = expenseRepository.save(expense);
-        paidBy = participantRepository.save(paidBy);
 
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(), paidBy.getId(),
                 receivedExpense.getInvitationCode());
