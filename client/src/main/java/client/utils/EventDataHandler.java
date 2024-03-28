@@ -331,5 +331,6 @@ public class EventDataHandler {
     private static void updateExpense(Expense toUpdate, Expense fromUpdate) {
         toUpdate.setTitle(fromUpdate.getTitle());
         toUpdate.setAmount(fromUpdate.getAmount());
+        toUpdate.setPaidById(fromUpdate.getPaidById());
     }
 }

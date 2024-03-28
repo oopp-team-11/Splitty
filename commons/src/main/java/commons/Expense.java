@@ -80,6 +80,10 @@ public class Expense {
         return paidById;
     }
 
+    public void setPaidById(UUID paidById) {
+        this.paidById = paidById;
+    }
+
     /***
      * std getter
      * @return invitation code of event
@@ -102,6 +106,16 @@ public class Expense {
      */
     public Participant getPaidBy() {
         return paidBy;
+    }
+
+    /**
+     * Sets the paidBy participant.
+     * Used for updating the Expense.
+     *
+     * @param paidBy reference to the paidBy participant
+     */
+    public void setPaidBy(Participant paidBy) {
+        this.paidBy = paidBy;
     }
 
     /**

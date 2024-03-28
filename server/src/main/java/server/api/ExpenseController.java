@@ -159,7 +159,9 @@ public class ExpenseController {
         if (badRequest.isUnsolvable())
             return badRequest;
 
+        Participant newPaidBy = participantRepository.getReferenceById(receivedExpense.getPaidById());
         Expense expense = expenseRepository.getReferenceById(receivedExpense.getId());
+        expense.setPaidBy(newPaidBy);
         expense.setAmount(receivedExpense.getAmount());
         expense.setTitle(receivedExpense.getTitle());
         expense = expenseRepository.save(expense);
