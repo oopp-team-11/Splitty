@@ -80,6 +80,10 @@ public class Expense {
         return paidById;
     }
 
+    /**
+     * Setter for the PaidById used to update an expense in EventDataHandler
+     * @param paidById new PaidById
+     */
     public void setPaidById(UUID paidById) {
         this.paidById = paidById;
     }

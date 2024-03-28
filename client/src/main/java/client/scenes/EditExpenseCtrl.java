@@ -4,7 +4,6 @@ import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Expense;
-import commons.ExpenseList;
 import commons.Participant;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
