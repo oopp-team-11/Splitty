@@ -14,6 +14,7 @@ public class ExpenseTest {
     private Expense expenseEqual;
     private Expense expenseNotEqual;
     private Participant participant1;
+    private Participant participant2;
 
     @BeforeEach
     void setup() {
@@ -26,7 +27,7 @@ public class ExpenseTest {
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123"
         );
-        Participant participant2 = new Participant(
+        participant2 = new Participant(
                 event,
                 "John",
                 "Burger",
@@ -47,6 +48,19 @@ public class ExpenseTest {
 
     private static void setId(Expense toSet, UUID newId) throws IllegalAccessException {
         FieldUtils.writeField(toSet, "id", newId, true);
+    }
+
+    @Test
+    void setPaidBy() {
+        expense.setPaidBy(participant2);
+        assertEquals(participant2, expense.getPaidBy());
+    }
+
+    @Test
+    void setPaidById() {
+        UUID newId = UUID.randomUUID();
+        expense.setPaidById(newId);
+        assertEquals(newId, expense.getPaidById());
     }
 
     @Test

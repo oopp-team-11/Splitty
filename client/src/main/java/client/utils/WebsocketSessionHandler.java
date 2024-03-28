@@ -163,4 +163,12 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
     public void refreshExpenses() {
         session.send("/app/expenses:read", invitationCode);
     }
+
+    /**
+     * Getter for the mainCtrl, for use in dataHandler
+     * @return current Main Ctrl
+     */
+    public MainCtrl getMainCtrl() {
+        return mainCtrl;
+    }
 }

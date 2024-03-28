@@ -7,7 +7,6 @@ import commons.Participant;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +15,9 @@ import java.util.Map;
  */
 public class EditParticipantCtrl {
     @FXML
-    private Button editBtn;
+    public Button abortEditButton;
+    @FXML
+    public Button editParticipantButton;
 
     @FXML
     private Label editParticipantLabel;
@@ -58,6 +59,11 @@ public class EditParticipantCtrl {
      */
     public void setParticipant(Participant participant) {
         this.participant = participant;
+        firstName.setText(participant.getFirstName());
+        lastName.setText(participant.getLastName());
+        email.setText(participant.getEmail());
+        iban.setText(participant.getIban());
+        bic.setText(participant.getBic());
     }
 
     /**
@@ -76,7 +82,7 @@ public class EditParticipantCtrl {
         labels.put(this.firstName, "FirstName");
         labels.put(this.lastName, "LastName");
         labels.put(this.editParticipantLabel, "EditAParticipant");
-        labels.put(this.editBtn, "Edit");
+        labels.put(this.editParticipantButton, "Edit");
         labels.forEach((key, val) -> {
             var translation = this.translationSupplier.getTranslation(val);
             if (translation == null) return;
@@ -92,24 +98,23 @@ public class EditParticipantCtrl {
      */
     public void onEdit() {
 
-        String firstNameString = firstName.getText();
-        String lastNameString = lastName.getText();
-        String ibanString = iban.getText();
-        String bicString = bic.getText();
-        String emailString = email.getText();
+        participant.setFirstName(firstName.getText());
+        participant.setLastName(lastName.getText());
+        participant.setEmail(email.getText());
+        participant.setIban(iban.getText());
+        participant.setBic(bic.getText());
 
 
-        try {
-            serverUtils.editParticipant(participant.getId(), firstNameString, lastNameString,
-                    emailString, ibanString, bicString, "http://" + mainCtrl.getServerIp());
-        }
-        catch (IOException | InterruptedException e)
-        {
-            System.err.println("Error while sending edit request to server");
-            return;
-        }
+        mainCtrl.getSessionHandler().sendParticipant(participant, "update");
 
-        mainCtrl.showStartScreen(); // todo: Change that to event screen when there is one
+        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
 
+    }
+
+    /**
+     * Method for aborting creating participant
+     */
+    public void abort() {
+        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
     }
 }

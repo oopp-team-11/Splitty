@@ -114,9 +114,7 @@ public class ParticipantController {
                 receivedParticipant.getIban(),
                 receivedParticipant.getBic()
         );
-        event.addParticipant(participant);
         participant = participantRepository.save(participant);
-        eventRepository.save(event);
 
         Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
                 participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
