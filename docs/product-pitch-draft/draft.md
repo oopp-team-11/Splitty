@@ -1,10 +1,12 @@
-### Product Pitch Draft
+# Product Pitch Draft
 
-## Step 0
+## Main block: The current state of the application
+
+### Step 0
 
 - The client must start the application
 
-## Step 1 - Startscreen overview
+### Step 1 - Startscreen overview
 
 - Once the application is started, the data from the config files are loaded. There are 2 config files. The first config file stores the url of the server and the second one stores a list with the id's of the recently viewed events by the client (events that the client joined in previous sessions).
 
@@ -14,7 +16,7 @@
     - The client is able to join to an existing event by providing the invitation code of the event on the corresponding input box and clicking on the ```Join``` button.
     - Alternatively, The client is able to (re)join an event by double clicking on the event they want to join from their list of events and they will be redirected do the specified event's overview page.
 
-## Step 2 - Event overview
+### Step 2 - Event overview
 
 - Once the client is on a specific event's overview page, they can perform a number of actions:
     - The client is able to go back to the startscreen by clicking the big ```home``` button on the top-left of the page.
@@ -30,7 +32,7 @@
     - The client is able to add an expense to the event by clicking the ```Add Expense``` button on the bottom of the page (See Step 5).
     
 
-## Step 3 - Add Participant
+### Step 3 - Add Participant
 
 - Once the client clicks on the ```Add Participant``` button, teh client will be redirected to the add participant page. The client is able to add a new participant to the event by providing the following fields:
     - First Name
@@ -41,7 +43,7 @@
     - The client is able to add the participant to the event by clicking the ```Add``` button. If the client clicks the ```Add``` button, then the participant will be added to the event and the client will be redirected back to the event's overview page. If the client clicks the ```Abort``` button, then the client will be redirected back to the event's overview page without adding the participant to the event.
 
 
-## Step 4 - Edit Participant
+### Step 4 - Edit Participant
 
 - Once the client clicks on the ```Edit``` button next to a participant, the client will be redirected to the edit participant page. The client is able to edit the participant's information by providing the following fields:
     - First Name
@@ -51,7 +53,7 @@
     - BIC
     - The client is able to save the changes by clicking the ```Edit``` button. If the client clicks the ```Edit``` button, then the participant's information will be updated and the client will be redirected back to the event's overview page. If the client clicks the ```Abort``` button, then the client will be redirected back to the event's overview page without updating the participant's information.
 
-## Step 5 - Add Expense
+### Step 5 - Add Expense
 
 - Once the client clicks on the ```Add Expense``` button, the client will be redirected to the add expense page. The client is able to add a new expense to the event by providing the following fields:
     - Title (What for?)
@@ -59,7 +61,7 @@
     - Who paid? (Select a participant from the list of participants)
     - The client is able to add the expense to the event by clicking the ```Add``` button. If the client clicks the ```Add``` button, then the expense will be added to the event and the client will be redirected back to the event's overview page. If the client clicks the ```Abort``` button, then the client will be redirected back to the event's overview page without adding the expense to the event.
 
-## Step 6 - Edit Expense
+### Step 6 - Edit Expense
 
 - Once the client clicks on the ```Edit``` button next to an expense, the client will be redirected to the edit expense page. The client is able to edit the expense's information by providing the following fields:
     - Title (What for?)
@@ -68,4 +70,21 @@
     - The client is able to save the changes by clicking the ```Edit``` button. If the client clicks the ```Edit``` button, then the expense's information will be updated and the client will be redirected back to the event's overview page. If the client clicks the ```Abort``` button, then the client will be redirected back to the event's overview page without updating the expense's information.
 
 
-## Step IDK YET - Admin panel
+### Step IDK YET - Admin panel
+
+## Present short slides about server-client communication
+
+## Ideas for extending our project
+
+- Add support for tracking the expense statistics of an event.
+  - Pie chart that shows the distribution between amount still owed and the amount settled
+  - Add support for tags to label the expenses.
+  - Pie chart distribution of the expenses per label type.
+- Add deadlines for expenses. The date on which all the debts of a single expense should be settled.
+  - Create an email reminder system for when the due date is near or past due
+- Create an email invite feature.
+- Add an email notification system to notify participants when they get a new debt
+to settle or when they get money from someone.
+- Expand the debt settling mechanism by taking someone straight to a payment provider
+where the details of the transaction are automatically filled in. The data for that
+could be stored in the config files on the client side.
