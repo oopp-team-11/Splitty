@@ -67,14 +67,14 @@ public class ExpenseControllerTest {
     }
 
     @Test
-    void checkCreateExpenseParticipantNotFound() {
+    void expenseParticipantNotFound() {
         Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
                 "abcd@gmail.com", null, null, UUID.randomUUID());
         Expense expense = new Expense(sentParticipant, "expense", 21.37);
         expense = expenseRepository.save(expense);
 
-        assertEquals(StatusEntity.notFound(false, "Provided participant who paid for the expense does not exist"),
-                expenseController.createExpense(expense));
+        assertEquals(StatusEntity.notFound(true, "Provided participant who paid for the expense does not exist"),
+                expenseController.isExpenseBadRequest(expense));
     }
 
     @Test
@@ -87,10 +87,12 @@ public class ExpenseControllerTest {
     void ExpenseTitleNull() {
         Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
                 "abcd@gmail.com", null, null, UUID.randomUUID());
+        sentParticipant = participantRepository.save(sentParticipant);
         Expense expense = new Expense(sentParticipant, null, 69);
         try {
             setId(expense, UUID.randomUUID());
-        } catch (IllegalAccessException ignored) {}
+        } catch (IllegalAccessException ignored) {
+        }
         assertEquals(StatusEntity.badRequest(true, "Expense title should not be empty"),
                 expenseController.isExpenseBadRequest(expense));
     }
@@ -99,6 +101,7 @@ public class ExpenseControllerTest {
     void ExpenseAmountNotPositive() {
         Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
                 "abcd@gmail.com", null, null, UUID.randomUUID());
+        sentParticipant = participantRepository.save(sentParticipant);
         Expense expense = new Expense(sentParticipant, "expense", 0);
         try {
             setId(expense, UUID.randomUUID());
@@ -123,6 +126,7 @@ public class ExpenseControllerTest {
     void ExpenseInvitationCodeNull() {
         Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
                 "abcd@gmail.com", null, null, null);
+        sentParticipant = participantRepository.save(sentParticipant);
         Expense expense = new Expense(sentParticipant, "expense", 69);
         try {
             setId(expense, UUID.randomUUID());
@@ -135,6 +139,7 @@ public class ExpenseControllerTest {
     void ExpenseOKRequest() {
         Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
                 "abcd@gmail.com", null, null, UUID.randomUUID());
+        sentParticipant = participantRepository.save(sentParticipant);
         Expense expense = new Expense(sentParticipant, "expense", 69);
         try {
             setId(expense, UUID.randomUUID());
@@ -148,8 +153,11 @@ public class ExpenseControllerTest {
                 "surname", "abcd@gmail.com", null, null, UUID.randomUUID()));
         Expense expense = new Expense(participant, "expense", 21.37);
         expense = expenseRepository.save(expense);
+        Participant newParticipant = participantRepository.save(new Participant(UUID.randomUUID(), "new name",
+                "new surname", "abcd@gmail.com", null, null, UUID.randomUUID()));
         expense.setTitle("NewTitle");
         expense.setAmount(69.42);
+        expense.setPaidById(newParticipant.getId());
 
         assertEquals(StatusEntity.StatusCode.OK, expenseController.updateExpense(expense).getStatusCode());
 
