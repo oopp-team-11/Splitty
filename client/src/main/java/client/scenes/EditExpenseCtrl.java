@@ -4,6 +4,7 @@ import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Expense;
+import commons.ExpenseList;
 import commons.Participant;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,6 +26,7 @@ public class EditExpenseCtrl {
     public ChoiceBox expensePaidBy;
 
     private MainCtrl mainCtrl;
+    private Expense expense;
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
 
@@ -45,6 +47,7 @@ public class EditExpenseCtrl {
      */
     public void setExpense(Expense expense) {
         var participantList = mainCtrl.getDataHandler().getParticipants();
+        this.expense = expense;
 
         ObservableList<String> participants = FXCollections.observableArrayList(
                 participantList.stream().map(participant ->
@@ -72,12 +75,14 @@ public class EditExpenseCtrl {
                 person = participant;
             }
         }
-        Expense newExpense = new Expense(person,
-                expenseTitle.getText(),
-                Double.parseDouble(expenseAmount.getText()));
-        mainCtrl.getSessionHandler().sendExpense(newExpense, "update");
 
-        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
+        if (person != null) {
+            expense = new Expense(expense.getId(), expenseTitle.getText(), Double.parseDouble(expenseAmount.getText()),
+                    person.getId(), expense.getInvitationCode());
+            mainCtrl.getSessionHandler().sendExpense(expense, "update");
+
+            mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
+        }
     }
 
     /**
