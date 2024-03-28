@@ -99,22 +99,14 @@ public class EditParticipantCtrl {
      */
     public void onEdit() {
 
-        String firstNameString = firstName.getText();
-        String lastNameString = lastName.getText();
-        String ibanString = iban.getText();
-        String bicString = bic.getText();
-        String emailString = email.getText();
+        participant.setFirstName(firstName.getText());
+        participant.setLastName(lastName.getText());
+        participant.setEmail(email.getText());
+        participant.setIban(iban.getText());
+        participant.setBic(bic.getText());
 
 
-        try {
-            serverUtils.editParticipant(participant.getId(), firstNameString, lastNameString,
-                    emailString, ibanString, bicString, "http://" + mainCtrl.getServerIp());
-        }
-        catch (IOException | InterruptedException e)
-        {
-            System.err.println("Error while sending edit request to server");
-            return;
-        }
+        mainCtrl.getSessionHandler().sendParticipant(participant, "update");
 
         mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
 
