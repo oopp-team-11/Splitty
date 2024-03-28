@@ -127,6 +127,8 @@ public class EventController {
         event.setTitle(receivedEvent.getTitle());
         event = repo.save(event);
 
+        eventUpdated(receivedEvent.getId(), receivedEvent.getTitle());
+
         Event sentEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(), event.getLastActivity());
         template.convertAndSend("/topic/" + sentEvent.getId() + "/event:update", sentEvent);
         return StatusEntity.ok("event:update " + sentEvent.getId());
