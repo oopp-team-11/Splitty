@@ -158,7 +158,6 @@ public class StartScreenCtrl implements Initializable {
         System.out.println("ONCREATE");
         String eventName = newEventName.getText();
 
-        // TODO: validate eventName first
         UUID invitationCode;
         try {
             invitationCode = serverUtils.createEvent(eventName, "http://" + mainCtrl.getServerIp());
@@ -230,6 +229,15 @@ public class StartScreenCtrl implements Initializable {
     }
 
     private void startLongPolling(List<UUID> eventIds) {
+
+        var threads = Thread.getAllStackTraces().keySet();
+        var oldPollingThread = threads.stream()
+                .filter(thread -> thread.getName().equals("Polling thread"))
+                .toList();
+        if (!oldPollingThread.isEmpty()){
+            oldPollingThread.getFirst().interrupt();
+        }
+
         if (pollingThread != null) {
             pollingThread.interrupt();
         }

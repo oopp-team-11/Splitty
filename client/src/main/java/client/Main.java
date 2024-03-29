@@ -51,7 +51,7 @@ public class Main extends Application {
                 .filter(thread -> thread.getName().equals("Polling thread"))
                 .toList();
         if (!pollingThread.isEmpty()){
-            pollingThread.getFirst().interrupt();
+            pollingThread.forEach(Thread::interrupt);
         }
     }
 

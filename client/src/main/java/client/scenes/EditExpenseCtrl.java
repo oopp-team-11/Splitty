@@ -3,7 +3,6 @@ package client.scenes;
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-import commons.Event;
 import commons.Expense;
 import commons.Participant;
 import javafx.collections.FXCollections;
@@ -26,9 +25,9 @@ public class EditExpenseCtrl {
     public ChoiceBox expensePaidBy;
 
     private MainCtrl mainCtrl;
+    private Expense expense;
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
-    private Event event;
 
     /***
      * constructor with injection
@@ -46,14 +45,19 @@ public class EditExpenseCtrl {
      * @param expense
      */
     public void setExpense(Expense expense) {
-        this.event = expense.getPaidBy().getEvent();
         var participantList = mainCtrl.getDataHandler().getParticipants();
+        this.expense = expense;
 
         ObservableList<String> participants = FXCollections.observableArrayList(
                 participantList.stream().map(participant ->
                         (participant.getFirstName() + " " + participant.getLastName())).toList());
         expensePaidBy.setItems(participants);
-        expensePaidBy.setValue((expense.getPaidBy().getFirstName() + " " + expense.getPaidBy().getLastName()));
+
+        expensePaidBy.setValue(
+                participantList.stream()
+                        .filter(person -> person.getId().equals(expense.getPaidById())).map(participant ->
+                                (participant.getFirstName() + " " + participant.getLastName()))
+                        .toList().getFirst());
         expenseTitle.setText(expense.getTitle());
         expenseAmount.setText(String.valueOf(expense.getAmount()));
     }
@@ -70,18 +74,20 @@ public class EditExpenseCtrl {
                 person = participant;
             }
         }
-        Expense newExpense = new Expense(person,
-                expenseTitle.getText(),
-                Double.parseDouble(expenseAmount.getText()));
-        mainCtrl.getSessionHandler().sendExpense(newExpense, "update");
 
-        mainCtrl.showEventOverview(event);
+        if (person != null) {
+            expense = new Expense(expense.getId(), expenseTitle.getText(), Double.parseDouble(expenseAmount.getText()),
+                    person.getId(), expense.getInvitationCode());
+            mainCtrl.getSessionHandler().sendExpense(expense, "update");
+
+            mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
+        }
     }
 
     /**
      * Abort adding expense
      */
     public void abort() {
-        mainCtrl.showEventOverview(event);
+        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
     }
 }
