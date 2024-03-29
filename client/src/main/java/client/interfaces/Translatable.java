@@ -2,6 +2,9 @@ package client.interfaces;
 
 import client.utils.TranslationSupplier;
 
+/**
+ * Scenes that can be translated using a translationSupplier should implement this interface.
+ */
 public interface Translatable {
     /**
      * Translates the current scene using a translationSUpplier
