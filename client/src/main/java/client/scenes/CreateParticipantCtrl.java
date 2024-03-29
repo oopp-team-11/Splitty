@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.interfaces.Translatable;
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
 import client.utils.TranslationSupplier;
@@ -16,13 +17,31 @@ import java.util.Map;
 /***
  * class CreateParticipantController
  */
-public class CreateParticipantCtrl {
+public class CreateParticipantCtrl implements Translatable {
 
     @FXML
     public Label addParticipantLabel;
 
     @FXML
     public Button createBtn;
+
+    @FXML
+    public Button cancelBtn;
+
+    @FXML
+    public Label participantFirstNameLabel;
+
+    @FXML
+    public Label participantLastNameLabel;
+
+    @FXML
+    public Label participantEmailLabel;
+
+    @FXML
+    public Label participantIBANLabel;
+
+    @FXML
+    public Label participantBICLabel;
 
     @FXML
     private TextField email;
@@ -44,7 +63,6 @@ public class CreateParticipantCtrl {
 
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
-    private TranslationSupplier translationSupplier;
 
     /***
      * constructor with injection
@@ -58,24 +76,26 @@ public class CreateParticipantCtrl {
     }
 
     /**
-     * Sets the translation supplier for this controller
-     * @param tl the translation supplier that should be used
+     * Translates the current scene using a translationSupplier
+     * @param translationSupplier an instance of a translationSupplier. If null, the default english will be displayed.
      */
-    public void setTranslationSupplier(TranslationSupplier tl) {
-        this.translationSupplier = tl;
-        this.translate();
-    }
-
-    private void translate() {
-        if (this.translationSupplier == null) return;
+    @Override
+    public void translate(TranslationSupplier translationSupplier) {
+        if (translationSupplier == null) return;
         Map<Control, String> labels = new HashMap<>();
         labels.put(this.email, "Email");
         labels.put(this.firstName, "FirstName");
         labels.put(this.lastName, "LastName");
         labels.put(this.addParticipantLabel, "AddAParticipant");
         labels.put(this.createBtn, "Create");
+        labels.put(this.cancelBtn, "Cancel");
+        labels.put(this.participantFirstNameLabel, "ParticipantFirstName");
+        labels.put(this.participantLastNameLabel, "ParticipantLastName");
+        labels.put(this.participantEmailLabel, "ParticipantEmail");
+        labels.put(this.participantIBANLabel, "ParticipantIBAN");
+        labels.put(this.participantBICLabel, "ParticipantBIC");
         labels.forEach((key, val) -> {
-            var translation = this.translationSupplier.getTranslation(val);
+            var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
             if (key instanceof Labeled)
                 ((Labeled) key).setText(translation.replaceAll("\"", ""));
