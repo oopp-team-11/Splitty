@@ -17,6 +17,7 @@ package client.scenes;
 
 import client.utils.EventDataHandler;
 import client.utils.FileSystemUtils;
+import client.utils.TranslationSupplier;
 import client.utils.WebsocketSessionHandler;
 import commons.Event;
 import commons.Expense;
@@ -63,6 +64,8 @@ public class MainCtrl {
     private EventDataHandler dataHandler;
     private String serverIp;
 
+    private TranslationSupplier translationSupplier;
+
     /**
      * Initializes javafx scenes and their controllers, sets start screen as the currently shown screen
      * @param primaryStage stage
@@ -105,6 +108,8 @@ public class MainCtrl {
         // Needs to be before the start websocket method
         setServerIp();
 
+        setTranslationSupplier();
+
         startWebSocket();
 
         showStartScreen();
@@ -125,6 +130,7 @@ public class MainCtrl {
             // Handle JSON parsing exception
             System.out.println("Failed to parse server response: " + e.getMessage());
         }
+        startScreenCtrl.translate(this.translationSupplier);
     }
 
     /**
@@ -136,6 +142,7 @@ public class MainCtrl {
         primaryStage.setScene(createParticipantScene);
         primaryStage.setResizable(false);
         createParticipantCtrl.setEvent(event);
+        createParticipantCtrl.translate(this.translationSupplier);
     }
 
     /**
@@ -147,6 +154,7 @@ public class MainCtrl {
         primaryStage.setScene(editParticipantScene);
         primaryStage.setResizable(false);
         editParticipantCtrl.setParticipant(participant);
+        editParticipantCtrl.translate(this.translationSupplier);
     }
 
     /**
@@ -232,6 +240,17 @@ public class MainCtrl {
         FileSystemUtils utils = new FileSystemUtils();
         try {
             this.serverIp = utils.getServerIP("client-config.json");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Did not find client config file." + e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void setTranslationSupplier(){
+        FileSystemUtils utils = new FileSystemUtils();
+        try {
+            this.translationSupplier = utils.getTranslationSupplier("client-config.json");
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Did not find client config file." + e);
         } catch (IOException e) {
