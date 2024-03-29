@@ -21,6 +21,7 @@ import java.util.UUID;
 public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
     private UUID invitationCode;
     private List<StompSession.Subscription> eventSubscriptions;
+    private List<StompSession.Subscription> adminSubscriptions;
     private final EventDataHandler dataHandler;
     private final MainCtrl mainCtrl;
     private StompSession session;
@@ -35,6 +36,7 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
         this.dataHandler = dataHandler;
         this.mainCtrl = mainCtrl;
         this.eventSubscriptions = new ArrayList<>();
+        this.adminSubscriptions = new ArrayList<>();
         dataHandler.setSessionHandler(this);
     }
 
@@ -56,6 +58,24 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
                 new ReadParticipantsHandler(dataHandler, mainCtrl));
         session.subscribe("/user/queue/expenses:read",
                 new ReadExpensesHandler(dataHandler, mainCtrl));
+
+
+        /*
+        NOTE: This subscription should be done only after initial check of password validation
+        that is done in initial send to endpoint /app/events:read
+        StatusEntity should contain info whether password was correct or not to show pop up for the user
+        Otherwise if the password is incorrect and the following subscription is made, the WS connection to
+        the server will be lost
+         */
+        //TODO: Should be moved to subscribeToAdmin method
+        //StompHeaders headers = new StompHeaders();
+        //headers.setDestination("/topic/admin/event:create");
+        //TODO: replace with an actual password
+        //headers.setPasscode("secretPasscode");
+
+        //subscription is added to a list for unsubscription purposes
+        //TODO: this should be replaced with a new frame handler
+        //adminSubscriptions.add(session.subscribe(headers, this));
     }
 
     @Override
