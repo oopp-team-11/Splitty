@@ -17,8 +17,24 @@ import java.util.Map;
 public class EditParticipantCtrl implements Translatable {
     @FXML
     public Button abortEditButton;
+
     @FXML
     public Button editParticipantButton;
+
+    @FXML
+    public Label participantFirstNameLabel;
+
+    @FXML
+    public Label participantLastNameLabel;
+
+    @FXML
+    public Label participantEmailLabel;
+
+    @FXML
+    public Label participantIBANLabel;
+
+    @FXML
+    public Label participantBICLabel;
 
     @FXML
     private Label editParticipantLabel;
@@ -80,6 +96,12 @@ public class EditParticipantCtrl implements Translatable {
         labels.put(this.lastName, "LastName");
         labels.put(this.editParticipantLabel, "EditAParticipant");
         labels.put(this.editParticipantButton, "Edit");
+        labels.put(this.abortEditButton, "Cancel");
+        labels.put(this.participantFirstNameLabel, "ParticipantFirstName");
+        labels.put(this.participantLastNameLabel, "ParticipantLastName");
+        labels.put(this.participantEmailLabel, "ParticipantEmail");
+        labels.put(this.participantIBANLabel, "ParticipantIBAN");
+        labels.put(this.participantBICLabel, "ParticipantBIC");
         labels.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
