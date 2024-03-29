@@ -15,6 +15,7 @@
  */
 package client.scenes;
 
+import client.utils.AdminDataHandler;
 import client.utils.EventDataHandler;
 import client.utils.FileSystemUtils;
 import client.utils.WebsocketSessionHandler;
@@ -62,6 +63,9 @@ public class MainCtrl {
     private WebsocketSessionHandler sessionHandler;
     private EventDataHandler dataHandler;
     private String serverIp;
+    private AdminPanelCtrl adminPanelCtrl;
+    private Scene adminPanelScene;
+    private AdminDataHandler adminDataHandler;
 
     /**
      * Initializes javafx scenes and their controllers, sets start screen as the currently shown screen
@@ -79,7 +83,8 @@ public class MainCtrl {
                            Pair<EditParticipantCtrl, Parent> editParticipant,
                            Pair<EventOverviewCtrl, Parent> eventOverview,
                            Pair<EditExpenseCtrl, Parent> editExpense,
-                           Pair<AddExpenseCtrl, Parent> addExpense) {
+                           Pair<AddExpenseCtrl, Parent> addExpense,
+                           Pair<AdminPanelCtrl, Parent> adminPanel) {
         this.primaryStage = primaryStage;
 
         this.startScreenCtrl = startScreen.getKey();
@@ -102,6 +107,11 @@ public class MainCtrl {
 
         this.dataHandler = new EventDataHandler();
 
+        this.adminPanelCtrl = adminPanel.getKey();
+        this.adminPanelScene = new Scene(adminPanel.getValue());
+
+        this.adminDataHandler = new AdminDataHandler();
+
         // Needs to be before the start websocket method
         setServerIp();
 
@@ -110,6 +120,22 @@ public class MainCtrl {
         showStartScreen();
 
         primaryStage.show();
+    }
+
+    /**
+     * std getter
+     * @return admin data handler
+     */
+    public AdminDataHandler getAdminDataHandler() {
+        return adminDataHandler;
+    }
+
+    /**
+     * std setter
+     * @param adminDataHandler
+     */
+    public void setAdminDataHandler(AdminDataHandler adminDataHandler) {
+        this.adminDataHandler = adminDataHandler;
     }
 
     /**

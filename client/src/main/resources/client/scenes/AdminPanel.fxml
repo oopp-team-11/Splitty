@@ -5,22 +5,22 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AdminPanel">
    <children>
-      <TableView layoutX="8.0" layoutY="100.0" prefHeight="200.0" prefWidth="585.0">
+      <TableView fx:id="eventTableView" layoutX="8.0" layoutY="78.0" prefHeight="222.0" prefWidth="585.0">
         <columns>
-          <TableColumn prefWidth="75.0" text="Invitation Code" />
-          <TableColumn prefWidth="75.0" text="Event Title" />
-            <TableColumn prefWidth="75.0" text="Creation Date" />
-            <TableColumn prefWidth="75.0" text="Last Activity Date" />
+          <TableColumn fx:id="invitationCode" prefWidth="75.0" text="Invitation Code" />
+          <TableColumn fx:id="title" prefWidth="75.0" text="Event Title" />
+            <TableColumn fx:id="creationDate" prefWidth="75.0" text="Creation Date" />
+            <TableColumn fx:id="lastActivityDate" prefWidth="75.0" text="Last Activity Date" />
         </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
-      <Button layoutX="393.0" layoutY="325.0" mnemonicParsing="false" text="Delete Event" />
-      <Button layoutX="109.0" layoutY="325.0" mnemonicParsing="false" text="JSON Dump" />
+      <Button fx:id="deleteEvent" layoutX="393.0" layoutY="325.0" mnemonicParsing="false" text="Delete Event" />
+      <Button fx:id="jsonDump" layoutX="109.0" layoutY="325.0" mnemonicParsing="false" text="JSON Dump" />
       <Button fx:id="jsonImport" layoutX="251.0" layoutY="325.0" mnemonicParsing="false" text="JSON Import" />
+      <Button fx:id="startScreenButton" layoutX="14.0" layoutY="21.0" mnemonicParsing="false" text="Go to the Start Screen" />
    </children>
 </AnchorPane>

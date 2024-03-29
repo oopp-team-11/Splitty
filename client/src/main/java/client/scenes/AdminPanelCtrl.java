@@ -10,6 +10,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class AdminPanelCtrl {
@@ -35,6 +38,19 @@ public class AdminPanelCtrl {
         this.mainCtrl = mainCtrl;
         serverUtils = new ServerUtils();
         fileSystemUtils = new FileSystemUtils();
+    }
+
+
+    public void refreshData() {
+        List<Event> events = mainCtrl.getAdminDataHandler().getEvents();
+        eventTableView.getItems().addAll(events);
+    }
+
+    public void goToStartScreen() {
+        // TODO: logic of unsubscribing from the websocket's endpoints
+        // mainCtrl.getAdminSessionHandler().unsubscribeFromCurrentAdminPanel();
+        mainCtrl.getAdminDataHandler().setEvents(new ArrayList<>());
+        mainCtrl.showStartScreen();
     }
 
 
