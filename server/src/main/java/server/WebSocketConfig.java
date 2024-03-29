@@ -1,6 +1,7 @@
 package server;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -14,6 +15,17 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    private final PasswordService passwordService;
+
+    /**
+     * Constructor accepting passwordService
+     *
+     * @param passwordService passwordService
+     */
+    public WebSocketConfig(PasswordService passwordService) {
+        this.passwordService = passwordService;
+    }
+
     /**
      * Configures prefixes for client-server communication
      * @param config websocket config
@@ -22,6 +34,15 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic", "/queue");
         config.setApplicationDestinationPrefixes("/app");
+    }
+
+    /**
+     * Adds the AdminValidation channel interceptor
+     * @param registration registration for channel interceptors
+     */
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(new AdminValidation(passwordService));
     }
 
     /**
