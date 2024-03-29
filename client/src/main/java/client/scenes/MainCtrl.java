@@ -76,6 +76,7 @@ public class MainCtrl {
      * @param eventOverview a pair of event overview controller and javafx event overview scene
      * @param editExpense a pair of edit expense controller and javafx edit expense scene
      * @param addExpense a pair of add expense controller and javafx add expense scene
+     * @param adminPanel a pair of admin panel controller and javafx admin panel scene
      */
 
     public void initialize(Stage primaryStage, Pair<StartScreenCtrl, Parent> startScreen,

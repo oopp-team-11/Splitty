@@ -18,9 +18,9 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
-      <Button fx:id="deleteEvent" layoutX="393.0" layoutY="325.0" mnemonicParsing="false" text="Delete Event" />
-      <Button fx:id="jsonDump" layoutX="109.0" layoutY="325.0" mnemonicParsing="false" text="JSON Dump" />
-      <Button fx:id="jsonImport" layoutX="251.0" layoutY="325.0" mnemonicParsing="false" text="JSON Import" />
-      <Button fx:id="startScreenButton" layoutX="14.0" layoutY="21.0" mnemonicParsing="false" text="Go to the Start Screen" />
+      <Button fx:id="deleteEvent" layoutX="393.0" layoutY="325.0" mnemonicParsing="false" onAction="#deleteEvent" text="Delete Event" />
+      <Button fx:id="jsonDump" layoutX="109.0" layoutY="325.0" mnemonicParsing="false" onAction="#jsonDump" text="JSON Dump" />
+      <Button fx:id="jsonImport" layoutX="251.0" layoutY="325.0" mnemonicParsing="false" onAction="#jsonImport" text="JSON Import" />
+      <Button fx:id="startScreenButton" layoutX="14.0" layoutY="21.0" mnemonicParsing="false" onAction="#goToStartScreen" text="Go to the Start Screen" />
    </children>
 </AnchorPane>
