@@ -168,4 +168,16 @@ public class FileSystemUtils {
 
         return serverIp;
     }
+
+    public TranslationSupplier getTranslationSupplier(String path) throws IOException {
+        JsonReader reader = Json.createReader(new FileReader(path));
+        JsonObject object = reader.readObject();
+        reader.close();
+        try {
+            String lang = object.getString("lang");
+            return new TranslationSupplier(lang);
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
 }
