@@ -26,10 +26,11 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import client.interfaces.Translatable;
 /**
  * Start Screen controller for showing start screen and entering to events
  */
-public class StartScreenCtrl implements Initializable {
+public class StartScreenCtrl implements Initializable, Translatable {
     private final MainCtrl mainCtrl;
 
     @FXML
@@ -64,7 +65,6 @@ public class StartScreenCtrl implements Initializable {
 
     private final FileSystemUtils fileSystemUtils;
     private final ServerUtils serverUtils;
-    private TranslationSupplier translationSupplier;
     private Thread pollingThread;
 
     /**
@@ -96,16 +96,12 @@ public class StartScreenCtrl implements Initializable {
     }
 
     /**
-     * Sets the translation supplier for this controller
-     * @param tl the translation supplier that should be used
+     * Translates the current scene using a translationSupplier
+     * @param translationSupplier an instance of a translationSupplier. If null, the default english will be displayed.
      */
-    public void setTranslationSupplier(TranslationSupplier tl) {
-        this.translationSupplier = tl;
-        this.translate();
-    }
-
-    private void translate() {
-        if (this.translationSupplier == null) return;
+    @Override
+    public void translate(TranslationSupplier translationSupplier) {
+        if (translationSupplier == null) return;
         Map<Control, String> labels = new HashMap<>();
         labels.put(this.newEventLabel, "CreateNewEventLabel");
         labels.put(this.joinEventLabel, "JoinEventLabel");
@@ -115,7 +111,7 @@ public class StartScreenCtrl implements Initializable {
         labels.put(this.newEventName, "EventName");
         labels.put(this.joinInvitationCode, "InvitationCode");
         labels.forEach((key, val) -> {
-            var translation = this.translationSupplier.getTranslation(val);
+            var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
             if (key instanceof Labeled)
                 ((Labeled) key).setText(translation.replaceAll("\"", ""));
@@ -127,7 +123,7 @@ public class StartScreenCtrl implements Initializable {
         tableColumns.put(this.eventNameColumn, "EventName");
         tableColumns.put(this.invitationCodeColumn, "InvitationCode");
         tableColumns.forEach((key, val) -> {
-            var translation = this.translationSupplier.getTranslation(val);
+            var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
             key.setText(translation.replaceAll("\"", ""));
         });
