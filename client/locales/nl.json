@@ -13,5 +13,11 @@
   "EditAParticipant": "Bewerk een deelnemer",
   "Edit": "Bewerk",
   "SendInvites": "Stuur uitnodigingen",
-  "Participants": "Deelnemers"
+  "Participants": "Deelnemers",
+  "Cancel": "Annuleren",
+  "ParticipantFirstName": "Deelnemer voornaam: ",
+  "ParticipantLastName": "Deelnemer achternaam: ",
+  "ParticipantEmail": "Deelnemer email address: ",
+  "ParticipantIBAN": "Deelnemer IBAN: ",
+  "ParticipantBIC": "Deelnemer BIC: "
 }
