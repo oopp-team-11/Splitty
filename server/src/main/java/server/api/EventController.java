@@ -1,5 +1,6 @@
 package server.api;
 import com.fasterxml.jackson.annotation.JsonView;
+import commons.EventList;
 import commons.StatusEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -181,6 +182,30 @@ public class EventController {
         template.convertAndSend("/topic/" + sentEvent.getId() + "/event:delete", sentEvent);
         return StatusEntity.ok("event:delete " + sentEvent.getId());
     }
+
+
+    /**
+     * Handles the read websocket endpoint for all events
+     * @param password The password provided by the client.
+     * @return Returns a StatusEntity with a List of all Events.
+     */
+    @MessageMapping("/events:read")
+    @SendToUser(value = "/queue/events:read", broadcast = false)
+    public StatusEntity readAllEvents(String password) {
+
+        if (!"adminPassword".equals(password)) {
+            return StatusEntity.badRequest(true, "Request must be made by the admin");
+        }
+
+
+        List<Event> events = repo.findAll();
+
+        EventList eventList = new EventList();
+        eventList.addAll(events);
+
+        return StatusEntity.ok(eventList);
+    }
+
 
     /**
      * Handles the PUT: /{invitationCode} endpoint
