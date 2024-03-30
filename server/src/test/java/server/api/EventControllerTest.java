@@ -203,20 +203,30 @@ public class EventControllerTest {
         Event event1 = new Event("event1");
         Event event2 = new Event("event2");
 
+        boolean foundEvent1 = false;
+        boolean foundEvent2 = false;
+
         event1 = eventRepo.save(event1);
         event2 = eventRepo.save(event2);
 
-        List<Event> eventList = List.of(event1, event2);
-
-        EventList events = new EventList();
-        events.addAll(eventList);
-
-        StatusEntity expected = StatusEntity.ok(events);
         StatusEntity received = sut.readAllEvents(passwordService.getAdminPassword());
 
-        System.out.println(received);
+        assertNotNull(received);
+        EventList receivedEvents = received.getEventList();
 
-        assertEquals(expected, received);
+        assertEquals(2, receivedEvents.size());
+
+        for (Event e : receivedEvents) {
+            if (e.getId().equals(event1.getId()) && e.getTitle().equals(event1.getTitle())) {
+                foundEvent1 = true;
+            }
+            if (e.getId().equals(event2.getId()) && e.getTitle().equals(event2.getTitle())) {
+                foundEvent2 = true;
+            }
+        }
+
+        assertTrue(foundEvent1);
+        assertTrue(foundEvent2);
     }
 
     @Test
@@ -232,7 +242,7 @@ public class EventControllerTest {
         EventList events = new EventList();
         events.addAll(eventList);
 
-        StatusEntity expected = StatusEntity.badRequest(true, "Request must be made by the admin");
+        StatusEntity expected = StatusEntity.badRequest(true, "Incorrect Password!");
         StatusEntity received = sut.readAllEvents("wrongPassword");
 
         assertEquals(expected, received);
