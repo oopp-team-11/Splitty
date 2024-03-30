@@ -39,6 +39,9 @@ public class StartScreenCtrl implements Initializable {
     private Button joinBtn;
 
     @FXML
+    private Button loginBtn;
+
+    @FXML
     private Label newEventLabel;
 
     @FXML
@@ -48,10 +51,16 @@ public class StartScreenCtrl implements Initializable {
     private Label recentEventsLabel;
 
     @FXML
+    private Label adminPanelLabel;
+
+    @FXML
     private TextField newEventName;
 
     @FXML
     private TextField joinInvitationCode;
+
+    @FXML
+    private PasswordField adminPassword;
 
     @FXML
     private TableView<Event> eventTable;
@@ -208,6 +217,15 @@ public class StartScreenCtrl implements Initializable {
         }
 
         mainCtrl.getSessionHandler().subscribeToEvent(invitationCode);
+    }
+
+    /**
+     * Method that is called when the user tries to log in to admin panel
+     */
+    public void onAdmin() {
+        System.out.println("ONADMIN");
+        String password = adminPassword.getText();
+        //mainCtrl.getSessionHandler().sendAdminEventsRead(password);
     }
 
     private static void serverErrorAlert(Exception exception) {
