@@ -1,6 +1,7 @@
 package server.api;
 
 
+import static commons.StatusEntity.ok;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
@@ -9,6 +10,7 @@ import static org.springframework.http.HttpStatus.*;
 
 
 import commons.Event;
+import commons.EventList;
 import commons.StatusEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -95,7 +97,7 @@ public class EventControllerTest {
 
         Event receivedEvent = new Event(event.getId(), "foo", event.getCreationDate(), event.getLastActivity());
 
-        assertEquals(StatusEntity.ok("event:update " + event.getId()), sut.updateEvent(receivedEvent));
+        assertEquals(ok("event:update " + event.getId()), sut.updateEvent(receivedEvent));
 
         verify(messagingTemplate).convertAndSend("/topic/" + event.getId() + "/event:update", receivedEvent);
 
@@ -143,7 +145,7 @@ public class EventControllerTest {
         Event receivedEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(),
                 event.getLastActivity());
 
-        assertEquals(StatusEntity.ok("event:delete " + event.getId()), sut.deleteEvent(receivedEvent));
+        assertEquals(ok("event:delete " + event.getId()), sut.deleteEvent(receivedEvent));
 
         verify(messagingTemplate).convertAndSend("/topic/"+event.getId()+"/event:delete", receivedEvent);
         assertFalse(eventRepo.existsById(receivedEvent.getId()));
@@ -176,7 +178,7 @@ public class EventControllerTest {
         Event receivedEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(),
                 event.getLastActivity());
 
-        assertEquals(StatusEntity.ok(receivedEvent), sut.readEvent(receivedEvent.getId()));
+        assertEquals(ok(receivedEvent), sut.readEvent(receivedEvent.getId()));
     }
 
     @Test
@@ -190,6 +192,44 @@ public class EventControllerTest {
         assertEquals(StatusEntity.notFound(true, (Event) null), sut.readEvent(uuid));
 
         assertFalse(eventRepo.existsById(uuid));
+    }
+
+    @Test
+    void checkReadAllEvents() {
+        Event event1 = new Event("event1");
+        Event event2 = new Event("event2");
+
+        event1 = eventRepo.save(event1);
+        event2 = eventRepo.save(event2);
+
+        List<Event> eventList = List.of(event1, event2);
+
+        EventList events = new EventList();
+        events.addAll(eventList);
+
+        StatusEntity expected = StatusEntity.ok(events);
+        StatusEntity received = sut.readAllEvents("adminPassword");
+
+        assertEquals(expected, received);
+    }
+
+    @Test
+    void checkReadAllEventsNonAdmin() {
+        Event event1 = new Event("event1");
+        Event event2 = new Event("event2");
+
+        event1 = eventRepo.save(event1);
+        event2 = eventRepo.save(event2);
+
+        List<Event> eventList = List.of(event1, event2);
+
+        EventList events = new EventList();
+        events.addAll(eventList);
+
+        StatusEntity expected = StatusEntity.badRequest(true, "Request must be made by the admin");
+        StatusEntity received = sut.readAllEvents("wrongPassword");
+
+        assertEquals(expected, received);
     }
 }
 
