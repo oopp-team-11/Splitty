@@ -202,7 +202,7 @@ public class EventController {
         String adminPassword = passwordService.getAdminPassword();
 
         if (!adminPassword.equals(password)) {
-            return StatusEntity.badRequest(true, "Request must be made by the admin");
+            return StatusEntity.badRequest(true, "Incorrect Password!");
         }
 
         List<Event> events = repo.findAll();
