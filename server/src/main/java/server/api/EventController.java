@@ -206,10 +206,12 @@ public class EventController {
         }
 
         List<Event> events = repo.findAll();
-
         EventList eventList = new EventList();
-        eventList.addAll(events);
-
+        for (Event event : events) {
+            Event clientEvent = new Event(event.getId(), event.getTitle(),
+                    event.getCreationDate(), event.getLastActivity());
+            eventList.add(clientEvent);
+        }
         return StatusEntity.ok(eventList);
     }
 
