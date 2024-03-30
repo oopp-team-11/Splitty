@@ -2,6 +2,7 @@ package server.api;
 import com.fasterxml.jackson.annotation.JsonView;
 import commons.EventList;
 import commons.StatusEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import commons.Event;
 import org.springframework.web.context.request.async.DeferredResult;
+import server.PasswordService;
 import server.database.EventRepository;
 
 import java.time.LocalDateTime;
@@ -32,15 +34,20 @@ public class EventController {
 
     private final SimpMessagingTemplate template;
 
+    private final PasswordService passwordService;
+
     /**
      * Constructor for the EventController.
      * Constructed automatically by Spring Boot.
      * @param template SimpMessagingTemplate
      * @param repo The EventRepository provided automatically by JPA
+        * @param passwordService The PasswordService provided by the server
      */
-    public EventController(SimpMessagingTemplate template, EventRepository repo) {
+    @Autowired
+    public EventController(SimpMessagingTemplate template, EventRepository repo, PasswordService passwordService) {
         this.template = template;
         this.repo = repo;
+        this.passwordService = passwordService;
         this.deferredResults = new ConcurrentHashMap<>();
     }
 
@@ -189,14 +196,14 @@ public class EventController {
      * @param password The password provided by the client.
      * @return Returns a StatusEntity with a List of all Events.
      */
-    @MessageMapping("/events:read")
-    @SendToUser(value = "/queue/events:read", broadcast = false)
+    @MessageMapping("/admin/events:read")
+    @SendToUser(value = "/queue/admin/events:read", broadcast = false)
     public StatusEntity readAllEvents(String password) {
+        String adminPassword = passwordService.getAdminPassword();
 
-        if (!"adminPassword".equals(password)) {
+        if (!adminPassword.equals(password)) {
             return StatusEntity.badRequest(true, "Request must be made by the admin");
         }
-
 
         List<Event> events = repo.findAll();
 
