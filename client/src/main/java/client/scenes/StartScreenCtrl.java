@@ -119,10 +119,13 @@ public class StartScreenCtrl implements Initializable {
         labels.put(this.newEventLabel, "CreateNewEventLabel");
         labels.put(this.joinEventLabel, "JoinEventLabel");
         labels.put(this.recentEventsLabel, "RecentEventsLabel");
+        labels.put(this.adminPanelLabel, "AdminPanelLabel");
         labels.put(this.createBtn, "Create");
         labels.put(this.joinBtn, "Join");
+        labels.put(this.loginBtn, "Log in");
         labels.put(this.newEventName, "EventName");
         labels.put(this.joinInvitationCode, "InvitationCode");
+        labels.put(this.adminPassword, "AdminPassword");
         labels.forEach((key, val) -> {
             var translation = this.translationSupplier.getTranslation(val);
             if (translation == null) return;
