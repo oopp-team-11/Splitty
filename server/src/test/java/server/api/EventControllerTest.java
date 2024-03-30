@@ -15,6 +15,7 @@ import commons.StatusEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import server.PasswordService;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,12 +26,15 @@ public class EventControllerTest {
     private SimpMessagingTemplate messagingTemplate;
     private EventController sut;
 
+    private PasswordService passwordService;
+
 
     @BeforeEach
     void setUp() {
         messagingTemplate = mock(SimpMessagingTemplate.class);
         eventRepo = new TestEventRepository();
-        sut = new EventController(messagingTemplate, eventRepo);
+        passwordService = new PasswordService();
+        sut = new EventController(messagingTemplate, eventRepo, passwordService);
     }
 
     // GET: ?query=title&invitationCodes={}
@@ -208,7 +212,9 @@ public class EventControllerTest {
         events.addAll(eventList);
 
         StatusEntity expected = StatusEntity.ok(events);
-        StatusEntity received = sut.readAllEvents("adminPassword");
+        StatusEntity received = sut.readAllEvents(passwordService.getAdminPassword());
+
+        System.out.println(received);
 
         assertEquals(expected, received);
     }
