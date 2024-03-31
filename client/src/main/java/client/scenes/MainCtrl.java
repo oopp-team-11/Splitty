@@ -187,6 +187,7 @@ public class MainCtrl {
         primaryStage.setScene(eventOverviewScene);
         primaryStage.setResizable(false);
         eventOverviewCtrl.setEvent(event);
+        eventOverviewCtrl.translate(this.translationSupplier);
     }
 
     /**

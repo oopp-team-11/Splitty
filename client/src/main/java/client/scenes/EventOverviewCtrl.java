@@ -58,6 +58,10 @@ public class EventOverviewCtrl implements Translatable {
     private Label eventNameLabel;
     @FXML
     private Button sendInvitesButton;
+    @FXML
+    private Button addParticipantBtn;
+    @FXML
+    private Button addExpenseBtn;
     private MainCtrl mainCtrl;
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
@@ -260,6 +264,9 @@ public class EventOverviewCtrl implements Translatable {
         Map<Control, String> labels = new HashMap<>();
         labels.put(this.sendInvitesButton, "SendInvites");
         labels.put(this.participantsLabel, "Participants");
+        labels.put(this.expensesLabel, "Expenses");
+        labels.put(this.addParticipantBtn, "AddAParticipant");
+        labels.put(this.addExpenseBtn, "AddAnExpense");
         labels.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
@@ -267,6 +274,20 @@ public class EventOverviewCtrl implements Translatable {
                 ((Labeled) key).setText(translation.replaceAll("\"", ""));
             if (key instanceof TextField)
                 ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
+        });
+        Map<TableColumn, String> tableColumns = new HashMap<>();
+        tableColumns.put(this.firstNameColumn, "FirstName");
+        tableColumns.put(this.lastNameColumn, "LastName");
+        tableColumns.put(this.editColumn, "Edit");
+        tableColumns.put(this.deleteColumn, "Delete");
+        tableColumns.put(this.titleColumn, "Title");
+        tableColumns.put(this.amountColumn, "Amount");
+        tableColumns.put(this.editColumn1, "Edit");
+        tableColumns.put(this.deleteColumn1, "Delete");
+        tableColumns.forEach((key, val) -> {
+            var translation = translationSupplier.getTranslation(val);
+            if (translation == null) return;
+            key.setText(translation.replaceAll("\"", ""));
         });
     }
 
