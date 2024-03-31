@@ -5,7 +5,6 @@ import client.utils.ServerUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import commons.Event;
-import commons.Expense;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -17,10 +16,8 @@ import javafx.util.Callback;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * admin panel controller
@@ -59,11 +56,15 @@ public class AdminPanelCtrl {
         fileSystemUtils = new FileSystemUtils();
     }
 
+    /**
+     * method that performs initial setup for scene
+     */
     public void makeSetUp() {
         invitationCode.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getId(), toString()));
         title.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getTitle()));
         creationDate.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getCreationDate().toString()));
-        lastActivityDate.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getLastActivity().toString()));
+        lastActivityDate.
+                setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getLastActivity().toString()));
 
         Callback<TableColumn<Event, String>, TableCell<Event, String>> cellFactoryDeleteButton
                 =
@@ -131,6 +132,7 @@ public class AdminPanelCtrl {
 
     /**
      * method for json dump
+     * @param event
      */
     public void jsonDump(Event event) {
         fileSystemUtils.jsonDump(event);
@@ -138,6 +140,7 @@ public class AdminPanelCtrl {
 
     /**
      * method that deletes event
+     * @param event
      */
     public void deleteEvent(Event event) {
         // TODO: propagate change to the websockets

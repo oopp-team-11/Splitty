@@ -209,6 +209,16 @@ public class MainCtrl {
     }
 
     /**
+     * shows admin panel
+     */
+    public void showAdminPanel() {
+        primaryStage.setTitle("Admin Panel");
+        primaryStage.setScene(adminPanelScene);
+        primaryStage.setResizable(false);
+        adminPanelCtrl.makeSetUp();
+    }
+
+    /**
      * Start websocket connection
      */
     public void startWebSocket(){
