@@ -5,6 +5,7 @@ import client.utils.frameHandlers.*;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
+import commons.StatusEntity;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -23,6 +24,7 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
     private List<StompSession.Subscription> eventSubscriptions;
     private List<StompSession.Subscription> adminSubscriptions;
     private final EventDataHandler dataHandler;
+    private final AdminDataHandler adminDataHandler;
     private final MainCtrl mainCtrl;
     private StompSession session;
 
@@ -32,8 +34,9 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
      * @param dataHandler    dataHandler of the client
      * @param mainCtrl       mainCtrl of the client
      */
-    public WebsocketSessionHandler(EventDataHandler dataHandler, MainCtrl mainCtrl) {
+    public WebsocketSessionHandler(EventDataHandler dataHandler, AdminDataHandler adminDataHandler, MainCtrl mainCtrl) {
         this.dataHandler = dataHandler;
+        this.adminDataHandler = adminDataHandler;
         this.mainCtrl = mainCtrl;
         this.eventSubscriptions = new ArrayList<>();
         this.adminSubscriptions = new ArrayList<>();
@@ -58,6 +61,12 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
                 new ReadParticipantsHandler(dataHandler, mainCtrl));
         session.subscribe("/user/queue/expenses:read",
                 new ReadExpensesHandler(dataHandler, mainCtrl));
+
+        StatusEntity statusEntity = (StatusEntity)
+                session.send("/app/events:read", connectedHeaders.getPasscode());
+        if(statusEntity.getStatusCode() == StatusEntity.StatusCode.OK)
+            session.subscribe("user/queue/events:read",
+                    new AdminReadEventsHandler(adminDataHandler));
 
 
         /*
@@ -124,6 +133,28 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
     }
 
     /**
+     * Subscribe to admin specific endpoints
+     *
+     * @param passcode admin passcode given by the user
+     */
+    public void subscribeToAdmin(String passcode) throws IllegalStateException {
+        if (!adminSubscriptions.isEmpty())
+            throw new IllegalStateException("User did not unsubscribe before subscribing to admin again.");
+
+        refreshEvents(passcode);
+
+        StompHeaders headers = new StompHeaders();
+        headers.setDestination("/topic/admin/event:delete");
+        headers.setPasscode(passcode);
+        adminSubscriptions.add(session.subscribe(headers, new AdminDeleteEventHandler(adminDataHandler)));
+
+        headers = new StompHeaders();
+        headers.setDestination("/topic/admin/event:update");
+        headers.setPasscode(passcode);
+        adminSubscriptions.add(session.subscribe(headers, new AdminUpdateEventHandler(adminDataHandler)));
+    }
+
+    /**
      * Unsubscribes from current event's specific topics and sets current invitationCode to null
      */
     public void unsubscribeFromCurrentEvent() {
@@ -183,6 +214,12 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
     public void refreshExpenses() {
         session.send("/app/expenses:read", invitationCode);
     }
+
+    public void refreshEvents(String passcode) {
+        session.send("/app/admin/events:read", passcode);
+    }
+
+    //TODO: Add sendDeleteEvent()
 
     /**
      * Getter for the mainCtrl, for use in dataHandler

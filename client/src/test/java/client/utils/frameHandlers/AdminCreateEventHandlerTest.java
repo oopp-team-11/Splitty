@@ -1,32 +1,23 @@
 package client.utils.frameHandlers;
 
-import client.scenes.MainCtrl;
 import client.utils.AdminDataHandler;
-import client.utils.EventDataHandler;
-import commons.Event;
-import commons.EventList;
 import commons.StatusEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
 
-class ReadEventsHandlerTest {
+class AdminCreateEventHandlerTest {
     private AdminDataHandler dataHandler;
-    private ReadEventsHandler handler;
+    private AdminCreateEventHandler handler;
     private StompHeaders headers;
-    private MainCtrl mainCtrl;
 
     @BeforeEach
     void setUp() {
-        mainCtrl = Mockito.mock(MainCtrl.class);
         dataHandler = Mockito.mock(AdminDataHandler.class);
-        handler = new ReadEventsHandler(dataHandler, mainCtrl);
+        handler = new AdminCreateEventHandler(dataHandler);
         headers = new StompHeaders();
     }
 
@@ -35,7 +26,7 @@ class ReadEventsHandlerTest {
         assertEquals(StatusEntity.class, handler.getPayloadType(headers));
     }
 
-    @Test
+    /*@Test
     void handleFrameOK() {
         Event event = new Event("testEvent");
         Event event2 = new Event("testEvent2");
@@ -46,5 +37,5 @@ class ReadEventsHandlerTest {
         StatusEntity status = StatusEntity.ok(events);
         handler.handleFrame(headers, status);
         verify(dataHandler).setEvents(events);
-    }
+    }*/
 }

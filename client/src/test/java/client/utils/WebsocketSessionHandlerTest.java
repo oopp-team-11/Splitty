@@ -38,7 +38,7 @@ class WebsocketSessionHandlerTest {
     @BeforeEach
     void setUp() {
         invitationCode = UUID.randomUUID();
-        handler = new WebsocketSessionHandler(new EventDataHandler(), new MainCtrl());
+        handler = new WebsocketSessionHandler(new EventDataHandler(), new AdminDataHandler(), new MainCtrl());
         headers = new StompHeaders();
         session = Mockito.mock(StompSession.class);
     }
