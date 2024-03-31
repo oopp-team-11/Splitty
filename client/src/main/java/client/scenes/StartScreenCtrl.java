@@ -39,6 +39,9 @@ public class StartScreenCtrl implements Initializable {
     private Button joinBtn;
 
     @FXML
+    private Button loginBtn;
+
+    @FXML
     private Label newEventLabel;
 
     @FXML
@@ -48,10 +51,16 @@ public class StartScreenCtrl implements Initializable {
     private Label recentEventsLabel;
 
     @FXML
+    private Label adminPanelLabel;
+
+    @FXML
     private TextField newEventName;
 
     @FXML
     private TextField joinInvitationCode;
+
+    @FXML
+    private PasswordField adminPassword;
 
     @FXML
     private TableView<Event> eventTable;
@@ -110,10 +119,13 @@ public class StartScreenCtrl implements Initializable {
         labels.put(this.newEventLabel, "CreateNewEventLabel");
         labels.put(this.joinEventLabel, "JoinEventLabel");
         labels.put(this.recentEventsLabel, "RecentEventsLabel");
+        labels.put(this.adminPanelLabel, "AdminPanelLabel");
         labels.put(this.createBtn, "Create");
         labels.put(this.joinBtn, "Join");
+        labels.put(this.loginBtn, "Log in");
         labels.put(this.newEventName, "EventName");
         labels.put(this.joinInvitationCode, "InvitationCode");
+        labels.put(this.adminPassword, "AdminPassword");
         labels.forEach((key, val) -> {
             var translation = this.translationSupplier.getTranslation(val);
             if (translation == null) return;
@@ -208,6 +220,15 @@ public class StartScreenCtrl implements Initializable {
         }
 
         mainCtrl.getSessionHandler().subscribeToEvent(invitationCode);
+    }
+
+    /**
+     * Method that is called when the user tries to log in to admin panel
+     */
+    public void onAdmin() {
+        System.out.println("ONADMIN");
+        String password = adminPassword.getText();
+        //mainCtrl.getSessionHandler().sendAdminEventsRead(password);
     }
 
     private static void serverErrorAlert(Exception exception) {
