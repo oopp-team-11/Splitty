@@ -15,6 +15,7 @@
  */
 package client.scenes;
 
+import client.utils.AdminDataHandler;
 import client.utils.EventDataHandler;
 import client.utils.FileSystemUtils;
 import client.utils.TranslationSupplier;
@@ -63,6 +64,9 @@ public class MainCtrl {
     private WebsocketSessionHandler sessionHandler;
     private EventDataHandler dataHandler;
     private String serverIp;
+    private AdminPanelCtrl adminPanelCtrl;
+    private Scene adminPanelScene;
+    private AdminDataHandler adminDataHandler;
 
     private TranslationSupplier translationSupplier;
 
@@ -75,6 +79,7 @@ public class MainCtrl {
      * @param eventOverview a pair of event overview controller and javafx event overview scene
      * @param editExpense a pair of edit expense controller and javafx edit expense scene
      * @param addExpense a pair of add expense controller and javafx add expense scene
+     * @param adminPanel a pair of admin panel controller and javafx admin panel scene
      */
 
     public void initialize(Stage primaryStage, Pair<StartScreenCtrl, Parent> startScreen,
@@ -82,7 +87,8 @@ public class MainCtrl {
                            Pair<EditParticipantCtrl, Parent> editParticipant,
                            Pair<EventOverviewCtrl, Parent> eventOverview,
                            Pair<EditExpenseCtrl, Parent> editExpense,
-                           Pair<AddExpenseCtrl, Parent> addExpense) {
+                           Pair<AddExpenseCtrl, Parent> addExpense,
+                           Pair<AdminPanelCtrl, Parent> adminPanel) {
         this.primaryStage = primaryStage;
 
         this.startScreenCtrl = startScreen.getKey();
@@ -105,6 +111,11 @@ public class MainCtrl {
 
         this.dataHandler = new EventDataHandler();
 
+        this.adminPanelCtrl = adminPanel.getKey();
+        this.adminPanelScene = new Scene(adminPanel.getValue());
+
+        this.adminDataHandler = new AdminDataHandler();
+
         // Needs to be before the start websocket method
         setServerIp();
 
@@ -115,6 +126,22 @@ public class MainCtrl {
         showStartScreen();
 
         primaryStage.show();
+    }
+
+    /**
+     * std getter
+     * @return admin data handler
+     */
+    public AdminDataHandler getAdminDataHandler() {
+        return adminDataHandler;
+    }
+
+    /**
+     * std setter
+     * @param adminDataHandler
+     */
+    public void setAdminDataHandler(AdminDataHandler adminDataHandler) {
+        this.adminDataHandler = adminDataHandler;
     }
 
     /**
@@ -189,6 +216,16 @@ public class MainCtrl {
         primaryStage.setResizable(false);
         eventOverviewCtrl.setEvent(event);
         eventOverviewCtrl.translate(this.translationSupplier);
+    }
+
+    /**
+     * shows admin panel
+     */
+    public void showAdminPanel() {
+        primaryStage.setTitle("Admin Panel");
+        primaryStage.setScene(adminPanelScene);
+        primaryStage.setResizable(false);
+        adminPanelCtrl.makeSetUp();
     }
 
     /**

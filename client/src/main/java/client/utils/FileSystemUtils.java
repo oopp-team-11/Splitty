@@ -1,6 +1,8 @@
 package client.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.Event;
+
 import javax.json.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -14,13 +16,32 @@ public class FileSystemUtils {
     //private static final String CLIENT_JSON_PATH = "client.json";
 
     /**
+     * method tht performs json dump
+     * @param event
+     * @throws IOException
+     */
+    public void jsonDump(Event event)  {
+        try {
+            String fileTitle = event.getId().toString();
+            String fileData = new ObjectMapper().writeValueAsString(event);
+            FileWriter file = new FileWriter(fileTitle);
+            file.write(fileData);
+            file.flush();
+            file.close();
+        } catch (IOException e) {
+            // TODO: pop-up notification
+        }
+    }
+
+    /**
      * Method that reads the invitation codes from the config file
+     *
      * @param path path of the file
      * @return lust of invitation codes
      * @throws FileNotFoundException if the file is not found
      */
     public List<UUID> readInvitationCodes(String path) throws FileNotFoundException {
-        if(!checkIfFileExists(path)) {
+        if (!checkIfFileExists(path)) {
             throw new FileNotFoundException("File not found");
         }
 
@@ -39,13 +60,14 @@ public class FileSystemUtils {
 
     /**
      * Method that saves the invitation codes to the config file
+     *
      * @param invitationCode invitation code to be saved
-     * @param path path of the file
+     * @param path           path of the file
      * @throws IOException if something goes wrong
      */
     public void saveInvitationCodesToConfigFile(UUID invitationCode, String path)
-        throws IOException {
-        if(!checkIfFileExists(path)) {
+            throws IOException {
+        if (!checkIfFileExists(path)) {
             List<UUID> codes = new ArrayList<>();
             codes.add(invitationCode);
             List<String> codeStrings = codes.stream().map(UUID::toString).toList();
@@ -62,7 +84,7 @@ public class FileSystemUtils {
 
         List<UUID> codes = new ArrayList<>(readInvitationCodes(path));
 
-        if(checkIfCodeExists(invitationCode, codes)) {
+        if (checkIfCodeExists(invitationCode, codes)) {
             return;
         }
 
@@ -81,6 +103,7 @@ public class FileSystemUtils {
 
     /**
      * Method that checks if a file exists
+     *
      * @param path path of the file
      * @return true if the file exists, false otherwise
      */
@@ -90,7 +113,8 @@ public class FileSystemUtils {
 
     /**
      * Method that checks if a code exists in a list of codes
-     * @param code code to be checked
+     *
+     * @param code  code to be checked
      * @param codes list of codes
      * @return true if the code exists, false otherwise
      */
@@ -100,7 +124,8 @@ public class FileSystemUtils {
 
     /**
      * Method that updates the config file
-     * @param path path of the file
+     *
+     * @param path  path of the file
      * @param codes list of codes
      * @throws IOException if something goes wrong
      */
@@ -118,12 +143,13 @@ public class FileSystemUtils {
 
     /**
      * Method that extracts the invitation codes from a list of events
+     *
      * @param events list of events
      * @return list of invitation codes
      */
     public List<UUID> extractInvitationCodesFromEventList(List<Event> events) {
         List<UUID> codes = new ArrayList<>();
-        for(Event event : events) {
+        for (Event event : events) {
             codes.add(event.getId());
         }
         return codes;
@@ -131,11 +157,12 @@ public class FileSystemUtils {
 
     /**
      * Gets the server ip from the client-config.json
+     *
      * @param path path to client config file
      * @return String of server ip address
      */
     public String getServerIP(String path) throws IOException {
-        if(!checkIfFileExists(path)) {
+        if (!checkIfFileExists(path)) {
             JsonObject json = Json.createObjectBuilder()
                     .add("server-ip", "SERVER_URL")
                     .build();
@@ -157,8 +184,7 @@ public class FileSystemUtils {
 
         if (serverIp == null || serverIp.isEmpty() || serverIp.equals("SERVER_URL")) {
             throw new RuntimeException("Server IP is empty, please fill it. The file is called client-config.json");
-        }
-        else if (serverIp.contains("http://") || serverIp.contains("ws://") ||
+        } else if (serverIp.contains("http://") || serverIp.contains("ws://") ||
                 serverIp.contains("https://") || serverIp.contains("wss://")) {
             serverIp = serverIp.replace("https://", "");
             serverIp = serverIp.replace("http://", "");
