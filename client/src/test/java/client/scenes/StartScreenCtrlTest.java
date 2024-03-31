@@ -2,6 +2,7 @@
 package client.scenes;
 
 import client.Main;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
@@ -25,7 +26,6 @@ class StartScreenCtrlTest {
      * @param stage - Will be injected by the test runner.
      */
     //@Start
-
     private void start(Stage stage) {
         var app = new Main();
         try {
@@ -49,6 +49,11 @@ class StartScreenCtrlTest {
     //@Test
     void shouldContainJoinEventBtn(FxRobot robot) {
         Assertions.assertThat(robot.lookup("#joinBtn").queryAs(Button.class)).hasText("Join");
+    }
+
+    //@Test
+    void shouldContainLoginBtn(FxRobot robot) {
+        Assertions.assertThat(robot.lookup("#loginBtn").queryAs(Button.class)).hasText("Log in");
     }
 
     /**
@@ -86,6 +91,14 @@ class StartScreenCtrlTest {
         robot.write("Breakfast");
         Assertions.assertThat(robot.lookup("#newEventName").queryAs(TextField.class))
                 .hasText("Breakfast");
+    }
+
+    //@Test
+    void shouldContainAdminPasswordField(FxRobot robot) {
+        robot.clickOn("#adminPassword", MouseButton.PRIMARY);
+        robot.write("secretPassword");
+        Assertions.assertThat(robot.lookup("#adminPassword").queryAs(PasswordField.class))
+                .hasText("secretPassword");
     }
 
     /**
