@@ -5,6 +5,7 @@ import commons.StatusEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
@@ -172,7 +173,7 @@ public class EventController {
      */
     @MessageMapping("/admin/event:delete")
     @SendToUser(value = "/queue/reply", broadcast = false)
-    public StatusEntity deleteEvent(Event receivedEvent, String password)
+    public StatusEntity deleteEvent(Event receivedEvent, @Header(name = "passcode") String password)
     {
         String adminPassword = passwordService.getAdminPassword();
 
