@@ -5,7 +5,6 @@ import client.utils.frameHandlers.*;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
-import commons.StatusEntity;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -62,12 +61,12 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
         session.subscribe("/user/queue/expenses:read",
                 new ReadExpensesHandler(dataHandler, mainCtrl));
 
-        StatusEntity statusEntity = (StatusEntity)
-                session.send("/app/admin/events:read", connectedHeaders.getPasscode());
-        if(statusEntity.getStatusCode() == StatusEntity.StatusCode.OK)
-            session.subscribe("user/queue/admin/events:read",
-                    new AdminReadEventsHandler(adminDataHandler));
-
+        session.subscribe("user/queue/admin/events:read",
+                new AdminReadEventsHandler(adminDataHandler));
+        session.subscribe("user/queue/admin/event:dump",
+                new AdminReadEventsHandler(adminDataHandler));
+        session.subscribe("user/queue/admin/event:import",
+                new AdminReadEventsHandler(adminDataHandler));
 
         /*
         NOTE: This subscription should be done only after initial check of password validation
@@ -140,8 +139,6 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
     public void subscribeToAdmin(String passcode) throws IllegalStateException {
         if (!adminSubscriptions.isEmpty())
             throw new IllegalStateException("User did not unsubscribe before subscribing to admin again.");
-
-        refreshEvents(passcode);
 
         StompHeaders headers = new StompHeaders();
         headers.setDestination("/topic/admin/event:create");
@@ -226,16 +223,16 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
         session.send("/app/expenses:read", invitationCode);
     }
 
-    public void refreshEvents(String passcode) {
+    public void sendReadEvents(String passcode) {
         session.send("/app/admin/events:read", passcode);
     }
 
-    public void sendDeleteEvent(String passcode)
+    public void sendAdminEvent(String passcode, Event receivedEvent, String methodType)
     {
         StompHeaders headers = new StompHeaders();
-        headers.setDestination("app/admin/event:delete");
+        headers.setDestination("app/admin/event:"+methodType); //delete/import/dump
         headers.setPasscode(passcode);
-        session.send(headers, invitationCode);
+        session.send(headers, receivedEvent);
     }
 
     /**

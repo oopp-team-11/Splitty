@@ -10,6 +10,7 @@ import java.util.List;
 public class AdminDataHandler {
     private List<Event> events;
     private WebsocketSessionHandler sessionHandler;
+    private String passcode;
 
     /**
      * empty constructor
@@ -27,6 +28,14 @@ public class AdminDataHandler {
         this.sessionHandler = sessionHandler;
     }
 
+    public String getPasscode() {
+        return passcode;
+    }
+
+    public void setPasscode(String passcode) {
+        this.passcode = passcode;
+    }
+
     /**
      * std getter
      * @return list of events
@@ -41,6 +50,7 @@ public class AdminDataHandler {
      */
     public void setEvents(List<Event> events) {
         this.events = events;
+        sessionHandler.subscribeToAdmin(passcode);
     }
 
     /**

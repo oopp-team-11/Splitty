@@ -36,10 +36,11 @@ public class AdminReadEventsHandler implements StompFrameHandler {
                 dataHandler.setEvents(status.getEventList());
             }
             case BAD_REQUEST -> {
-                System.out.println("Server malfunctioned somehow. This should never happen.");
+                System.out.println("Incorrect password.");
+                //todo: show pop-up
             }
             case NOT_FOUND -> {
-                dataHandler.setEvents(new ArrayList<>());
+                System.out.println("Server malfunctioned somehow. This should never happen.");
             }
         }
     }

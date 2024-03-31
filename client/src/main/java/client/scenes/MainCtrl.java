@@ -229,7 +229,7 @@ public class MainCtrl {
         jackson2MessageConverter.getObjectMapper().findAndRegisterModules();
         stompClient.setMessageConverter(jackson2MessageConverter);
 
-        sessionHandler = new WebsocketSessionHandler(dataHandler, this);
+        sessionHandler = new WebsocketSessionHandler(dataHandler, adminDataHandler, this);
         stompClient.connectAsync("ws://" + this.serverIp + "/v1", sessionHandler);
     }
 

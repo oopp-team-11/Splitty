@@ -32,7 +32,7 @@ public class AdminCreateEventHandler implements StompFrameHandler {
                 dataHandler.getCreateEvent(status.getEvent());
             }
             case BAD_REQUEST -> {
-                System.out.println("Invalid request. This should never happen.");
+                System.out.println("Invalid request.");
             }
         }
     }

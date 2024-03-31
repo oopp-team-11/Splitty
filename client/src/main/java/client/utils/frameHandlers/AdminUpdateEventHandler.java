@@ -33,10 +33,10 @@ public class AdminUpdateEventHandler implements StompFrameHandler {
                   dataHandler.getUpdateEvent(status.getEvent());
             }
             case BAD_REQUEST -> {
-                System.out.println("Invalid request. This should never happen.");
+                System.out.println("Invalid request.");
             }
             case NOT_FOUND -> {
-                System.out.println("Event not found. This should never happen.");
+                System.out.println("Event not found.");
             }
         }
     }

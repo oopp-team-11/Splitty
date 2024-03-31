@@ -32,10 +32,10 @@ public class AdminDeleteEventHandler implements StompFrameHandler {
                 dataHandler.getDeleteEvent(status.getEvent());
             }
             case BAD_REQUEST -> {
-                System.out.println("Invalid request. This should never happen.");
+                System.out.println("Invalid request.");
             }
             case NOT_FOUND -> {
-                System.out.println("Invalid request. Event not found");
+                System.out.println("Event not found.");
             }
         }
     }
