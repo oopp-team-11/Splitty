@@ -29,13 +29,13 @@ public class AdminDeleteEventHandler implements StompFrameHandler {
         StatusEntity status = (StatusEntity) payload;
         switch (status.getStatusCode()) {
             case OK -> {
-//                dataHandler.setEvents(status.getEventList());
+                dataHandler.getDeleteEvent(status.getEvent());
             }
             case BAD_REQUEST -> {
-//                System.out.println("Server malfunctioned somehow. This should never happen.");
+                System.out.println("Invalid request. This should never happen.");
             }
             case NOT_FOUND -> {
-//                dataHandler.setEvents(new ArrayList<>());
+                System.out.println("Invalid request. Event not found");
             }
         }
     }

@@ -30,13 +30,13 @@ public class AdminUpdateEventHandler implements StompFrameHandler {
         StatusEntity status = (StatusEntity) payload;
         switch (status.getStatusCode()) {
             case OK -> {
-//                dataHandler.setEvents(status.getEventList());
+                  dataHandler.getUpdateEvent(status.getEvent());
             }
             case BAD_REQUEST -> {
-//                System.out.println("Server malfunctioned somehow. This should never happen.");
+                System.out.println("Invalid request. This should never happen.");
             }
             case NOT_FOUND -> {
-//                dataHandler.setEvents(new ArrayList<>());
+                System.out.println("Event not found. This should never happen.");
             }
         }
     }
