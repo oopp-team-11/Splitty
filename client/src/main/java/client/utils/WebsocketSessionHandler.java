@@ -63,9 +63,9 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
                 new ReadExpensesHandler(dataHandler, mainCtrl));
 
         StatusEntity statusEntity = (StatusEntity)
-                session.send("/app/events:read", connectedHeaders.getPasscode());
+                session.send("/app/admin/events:read", connectedHeaders.getPasscode());
         if(statusEntity.getStatusCode() == StatusEntity.StatusCode.OK)
-            session.subscribe("user/queue/events:read",
+            session.subscribe("user/queue/admin/events:read",
                     new AdminReadEventsHandler(adminDataHandler));
 
 
@@ -144,6 +144,11 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
         refreshEvents(passcode);
 
         StompHeaders headers = new StompHeaders();
+        headers.setDestination("/topic/admin/event:create");
+        headers.setPasscode(passcode);
+        adminSubscriptions.add(session.subscribe(headers, new AdminCreateEventHandler(adminDataHandler)));
+
+        headers = new StompHeaders();
         headers.setDestination("/topic/admin/event:delete");
         headers.setPasscode(passcode);
         adminSubscriptions.add(session.subscribe(headers, new AdminDeleteEventHandler(adminDataHandler)));
@@ -152,6 +157,12 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
         headers.setDestination("/topic/admin/event:update");
         headers.setPasscode(passcode);
         adminSubscriptions.add(session.subscribe(headers, new AdminUpdateEventHandler(adminDataHandler)));
+    }
+
+    public void unsubscribeFromAdmin() throws IllegalStateException {
+        for (var subscription : adminSubscriptions)
+            subscription.unsubscribe();
+        adminSubscriptions.clear();
     }
 
     /**
@@ -219,7 +230,13 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
         session.send("/app/admin/events:read", passcode);
     }
 
-    //TODO: Add sendDeleteEvent()
+    public void sendDeleteEvent(String passcode)
+    {
+        StompHeaders headers = new StompHeaders();
+        headers.setDestination("app/admin/event:delete");
+        headers.setPasscode(passcode);
+        session.send(headers, passcode);
+    }
 
     /**
      * Getter for the mainCtrl, for use in dataHandler
