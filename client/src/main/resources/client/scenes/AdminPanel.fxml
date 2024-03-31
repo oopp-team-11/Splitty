@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AdminPanelCtrl">
+   <children>
+      <TableView fx:id="eventTableView" layoutX="8.0" layoutY="78.0" prefHeight="300.0" prefWidth="780.0">
+        <columns>
+          <TableColumn fx:id="invitationCode" prefWidth="75.0" text="Invitation Code" />
+          <TableColumn fx:id="title" prefWidth="75.0" text="Event Title" />
+            <TableColumn fx:id="creationDate" prefWidth="75.0" text="Creation Date" />
+            <TableColumn fx:id="lastActivityDate" prefWidth="90.0" text="Last Activity Date" />
+            <TableColumn fx:id="deleteEvent" prefWidth="75.0" text="Delete Event" />
+            <TableColumn fx:id="jsonDump" prefWidth="75.0" text="JSON Dump" />
+        </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+      <Button fx:id="jsonImport" layoutX="14.0" layoutY="413.0" mnemonicParsing="false" onAction="#jsonImport" text="JSON Import" />
+      <Button fx:id="startScreenButton" layoutX="14.0" layoutY="21.0" mnemonicParsing="false" onAction="#goToStartScreen" text="Go to the Start Screen" />
+   </children>
+</AnchorPane>
