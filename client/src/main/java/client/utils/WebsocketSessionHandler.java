@@ -235,7 +235,7 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
         StompHeaders headers = new StompHeaders();
         headers.setDestination("app/admin/event:delete");
         headers.setPasscode(passcode);
-        session.send(headers, passcode);
+        session.send(headers, invitationCode);
     }
 
     /**
