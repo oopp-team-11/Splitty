@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import commons.Event;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
@@ -17,7 +18,6 @@ import javafx.util.Callback;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * admin panel controller
@@ -126,8 +126,9 @@ public class AdminPanelCtrl {
      * methods that refreshes data on the scene
      */
     public void refreshData() {
-        List<Event> events = mainCtrl.getAdminDataHandler().getEvents();
-        eventTableView.getItems().addAll(events);
+        eventTableView.getColumns().getFirst().setVisible(false);
+        eventTableView.getColumns().getFirst().setVisible(false);
+        eventTableView.setItems(FXCollections.observableList(mainCtrl.getAdminDataHandler().getEvents()));
     }
 
     /**
