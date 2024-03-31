@@ -176,6 +176,7 @@ public class MainCtrl {
         primaryStage.setScene(addExpenseScene);
         primaryStage.setResizable(false);
         addExpenseCtrl.setFields();
+        addExpenseCtrl.translate(this.translationSupplier);
     }
 
     /**

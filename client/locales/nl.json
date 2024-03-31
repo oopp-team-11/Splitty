@@ -17,6 +17,7 @@
   "Participants": "Deelnemers",
   "Expenses": "Kosten",
   "AddAnExpense": "Voeg een kost toe",
+  "EditAnExpense": "Bewerk een kost",
   "Cancel": "Annuleren",
   "ParticipantFirstName": "Deelnemer voornaam: ",
   "ParticipantLastName": "Deelnemer achternaam: ",
@@ -24,5 +25,9 @@
   "ParticipantIBAN": "Deelnemer IBAN: ",
   "ParticipantBIC": "Deelnemer BIC: ",
   "Title": "Titel",
-  "Amount": "Hoeveelheid"
+  "Amount": "Hoeveelheid",
+  "WhatForExample": "Bijvoorbeeld: Boodschappen",
+  "WhoPaidLabel": "Wie heeft betaald?",
+  "HowMuchLabel": "Hoeveel?",
+  "WhatForLabel": "Waarvoor?"
 }
