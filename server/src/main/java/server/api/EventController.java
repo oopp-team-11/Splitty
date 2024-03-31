@@ -167,13 +167,19 @@ public class EventController {
     /**
      * Handles delete websocket endpoint for event
      * @param receivedEvent Event that we want to delete
+     * @param password The password provided by the client.
      * @return StatusEntity<String> body contains description of success/failure
      */
-    @MessageMapping("/event:delete")
+    @MessageMapping("/admin/event:delete")
     @SendToUser(value = "/queue/reply", broadcast = false)
-    public StatusEntity deleteEvent(Event receivedEvent)
+    public StatusEntity deleteEvent(Event receivedEvent, String password)
     {
-        /*TODO: Implement admin passcode verification*/
+        String adminPassword = passwordService.getAdminPassword();
+
+        if (!adminPassword.equals(password)) {
+            return StatusEntity.badRequest(true, "Incorrect Password!");
+        }
+
         if(receivedEvent == null)
             return StatusEntity.badRequest(true, "Event should not be null");
 
