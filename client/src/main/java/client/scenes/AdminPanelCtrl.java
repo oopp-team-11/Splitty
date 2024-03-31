@@ -5,10 +5,15 @@ import client.utils.ServerUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import commons.Event;
+import commons.Expense;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,13 +29,17 @@ public class AdminPanelCtrl {
 
 
     @FXML
-    private TableColumn<Event, UUID> invitationCode;
+    private TableColumn<Event, String> invitationCode;
     @FXML
     private TableColumn<Event, String> title;
     @FXML
-    private TableColumn<Event, LocalDateTime> creationDate;
+    private TableColumn<Event, String> creationDate;
     @FXML
-    private TableColumn<Event, LocalDateTime> lastActivityDate;
+    private TableColumn<Event, String> lastActivityDate;
+    @FXML
+    private TableColumn<Event, String> deleteEvent;
+    @FXML
+    private TableColumn<Event, String> jsonDump;
     @FXML
     private TableView<Event> eventTableView;
 
@@ -40,6 +49,7 @@ public class AdminPanelCtrl {
 
     /**
      * Constructor
+     *
      * @param mainCtrl
      */
     @Inject
@@ -47,6 +57,68 @@ public class AdminPanelCtrl {
         this.mainCtrl = mainCtrl;
         serverUtils = new ServerUtils();
         fileSystemUtils = new FileSystemUtils();
+    }
+
+    public void makeSetUp() {
+        invitationCode.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getId(), toString()));
+        title.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getTitle()));
+        creationDate.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getCreationDate().toString()));
+        lastActivityDate.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getLastActivity().toString()));
+
+        Callback<TableColumn<Event, String>, TableCell<Event, String>> cellFactoryDeleteButton
+                =
+                new Callback<>() {
+                    @Override
+                    public TableCell<Event, String> call(TableColumn<Event, String> eventStringTableColumn) {
+                        return new TableCell<Event, String>() {
+                            final Button btn = new Button("X");
+
+                            @Override
+                            public void updateItem(String item, boolean empty) {
+                                super.updateItem(item, empty);
+                                if (empty) {
+                                    setGraphic(null);
+                                    setText(null);
+                                } else {
+                                    btn.setOnAction(event1 ->
+                                            deleteEvent(getTableView().getItems().get(getIndex())));
+                                    setGraphic(btn);
+                                    setText(null);
+                                }
+                            }
+                        };
+                    }
+                };
+        deleteEvent.setCellFactory(cellFactoryDeleteButton);
+
+        Callback<TableColumn<Event, String>, TableCell<Event, String>> cellFactoryJsonDumpButton
+                =
+                new Callback<>() {
+                    @Override
+                    public TableCell<Event, String> call(TableColumn<Event, String> eventStringTableColumn) {
+                        return new TableCell<Event, String>() {
+
+                            final Button btn = new Button("⬇");
+
+                            @Override
+                            public void updateItem(String item, boolean empty) {
+                                super.updateItem(item, empty);
+                                if (empty) {
+                                    setGraphic(null);
+                                    setText(null);
+                                } else {
+                                    btn.setOnAction(event1 ->
+                                            jsonDump(getTableView().getItems().get(getIndex())));
+                                    setGraphic(btn);
+                                    setText(null);
+                                }
+                            }
+                        };
+                    }
+                };
+        jsonDump.setCellFactory(cellFactoryJsonDumpButton);
+
+        refreshData();
     }
 
     /**
@@ -60,18 +132,14 @@ public class AdminPanelCtrl {
     /**
      * method for json dump
      */
-    public void jsonDump() {
-        var positions = eventTableView.getSelectionModel().getSelectedCells();
-        Event event = eventTableView.getItems().get(positions.getFirst().getRow());
+    public void jsonDump(Event event) {
         fileSystemUtils.jsonDump(event);
     }
 
     /**
      * method that deletes event
      */
-    public void deleteEvent() {
-        var positions = eventTableView.getSelectionModel().getSelectedCells();
-        Event event = eventTableView.getItems().get(positions.getFirst().getRow());
+    public void deleteEvent(Event event) {
         // TODO: propagate change to the websockets
     }
 
