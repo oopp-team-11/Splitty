@@ -137,7 +137,6 @@ public class EventControllerTest {
         assertFalse(eventRepo.existsById(event.getId()));
     }
 
-    //TODO: Incorporate admin password into tests for deleteEvent()
     @Test
     void checkDeleteEvent() {
         Event event = new Event("event");
@@ -149,7 +148,7 @@ public class EventControllerTest {
         Event receivedEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(),
                 event.getLastActivity());
 
-        assertEquals(ok("event:delete " + event.getId()), sut.deleteEvent(receivedEvent));
+        assertEquals(ok("event:delete " + event.getId()), sut.deleteEvent(receivedEvent, passwordService.getAdminPassword()));
 
         verify(messagingTemplate).convertAndSend("/topic/"+event.getId()+"/event:delete", receivedEvent);
         assertFalse(eventRepo.existsById(receivedEvent.getId()));
@@ -159,7 +158,7 @@ public class EventControllerTest {
     void checkDeleteEventNotFound() {
         Event event = new Event(UUID.randomUUID(), "foo", null, null);
 
-        assertEquals(StatusEntity.notFound(true, "Event not found"), sut.deleteEvent(event));
+        assertEquals(StatusEntity.notFound(true, "Event not found"), sut.deleteEvent(event, passwordService.getAdminPassword()));
 
         assertFalse(eventRepo.existsById(event.getId()));
     }
@@ -168,10 +167,23 @@ public class EventControllerTest {
     void checkDeleteEventNull() {
         Event event = null;
 
-        assertEquals(StatusEntity.badRequest(true, "Event should not be null"), sut.deleteEvent(event));
+        assertEquals(StatusEntity.badRequest(true, "Event should not be null"), sut.deleteEvent(event, passwordService.getAdminPassword()));
     }
 
-    //TODO: add a test for unauthorized access
+    @Test
+    void checkDeleteEventUnauthorizedAccess() {
+        Event event = new Event("event");
+        event = eventRepo.save(event);
+
+        assertTrue(eventRepo.existsById(event.getId()));
+
+        Event receivedEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(),
+                event.getLastActivity());
+        StatusEntity result = sut.deleteEvent(receivedEvent, "incorrectPassword");
+
+        assertEquals(StatusEntity.badRequest(true, "Incorrect Password!"), result);
+        assertTrue(eventRepo.existsById(receivedEvent.getId()));
+    }
 
     @Test
     void checkReadEvent() {
