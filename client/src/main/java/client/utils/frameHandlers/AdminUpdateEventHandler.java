@@ -6,13 +6,15 @@ import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 
+/**
+ * Frame handler for user/queue/admin/event:update endpoint
+ */
 public class AdminUpdateEventHandler implements StompFrameHandler {
     private final AdminDataHandler dataHandler;
 
     /**
-     * Constructor for the AdminReadEventsHandler
+     * Constructor for the AdminUpdateEventHandler
      *
      * @param dataHandler reference to the dataHandler
      */
@@ -30,7 +32,7 @@ public class AdminUpdateEventHandler implements StompFrameHandler {
         StatusEntity status = (StatusEntity) payload;
         switch (status.getStatusCode()) {
             case OK -> {
-                  dataHandler.getUpdateEvent(status.getEvent());
+                dataHandler.getUpdateEvent(status.getEvent());
             }
             case BAD_REQUEST -> {
                 System.out.println("Invalid request.");

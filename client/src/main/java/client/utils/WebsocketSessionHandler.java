@@ -31,6 +31,7 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
      * Custom constructor for WebsocketSessionHandler
      *
      * @param dataHandler    dataHandler of the client
+     * @param adminDataHandler admin data handler of the client
      * @param mainCtrl       mainCtrl of the client
      */
     public WebsocketSessionHandler(EventDataHandler dataHandler, AdminDataHandler adminDataHandler, MainCtrl mainCtrl) {
@@ -156,6 +157,9 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
         adminSubscriptions.add(session.subscribe(headers, new AdminUpdateEventHandler(adminDataHandler)));
     }
 
+    /**
+     * Unsubscribes from admin's specific topics
+     */
     public void unsubscribeFromAdmin() throws IllegalStateException {
         for (var subscription : adminSubscriptions)
             subscription.unsubscribe();
@@ -223,10 +227,20 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
         session.send("/app/expenses:read", invitationCode);
     }
 
+    /**
+     * Sends a message to the server with a request to read all events
+     * @param passcode admin passcode
+     */
     public void sendReadEvents(String passcode) {
         session.send("/app/admin/events:read", passcode);
     }
 
+    /**
+     * Sends a message to the server with delete/import/dump request
+     * @param passcode admin passcode
+     * @param receivedEvent event we are concerned about
+     * @param methodType type of the method (delete/import/dump)
+     */
     public void sendAdminEvent(String passcode, Event receivedEvent, String methodType)
     {
         StompHeaders headers = new StompHeaders();

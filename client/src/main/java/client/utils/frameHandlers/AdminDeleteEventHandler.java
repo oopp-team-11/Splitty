@@ -7,11 +7,14 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 
 import java.lang.reflect.Type;
 
+/**
+ * Frame handler for user/queue/admin/event:delete endpoint
+ */
 public class AdminDeleteEventHandler implements StompFrameHandler {
     private final AdminDataHandler dataHandler;
 
     /**
-     * Constructor for the AdminReadEventsHandler
+     * Constructor for the AdminDeleteEventHandler
      *
      * @param dataHandler reference to the dataHandler
      */

@@ -6,7 +6,6 @@ import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 
 /**
  * Frame handler for user/queue/admin/events:read endpoint

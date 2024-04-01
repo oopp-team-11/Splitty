@@ -8,13 +8,13 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 import java.lang.reflect.Type;
 
 /**
- * Frame handler for user/queue/admin/events:read endpoint
+ * Frame handler for user/queue/admin/event:import endpoint
  */
 public class AdminImportEventHandler implements StompFrameHandler {
     private final AdminDataHandler dataHandler;
 
     /**
-     * Constructor for the AdminReadEventsHandler
+     * Constructor for the AdminImportEventHandler
      *
      * @param dataHandler reference to the dataHandler
      */

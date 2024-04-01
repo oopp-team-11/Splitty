@@ -20,8 +20,9 @@ public class AdminDataHandler {
 
     /**
      * default constructor
-     * @param events
-     * @param sessionHandler
+     * @param events List of all events
+     * @param sessionHandler websocket session handler
+     * @param passcode client's passcode
      */
     public AdminDataHandler(List<Event> events, WebsocketSessionHandler sessionHandler, String passcode) {
         this.events = events;
@@ -29,10 +30,18 @@ public class AdminDataHandler {
         this.passcode = passcode;
     }
 
+    /**
+     * Getter for passcode
+     * @return passcode
+     */
     public String getPasscode() {
         return passcode;
     }
 
+    /**
+     * Setter for passcode
+     * @param passcode passcode we want to set
+     */
     public void setPasscode(String passcode) {
         this.passcode = passcode;
     }

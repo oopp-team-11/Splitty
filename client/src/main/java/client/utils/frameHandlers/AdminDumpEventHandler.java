@@ -9,14 +9,14 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 import java.lang.reflect.Type;
 
 /**
- * Frame handler for user/queue/admin/events:read endpoint
+ * Frame handler for user/queue/admin/event:dump endpoint
  */
 public class AdminDumpEventHandler implements StompFrameHandler {
     private final AdminDataHandler dataHandler;
     private final FileSystemUtils utils;
 
     /**
-     * Constructor for the AdminReadEventsHandler
+     * Constructor for the AdminDumpEventHandler
      *
      * @param dataHandler reference to the dataHandler
      */
