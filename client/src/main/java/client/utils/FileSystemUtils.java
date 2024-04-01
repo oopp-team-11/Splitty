@@ -194,4 +194,22 @@ public class FileSystemUtils {
 
         return serverIp;
     }
+
+    /**
+     * Returns a translation supplier from a config.
+     * @param path the path of the config file to read.
+     * @return the associated translationsupplier, null otherwise.
+     * @throws IOException If an error occurs during config file reading.
+     */
+    public TranslationSupplier getTranslationSupplier(String path) throws IOException {
+        JsonReader reader = Json.createReader(new FileReader(path));
+        JsonObject object = reader.readObject();
+        reader.close();
+        try {
+            String lang = object.getString("lang");
+            return new TranslationSupplier(lang);
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
 }

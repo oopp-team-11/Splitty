@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.interfaces.Translatable;
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
 import client.utils.TranslationSupplier;
@@ -22,7 +23,7 @@ import java.util.Map;
 /***
  * class CreateParticipantController
  */
-public class EventOverviewCtrl {
+public class EventOverviewCtrl implements Translatable {
     @FXML
     public Label expensesLabel;
     @FXML
@@ -57,11 +58,14 @@ public class EventOverviewCtrl {
     private Label eventNameLabel;
     @FXML
     private Button sendInvitesButton;
+    @FXML
+    private Button addParticipantBtn;
+    @FXML
+    private Button addExpenseBtn;
     private MainCtrl mainCtrl;
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
     private Event event;
-    private TranslationSupplier translationSupplier;
 
     /***
      * constructor with injection
@@ -251,26 +255,39 @@ public class EventOverviewCtrl {
     }
 
     /**
-     * Sets the translation supplier for this controller
-     * @param tl the translation supplier that should be used
+     * Translates the current scene using a translationSupplier
+     * @param translationSupplier an instance of a translationSupplier. If null, the default english will be displayed.
      */
-    public void setTranslationSupplier(TranslationSupplier tl) {
-        this.translationSupplier = tl;
-        this.translate();
-    }
-
-    private void translate() {
-        if (this.translationSupplier == null) return;
+    @Override
+    public void translate(TranslationSupplier translationSupplier) {
+        if (translationSupplier == null) return;
         Map<Control, String> labels = new HashMap<>();
         labels.put(this.sendInvitesButton, "SendInvites");
         labels.put(this.participantsLabel, "Participants");
+        labels.put(this.expensesLabel, "Expenses");
+        labels.put(this.addParticipantBtn, "AddAParticipant");
+        labels.put(this.addExpenseBtn, "AddAnExpense");
         labels.forEach((key, val) -> {
-            var translation = this.translationSupplier.getTranslation(val);
+            var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
             if (key instanceof Labeled)
                 ((Labeled) key).setText(translation.replaceAll("\"", ""));
             if (key instanceof TextField)
                 ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
+        });
+        Map<TableColumn, String> tableColumns = new HashMap<>();
+        tableColumns.put(this.firstNameColumn, "FirstName");
+        tableColumns.put(this.lastNameColumn, "LastName");
+        tableColumns.put(this.editColumn, "Edit");
+        tableColumns.put(this.deleteColumn, "Delete");
+        tableColumns.put(this.titleColumn, "Title");
+        tableColumns.put(this.amountColumn, "Amount");
+        tableColumns.put(this.editColumn1, "Edit");
+        tableColumns.put(this.deleteColumn1, "Delete");
+        tableColumns.forEach((key, val) -> {
+            var translation = translationSupplier.getTranslation(val);
+            if (translation == null) return;
+            key.setText(translation.replaceAll("\"", ""));
         });
     }
 

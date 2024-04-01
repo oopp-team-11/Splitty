@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.interfaces.Translatable;
 import client.utils.ServerUtils;
 import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
@@ -13,11 +14,27 @@ import java.util.Map;
 /**
  * Client controller for the EditParticipant.fxml scene
  */
-public class EditParticipantCtrl {
+public class EditParticipantCtrl implements Translatable {
     @FXML
     public Button abortEditButton;
+
     @FXML
     public Button editParticipantButton;
+
+    @FXML
+    public Label participantFirstNameLabel;
+
+    @FXML
+    public Label participantLastNameLabel;
+
+    @FXML
+    public Label participantEmailLabel;
+
+    @FXML
+    public Label participantIBANLabel;
+
+    @FXML
+    public Label participantBICLabel;
 
     @FXML
     private Label editParticipantLabel;
@@ -67,24 +84,26 @@ public class EditParticipantCtrl {
     }
 
     /**
-     * Sets the translation supplier for this controller
-     * @param tl the translation supplier that should be used
+     * Translates the current scene using a translationSupplier
+     * @param translationSupplier an instance of a translationSupplier. If null, the default english will be displayed.
      */
-    public void setTranslationSupplier(TranslationSupplier tl) {
-        this.translationSupplier = tl;
-        this.translate();
-    }
-
-    private void translate() {
-        if (this.translationSupplier == null) return;
+    @Override
+    public void translate(TranslationSupplier translationSupplier) {
+        if (translationSupplier == null) return;
         Map<Control, String> labels = new HashMap<>();
         labels.put(this.email, "Email");
         labels.put(this.firstName, "FirstName");
         labels.put(this.lastName, "LastName");
         labels.put(this.editParticipantLabel, "EditAParticipant");
         labels.put(this.editParticipantButton, "Edit");
+        labels.put(this.abortEditButton, "Cancel");
+        labels.put(this.participantFirstNameLabel, "ParticipantFirstName");
+        labels.put(this.participantLastNameLabel, "ParticipantLastName");
+        labels.put(this.participantEmailLabel, "ParticipantEmail");
+        labels.put(this.participantIBANLabel, "ParticipantIBAN");
+        labels.put(this.participantBICLabel, "ParticipantBIC");
         labels.forEach((key, val) -> {
-            var translation = this.translationSupplier.getTranslation(val);
+            var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
             if (key instanceof Labeled)
                 ((Labeled) key).setText(translation.replaceAll("\"", ""));

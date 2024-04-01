@@ -29,11 +29,11 @@
                   <Font name="System Bold" size="16.0" />
                </font>
             </Label>
-            <Button mnemonicParsing="false" onAction="#addParticipant" prefHeight="737.0" prefWidth="855.0" text="Add Participant" GridPane.rowIndex="3">
+            <Button mnemonicParsing="false" onAction="#addParticipant" fx:id="addParticipantBtn" prefHeight="737.0" prefWidth="855.0" text="Add Participant" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </GridPane.margin></Button>
-            <Button mnemonicParsing="false" onAction="#addExpense" prefHeight="679.0" prefWidth="1117.0" text="Add Expense" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <Button mnemonicParsing="false" onAction="#addExpense" fx:id="addExpenseBtn" prefHeight="679.0" prefWidth="1117.0" text="Add Expense" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </GridPane.margin></Button>

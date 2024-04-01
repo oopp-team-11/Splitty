@@ -12,6 +12,22 @@
   "AddAParticipant": "Voeg een deelnemer toe",
   "EditAParticipant": "Bewerk een deelnemer",
   "Edit": "Bewerk",
+  "Delete": "Verwijder",
   "SendInvites": "Stuur uitnodigingen",
-  "Participants": "Deelnemers"
+  "Participants": "Deelnemers",
+  "Expenses": "Kosten",
+  "AddAnExpense": "Voeg een kost toe",
+  "EditAnExpense": "Bewerk een kost",
+  "Cancel": "Annuleren",
+  "ParticipantFirstName": "Deelnemer voornaam: ",
+  "ParticipantLastName": "Deelnemer achternaam: ",
+  "ParticipantEmail": "Deelnemer email address: ",
+  "ParticipantIBAN": "Deelnemer IBAN: ",
+  "ParticipantBIC": "Deelnemer BIC: ",
+  "Title": "Titel",
+  "Amount": "Hoeveelheid",
+  "WhatForExample": "Bijvoorbeeld: Boodschappen",
+  "WhoPaidLabel": "Wie heeft betaald?",
+  "HowMuchLabel": "Hoeveel?",
+  "WhatForLabel": "Waarvoor?"
 }

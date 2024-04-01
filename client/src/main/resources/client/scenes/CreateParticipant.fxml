@@ -9,7 +9,7 @@
    <children>
       <VBox prefHeight="640.0" prefWidth="600.0">
          <children>
-            <Label alignment="CENTER" prefHeight="50.0" prefWidth="570.0" style="-fx-padding: 10;" text="Add a participant">
+            <Label alignment="CENTER" fx:id="addParticipantLabel" prefHeight="50.0" prefWidth="570.0" style="-fx-padding: 10;" text="Add a participant">
                <font>
                   <Font size="17.0" />
                </font>
@@ -34,43 +34,43 @@
                   <TextField fx:id="iban" promptText="IBAN" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <TextField fx:id="bic" promptText="BIC" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
-                  <Label alignment="CENTER" prefHeight="173.0" prefWidth="987.0" text="Participants First Name:">
+                  <Label alignment="CENTER" prefHeight="173.0" prefWidth="987.0" text="Participants First Name:" fx:id="participantFirstNameLabel">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
                   </Label>
 
-                  <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants Last Name:" GridPane.rowIndex="1">
+                  <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants Last Name:" fx:id="participantLastNameLabel" GridPane.rowIndex="1">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
                   </Label>
 
-                  <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants Email Adress:" GridPane.rowIndex="2">
+                  <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants Email Adress:" fx:id="participantEmailLabel" GridPane.rowIndex="2">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
                   </Label>
 
-                  <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants IBAN:" GridPane.rowIndex="3">
+                  <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants IBAN:" fx:id="participantIBANLabel" GridPane.rowIndex="3">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
                   </Label>
 
-                  <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants BIC:" GridPane.rowIndex="4">
+                  <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants BIC:" fx:id="participantBICLabel" GridPane.rowIndex="4">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
                   </Label>
 
-                  <Button id="CreateParticipant" layoutX="310.0" layoutY="492.0" mnemonicParsing="false" onAction="#abort" prefHeight="660.0" prefWidth="1357.0" text="Abort" GridPane.rowIndex="5">
+                  <Button id="CreateParticipant" fx:id="cancelBtn" layoutX="310.0" layoutY="492.0" mnemonicParsing="false" onAction="#abort" prefHeight="660.0" prefWidth="1357.0" text="Abort" GridPane.rowIndex="5">
                      <GridPane.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </GridPane.margin>
                   </Button>
 
-                  <Button id="CreateParticipant" mnemonicParsing="false" onAction="#onCreate" prefHeight="660.0" prefWidth="1357.0" text="Add" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                  <Button id="CreateParticipant" fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate" prefHeight="660.0" prefWidth="1357.0" text="Add" GridPane.columnIndex="1" GridPane.rowIndex="5">
                      <GridPane.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </GridPane.margin></Button>
