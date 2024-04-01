@@ -61,11 +61,11 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
         session.subscribe("/user/queue/expenses:read",
                 new ReadExpensesHandler(dataHandler, mainCtrl));
 
-        session.subscribe("user/queue/admin/events:read",
+        session.subscribe("/user/queue/admin/events:read",
                 new AdminReadEventsHandler(adminDataHandler));
-        session.subscribe("user/queue/admin/event:dump",
+        session.subscribe("/user/queue/admin/event:dump",
                 new AdminReadEventsHandler(adminDataHandler));
-        session.subscribe("user/queue/admin/event:import",
+        session.subscribe("/user/queue/admin/event:import",
                 new AdminReadEventsHandler(adminDataHandler));
 
         /*

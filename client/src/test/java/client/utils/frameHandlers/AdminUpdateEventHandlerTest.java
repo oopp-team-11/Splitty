@@ -29,16 +29,11 @@ class AdminUpdateEventHandlerTest {
         assertEquals(StatusEntity.class, handler.getPayloadType(headers));
     }
 
-    /*@Test
+    @Test
     void handleFrameOK() {
         Event event = new Event("testEvent");
-        Event event2 = new Event("testEvent2");
-
-        EventList events = new EventList();
-        events.add(event);
-        events.add(event2);
-        StatusEntity status = StatusEntity.ok(events);
+        StatusEntity status = StatusEntity.ok(event);
         handler.handleFrame(headers, status);
-        verify(dataHandler).setEvents(events);
-    }*/
+        verify(dataHandler).getUpdateEvent(event);
+    }
 }

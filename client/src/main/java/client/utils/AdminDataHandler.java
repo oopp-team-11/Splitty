@@ -23,9 +23,10 @@ public class AdminDataHandler {
      * @param events
      * @param sessionHandler
      */
-    public AdminDataHandler(List<Event> events, WebsocketSessionHandler sessionHandler) {
+    public AdminDataHandler(List<Event> events, WebsocketSessionHandler sessionHandler, String passcode) {
         this.events = events;
         this.sessionHandler = sessionHandler;
+        this.passcode = passcode;
     }
 
     public String getPasscode() {
