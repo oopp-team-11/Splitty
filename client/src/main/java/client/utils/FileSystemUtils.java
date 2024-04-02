@@ -164,7 +164,7 @@ public class FileSystemUtils {
     public String getServerIP(String path) throws IOException {
         if (!checkIfFileExists(path)) {
             JsonObject json = Json.createObjectBuilder()
-                    .add("server-ip", "SERVER_URL")
+                    .add("server-ip", "localhost:8080")
                     .build();
 
             FileWriter file = new FileWriter(path);
@@ -172,27 +172,65 @@ public class FileSystemUtils {
             file.flush();
             file.close();
 
-            throw new FileNotFoundException(path + " doesn't exist. " +
-                    "Created new file, please put the server url in client-config.json." +
-                    "You need to delete the SERVER_URL and put it there.");
+            System.err.println(path + " doesn't exist. \n" +
+                    "Created new default file, please put the server url if it isn't localhost:8080 " +
+                    "in client-config.json.\n" +
+                    "You need to delete localhost:8080 and put it there.");
+            //TODO: Pop-up showing error, but it is only a warning
+
+            return getServerIP(path);
         }
 
-        JsonReader reader = Json.createReader(new FileReader(path));
-        JsonObject object = reader.readObject();
-        reader.close();
-        String serverIp = object.getString("server-ip");
+        try{
+            JsonReader reader = Json.createReader(new FileReader(path));
+            JsonObject object = reader.readObject();
+            reader.close();
+            String serverIp = object.getString("server-ip");
 
-        if (serverIp == null || serverIp.isEmpty() || serverIp.equals("SERVER_URL")) {
-            throw new RuntimeException("Server IP is empty, please fill it. The file is called client-config.json");
-        } else if (serverIp.contains("http://") || serverIp.contains("ws://") ||
-                serverIp.contains("https://") || serverIp.contains("wss://")) {
-            serverIp = serverIp.replace("https://", "");
-            serverIp = serverIp.replace("http://", "");
-            serverIp = serverIp.replace("wss://", "");
-            serverIp = serverIp.replace("ws://", "");
+            if (serverIp == null || serverIp.isEmpty()) {
+                JsonObject json = Json.createObjectBuilder()
+                        .add("server-ip", "localhost:8080")
+                        .build();
+
+                FileWriter file = new FileWriter(path);
+                file.write(json.toString());
+                file.flush();
+                file.close();
+
+                System.err.println(path + " is the wrong format. \n" +
+                        "Created new default file, please put the server url if it isn't localhost:8080 " +
+                        "in client-config.json.\n" +
+                        "You need to delete localhost:8080 and put it there.");
+                //TODO: Pop-up showing error, but it is only a warning
+                return getServerIP(path);
+            } else if (serverIp.contains("http://") || serverIp.contains("ws://") ||
+                    serverIp.contains("https://") || serverIp.contains("wss://")) {
+                serverIp = serverIp.replace("https://", "");
+                serverIp = serverIp.replace("http://", "");
+                serverIp = serverIp.replace("wss://", "");
+                serverIp = serverIp.replace("ws://", "");
+            } else if (!serverIp.contains(":")) {
+                serverIp = serverIp + ":8080";
+            }
+            return serverIp;
         }
+        catch (Exception e){
+            JsonObject json = Json.createObjectBuilder()
+                    .add("server-ip", "localhost:8080")
+                    .build();
 
-        return serverIp;
+            FileWriter file = new FileWriter(path);
+            file.write(json.toString());
+            file.flush();
+            file.close();
+
+            System.err.println(path + " is the wrong format. \n" +
+                    "Created new default file, please put the server url if it isn't localhost:8080 " +
+                    "in client-config.json.\n" +
+                    "You need to delete localhost:8080 and put it there.");
+            //TODO: Pop-up showing error, but it is only a warning
+            return getServerIP(path);
+        }
     }
 
     /**

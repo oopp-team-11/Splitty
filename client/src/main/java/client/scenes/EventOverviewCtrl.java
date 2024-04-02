@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -35,9 +36,9 @@ public class EventOverviewCtrl implements Translatable {
     @FXML
     public TableColumn<Participant, String> lastNameColumn;
     @FXML
-    public TableColumn<Participant, String> editColumn;
+    public TableColumn<Participant, Button> editColumn;
     @FXML
-    public TableColumn<Participant, String> deleteColumn;
+    public TableColumn<Participant, Button> deleteColumn;
     @FXML
     public TableView<Expense> expensesList;
     @FXML
@@ -45,9 +46,9 @@ public class EventOverviewCtrl implements Translatable {
     @FXML
     public TableColumn<Expense, String> amountColumn;
     @FXML
-    public TableColumn<Expense, String> editColumn1;
+    public TableColumn<Expense, Button> editColumn1;
     @FXML
-    public TableColumn<Expense, String> deleteColumn1;
+    public TableColumn<Expense, Button> deleteColumn1;
     @FXML
     public Label editTitle;
     @FXML
@@ -90,119 +91,33 @@ public class EventOverviewCtrl implements Translatable {
         firstNameColumn.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getFirstName()));
         lastNameColumn.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getLastName()));
 
-        Callback<TableColumn<Participant, String>, TableCell<Participant, String>> cellFactoryEditButton
-                = //
-                new Callback<>() {
-                    @Override
-                    public TableCell call(final TableColumn<Participant, String> param) {
-                        return new TableCell<Participant, String>() {
+        editColumn.setCellValueFactory(participant -> {
+            Button button = new Button("✎");
+            button.setOnAction(event1 -> editParticipant(participant.getValue()));
+            return new SimpleObjectProperty<>(button);
+        });
 
-                            final Button btn = new Button("✎");
-
-                            @Override
-                            public void updateItem(String item, boolean empty) {
-                                super.updateItem(item, empty);
-                                if (empty) {
-                                    setGraphic(null);
-                                    setText(null);
-                                } else {
-                                    btn.setOnAction(event1 ->
-                                            editParticipant(getTableView().getItems().get(getIndex())));
-                                    setGraphic(btn);
-                                    setText(null);
-                                }
-                            }
-                        };
-                    }
-                };
-        editColumn.setCellFactory(cellFactoryEditButton);
-
-        Callback<TableColumn<Participant, String>, TableCell<Participant, String>> cellFactoryDeleteButton
-                = //
-                new Callback<>() {
-                    @Override
-                    public TableCell call(final TableColumn<Participant, String> param) {
-                        return new TableCell<Participant, String>() {
-
-                            final Button btn = new Button("X");
-
-                            @Override
-                            public void updateItem(String item, boolean empty) {
-                                super.updateItem(item, empty);
-                                if (empty) {
-                                    setGraphic(null);
-                                    setText(null);
-                                } else {
-                                    btn.setOnAction(event1 ->
-                                            deleteParticipant(getTableView().getItems().get(getIndex())));
-                                    setGraphic(btn);
-                                    setText(null);
-                                }
-                            }
-                        };
-                    }
-                };
-
-        deleteColumn.setCellFactory(cellFactoryDeleteButton);
+        deleteColumn.setCellValueFactory(participant -> {
+            Button button = new Button("X");
+            button.setOnAction(event1 -> deleteParticipant(participant.getValue()));
+            return new SimpleObjectProperty<>(button);
+        });
         participantsList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
 
         titleColumn.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getTitle()));
         amountColumn.setCellValueFactory(col -> new SimpleStringProperty(String.valueOf(col.getValue().getAmount())));
 
-        Callback<TableColumn<Expense, String>, TableCell<Expense, String>> cellFactoryEditButton1
-                = //
-                new Callback<>() {
-                    @Override
-                    public TableCell call(final TableColumn<Expense, String> param) {
-                        return new TableCell<Expense, String>() {
+        editColumn1.setCellValueFactory(expense -> {
+            Button button = new Button("✎");
+            button.setOnAction(event1 -> editExpense(expense.getValue()));
+            return new SimpleObjectProperty<>(button);
+        });
 
-                            final Button btn = new Button("✎");
-
-                            @Override
-                            public void updateItem(String item, boolean empty) {
-                                super.updateItem(item, empty);
-                                if (empty) {
-                                    setGraphic(null);
-                                    setText(null);
-                                } else {
-                                    btn.setOnAction(event1 ->
-                                            editExpense(getTableView().getItems().get(getIndex())));
-                                    setGraphic(btn);
-                                    setText(null);
-                                }
-                            }
-                        };
-                    }
-                };
-        editColumn1.setCellFactory(cellFactoryEditButton1);
-
-        Callback<TableColumn<Expense, String>, TableCell<Expense, String>> cellFactoryDeleteButton1
-                = //
-                new Callback<>() {
-                    @Override
-                    public TableCell call(final TableColumn<Expense, String> param) {
-                        return new TableCell<Expense, String>() {
-
-                            final Button btn = new Button("X");
-
-                            @Override
-                            public void updateItem(String item, boolean empty) {
-                                super.updateItem(item, empty);
-                                if (empty) {
-                                    setGraphic(null);
-                                    setText(null);
-                                } else {
-                                    btn.setOnAction(event1 ->
-                                            deleteExpense(getTableView().getItems().get(getIndex())));
-                                    setGraphic(btn);
-                                    setText(null);
-                                }
-                            }
-                        };
-                    }
-                };
-
-        deleteColumn1.setCellFactory(cellFactoryDeleteButton1);
+        deleteColumn1.setCellValueFactory(expense -> {
+            Button button = new Button("X");
+            button.setOnAction(event1 -> deleteExpense(expense.getValue()));
+            return new SimpleObjectProperty<>(button);
+        });
         expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));
 
         editTitle.onMouseClickedProperty().set(event1 -> editingTitle());
