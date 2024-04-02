@@ -38,6 +38,7 @@
 * Admin panel server-side
 * Testing manually everything and minor adjustments
 * Accessibility (we need at least 5.0; currently we may have or almost have contrast, but nothing else)
+* Multi-modality: we can use emoji for flags for the language selection.
 
 #### Advanced features
 TA: If the feature is incomplete, but generally usable (general usability might require more than just 1 unimportant bullet point from the list), we may get some partial points.
@@ -45,7 +46,6 @@ TA: If the feature is incomplete, but generally usable (general usability might 
 * We need to implement pop-ups. We should use messages from status entities.
 * Live language switch is a must for us because it is easy to do with our current implementation
 * The rest of the advanced features rely on extended expense, so we are currently not able to work on them and most likely we won't
-* Multi-modality: we can use emoji for flags for the language selection.
 * Except for Midas, everyone has worked on every area of the project, so we can perhaps work according to our strengths to increase efficiency.
 
 #### Discussion
@@ -69,12 +69,12 @@ so let's not test it.
 
 ### Distribution of work for this week
 
-* Adam: 
-* Boaz: 
-* David: 
-* Jakub: 
-* Marios: 
-* Midas: 
+* Adam: Extended expense
+* Boaz: UI, accessibility (multi-modality, keyboard shortcuts, pop-ups)
+* David: Involved model, adjustments to models, server-side controllers for extended expense
+* Jakub: Polish translation, help with pop-ups, StatusEntity adjustments
+* Marios: Extended expense, last activity field
+* Midas: Server-side controllers for /admin/event:dump and /admin/event:import, pop-ups
 
 ### Questions for the TA
 - Q: Is just black and white as we have right now counted as contrast?
