@@ -65,9 +65,7 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
         session.subscribe("/user/queue/admin/events:read",
                 new AdminReadEventsHandler(adminDataHandler));
         session.subscribe("/user/queue/admin/event:dump",
-                new AdminReadEventsHandler(adminDataHandler));
-        session.subscribe("/user/queue/admin/event:import",
-                new AdminReadEventsHandler(adminDataHandler));
+                new AdminDumpEventHandler(adminDataHandler));
     }
 
     @Override
@@ -123,6 +121,8 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
     public void subscribeToAdmin(String passcode) throws IllegalStateException {
         if (!adminSubscriptions.isEmpty())
             throw new IllegalStateException("User did not unsubscribe before subscribing to admin again.");
+        if(passcode == null)
+            throw new IllegalArgumentException();
 
         StompHeaders headers = new StompHeaders();
         headers.setDestination("/topic/admin/event:create");

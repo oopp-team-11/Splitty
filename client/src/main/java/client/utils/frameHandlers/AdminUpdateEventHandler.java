@@ -1,6 +1,7 @@
 package client.utils.frameHandlers;
 
 import client.utils.AdminDataHandler;
+import commons.Event;
 import commons.StatusEntity;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -29,17 +30,7 @@ public class AdminUpdateEventHandler implements StompFrameHandler {
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        StatusEntity status = (StatusEntity) payload;
-        switch (status.getStatusCode()) {
-            case OK -> {
-                dataHandler.getUpdateEvent(status.getEvent());
-            }
-            case BAD_REQUEST -> {
-                System.out.println("Invalid request.");
-            }
-            case NOT_FOUND -> {
-                System.out.println("Event not found.");
-            }
-        }
+        Event receivedEvent = (Event) payload;
+        dataHandler.getUpdateEvent(receivedEvent);
     }
 }

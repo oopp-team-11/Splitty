@@ -54,7 +54,7 @@ class WebsocketSessionHandlerTest {
         ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<StompFrameHandler> stompFrameHandlerCaptor = ArgumentCaptor.forClass(StompFrameHandler.class);
 
-        verify(session, times(7)).subscribe(destinationCaptor.capture(),
+        verify(session, times(6)).subscribe(destinationCaptor.capture(),
                 stompFrameHandlerCaptor.capture());
 
         List<String> destinations = destinationCaptor.getAllValues();
@@ -65,7 +65,6 @@ class WebsocketSessionHandlerTest {
         assertEquals("/user/queue/expenses:read", destinations.get(3));
         assertEquals("/user/queue/admin/events:read", destinations.get(4));
         assertEquals("/user/queue/admin/event:dump", destinations.get(5));
-        assertEquals("/user/queue/admin/event:import", destinations.get(6));
     }
 
     @Test
@@ -77,7 +76,7 @@ class WebsocketSessionHandlerTest {
         ArgumentCaptor<StompFrameHandler> stompFrameHandlerCaptor = ArgumentCaptor.forClass(StompFrameHandler.class);
         ArgumentCaptor<UUID> idCaptor = ArgumentCaptor.forClass(UUID.class);
 
-        verify(session, times(15)).subscribe(destinationCaptor.capture(),
+        verify(session, times(14)).subscribe(destinationCaptor.capture(),
                 stompFrameHandlerCaptor.capture());
         verify(session, times(3)).send(destinationCaptor.capture(), idCaptor.capture());
 
@@ -88,18 +87,18 @@ class WebsocketSessionHandlerTest {
         assertEquals(invitationCode, uuids.get(1));
         assertEquals(invitationCode, uuids.get(2));
 
-        assertEquals("/topic/" + invitationCode + "/event:delete", destinations.get(7));
-        assertEquals("/topic/" + invitationCode + "/event:update", destinations.get(8));
-        assertEquals("/topic/" + invitationCode + "/participant:delete", destinations.get(9));
-        assertEquals("/topic/" + invitationCode + "/participant:update", destinations.get(10));
-        assertEquals("/topic/" + invitationCode + "/participant:create", destinations.get(11));
-        assertEquals("/topic/" + invitationCode + "/expense:delete", destinations.get(12));
-        assertEquals("/topic/" + invitationCode + "/expense:update", destinations.get(13));
-        assertEquals("/topic/" + invitationCode + "/expense:create", destinations.get(14));
+        assertEquals("/topic/" + invitationCode + "/event:delete", destinations.get(6));
+        assertEquals("/topic/" + invitationCode + "/event:update", destinations.get(7));
+        assertEquals("/topic/" + invitationCode + "/participant:delete", destinations.get(8));
+        assertEquals("/topic/" + invitationCode + "/participant:update", destinations.get(9));
+        assertEquals("/topic/" + invitationCode + "/participant:create", destinations.get(10));
+        assertEquals("/topic/" + invitationCode + "/expense:delete", destinations.get(11));
+        assertEquals("/topic/" + invitationCode + "/expense:update", destinations.get(12));
+        assertEquals("/topic/" + invitationCode + "/expense:create", destinations.get(13));
 
-        assertEquals("/app/event:read", destinations.get(15));
-        assertEquals("/app/participants:read", destinations.get(16));
-        assertEquals("/app/expenses:read", destinations.get(17));
+        assertEquals("/app/event:read", destinations.get(14));
+        assertEquals("/app/participants:read", destinations.get(15));
+        assertEquals("/app/expenses:read", destinations.get(16));
     }
 
     @Test
@@ -111,7 +110,7 @@ class WebsocketSessionHandlerTest {
         ArgumentCaptor<StompHeaders> headerCaptor = ArgumentCaptor.forClass(StompHeaders.class);
         ArgumentCaptor<StompFrameHandler> stompFrameHandlerCaptor = ArgumentCaptor.forClass(StompFrameHandler.class);
 
-        verify(session, times(7)).subscribe(destinationCaptor.capture(),
+        verify(session, times(6)).subscribe(destinationCaptor.capture(),
                 stompFrameHandlerCaptor.capture());
         verify(session, times(3)).subscribe(headerCaptor.capture(),
                 stompFrameHandlerCaptor.capture());
@@ -158,6 +157,18 @@ class WebsocketSessionHandlerTest {
         try {
             handler.subscribeToAdmin("42");
         } catch (IllegalStateException exception) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    void testNullPasscodeSubscribeToAdmin() {
+        StompSession.Subscription subscription1 = Mockito.mock(StompSession.Subscription.class);
+        StompSession.Subscription subscription2 = Mockito.mock(StompSession.Subscription.class);
+
+        try {
+            handler.subscribeToAdmin(null);
+        } catch (IllegalArgumentException exception) {
             assertTrue(true);
         }
     }
