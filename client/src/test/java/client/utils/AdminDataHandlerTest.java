@@ -10,18 +10,22 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class AdminDataHandlerTest {
 
     AdminDataHandler handler;
+    WebsocketSessionHandler session;
+    Event event1;
     @BeforeEach
     void setUp() throws IllegalAccessException {
-        Event event1 = new Event("Antihype1");
+        event1 = new Event("Antihype1");
         setId(event1, UUID.randomUUID());
         List<Event> events = new ArrayList<>();
         events.add(event1);
-        handler = new AdminDataHandler();
-        handler.setEvents(events);
+        session = mock(WebsocketSessionHandler.class);
+        handler = new AdminDataHandler(events, session, "42");
     }
 
     @Test
@@ -47,5 +51,28 @@ class AdminDataHandlerTest {
     void getDeleteEvent() {
         handler.getDeleteEvent(handler.getEvents().getFirst());
         assertEquals(0, handler.getEvents().size());
+    }
+
+    @Test
+    void testGetEvents() {
+        assertEquals(List.of(event1), handler.getEvents());
+    }
+
+    @Test
+    void testSetEvents() {
+        handler.setEvents(List.of(new Event(), new Event()));
+        assertEquals(List.of(new Event(), new Event()), handler.getEvents());
+        verify(session).subscribeToAdmin("42");
+    }
+
+    @Test
+    void testGetPasscode() {
+        assertEquals("42", handler.getPasscode());
+    }
+
+    @Test
+    void testSetPasscode() {
+        handler.setPasscode("44");
+        assertEquals("44", handler.getPasscode());
     }
 }

@@ -10,6 +10,7 @@ import java.util.List;
 public class AdminDataHandler {
     private List<Event> events;
     private WebsocketSessionHandler sessionHandler;
+    private String passcode;
 
     /**
      * empty constructor
@@ -19,12 +20,30 @@ public class AdminDataHandler {
 
     /**
      * default constructor
-     * @param events
-     * @param sessionHandler
+     * @param events List of all events
+     * @param sessionHandler websocket session handler
+     * @param passcode client's passcode
      */
-    public AdminDataHandler(List<Event> events, WebsocketSessionHandler sessionHandler) {
+    public AdminDataHandler(List<Event> events, WebsocketSessionHandler sessionHandler, String passcode) {
         this.events = events;
         this.sessionHandler = sessionHandler;
+        this.passcode = passcode;
+    }
+
+    /**
+     * Getter for passcode
+     * @return passcode
+     */
+    public String getPasscode() {
+        return passcode;
+    }
+
+    /**
+     * Setter for passcode
+     * @param passcode passcode we want to set
+     */
+    public void setPasscode(String passcode) {
+        this.passcode = passcode;
     }
 
     /**
@@ -41,6 +60,7 @@ public class AdminDataHandler {
      */
     public void setEvents(List<Event> events) {
         this.events = events;
+        sessionHandler.subscribeToAdmin(passcode);
     }
 
     /**
