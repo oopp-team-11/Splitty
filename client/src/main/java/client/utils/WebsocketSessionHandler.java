@@ -118,10 +118,12 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
      *
      * @param passcode admin passcode given by the user
      */
-    public void subscribeToAdmin(String passcode) throws IllegalStateException {
-        if (!adminSubscriptions.isEmpty())
-            throw new IllegalStateException("User did not unsubscribe before subscribing to admin again.");
-        if(passcode == null)
+    public void subscribeToAdmin(String passcode) {
+        if (!adminSubscriptions.isEmpty()) {
+            System.err.println("User did not unsubscribe before subscribing to admin again.");
+            return;
+        }
+        if(passcode == null || passcode.isEmpty())
             throw new IllegalArgumentException();
 
         StompHeaders headers = new StompHeaders();

@@ -1,6 +1,7 @@
 package client.utils.frameHandlers;
 
 import client.utils.AdminDataHandler;
+import commons.Event;
 import commons.StatusEntity;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -29,15 +30,7 @@ public class AdminDeleteEventHandler implements StompFrameHandler {
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        StatusEntity status = (StatusEntity) payload;
-        switch (status.getStatusCode()) {
-            case OK -> {
-                dataHandler.getDeleteEvent(status.getEvent());
-            }
-            case BAD_REQUEST, NOT_FOUND -> {
-                System.out.println(status.getMessage());
-                //todo: show pop-up
-            }
-        }
+        Event receivedEvent = (Event) payload;
+        dataHandler.getDeleteEvent(receivedEvent);
     }
 }

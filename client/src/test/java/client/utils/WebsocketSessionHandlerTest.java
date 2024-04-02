@@ -140,8 +140,9 @@ class WebsocketSessionHandlerTest {
         try {
             handler.subscribeToEvent(invitationCode);
         } catch (IllegalStateException exception) {
-            assertTrue(true);
+            return;
         }
+        fail();
     }
 
     @Test
@@ -155,10 +156,11 @@ class WebsocketSessionHandlerTest {
             setAdminSubscriptions(handler, subscriptions);
         } catch (IllegalAccessException ignored) {}
         try {
-            handler.subscribeToAdmin("42");
-        } catch (IllegalStateException exception) {
-            assertTrue(true);
+            handler.subscribeToAdmin("");
+        } catch (IllegalArgumentException exception) {
+            fail();
         }
+        assertTrue(true);
     }
 
     @Test

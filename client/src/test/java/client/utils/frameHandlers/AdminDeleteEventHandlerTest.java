@@ -31,8 +31,7 @@ class AdminDeleteEventHandlerTest {
     @Test
     void handleFrameOK() {
         Event event = new Event("testEvent");
-        StatusEntity status = StatusEntity.ok(event);
-        handler.handleFrame(headers, status);
+        handler.handleFrame(headers, event);
         verify(dataHandler).getDeleteEvent(event);
     }
 }
