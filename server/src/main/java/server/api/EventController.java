@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import commons.Event;
 import org.springframework.web.context.request.async.DeferredResult;
+import server.EventLastActivityService;
 import server.PasswordService;
 import server.database.EventRepository;
 
@@ -37,12 +38,14 @@ public class EventController {
 
     private final PasswordService passwordService;
 
+    private final EventLastActivityService eventLastActivityService;
+
     /**
      * Constructor for the EventController.
      * Constructed automatically by Spring Boot.
      * @param template SimpMessagingTemplate
      * @param repo The EventRepository provided automatically by JPA
-        * @param passwordService The PasswordService provided by the server
+     * @param passwordService The PasswordService provided by the server
      */
     @Autowired
     public EventController(SimpMessagingTemplate template, EventRepository repo, PasswordService passwordService) {
@@ -50,6 +53,7 @@ public class EventController {
         this.repo = repo;
         this.passwordService = passwordService;
         this.deferredResults = new ConcurrentHashMap<>();
+        this.eventLastActivityService = new EventLastActivityService(repo, template);
     }
 
 
@@ -134,7 +138,11 @@ public class EventController {
 
         Event event = repo.getReferenceById(receivedEvent.getId());
         event.setTitle(receivedEvent.getTitle());
+        eventLastActivityService.updateLastActivity(event);
         event = repo.save(event);
+
+
+        System.out.println("Event updated: " + event.getId() + " " + event.getTitle());
 
         eventUpdated(receivedEvent.getId(), receivedEvent.getTitle());
 

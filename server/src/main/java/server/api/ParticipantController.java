@@ -4,11 +4,13 @@ import commons.Event;
 import commons.Participant;
 import commons.ParticipantList;
 import commons.StatusEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import server.EventLastActivityService;
 import server.database.EventRepository;
 import server.database.ParticipantRepository;
 
@@ -26,17 +28,21 @@ public class ParticipantController {
     private final EventRepository eventRepository;
     private final SimpMessagingTemplate template;
 
+    private final EventLastActivityService eventLastActivityService;
+
     /**
      * Constructor
      * @param participantRepository participant repository
      * @param eventRepository event repository
      * @param template SimpMessagingTemplate
      */
+    @Autowired
     public ParticipantController(ParticipantRepository participantRepository, EventRepository eventRepository,
                                  SimpMessagingTemplate template) {
         this.participantRepository = participantRepository;
         this.eventRepository = eventRepository;
         this.template = template;
+        this.eventLastActivityService = new EventLastActivityService(eventRepository, template);
     }
 
     private static boolean isNullOrEmpty(String str) {
@@ -115,6 +121,7 @@ public class ParticipantController {
                 receivedParticipant.getBic()
         );
         participant = participantRepository.save(participant);
+        eventLastActivityService.updateLastActivity(event);
 
         Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
                 participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
@@ -175,6 +182,7 @@ public class ParticipantController {
         participant.setIban(receivedParticipant.getIban());
         participant.setBic(receivedParticipant.getBic());
         participant = participantRepository.save(participant);
+        eventLastActivityService.updateLastActivity(eventRepository.getReferenceById(receivedParticipant.getEventId()));
 
         Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
                 participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
@@ -198,7 +206,10 @@ public class ParticipantController {
             return isExistingBadRequest;
 
         Participant participant = participantRepository.getReferenceById(receivedParticipant.getId());
+
         participantRepository.delete(participant);
+
+        eventLastActivityService.updateLastActivity(eventRepository.getReferenceById(receivedParticipant.getEventId()));
 
         Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
                 participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
