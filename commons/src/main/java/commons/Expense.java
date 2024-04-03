@@ -40,6 +40,25 @@ public class Expense {
     @Transient
     private UUID invitationCode;
 
+    @Transient
+    private double amountOwed;
+
+    /**
+     * std getter
+     * @return amount owed
+     */
+    public double getAmountOwed() {
+        return amountOwed;
+    }
+
+    /**
+     * std setter
+     * @param amountOwed
+     */
+    public void setAmountOwed(double amountOwed) {
+        this.amountOwed = amountOwed;
+    }
+
     /**
      * std getter
      * @return list of involveds
