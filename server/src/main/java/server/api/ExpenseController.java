@@ -111,10 +111,13 @@ public class ExpenseController {
 
         expense = expenseRepository.save(expense);
 
+        eventLastActivityService.updateLastActivity(eventRepository.getReferenceById(expense.getInvitationCode()));
+
+
 
 
         System.out.println("Expense created: " + expense.getId() + " " +
-                eventRepository.getReferenceById(receivedExpense.getInvitationCode()).getLastActivity());
+                eventRepository.getReferenceById(expense.getInvitationCode()).getLastActivity());
 
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(), paidBy.getId(),
                 receivedExpense.getInvitationCode());
@@ -178,8 +181,10 @@ public class ExpenseController {
         expense.setPaidBy(newPaidBy);
         expense.setAmount(receivedExpense.getAmount());
         expense.setTitle(receivedExpense.getTitle());
-        eventLastActivityService.updateLastActivity(receivedExpense.getPaidBy().getEvent());
+
         expense = expenseRepository.save(expense);
+
+        eventLastActivityService.updateLastActivity(eventRepository.getReferenceById(expense.getInvitationCode()));
 
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
                 receivedExpense.getPaidById(), receivedExpense.getInvitationCode());
