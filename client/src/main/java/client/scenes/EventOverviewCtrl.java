@@ -15,6 +15,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
+import javafx.scene.text.Text;
 import javafx.util.Callback;
 
 import java.util.HashMap;
@@ -62,6 +63,8 @@ public class EventOverviewCtrl implements Translatable {
     private Button addParticipantBtn;
     @FXML
     private Button addExpenseBtn;
+    private Text invitationSendText = new Text("Code is put on the clipboard.");
+    private Text inviteCodeText = new Text("Invitation code");
     private MainCtrl mainCtrl;
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
@@ -289,6 +292,15 @@ public class EventOverviewCtrl implements Translatable {
             if (translation == null) return;
             key.setText(translation.replaceAll("\"", ""));
         });
+
+        Map<Text, String> texts = new HashMap<>();
+        texts.put(this.invitationSendText, "InvitationSendText");
+        texts.put(this.inviteCodeText, "InvitationCode");
+        texts.forEach((key, val) -> {
+            var translation = translationSupplier.getTranslation(val);
+            if (translation == null) return;
+            key.setText(translation.replaceAll("\"", ""));
+        });
     }
 
     /**
@@ -299,8 +311,8 @@ public class EventOverviewCtrl implements Translatable {
         ClipboardContent content = new ClipboardContent();
         content.putString(mainCtrl.getDataHandler().getEvent().getId().toString());
         clipboard.setContent(content);
-        sendInvitesConfirmation.setText("Code is put on the clipboard." +
-                " Invite Code:\n" + mainCtrl.getDataHandler().getEvent().getId());
+        sendInvitesConfirmation.setText(invitationSendText.getText() +
+                " " + inviteCodeText.getText() + ":\n" + mainCtrl.getDataHandler().getEvent().getId());
     }
 
     /**
