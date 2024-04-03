@@ -32,10 +32,16 @@ public class EventLastActivityService {
      * @param event the event to update
      */
     public void updateLastActivity(Event event) {
-        Event tempEvent = eventRepository.getReferenceById(event.getId());
+        Event tempEvent;
+        try {
+            tempEvent = eventRepository.getReferenceById(event.getId());
+        } catch (Exception e) {
+            System.out.println("Event not found");
+            return;
+        }
+
         tempEvent.setLastActivity(LocalDateTime.now());
         eventRepository.save(tempEvent);
-
         template.convertAndSend("/topic/admin/event:update", event);
     }
 }
