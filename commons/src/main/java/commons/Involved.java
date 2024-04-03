@@ -33,6 +33,41 @@ public class Involved {
     private UUID participantId;
 
     /**
+     * Server2DataBase constructor
+     * @param isSettled
+     * @param expense
+     * @param participant
+     */
+    public Involved(boolean isSettled, Expense expense, Participant participant) {
+        this.isSettled = isSettled;
+        this.expense = expense;
+        this.participant = participant;
+        this.expenseId = expense.getId();
+        this.participantId = participant.getId();
+    }
+
+    /**
+     * empty constructor
+     */
+    public Involved() {
+
+    }
+
+    /**
+     * Server2Client constructor
+     * @param id
+     * @param isSettled
+     * @param expenseId
+     * @param participantId
+     */
+    public Involved(UUID id, boolean isSettled, UUID expenseId, UUID participantId) {
+        this.id = id;
+        this.isSettled = isSettled;
+        this.expenseId = expenseId;
+        this.participantId = participantId;
+    }
+
+    /**
      * std getter
      *
      * @return expense id
