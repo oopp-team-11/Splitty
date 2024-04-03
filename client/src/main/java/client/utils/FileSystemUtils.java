@@ -165,6 +165,7 @@ public class FileSystemUtils {
         if (!checkIfFileExists(path)) {
             JsonObject json = Json.createObjectBuilder()
                     .add("server-ip", "localhost:8080")
+                    .add("lang", "en")
                     .build();
 
             FileWriter file = new FileWriter(path);
@@ -190,6 +191,7 @@ public class FileSystemUtils {
             if (serverIp == null || serverIp.isEmpty()) {
                 JsonObject json = Json.createObjectBuilder()
                         .add("server-ip", "localhost:8080")
+                        .add("lang", "en")
                         .build();
 
                 FileWriter file = new FileWriter(path);
@@ -217,6 +219,7 @@ public class FileSystemUtils {
         catch (Exception e){
             JsonObject json = Json.createObjectBuilder()
                     .add("server-ip", "localhost:8080")
+                    .add("lang", "en")
                     .build();
 
             FileWriter file = new FileWriter(path);
@@ -240,14 +243,52 @@ public class FileSystemUtils {
      * @throws IOException If an error occurs during config file reading.
      */
     public TranslationSupplier getTranslationSupplier(String path) throws IOException {
-        JsonReader reader = Json.createReader(new FileReader(path));
-        JsonObject object = reader.readObject();
-        reader.close();
-        try {
+        try{
+            JsonReader reader = Json.createReader(new FileReader(path));
+            JsonObject object = reader.readObject();
+            reader.close();
             String lang = object.getString("lang");
+
+            if (lang == null || lang.isEmpty()) {
+                JsonObject json = Json.createObjectBuilder()
+                        .add("server-ip", "localhost:8080")
+                        .add("lang", "en")
+                        .build();
+
+                FileWriter file = new FileWriter(path);
+                file.write(json.toString());
+                file.flush();
+                file.close();
+
+                System.err.println(path + " is the wrong format. \n" +
+                        "Created new default file, please put the language if it isn't en(english) " +
+                        "in client-config.json.\n" +
+                        "You need to delete en and put it there.");
+                //TODO: Pop-up showing error, but it is only a warning
+                return getTranslationSupplier(path);
+            }
+            if(lang.equals("en")){
+                return null;
+            }
             return new TranslationSupplier(lang);
-        } catch (NullPointerException e) {
-            return null;
+        }
+        catch (Exception e) {
+            JsonObject json = Json.createObjectBuilder()
+                    .add("server-ip", "localhost:8080")
+                    .add("lang", "en")
+                    .build();
+
+            FileWriter file = new FileWriter(path);
+            file.write(json.toString());
+            file.flush();
+            file.close();
+
+            System.err.println(path + " is the wrong format. \n" +
+                    "Created new default file, please put the language if it isn't en(english) " +
+                    "in client-config.json.\n" +
+                    "You need to delete en and put it there.");
+            //TODO: Pop-up showing error, but it is only a warning
+            return getTranslationSupplier(path);
         }
     }
 }
