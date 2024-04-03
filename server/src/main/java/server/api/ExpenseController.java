@@ -124,7 +124,6 @@ public class ExpenseController {
         template.convertAndSend("/topic/" + sentExpense.getInvitationCode() + "/expense:create",
                 sentExpense);
 
-        System.out.println("AAAAAA");
         return StatusEntity.ok("expense:create " + sentExpense.getId());
     }
 
