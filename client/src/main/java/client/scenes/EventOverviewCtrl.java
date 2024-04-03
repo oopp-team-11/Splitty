@@ -16,7 +16,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
-import javafx.util.Callback;
 
 import java.util.HashMap;
 import java.util.Map;
