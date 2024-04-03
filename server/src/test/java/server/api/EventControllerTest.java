@@ -15,6 +15,7 @@ import commons.StatusEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import server.EventLastActivityService;
 import server.PasswordService;
 
 import java.util.List;
@@ -28,12 +29,15 @@ public class EventControllerTest {
 
     private PasswordService passwordService;
 
+    private EventLastActivityService eventLastActivityService;
+
 
     @BeforeEach
     void setUp() {
         messagingTemplate = mock(SimpMessagingTemplate.class);
         eventRepo = new TestEventRepository();
         passwordService = new PasswordService();
+        eventLastActivityService = new EventLastActivityService(eventRepo, messagingTemplate);
         sut = new EventController(messagingTemplate, eventRepo, passwordService);
     }
 
@@ -103,7 +107,8 @@ public class EventControllerTest {
 
         assertEquals(ok("event:update " + event.getId()), sut.updateEvent(receivedEvent));
 
-        verify(messagingTemplate).convertAndSend("/topic/" + event.getId() + "/event:update", receivedEvent);
+        Event sentEvent = new Event(event.getId(), "foo", event.getCreationDate(), event.getLastActivity());
+        verify(messagingTemplate).convertAndSend("/topic/" + sentEvent.getId() + "/event:update", sentEvent);
 
         assertTrue(eventRepo.existsById(receivedEvent.getId()));
         var repoEvent = eventRepo.getReferenceById(receivedEvent.getId());
