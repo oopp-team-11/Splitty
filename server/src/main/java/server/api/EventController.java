@@ -46,14 +46,16 @@ public class EventController {
      * @param template SimpMessagingTemplate
      * @param repo The EventRepository provided automatically by JPA
      * @param passwordService The PasswordService provided by the server
+     * @param eventLastActivityService The EventLastActivityService provided by the server
      */
     @Autowired
-    public EventController(SimpMessagingTemplate template, EventRepository repo, PasswordService passwordService) {
+    public EventController(SimpMessagingTemplate template, EventRepository repo, PasswordService passwordService,
+                           EventLastActivityService eventLastActivityService) {
         this.template = template;
         this.repo = repo;
         this.passwordService = passwordService;
         this.deferredResults = new ConcurrentHashMap<>();
-        this.eventLastActivityService = new EventLastActivityService(repo, template);
+        this.eventLastActivityService = eventLastActivityService;
     }
 
 
@@ -138,7 +140,7 @@ public class EventController {
 
         Event event = repo.getReferenceById(receivedEvent.getId());
         event.setTitle(receivedEvent.getTitle());
-        eventLastActivityService.updateLastActivity(event);
+        eventLastActivityService.updateLastActivity(event.getId());
         event = repo.save(event);
 
 

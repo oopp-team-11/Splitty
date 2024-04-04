@@ -35,14 +35,16 @@ public class ParticipantController {
      * @param participantRepository participant repository
      * @param eventRepository event repository
      * @param template SimpMessagingTemplate
+     * @param eventLastActivityService EventLastActivityService
      */
     @Autowired
     public ParticipantController(ParticipantRepository participantRepository, EventRepository eventRepository,
-                                 SimpMessagingTemplate template) {
+                                 SimpMessagingTemplate template,
+                                 EventLastActivityService eventLastActivityService) {
         this.participantRepository = participantRepository;
         this.eventRepository = eventRepository;
         this.template = template;
-        this.eventLastActivityService = new EventLastActivityService(eventRepository, template);
+        this.eventLastActivityService = eventLastActivityService;
     }
 
     private static boolean isNullOrEmpty(String str) {
@@ -120,8 +122,9 @@ public class ParticipantController {
                 receivedParticipant.getIban(),
                 receivedParticipant.getBic()
         );
+        eventLastActivityService.updateLastActivity(event.getId());
         participant = participantRepository.save(participant);
-        eventLastActivityService.updateLastActivity(event);
+
 
         Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
                 participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
@@ -181,8 +184,10 @@ public class ParticipantController {
         participant.setEmail(receivedParticipant.getEmail());
         participant.setIban(receivedParticipant.getIban());
         participant.setBic(receivedParticipant.getBic());
+
+        eventLastActivityService.updateLastActivity(participant.getEvent().getId());
         participant = participantRepository.save(participant);
-        eventLastActivityService.updateLastActivity(eventRepository.getReferenceById(receivedParticipant.getEventId()));
+
 
         Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
                 participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
@@ -207,9 +212,10 @@ public class ParticipantController {
 
         Participant participant = participantRepository.getReferenceById(receivedParticipant.getId());
 
+        eventLastActivityService.updateLastActivity(participant.getEvent().getId());
         participantRepository.delete(participant);
 
-        eventLastActivityService.updateLastActivity(eventRepository.getReferenceById(receivedParticipant.getEventId()));
+
 
         Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
                 participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),

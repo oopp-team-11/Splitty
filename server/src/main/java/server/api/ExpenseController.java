@@ -34,17 +34,19 @@ public class ExpenseController {
      * @param expenseRepository expense repository
      * @param participantRepository participant repository
      * @param template SimpMessagingTemplate
+     * @param eventLastActivityService EventLastActivityService
      */
     @Autowired
     public ExpenseController(EventRepository eventRepository,
                              ExpenseRepository expenseRepository,
                              ParticipantRepository participantRepository,
-                             SimpMessagingTemplate template) {
+                             SimpMessagingTemplate template,
+                             EventLastActivityService eventLastActivityService) {
         this.eventRepository = eventRepository;
         this.expenseRepository = expenseRepository;
         this.participantRepository = participantRepository;
         this.template = template;
-        this.eventLastActivityService = new EventLastActivityService(eventRepository, template);
+        this.eventLastActivityService = eventLastActivityService;
     }
 
     private static boolean isNullOrEmpty(String str) {
@@ -106,15 +108,9 @@ public class ExpenseController {
         Participant paidBy = participantRepository.getReferenceById(receivedExpense.getPaidById());
         Expense expense = new Expense(paidBy, receivedExpense.getTitle(), receivedExpense.getAmount());
 
-        eventLastActivityService.updateLastActivity(paidBy.getEvent());
-
+        eventLastActivityService.updateLastActivity(expense.getInvitationCode());
 
         expense = expenseRepository.save(expense);
-
-        eventLastActivityService.updateLastActivity(eventRepository.getReferenceById(expense.getInvitationCode()));
-
-
-
 
         System.out.println("Expense created: " + expense.getId() + " " +
                 eventRepository.getReferenceById(expense.getInvitationCode()).getLastActivity());
@@ -181,9 +177,11 @@ public class ExpenseController {
         expense.setAmount(receivedExpense.getAmount());
         expense.setTitle(receivedExpense.getTitle());
 
+
         expense = expenseRepository.save(expense);
 
-        eventLastActivityService.updateLastActivity(eventRepository.getReferenceById(expense.getInvitationCode()));
+        eventLastActivityService.updateLastActivity(expense.getInvitationCode());
+
 
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
                 receivedExpense.getPaidById(), receivedExpense.getInvitationCode());
@@ -208,8 +206,9 @@ public class ExpenseController {
         if (badRequest.isUnsolvable())
             return badRequest;
 
-        eventLastActivityService.updateLastActivity(receivedExpense.getPaidBy().getEvent());
+
         Expense expense = expenseRepository.getReferenceById(receivedExpense.getId());
+        eventLastActivityService.updateLastActivity(expense.getInvitationCode());
         expenseRepository.delete(expense);
 
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
