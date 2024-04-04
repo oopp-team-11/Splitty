@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import server.EventLastActivityService;
 import server.database.EventRepository;
 import server.database.ExpenseRepository;
 import server.database.ParticipantRepository;
@@ -24,6 +25,7 @@ public class ExpenseControllerTest {
     private ParticipantRepository participantRepository;
     private ExpenseController expenseController;
     private SimpMessagingTemplate messagingTemplate;
+    private EventLastActivityService eventLastActivityService;
 
 
     @BeforeEach
@@ -32,8 +34,9 @@ public class ExpenseControllerTest {
         eventRepository = new TestEventRepository();
         participantRepository = new TestParticipantRepository();
         messagingTemplate = mock(SimpMessagingTemplate.class);
+        eventLastActivityService = new EventLastActivityService(eventRepository, messagingTemplate);
         expenseController = new ExpenseController(eventRepository, expenseRepository,
-                participantRepository, messagingTemplate);
+                participantRepository, messagingTemplate, eventLastActivityService);
     }
 
     private static void setId(Expense toSet, UUID newId) throws IllegalAccessException {

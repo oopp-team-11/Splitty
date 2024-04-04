@@ -38,7 +38,7 @@ public class EventControllerTest {
         eventRepo = new TestEventRepository();
         passwordService = new PasswordService();
         eventLastActivityService = new EventLastActivityService(eventRepo, messagingTemplate);
-        sut = new EventController(messagingTemplate, eventRepo, passwordService);
+        sut = new EventController(messagingTemplate, eventRepo, passwordService, eventLastActivityService);
     }
 
     // GET: ?query=title&invitationCodes={}
