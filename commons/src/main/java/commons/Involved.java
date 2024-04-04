@@ -154,15 +154,13 @@ public class Involved {
         if (obj == null || getClass() != obj.getClass()) return false;
         Involved involved = (Involved) obj;
         return isSettled == involved.isSettled && Objects.equals(id, involved.id) &&
-                Objects.equals(expense, involved.expense) &&
-                Objects.equals(participant, involved.participant) &&
                 Objects.equals(expenseId, involved.expenseId) &&
                 Objects.equals(participantId, involved.participantId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, isSettled, expense, participant, expenseId, participantId);
+        return Objects.hash(id, isSettled, expenseId, participantId);
     }
 
     @Override
@@ -170,8 +168,6 @@ public class Involved {
         return "Involved{" +
                 "id=" + id +
                 ", isSettled=" + isSettled +
-                ", expense=" + expense +
-                ", participant=" + participant +
                 ", expenseId=" + expenseId +
                 ", participantId=" + participantId +
                 '}';
