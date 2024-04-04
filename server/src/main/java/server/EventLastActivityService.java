@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import server.database.EventRepository;
 import commons.Event;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Service for updating the last activity of an event
@@ -28,13 +29,13 @@ public class EventLastActivityService {
     }
 
     /**
-     * Update the last activity of an event
-     * @param event the event to update
+     * Updates the last activity of an event
+     * @param invitationCode the invitation code of the event
      */
-    public void updateLastActivity(Event event) {
+    public void updateLastActivity(UUID invitationCode) {
         Event tempEvent;
         try {
-            tempEvent = eventRepository.getReferenceById(event.getId());
+            tempEvent = eventRepository.getReferenceById(invitationCode);
         } catch (Exception e) {
             System.out.println("Event not found");
             return;
@@ -42,6 +43,6 @@ public class EventLastActivityService {
 
         tempEvent.setLastActivity(LocalDateTime.now());
         eventRepository.save(tempEvent);
-        template.convertAndSend("/topic/admin/event:update", event);
+        template.convertAndSend("/topic/admin/event:update", tempEvent);
     }
 }
