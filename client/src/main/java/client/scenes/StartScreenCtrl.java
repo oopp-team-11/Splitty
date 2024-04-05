@@ -16,6 +16,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Modality;
 import javafx.application.Platform;
 import java.io.IOException;
@@ -102,6 +103,12 @@ public class StartScreenCtrl implements Initializable, Translatable {
             });
             return row;
         });
+        newEventName.onKeyPressedProperty().set(keyEvent -> {
+            if (keyEvent.getCode().equals(KeyCode.ENTER)) onCreate();
+        });
+        joinInvitationCode.onKeyPressedProperty().set(keyEvent -> {
+            if (keyEvent.getCode().equals(KeyCode.ENTER)) onJoin();
+        });
     }
 
     /**
@@ -151,6 +158,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
             ObservableList<Event> data = FXCollections.observableList(events);
             eventTable.setItems(data);
             List<UUID> eventIds = eventTable.getItems().stream().map(Event::getId).collect(Collectors.toList());
+            newEventName.clear();
+            joinInvitationCode.clear();
             startLongPolling(eventIds);
         } catch (IOException | InterruptedException e) {
             System.out.println("Failed to get recent events: " + e.getMessage());

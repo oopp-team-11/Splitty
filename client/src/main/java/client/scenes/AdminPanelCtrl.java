@@ -5,15 +5,14 @@ import client.utils.ServerUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import commons.Event;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.FileChooser;
-import javafx.util.Callback;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,9 +33,9 @@ public class AdminPanelCtrl {
     @FXML
     private TableColumn<Event, String> lastActivityDate;
     @FXML
-    private TableColumn<Event, String> deleteEvent;
+    private TableColumn<Event, Button> deleteEvent;
     @FXML
-    private TableColumn<Event, String> jsonDump;
+    private TableColumn<Event, Button> jsonDump;
     @FXML
     private TableView<Event> eventTableView;
 
@@ -66,58 +65,17 @@ public class AdminPanelCtrl {
         lastActivityDate.
                 setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getLastActivity().toString()));
 
-        Callback<TableColumn<Event, String>, TableCell<Event, String>> cellFactoryDeleteButton
-                =
-                new Callback<>() {
-                    @Override
-                    public TableCell<Event, String> call(TableColumn<Event, String> eventStringTableColumn) {
-                        return new TableCell<Event, String>() {
-                            final Button btn = new Button("X");
+        deleteEvent.setCellValueFactory(event -> {
+            Button button = new Button("X");
+            button.setOnAction(event1 -> deleteEvent(event.getValue()));
+            return new SimpleObjectProperty<>(button);
+        });
 
-                            @Override
-                            public void updateItem(String item, boolean empty) {
-                                super.updateItem(item, empty);
-                                if (empty) {
-                                    setGraphic(null);
-                                    setText(null);
-                                } else {
-                                    btn.setOnAction(event1 ->
-                                            deleteEvent(getTableView().getItems().get(getIndex())));
-                                    setGraphic(btn);
-                                    setText(null);
-                                }
-                            }
-                        };
-                    }
-                };
-        deleteEvent.setCellFactory(cellFactoryDeleteButton);
-
-        Callback<TableColumn<Event, String>, TableCell<Event, String>> cellFactoryJsonDumpButton
-                =
-                new Callback<>() {
-                    @Override
-                    public TableCell<Event, String> call(TableColumn<Event, String> eventStringTableColumn) {
-                        return new TableCell<Event, String>() {
-
-                            final Button btn = new Button("⬇");
-
-                            @Override
-                            public void updateItem(String item, boolean empty) {
-                                super.updateItem(item, empty);
-                                if (empty) {
-                                    setGraphic(null);
-                                    setText(null);
-                                } else {
-                                    btn.setOnAction(event1 ->
-                                            jsonDump(getTableView().getItems().get(getIndex())));
-                                    setGraphic(btn);
-                                    setText(null);
-                                }
-                            }
-                        };
-                    }
-                };
-        jsonDump.setCellFactory(cellFactoryJsonDumpButton);
+        jsonDump.setCellValueFactory(event -> {
+            Button button = new Button("⬇");
+            button.setOnAction(event1 -> jsonDump(event.getValue()));
+            return new SimpleObjectProperty<>(button);
+        });
 
         refreshData();
     }

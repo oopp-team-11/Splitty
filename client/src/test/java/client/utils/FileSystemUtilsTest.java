@@ -2,6 +2,7 @@ package client.utils;
 
 import commons.Event;
 import commons.Participant;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
 import javax.json.Json;
@@ -17,6 +18,14 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FileSystemUtilsTest {
+
+    @AfterAll
+    static void removeUsedFiles(){
+        if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
+            new File("test-client-config.json").delete();
+        }
+    }
+
     @Test
     void checkIfFileExistsFalse() {
         FileSystemUtils fileSystemUtils = new FileSystemUtils();
@@ -229,9 +238,10 @@ class FileSystemUtilsTest {
     }
 
     @Test
-    void checkClientConfigCreationErrorEmptyFile() {
+    void checkClientConfigCreationErrorEmptyFile() throws IOException {
         FileSystemUtils utils = new FileSystemUtils();
-        assertThrows(FileNotFoundException.class, () -> utils.getServerIP("test-client-config.json"));
+
+        assertEquals("localhost:8080", utils.getServerIP("test-client-config.json"));
         if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
             new File("test-client-config.json").delete();
         }
@@ -246,7 +256,7 @@ class FileSystemUtilsTest {
         }
 
         JsonObject json = Json.createObjectBuilder()
-                .add("server-ip", "SERVER_URL")
+                .add("server-ip", "")
                 .build();
 
         FileWriter file = new FileWriter("test-client-config.json");
@@ -254,7 +264,7 @@ class FileSystemUtilsTest {
         file.flush();
         file.close();
 
-        assertThrows(RuntimeException.class, () -> utils.getServerIP("test-client-config.json"));
+        assertEquals("localhost:8080", utils.getServerIP("test-client-config.json"));
         if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
             new File("test-client-config.json").delete();
         }
