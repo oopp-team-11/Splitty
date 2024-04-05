@@ -15,6 +15,7 @@ import java.util.HashMap;
 public class TranslationSupplier {
     private static final String localesPath = "locales/";
     private HashMap<String, String> translationMap;
+    private String currentLanguage;
 
     /**
      * Constructor for the translation supplier
@@ -23,6 +24,7 @@ public class TranslationSupplier {
      * @throws FileNotFoundException in case there is no corresponding json file found.
      */
     public TranslationSupplier(String lang) throws FileNotFoundException {
+        currentLanguage = lang;
         var path = localesPath + lang + ".json";
         if(!FileSystemUtils.checkIfFileExists(localesPath + lang + ".json")) {
             throw new FileNotFoundException(path + " could not be located");
@@ -33,7 +35,6 @@ public class TranslationSupplier {
 
         translationMap = new HashMap<>();
         json.forEach((key, val) -> translationMap.put(key,val.toString()));
-        System.out.println(translationMap);
     }
 
     /**
@@ -43,4 +44,12 @@ public class TranslationSupplier {
      * @return Either the correct translation or null
      */
     public String getTranslation(String key) { return translationMap.get(key); }
+
+    /**
+     * Getter for current language
+     * @return current language as String
+     */
+    public String getCurrentLanguage() {
+        return currentLanguage;
+    }
 }

@@ -1,4 +1,6 @@
 {
+  "Country Code in ISO 3166-1-alpha-3 code": "nld",
+
   "CreateNewEventLabel": "Nieuw evenement aanmaken",
   "JoinEventLabel": "Deelnemen aan evenement",
   "RecentEventsLabel": "Neem deel aan recent evenement",
@@ -29,5 +31,9 @@
   "WhatForExample": "Bijvoorbeeld: Boodschappen",
   "WhoPaidLabel": "Wie heeft betaald?",
   "HowMuchLabel": "Hoeveel?",
-  "WhatForLabel": "Waarvoor?"
+  "WhatForLabel": "Waarvoor?",
+  "AdminPassword": "Wachtwoord",
+  "AdminPanelLabel": "Ga naar Administrator paneel",
+  "Log in": "Log in",
+  "InvitationSendText": "Code staat op het klembord"
 }

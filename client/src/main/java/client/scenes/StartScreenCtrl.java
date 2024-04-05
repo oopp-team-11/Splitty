@@ -13,13 +13,18 @@ import jakarta.ws.rs.core.Response;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Modality;
 import javafx.application.Platform;
-import java.io.IOException;
+
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
@@ -28,11 +33,22 @@ import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import client.interfaces.Translatable;
+import org.json.JSONException;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+
 /**
  * Start Screen controller for showing start screen and entering to events
  */
 public class StartScreenCtrl implements Initializable, Translatable {
     private final MainCtrl mainCtrl;
+    @FXML
+    public MenuButton languages;
+    @FXML
+    public ComboBox<Locale> languages_old;
+    @FXML
+    public ImageView imageview;
 
     @FXML
     private Button createBtn;
@@ -161,9 +177,67 @@ public class StartScreenCtrl implements Initializable, Translatable {
             newEventName.clear();
             joinInvitationCode.clear();
             startLongPolling(eventIds);
+
+            mainCtrl.getAvailableLanguages().values().forEach(locale ->
+            {
+                MenuItem newOption = new MenuItem();
+                newOption.setText(locale.getDisplayLanguage() + " - " + locale.getDisplayLanguage(locale));
+
+                //Does some conversion to get the correct country code of this option
+                String countryCode;
+                try{
+                    var reader = Json.createReader(new FileReader("locales/" +
+                            mainCtrl.getAvailableLanguages().values().stream().filter(
+                                    locale1 -> locale1.getDisplayLanguage().equals(newOption.getText().split(" - ")[0])
+                            ).toList().getFirst() + ".json"));
+                    JsonObject json = reader.readObject();
+                    reader.close();
+
+                    countryCode = json.get("Country Code in ISO 3166-1-alpha-3 code")
+                            .toString().replaceAll("\"", "");
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+
+                ImageView imageView = new ImageView(new Image("/flags/" + countryCode + ".png"));
+                imageView.setPreserveRatio(true);
+                imageView.setSmooth(true);
+                imageView.setFitWidth(16);
+
+                newOption.setGraphic(imageView);
+                newOption.setOnAction(actionEvent -> {
+                    try {
+                        fileSystemUtils.changeLanguageInFile("client-config.json",
+                                mainCtrl.getAvailableLanguages().values().stream().filter(
+                                        locale1 -> locale1.getDisplayLanguage().equals(
+                                                ((MenuItem) actionEvent.getSource()).getText().split(" - ")[0])
+                                ).toList().getFirst().getLanguage());
+                        mainCtrl.setTranslationSupplier();
+                        translate(mainCtrl.getTranslationSupplier());
+                        languages.setGraphic(((MenuItem) actionEvent.getSource()).getGraphic());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                );
+                languages.getItems().addLast(newOption);
+            });
+
+            ImageView imageView = new ImageView(
+                    new Image("/flags/" +
+                            mainCtrl.getTranslationSupplier()
+                                    .getTranslation("Country Code in ISO 3166-1-alpha-3 code")
+                                    .replaceAll("\"", "")
+                            + ".png"));
+            imageView.setPreserveRatio(true);
+            imageView.setSmooth(true);
+            imageView.setFitWidth(16);
+
+            languages.setGraphic(imageView);
+
         } catch (IOException | InterruptedException e) {
             System.out.println("Failed to get recent events: " + e.getMessage());
-        } catch (org.json.JSONException e) {
+        } catch (JSONException e) {
             System.out.println("Failed to parse server response: " + e.getMessage());
         }
     }

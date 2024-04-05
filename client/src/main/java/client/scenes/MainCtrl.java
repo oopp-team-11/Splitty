@@ -32,8 +32,11 @@ import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Main scene controller. It oversights currently active scenes, switches between them,
@@ -69,6 +72,7 @@ public class MainCtrl {
     private AdminDataHandler adminDataHandler;
 
     private TranslationSupplier translationSupplier;
+    private LinkedHashMap<String, Locale> availableLanguages;
 
     /**
      * Initializes javafx scenes and their controllers, sets start screen as the currently shown screen
@@ -116,6 +120,8 @@ public class MainCtrl {
 
         this.adminDataHandler = new AdminDataHandler();
 
+        setAvailableLanguagesFromFiles();
+
         // Needs to be before the start websocket method
         setServerIp();
 
@@ -126,6 +132,25 @@ public class MainCtrl {
         showStartScreen();
 
         primaryStage.show();
+    }
+
+    private void setAvailableLanguagesFromFiles() {
+        File locales = new File("locales");
+        List<String> listOfLocalesNames = new ArrayList<>(Arrays.stream(Objects.requireNonNull(locales.listFiles()))
+                .map(File::getName).map(string -> string.replace(".json", "")).toList());
+        listOfLocalesNames.add("en");
+
+        HashMap<String, Locale> localeHashMap = new HashMap<>();
+        listOfLocalesNames.forEach(localeName ->
+                localeHashMap.put(localeName, new Locale.Builder().setLanguage(localeName).build()));
+
+        this.availableLanguages = localeHashMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.comparing(Locale::getDisplayLanguage)))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
     }
 
     /**
@@ -287,7 +312,10 @@ public class MainCtrl {
         }
     }
 
-    private void setTranslationSupplier(){
+    /**
+     * Method for setting the correct language in all scenes
+     */
+    public void setTranslationSupplier(){
         FileSystemUtils utils = new FileSystemUtils();
         try {
             this.translationSupplier = utils.getTranslationSupplier("client-config.json");
@@ -331,5 +359,21 @@ public class MainCtrl {
         if(primaryStage.getTitle().equals("Event overview")){
             eventOverviewCtrl.refreshExpensesData();
         }
+    }
+
+    /**
+     * Getter for available languages
+     * @return available languages in a linked hashmap
+     */
+    public LinkedHashMap<String, Locale> getAvailableLanguages() {
+        return availableLanguages;
+    }
+
+    /**
+     * Getter for the translation Supplier
+     * @return current translationSupplier
+     */
+    public TranslationSupplier getTranslationSupplier() {
+        return translationSupplier;
     }
 }
