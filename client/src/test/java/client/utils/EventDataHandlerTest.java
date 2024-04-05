@@ -189,7 +189,7 @@ class EventDataHandlerTest {
 
     @Test
     void setSessionHandler() {
-        WebsocketSessionHandler sessionHandler = new WebsocketSessionHandler(handler,
+        WebsocketSessionHandler sessionHandler = new WebsocketSessionHandler(handler, new AdminDataHandler(),
                 new MainCtrl());
         handler.setSessionHandler(sessionHandler);
         assertEquals(sessionHandler, handler.getSessionHandler());

@@ -23,6 +23,7 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
     private List<StompSession.Subscription> eventSubscriptions;
     private List<StompSession.Subscription> adminSubscriptions;
     private final EventDataHandler dataHandler;
+    private final AdminDataHandler adminDataHandler;
     private final MainCtrl mainCtrl;
     private StompSession session;
 
@@ -30,10 +31,12 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
      * Custom constructor for WebsocketSessionHandler
      *
      * @param dataHandler    dataHandler of the client
+     * @param adminDataHandler admin data handler of the client
      * @param mainCtrl       mainCtrl of the client
      */
-    public WebsocketSessionHandler(EventDataHandler dataHandler, MainCtrl mainCtrl) {
+    public WebsocketSessionHandler(EventDataHandler dataHandler, AdminDataHandler adminDataHandler, MainCtrl mainCtrl) {
         this.dataHandler = dataHandler;
+        this.adminDataHandler = adminDataHandler;
         this.mainCtrl = mainCtrl;
         this.eventSubscriptions = new ArrayList<>();
         this.adminSubscriptions = new ArrayList<>();
@@ -59,23 +62,10 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
         session.subscribe("/user/queue/expenses:read",
                 new ReadExpensesHandler(dataHandler, mainCtrl));
 
-
-        /*
-        NOTE: This subscription should be done only after initial check of password validation
-        that is done in initial send to endpoint /app/events:read
-        StatusEntity should contain info whether password was correct or not to show pop up for the user
-        Otherwise if the password is incorrect and the following subscription is made, the WS connection to
-        the server will be lost
-         */
-        //TODO: Should be moved to subscribeToAdmin method
-        //StompHeaders headers = new StompHeaders();
-        //headers.setDestination("/topic/admin/event:create");
-        //TODO: replace with an actual password
-        //headers.setPasscode("secretPasscode");
-
-        //subscription is added to a list for unsubscription purposes
-        //TODO: this should be replaced with a new frame handler
-        //adminSubscriptions.add(session.subscribe(headers, this));
+        session.subscribe("/user/queue/admin/events:read",
+                new AdminReadEventsHandler(adminDataHandler));
+        session.subscribe("/user/queue/admin/event:dump",
+                new AdminDumpEventHandler(adminDataHandler));
     }
 
     @Override
@@ -121,6 +111,44 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
                 new UpdateExpenseHandler(dataHandler)));
         eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/expense:create",
                 new CreateExpenseHandler(dataHandler)));
+    }
+
+    /**
+     * Subscribe to admin specific endpoints
+     *
+     * @param passcode admin passcode given by the user
+     */
+    public void subscribeToAdmin(String passcode) {
+        if (!adminSubscriptions.isEmpty()) {
+            System.err.println("User did not unsubscribe before subscribing to admin again.");
+            return;
+        }
+        if(passcode == null || passcode.isEmpty())
+            throw new IllegalArgumentException();
+
+        StompHeaders headers = new StompHeaders();
+        headers.setDestination("/topic/admin/event:create");
+        headers.setPasscode(passcode);
+        adminSubscriptions.add(session.subscribe(headers, new AdminCreateEventHandler(adminDataHandler)));
+
+        headers = new StompHeaders();
+        headers.setDestination("/topic/admin/event:delete");
+        headers.setPasscode(passcode);
+        adminSubscriptions.add(session.subscribe(headers, new AdminDeleteEventHandler(adminDataHandler)));
+
+        headers = new StompHeaders();
+        headers.setDestination("/topic/admin/event:update");
+        headers.setPasscode(passcode);
+        adminSubscriptions.add(session.subscribe(headers, new AdminUpdateEventHandler(adminDataHandler)));
+    }
+
+    /**
+     * Unsubscribes from admin's specific topics
+     */
+    public void unsubscribeFromAdmin() throws IllegalStateException {
+        for (var subscription : adminSubscriptions)
+            subscription.unsubscribe();
+        adminSubscriptions.clear();
     }
 
     /**
@@ -182,6 +210,28 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
      */
     public void refreshExpenses() {
         session.send("/app/expenses:read", invitationCode);
+    }
+
+    /**
+     * Sends a message to the server with a request to read all events
+     * @param passcode admin passcode
+     */
+    public void sendReadEvents(String passcode) {
+        session.send("/app/admin/events:read", passcode);
+    }
+
+    /**
+     * Sends a message to the server with delete/import/dump request
+     * @param passcode admin passcode
+     * @param receivedEvent event we are concerned about
+     * @param methodType type of the method (delete/import/dump)
+     */
+    public void sendAdminEvent(String passcode, Event receivedEvent, String methodType)
+    {
+        StompHeaders headers = new StompHeaders();
+        headers.setDestination("app/admin/event:"+methodType); //delete/import/dump
+        headers.setPasscode(passcode);
+        session.send(headers, receivedEvent);
     }
 
     /**

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import server.EventLastActivityService;
 import server.database.EventRepository;
 import server.database.ExpenseRepository;
 import server.database.ParticipantRepository;
@@ -24,6 +25,8 @@ public class ExpenseControllerTest {
     private ParticipantRepository participantRepository;
     private ExpenseController expenseController;
     private SimpMessagingTemplate messagingTemplate;
+    private EventLastActivityService eventLastActivityService;
+
 
     @BeforeEach
     public void setup() {
@@ -31,8 +34,9 @@ public class ExpenseControllerTest {
         eventRepository = new TestEventRepository();
         participantRepository = new TestParticipantRepository();
         messagingTemplate = mock(SimpMessagingTemplate.class);
+        eventLastActivityService = new EventLastActivityService(eventRepository, messagingTemplate);
         expenseController = new ExpenseController(eventRepository, expenseRepository,
-                participantRepository, messagingTemplate);
+                participantRepository, messagingTemplate, eventLastActivityService);
     }
 
     private static void setId(Expense toSet, UUID newId) throws IllegalAccessException {
@@ -41,8 +45,12 @@ public class ExpenseControllerTest {
 
     @Test
     void checkCreateExpense() {
+        Event event = eventRepository.save(new Event("testEvent"));
+
+        System.out.println(event.getId());
+
         Participant participant = participantRepository.save(new Participant(
-                new Event(),
+                event,
                 "abc",
                 "def",
                 "a@b.c",
@@ -54,6 +62,7 @@ public class ExpenseControllerTest {
                 UUID.randomUUID());
         Expense expense = new Expense(sentParticipant, "expense", 21.37);
 
+        System.out.println(expense.getInvitationCode());
         assertEquals(StatusEntity.StatusCode.OK, expenseController.createExpense(expense).getStatusCode());
 
         ArgumentCaptor<Expense> expenseArgumentCaptor = ArgumentCaptor.forClass(Expense.class);
@@ -149,12 +158,13 @@ public class ExpenseControllerTest {
 
     @Test
     void checkUpdateExpense() {
+        Event event = eventRepository.save(new Event("testEvent"));
         Participant participant = participantRepository.save(new Participant(UUID.randomUUID(), "name",
-                "surname", "abcd@gmail.com", null, null, UUID.randomUUID()));
+                "surname", "abcd@gmail.com", null, null, event.getId()));
         Expense expense = new Expense(participant, "expense", 21.37);
         expense = expenseRepository.save(expense);
         Participant newParticipant = participantRepository.save(new Participant(UUID.randomUUID(), "new name",
-                "new surname", "abcd@gmail.com", null, null, UUID.randomUUID()));
+                "new surname", "abcd@gmail.com", null, null, event.getId()));
         expense.setTitle("NewTitle");
         expense.setAmount(69.42);
         expense.setPaidById(newParticipant.getId());
@@ -196,8 +206,9 @@ public class ExpenseControllerTest {
 
     @Test
     void checkDeleteExpense() {
+        Event event = eventRepository.save(new Event("testEvent"));
         Participant participant = participantRepository.save(new Participant(UUID.randomUUID(), "name",
-                "surname", "abcd@gmail.com", null, null, UUID.randomUUID()));
+                "surname", "abcd@gmail.com", null, null, event.getId()));
         Expense expense = new Expense(participant, "expense", 21.37);
         expense = expenseRepository.save(expense);
 

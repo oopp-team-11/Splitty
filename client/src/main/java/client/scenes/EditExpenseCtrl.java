@@ -125,6 +125,8 @@ public class EditExpenseCtrl implements Translatable {
                 ((Labeled) key).setText(translation.replaceAll("\"", ""));
             if (key instanceof TextField)
                 ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
+            if (key instanceof Button)
+                ((Button) key).setText(translation.replaceAll("\"", ""));
         });
     }
 }
