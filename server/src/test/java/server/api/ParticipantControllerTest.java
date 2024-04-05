@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import server.EventLastActivityService;
 import server.database.EventRepository;
 import server.database.ParticipantRepository;
 
@@ -24,13 +25,15 @@ public class ParticipantControllerTest {
     private EventRepository eventRepository;
     private ParticipantController participantController;
     private SimpMessagingTemplate messagingTemplate;
+    private EventLastActivityService eventLastActivityService;
 
     @BeforeEach
     public void setup() {
         participantRepository = new TestParticipantRepository();
         eventRepository = new TestEventRepository();
         messagingTemplate = mock(SimpMessagingTemplate.class);
-        participantController = new ParticipantController(participantRepository, eventRepository, messagingTemplate);
+        eventLastActivityService = new EventLastActivityService(eventRepository, messagingTemplate);
+        participantController = new ParticipantController(participantRepository, eventRepository, messagingTemplate, eventLastActivityService);
     }
 
     @Test

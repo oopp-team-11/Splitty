@@ -1,11 +1,13 @@
 package server.api;
 
 import commons.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import server.EventLastActivityService;
 import server.database.EventRepository;
 import server.database.ExpenseRepository;
 import server.database.ParticipantRepository;
@@ -24,21 +26,27 @@ public class ExpenseController {
     private final ParticipantRepository participantRepository;
     private final SimpMessagingTemplate template;
 
+    private final EventLastActivityService eventLastActivityService;
+
     /**
      * Constructor
      * @param eventRepository event repository
      * @param expenseRepository expense repository
      * @param participantRepository participant repository
      * @param template SimpMessagingTemplate
+     * @param eventLastActivityService EventLastActivityService
      */
+    @Autowired
     public ExpenseController(EventRepository eventRepository,
                              ExpenseRepository expenseRepository,
                              ParticipantRepository participantRepository,
-                             SimpMessagingTemplate template) {
+                             SimpMessagingTemplate template,
+                             EventLastActivityService eventLastActivityService) {
         this.eventRepository = eventRepository;
         this.expenseRepository = expenseRepository;
         this.participantRepository = participantRepository;
         this.template = template;
+        this.eventLastActivityService = eventLastActivityService;
     }
 
     private static boolean isNullOrEmpty(String str) {
@@ -100,12 +108,18 @@ public class ExpenseController {
         Participant paidBy = participantRepository.getReferenceById(receivedExpense.getPaidById());
         Expense expense = new Expense(paidBy, receivedExpense.getTitle(), receivedExpense.getAmount());
 
+        eventLastActivityService.updateLastActivity(expense.getInvitationCode());
+
         expense = expenseRepository.save(expense);
+
+        System.out.println("Expense created: " + expense.getId() + " " +
+                eventRepository.getReferenceById(expense.getInvitationCode()).getLastActivity());
 
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(), paidBy.getId(),
                 receivedExpense.getInvitationCode());
         template.convertAndSend("/topic/" + sentExpense.getInvitationCode() + "/expense:create",
                 sentExpense);
+
         return StatusEntity.ok("expense:create " + sentExpense.getId());
     }
 
@@ -162,7 +176,12 @@ public class ExpenseController {
         expense.setPaidBy(newPaidBy);
         expense.setAmount(receivedExpense.getAmount());
         expense.setTitle(receivedExpense.getTitle());
+
+
         expense = expenseRepository.save(expense);
+
+        eventLastActivityService.updateLastActivity(expense.getInvitationCode());
+
 
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
                 receivedExpense.getPaidById(), receivedExpense.getInvitationCode());
@@ -187,7 +206,9 @@ public class ExpenseController {
         if (badRequest.isUnsolvable())
             return badRequest;
 
+
         Expense expense = expenseRepository.getReferenceById(receivedExpense.getId());
+        eventLastActivityService.updateLastActivity(expense.getInvitationCode());
         expenseRepository.delete(expense);
 
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),

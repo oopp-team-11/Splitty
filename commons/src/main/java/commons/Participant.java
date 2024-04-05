@@ -1,6 +1,7 @@
 package commons;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -16,6 +17,8 @@ import java.util.UUID;
 /**
  * Class that represents a participant
  */
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
 @Entity
 public class Participant {
     @Id
