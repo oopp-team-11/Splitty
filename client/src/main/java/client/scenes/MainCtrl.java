@@ -193,6 +193,7 @@ public class MainCtrl {
         primaryStage.setScene(editExpenseScene);
         primaryStage.setResizable(false);
         editExpenseCtrl.setExpense(expense);
+        editExpenseCtrl.translate(this.translationSupplier);
     }
 
     /**
