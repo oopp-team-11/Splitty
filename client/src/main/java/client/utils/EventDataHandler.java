@@ -5,6 +5,7 @@ import commons.Expense;
 import commons.Participant;
 import javafx.application.Platform;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,9 +27,9 @@ public class EventDataHandler {
 
     /***
      * std constructor
-     * @param event
-     * @param participants
-     * @param expenses
+     * @param event event
+     * @param participants participants
+     * @param expenses expenses
      */
     public EventDataHandler(Event event, List<Participant> participants, List<Expense> expenses) {
         this.event = event;
@@ -113,7 +114,7 @@ public class EventDataHandler {
 
     /***
      * helper method that handles the state of the participant
-     * @param uuid
+     * @param uuid uuid of participant
      * @return Participant
      */
     private Participant getParticipantById(UUID uuid) {
@@ -127,8 +128,8 @@ public class EventDataHandler {
 
     /***
      * helper method that updates the participant
-     * @param toUpdate
-     * @param fromUpdate
+     * @param toUpdate locally stored participant
+     * @param fromUpdate participant storing new data
      */
     private void updateParticipant(Participant toUpdate, Participant fromUpdate) {
         toUpdate.setFirstName(fromUpdate.getFirstName());
@@ -140,8 +141,8 @@ public class EventDataHandler {
 
     /**
      * contains by id for participants
-     * @param receivedParticipant
-     * @return
+     * @param receivedParticipant participant to check if exists
+     * @return boolean whether it exists
      */
     private boolean containsParticipantById(Participant receivedParticipant) {
         for (var participant : participants) {
@@ -154,8 +155,8 @@ public class EventDataHandler {
 
     /**
      * contains by id for expenses
-     * @param receivedExpense
-     * @return
+     * @param receivedExpense expense to check whether exists locally
+     * @return boolean whether it exists
      */
     private boolean containsExpenseById(Expense receivedExpense) {
         for (var expense : expenses) {
@@ -173,7 +174,7 @@ public class EventDataHandler {
      */
     public void getCreateParticipant(Participant receivedParticipant) {
         if (containsParticipantById(receivedParticipant)) {
-            // logic of refetching list of participants
+            // logic of refreshing list of participants
             sessionHandler.refreshParticipants();
             // TODO: logic of pop-up
             return;
@@ -189,7 +190,7 @@ public class EventDataHandler {
      */
     public void getDeleteParticipant(Participant receivedParticipant) {
         if (!containsParticipantById(receivedParticipant)) {
-            //logic of refetching
+            //logic of refreshing
             sessionHandler.refreshParticipants();
             // TODO: logic of pop-up
             return;
@@ -197,6 +198,10 @@ public class EventDataHandler {
 
         participants.remove(getParticipantById(receivedParticipant.getId()));
         expenses.removeIf(expense -> expense.getPaidById().equals(receivedParticipant.getId()));
+        for (var expense : expenses) {
+            expense.getInvolveds()
+                    .removeIf(involved -> involved.getParticipantId().equals(receivedParticipant.getId()));
+        }
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshParticipantsData());
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
     }
@@ -208,7 +213,7 @@ public class EventDataHandler {
      */
     public void getUpdateParticipant(Participant receivedParticipant) {
         if (!containsParticipantById(receivedParticipant)) {
-            //logic of refetching
+            //logic of refreshing
             sessionHandler.refreshParticipants();
             // TODO: logic of pop-up
             return;
@@ -253,7 +258,7 @@ public class EventDataHandler {
      */
     public void getCreateExpense(Expense receivedExpense) {
         if (containsExpenseById(receivedExpense)) {
-            // logic of refetching expenses from server
+            // logic of refreshing expenses from server
             sessionHandler.refreshExpenses();
             // TODO: logic of pop-up
             return;
@@ -270,7 +275,7 @@ public class EventDataHandler {
      */
     public void getUpdateExpense(Expense receivedExpense) {
         if (!containsExpenseById(receivedExpense)) {
-            // logic of refetching expenses
+            // logic of refreshing expenses
             sessionHandler.refreshExpenses();
             // TODO: logic of pop-up
             return;
@@ -287,7 +292,7 @@ public class EventDataHandler {
      */
     public void getDeleteExpense(Expense receivedExpense) {
         if (!containsExpenseById(receivedExpense)) {
-            // logic of refetching expenses
+            // logic of refreshing expenses
             sessionHandler.refreshExpenses();
             // TODO: logic of pop-up
             return;
@@ -297,17 +302,9 @@ public class EventDataHandler {
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
     }
 
-    /**
-     * Handles received updates on a Participant object
-     *
-     * @param receivedParticipant received Participant object
-     * @param methodType          type of change
-     */
-
-
     /***
      * returns expense by id
-     * @param uuid
+     * @param uuid uuid of an expense
      * @return Expense
      */
     private Expense getExpenseById(UUID uuid) {
@@ -319,14 +316,47 @@ public class EventDataHandler {
         return null;
     }
 
+    /**
+     * Filters the expense list by participant who paid for it
+     * @param participant Participant to filter by
+     * @return returns a new list of expenses, which the provided participant paid for
+     */
+    public List<Expense> getExpensesByParticipant(Participant participant) {
+        List<Expense> expensesByParticipant = new ArrayList<>();
+        for (var expense : expenses) {
+            if (expense.getPaidById().equals(participant.getId())) {
+                expensesByParticipant.add(expense);
+            }
+        }
+        return expensesByParticipant;
+    }
+
+    /**
+     * Filters the expense list by participant who is involved in it
+     * @param involvedParticipant Participant to filter by
+     * @return returns a new list of expenses, which the provided participant is involved in
+     */
+    public List<Expense> getExpensesByInvolvedParticipant(Participant involvedParticipant) {
+        List<Expense> expensesByInvolvedParticipant = new ArrayList<>();
+        for (var expense : expenses) {
+            for (var involved : expense.getInvolveds()) {
+                if (involved.getParticipantId().equals(involvedParticipant.getId())) {
+                    expensesByInvolvedParticipant.add(expense);
+                }
+            }
+        }
+        return expensesByInvolvedParticipant;
+    }
+
     /***
      * updates the toUpdate expense with fromUpdate expense
-     * @param toUpdate
-     * @param fromUpdate
+     * @param toUpdate locally existing expense
+     * @param fromUpdate expense containing new data
      */
     private static void updateExpense(Expense toUpdate, Expense fromUpdate) {
         toUpdate.setTitle(fromUpdate.getTitle());
         toUpdate.setAmount(fromUpdate.getAmount());
         toUpdate.setPaidById(fromUpdate.getPaidById());
+        toUpdate.setInvolveds(fromUpdate.getInvolveds());
     }
 }
