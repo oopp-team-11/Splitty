@@ -108,7 +108,7 @@ public class ExpenseController {
         Participant paidBy = participantRepository.getReferenceById(receivedExpense.getPaidById());
         Expense expense = new Expense(paidBy, receivedExpense.getTitle(), receivedExpense.getAmount());
 
-        eventLastActivityService.updateLastActivity(expense.getInvitationCode());
+        eventLastActivityService.updateLastActivity(receivedExpense.getInvitationCode());
 
         expense = expenseRepository.save(expense);
 
@@ -177,7 +177,7 @@ public class ExpenseController {
 
         expense = expenseRepository.save(expense);
 
-        eventLastActivityService.updateLastActivity(expense.getInvitationCode());
+        eventLastActivityService.updateLastActivity(receivedExpense.getInvitationCode());
 
 
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
@@ -205,7 +205,7 @@ public class ExpenseController {
 
 
         Expense expense = expenseRepository.getReferenceById(receivedExpense.getId());
-        eventLastActivityService.updateLastActivity(expense.getInvitationCode());
+        eventLastActivityService.updateLastActivity(receivedExpense.getInvitationCode());
         expenseRepository.delete(expense);
 
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
