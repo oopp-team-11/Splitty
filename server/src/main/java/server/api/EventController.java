@@ -143,9 +143,6 @@ public class EventController {
         eventLastActivityService.updateLastActivity(event.getId());
         event = repo.save(event);
 
-
-        System.out.println("Event updated: " + event.getId() + " " + event.getTitle());
-
         eventUpdated(receivedEvent.getId(), receivedEvent.getTitle());
 
         Event sentEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(), event.getLastActivity());

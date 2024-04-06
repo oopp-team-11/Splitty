@@ -112,9 +112,6 @@ public class ExpenseController {
 
         expense = expenseRepository.save(expense);
 
-        System.out.println("Expense created: " + expense.getId() + " " +
-                eventRepository.getReferenceById(expense.getInvitationCode()).getLastActivity());
-
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(), paidBy.getId(),
                 receivedExpense.getInvitationCode());
         template.convertAndSend("/topic/" + sentExpense.getInvitationCode() + "/expense:create",
