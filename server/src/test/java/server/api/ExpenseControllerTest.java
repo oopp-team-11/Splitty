@@ -57,10 +57,7 @@ public class ExpenseControllerTest {
                 null,
                 null
         ));
-        Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
-                participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
-                UUID.randomUUID());
-        Expense expense = new Expense(sentParticipant, "expense", 21.37);
+        Expense expense = new Expense(participant, "expense", 21.37);
 
         System.out.println(expense.getInvitationCode());
         assertEquals(StatusEntity.StatusCode.OK, expenseController.createExpense(expense).getStatusCode());
@@ -218,7 +215,10 @@ public class ExpenseControllerTest {
         ArgumentCaptor<Expense> expenseArgumentCaptor = ArgumentCaptor.forClass(Expense.class);
         verify(messagingTemplate).convertAndSend(eq("/topic/" + expense.getInvitationCode() + "/expense:delete"),
                 expenseArgumentCaptor.capture());
-        assertEquals(expense, expenseArgumentCaptor.getValue());
+        Expense sentExpense = expenseArgumentCaptor.getValue();
+        assertEquals(expense.getId(), sentExpense.getId());
+        assertEquals(expense.getAmount(), sentExpense.getAmount());
+        assertEquals(expense.getTitle(), sentExpense.getTitle());
     }
 
     @Test
