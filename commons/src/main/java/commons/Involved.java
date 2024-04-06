@@ -139,6 +139,25 @@ public class Involved {
         return participant;
     }
 
+
+    /**
+     * std setter
+     *
+     * @param expense
+     */
+    public void setExpense(Expense expense) {
+        this.expense = expense;
+    }
+
+    /**
+     * std setter
+     *
+     * @param participant
+     */
+    public void setParticipant(Participant participant) {
+        this.participant = participant;
+    }
+
     /**
      * std setter
      *
@@ -162,6 +181,8 @@ public class Involved {
     public int hashCode() {
         return Objects.hash(id, isSettled, expenseId, participantId);
     }
+
+
 
     @Override
     public String toString() {
