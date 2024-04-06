@@ -274,16 +274,16 @@ public class EventDataHandler {
     public void assignParticipantsInExpense(Expense expense) {
         expense.setPaidBy(getParticipantById(expense.getPaidById()));
         if (expense.getPaidBy() == null) {
+            expenses = null; //This allows for a sequential refresh
             sessionHandler.refreshParticipants();
-            sessionHandler.refreshExpenses();
             return;
         }
         if (expense.getInvolveds() != null) {
             for (Involved involved : expense.getInvolveds()) {
                 involved.setParticipant(getParticipantById(involved.getParticipantId()));
                 if (involved.getParticipant() == null) {
+                    expenses = null; //This allows for a sequential refresh
                     sessionHandler.refreshParticipants();
-                    sessionHandler.refreshExpenses();
                     return;
                 }
             }
