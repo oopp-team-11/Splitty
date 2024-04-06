@@ -214,7 +214,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
                                 ).toList().getFirst().getLanguage());
                         mainCtrl.setTranslationSupplier();
                         translate(mainCtrl.getTranslationSupplier());
-                        languages.setGraphic(((MenuItem) actionEvent.getSource()).getGraphic());
+                        ((ImageView) languages.getGraphic()).setImage(
+                                ((ImageView)((MenuItem) actionEvent.getSource()).getGraphic()).getImage());
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
