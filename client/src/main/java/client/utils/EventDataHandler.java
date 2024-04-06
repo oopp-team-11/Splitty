@@ -59,13 +59,10 @@ public class EventDataHandler {
      * @param event the initial event object
      */
     public void setEvent(Event event) {
-        if (this.event == null) {
-            this.event = event;
-            Platform.runLater(() -> sessionHandler.getMainCtrl().showEventOverview(event));
-        } else {
-            this.event = event;
+        boolean refresh = this.event != null;
+        this.event = event;
+        if (refresh)
             Platform.runLater(() -> sessionHandler.getMainCtrl().refreshEventData());
-        }
     }
 
     /**
@@ -74,8 +71,10 @@ public class EventDataHandler {
      * @param participants Initial list of participants
      */
     public void setParticipants(List<Participant> participants) {
+        boolean refresh = this.participants != null;
         this.participants = participants;
-        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshParticipantsData());
+        if (refresh)
+            Platform.runLater(() -> sessionHandler.getMainCtrl().refreshParticipantsData());
     }
 
     /**
@@ -84,8 +83,12 @@ public class EventDataHandler {
      * @param expenses Initial list of expenses.
      */
     public void setExpenses(List<Expense> expenses) {
+        boolean refresh = this.expenses != null;
         this.expenses = expenses;
-        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
+        if (refresh)
+            Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
+        else
+            Platform.runLater(() -> sessionHandler.getMainCtrl().showEventOverview());
     }
 
     /***
@@ -241,13 +244,20 @@ public class EventDataHandler {
     }
 
     /**
-     * Receives the request to delete all data related to current event and change the scene to start screen
+     * Sets all data related to current event to null
      */
-    public void getDeleteEvent() {
-        // Maybe some smarter logic will be needed
+    public void setAllToNull() {
         event = null;
         participants = null;
         expenses = null;
+    }
+
+    /**
+     * Receives the request to delete all data related to current event and change the scene to start screen
+     */
+    public void getDeleteEvent() {
+        sessionHandler.unsubscribeFromCurrentEvent();
+        setAllToNull();
         Platform.runLater(() -> sessionHandler.getMainCtrl().showStartScreen());
     }
 

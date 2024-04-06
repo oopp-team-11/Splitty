@@ -83,27 +83,15 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
         if (!eventSubscriptions.isEmpty())
             throw new IllegalStateException("User did not unsubscribe before subscribing to a new event.");
         this.invitationCode = invitationCode;
-        //We want to track event deletion as soon as possible
-        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/event:delete",
-                new DeleteEventHandler(dataHandler)));
-        //Initial event read
-        session.send("/app/event:read", invitationCode);
-        //Track event updates
-        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/event:update",
-                new UpdateEventHandler(dataHandler)));
 
-        //Initial participants read
-        session.send("/app/participants:read", invitationCode);
-        //Track participants updates
-        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/participant:delete",
-                new DeleteParticipantHandler(dataHandler)));
-        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/participant:update",
-                new UpdateParticipantHandler(dataHandler)));
-        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/participant:create",
-                new CreateParticipantHandler(dataHandler)));
+        //Send request for initial event read
+        refreshEvent();
+    }
 
-        //Initial expenses read
-        session.send("/app/expenses:read", invitationCode);
+    /**
+     * Subscribes to changes to event's expenses
+     */
+    public void afterInitialExpenseRead() {
         //Track expenses updates
         eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/expense:delete",
                 new DeleteExpenseHandler(dataHandler)));
@@ -111,6 +99,34 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
                 new UpdateExpenseHandler(dataHandler)));
         eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/expense:create",
                 new CreateExpenseHandler(dataHandler)));
+    }
+
+    /**
+     * Subscribes to changes to event's participants and requests for initial expenses read
+     */
+    public void afterInitialParticipantsRead() {
+        //Track participants updates
+        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/participant:delete",
+                new DeleteParticipantHandler(dataHandler)));
+        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/participant:update",
+                new UpdateParticipantHandler(dataHandler)));
+        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/participant:create",
+                new CreateParticipantHandler(dataHandler)));
+        //Send request for initial expenses list read
+        refreshExpenses();
+    }
+
+    /**
+     * Subscribes to changes to event and requests for initial participants read
+     */
+    public void afterInitialEventRead() {
+        //Track event updates
+        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/event:delete",
+                new DeleteEventHandler(dataHandler)));
+        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/event:update",
+                new UpdateEventHandler(dataHandler)));
+        //Send request for initial participant list read
+        refreshParticipants();
     }
 
     /**
@@ -192,21 +208,21 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
     }
 
     /**
-     * Used for refreshing the Event object in case of data synchronisation issues
+     * Used for refreshing the Event object
      */
     public void refreshEvent() {
         session.send("/app/event:read", invitationCode);
     }
 
     /**
-     * Used for refreshing the Participants list in case of data synchronisation issues
+     * Used for refreshing the Participants list
      */
     public void refreshParticipants() {
         session.send("/app/participants:read", invitationCode);
     }
 
     /**
-     * Used for refreshing the Expenses list in case of data synchronisation issues
+     * Used for refreshing the Expenses list
      */
     public void refreshExpenses() {
         session.send("/app/expenses:read", invitationCode);

@@ -95,7 +95,7 @@ public class EditExpenseCtrl implements Translatable {
                     person.getId(), expense.getInvitationCode());
             mainCtrl.getSessionHandler().sendExpense(expense, "update");
 
-            mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
+            mainCtrl.showEventOverview();
         }
     }
 
@@ -103,7 +103,7 @@ public class EditExpenseCtrl implements Translatable {
      * Abort adding expense
      */
     public void abort() {
-        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
+        mainCtrl.showEventOverview();
     }
 
     @Override

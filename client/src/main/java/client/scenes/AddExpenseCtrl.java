@@ -87,14 +87,14 @@ public class AddExpenseCtrl implements Translatable {
                 Double.parseDouble(expenseAmount.getText()));
         mainCtrl.getSessionHandler().sendExpense(newExpense, "create");
 
-        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
+        mainCtrl.showEventOverview();
     }
 
     /**
      * Abort adding expense
      */
     public void abort() {
-        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
+        mainCtrl.showEventOverview();
     }
 
     @Override
