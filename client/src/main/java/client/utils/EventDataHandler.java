@@ -196,13 +196,9 @@ public class EventDataHandler {
         }
 
         participants.remove(getParticipantById(receivedParticipant.getId()));
-        for (Expense expense : expenses){
-            if(expense.getPaidById() == receivedParticipant.getId()){
-                expenses.remove(expense);
-            }
-        }
-        sessionHandler.refreshExpenses();
+        expenses.removeIf(expense -> expense.getPaidById().equals(receivedParticipant.getId()));
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshParticipantsData());
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
     }
 
     /**
