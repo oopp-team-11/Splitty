@@ -101,7 +101,6 @@ public class Expense {
         this.amount = amount;
         this.paidById = paidById;
         this.invitationCode = invitationCode;
-        this.involveds = new InvolvedList();
     }
 
     /**

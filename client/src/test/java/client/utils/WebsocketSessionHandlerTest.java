@@ -20,8 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class WebsocketSessionHandlerTest {
 
@@ -29,6 +28,7 @@ class WebsocketSessionHandlerTest {
     private WebsocketSessionHandler handler;
     private StompHeaders headers;
     private StompSession session;
+    private MainCtrl mainCtrl;
 
     private static void setSubscriptions(WebsocketSessionHandler handler,
                                          List<StompSession.Subscription> subscriptions) throws IllegalAccessException {
@@ -42,9 +42,15 @@ class WebsocketSessionHandlerTest {
     @BeforeEach
     void setUp() {
         invitationCode = UUID.randomUUID();
-        handler = new WebsocketSessionHandler(new EventDataHandler(), new AdminDataHandler(), new MainCtrl());
+        mainCtrl = new MainCtrl();
+        handler = new WebsocketSessionHandler(new EventDataHandler(), new AdminDataHandler(), mainCtrl);
         headers = new StompHeaders();
         session = Mockito.mock(StompSession.class);
+    }
+
+    @Test
+    void getMainCtrl() {
+        assertEquals(mainCtrl, handler.getMainCtrl());
     }
 
     @Test
@@ -68,6 +74,68 @@ class WebsocketSessionHandlerTest {
     }
 
     @Test
+    void afterInitialEventRead() {
+        handler.afterConnected(session, headers);
+        handler.subscribeToEvent(invitationCode);
+        handler.afterInitialEventRead();
+
+        ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<StompFrameHandler> stompFrameHandlerCaptor = ArgumentCaptor.forClass(StompFrameHandler.class);
+        ArgumentCaptor<UUID> idCaptor = ArgumentCaptor.forClass(UUID.class);
+        verify(session, times(8)).subscribe(destinationCaptor.capture(),
+                stompFrameHandlerCaptor.capture());
+        verify(session, times(2)).send(destinationCaptor.capture(), idCaptor.capture());
+
+        List<String> destinations = destinationCaptor.getAllValues();
+        assertEquals("/topic/" + invitationCode + "/event:delete", destinations.get(6));
+        assertEquals("/topic/" + invitationCode + "/event:update", destinations.get(7));
+
+        assertEquals(invitationCode, idCaptor.getValue());
+        assertEquals("/app/participants:read", destinations.get(9));
+    }
+
+    @Test
+    void afterInitialParticipantsRead() {
+        handler.afterConnected(session, headers);
+        handler.subscribeToEvent(invitationCode);
+        handler.afterInitialParticipantsRead();
+
+        ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<StompFrameHandler> stompFrameHandlerCaptor = ArgumentCaptor.forClass(StompFrameHandler.class);
+        ArgumentCaptor<UUID> idCaptor = ArgumentCaptor.forClass(UUID.class);
+        verify(session, times(9)).subscribe(destinationCaptor.capture(),
+                stompFrameHandlerCaptor.capture());
+        verify(session, times(2)).send(destinationCaptor.capture(), idCaptor.capture());
+
+        List<String> destinations = destinationCaptor.getAllValues();
+        assertEquals("/topic/" + invitationCode + "/participant:delete", destinations.get(6));
+        assertEquals("/topic/" + invitationCode + "/participant:update", destinations.get(7));
+        assertEquals("/topic/" + invitationCode + "/participant:create", destinations.get(8));
+
+        assertEquals(invitationCode, idCaptor.getValue());
+        assertEquals("/app/expenses:read", destinations.get(10));
+    }
+
+    @Test
+    void afterInitialExpenseRead() {
+        handler.afterConnected(session, headers);
+        handler.subscribeToEvent(invitationCode);
+        handler.afterInitialExpenseRead();
+
+        ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<StompFrameHandler> stompFrameHandlerCaptor = ArgumentCaptor.forClass(StompFrameHandler.class);
+        ArgumentCaptor<UUID> idCaptor = ArgumentCaptor.forClass(UUID.class);
+        verify(session, times(9)).subscribe(destinationCaptor.capture(),
+                stompFrameHandlerCaptor.capture());
+        verify(session, times(1)).send(destinationCaptor.capture(), idCaptor.capture());
+
+        List<String> destinations = destinationCaptor.getAllValues();
+        assertEquals("/topic/" + invitationCode + "/expense:delete", destinations.get(6));
+        assertEquals("/topic/" + invitationCode + "/expense:update", destinations.get(7));
+        assertEquals("/topic/" + invitationCode + "/expense:create", destinations.get(8));
+    }
+
+    @Test
     void subscribeToEvent() {
         handler.afterConnected(session, headers);
         handler.subscribeToEvent(invitationCode);
@@ -76,29 +144,15 @@ class WebsocketSessionHandlerTest {
         ArgumentCaptor<StompFrameHandler> stompFrameHandlerCaptor = ArgumentCaptor.forClass(StompFrameHandler.class);
         ArgumentCaptor<UUID> idCaptor = ArgumentCaptor.forClass(UUID.class);
 
-        verify(session, times(14)).subscribe(destinationCaptor.capture(),
+        verify(session, times(6)).subscribe(destinationCaptor.capture(),
                 stompFrameHandlerCaptor.capture());
-        verify(session, times(3)).send(destinationCaptor.capture(), idCaptor.capture());
+        verify(session, times(1)).send(destinationCaptor.capture(), idCaptor.capture());
 
         List<UUID> uuids = idCaptor.getAllValues();
         List<String> destinations = destinationCaptor.getAllValues();
 
-        assertEquals(invitationCode, uuids.get(0));
-        assertEquals(invitationCode, uuids.get(1));
-        assertEquals(invitationCode, uuids.get(2));
-
-        assertEquals("/topic/" + invitationCode + "/event:delete", destinations.get(6));
-        assertEquals("/topic/" + invitationCode + "/event:update", destinations.get(7));
-        assertEquals("/topic/" + invitationCode + "/participant:delete", destinations.get(8));
-        assertEquals("/topic/" + invitationCode + "/participant:update", destinations.get(9));
-        assertEquals("/topic/" + invitationCode + "/participant:create", destinations.get(10));
-        assertEquals("/topic/" + invitationCode + "/expense:delete", destinations.get(11));
-        assertEquals("/topic/" + invitationCode + "/expense:update", destinations.get(12));
-        assertEquals("/topic/" + invitationCode + "/expense:create", destinations.get(13));
-
-        assertEquals("/app/event:read", destinations.get(14));
-        assertEquals("/app/participants:read", destinations.get(15));
-        assertEquals("/app/expenses:read", destinations.get(16));
+        assertEquals(invitationCode, uuids.getFirst());
+        assertEquals("/app/event:read", destinations.get(6));
     }
 
     @Test
@@ -283,7 +337,7 @@ class WebsocketSessionHandlerTest {
         ArgumentCaptor<Object> payloadCaptor = ArgumentCaptor.forClass(Object.class);
 
         handler.refreshEvent();
-        verify(session, times(4)).send(destinationCaptor.capture(), payloadCaptor.capture());
+        verify(session, times(2)).send(destinationCaptor.capture(), payloadCaptor.capture());
 
         String capturedDestination = destinationCaptor.getValue();
         assertEquals("/app/event:read", capturedDestination);
@@ -300,7 +354,7 @@ class WebsocketSessionHandlerTest {
         ArgumentCaptor<Object> payloadCaptor = ArgumentCaptor.forClass(Object.class);
 
         handler.refreshParticipants();
-        verify(session, times(4)).send(destinationCaptor.capture(), payloadCaptor.capture());
+        verify(session, times(2)).send(destinationCaptor.capture(), payloadCaptor.capture());
 
         String capturedDestination = destinationCaptor.getValue();
         assertEquals("/app/participants:read", capturedDestination);
@@ -317,7 +371,7 @@ class WebsocketSessionHandlerTest {
         ArgumentCaptor<Object> payloadCaptor = ArgumentCaptor.forClass(Object.class);
 
         handler.refreshExpenses();
-        verify(session, times(4)).send(destinationCaptor.capture(), payloadCaptor.capture());
+        verify(session, times(2)).send(destinationCaptor.capture(), payloadCaptor.capture());
 
         String capturedDestination = destinationCaptor.getValue();
         assertEquals("/app/expenses:read", capturedDestination);

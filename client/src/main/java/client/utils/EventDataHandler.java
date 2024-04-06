@@ -202,8 +202,9 @@ public class EventDataHandler {
         participants.remove(getParticipantById(receivedParticipant.getId()));
         expenses.removeIf(expense -> expense.getPaidById().equals(receivedParticipant.getId()));
         for (var expense : expenses) {
-            expense.getInvolveds()
-                    .removeIf(involved -> involved.getParticipantId().equals(receivedParticipant.getId()));
+            if (expense.getInvolveds() != null)
+                expense.getInvolveds()
+                        .removeIf(involved -> involved.getParticipantId().equals(receivedParticipant.getId()));
         }
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshParticipantsData());
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
