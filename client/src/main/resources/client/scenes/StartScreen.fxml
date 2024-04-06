@@ -2,77 +2,92 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.StartScreenCtrl">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.StartScreenCtrl">
    <children>
-      <HBox prefHeight="640.0" prefWidth="600.0">
-         <children>
-            <VBox prefHeight="640.0" prefWidth="240.0">
+      <BorderPane prefHeight="640.0" prefWidth="700.0">
+         <left>
+            <HBox fillHeight="false" prefHeight="100.0" prefWidth="100.0" BorderPane.alignment="CENTER">
                <children>
-                  <Label fx:id="newEventLabel" prefHeight="44.0" prefWidth="205.0" style="-fx-padding: 10;" text="Create a new event">
-                     <font>
-                        <Font size="17.0" />
-                     </font>
-                  </Label>
-                  <HBox prefHeight="27.0" prefWidth="476.0" style="-fx-padding: 10;">
+                  <Pane fx:id="languageSwitchPlaceHolder" prefHeight="50.0" prefWidth="50.0">
+                     <HBox.margin>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </HBox.margin></Pane>
+                  <Separator orientation="VERTICAL" prefHeight="640.0" prefWidth="5.0">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Separator>
+               </children>
+            </HBox>
+         </left>
+         <center>
+            <HBox prefHeight="640.0" prefWidth="600.0">
+               <children>
+                  <VBox prefHeight="640.0" prefWidth="240.0">
                      <children>
-                        <TextField id="newEventName" fx:id="newEventName" prefHeight="76.0" prefWidth="134.0" promptText="Event name" />
-                        <Button id="createBtn" fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate" text="Create" />
-                     </children>
-                  </HBox>
-                  <Label fx:id="joinEventLabel" style="-fx-padding: 10;" text="Join event by invite">
-                     <font>
-                        <Font size="17.0" />
-                     </font>
-                  </Label>
-                  <HBox prefHeight="40.0" prefWidth="476.0" style="-fx-padding: 10;">
-                     <children>
-                        <TextField id="joinInvitationCode" fx:id="joinInvitationCode" prefHeight="26.0" prefWidth="134.0" promptText="Invitation code" />
-                        <Button id="joinBtn" fx:id="joinBtn" mnemonicParsing="false" onAction="#onJoin" prefHeight="26.0" prefWidth="55.0" text="Join" />
-                     </children>
-                  </HBox>
-                  <VBox alignment="BOTTOM_LEFT" prefHeight="466.0" prefWidth="240.0">
-                     <children>
-                        <ImageView fx:id="imageview" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                        <MenuButton fx:id="languages" mnemonicParsing="false" />
-                        <ComboBox fx:id="languages_old" prefWidth="150.0" />
-                        <Label fx:id="adminPanelLabel" style="-fx-padding: 10;" text="Show admin panel">
+                        <Label fx:id="newEventLabel" prefHeight="44.0" prefWidth="205.0" style="-fx-padding: 10;" text="Create a new event">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                        </Label>
+                        <HBox prefHeight="27.0" prefWidth="476.0" style="-fx-padding: 10;">
+                           <children>
+                              <TextField id="newEventName" fx:id="newEventName" prefHeight="76.0" prefWidth="134.0" promptText="Event name" />
+                              <Button id="createBtn" fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate" text="Create" />
+                           </children>
+                        </HBox>
+                        <Label fx:id="joinEventLabel" style="-fx-padding: 10;" text="Join event by invite">
                            <font>
                               <Font size="17.0" />
                            </font>
                         </Label>
                         <HBox prefHeight="40.0" prefWidth="476.0" style="-fx-padding: 10;">
                            <children>
-                              <PasswordField id="adminPassword" fx:id="adminPassword" promptText="Password" />
-                              <Button id="loginBtn" fx:id="loginBtn" mnemonicParsing="false" onAction="#onAdmin" prefHeight="26.0" prefWidth="55.0" text="Log in" />
+                              <TextField id="joinInvitationCode" fx:id="joinInvitationCode" prefHeight="26.0" prefWidth="134.0" promptText="Invitation code" />
+                              <Button id="joinBtn" fx:id="joinBtn" mnemonicParsing="false" onAction="#onJoin" prefHeight="26.0" prefWidth="55.0" text="Join" />
                            </children>
                         </HBox>
+                        <VBox alignment="BOTTOM_LEFT" prefHeight="466.0" prefWidth="240.0">
+                           <children>
+                              <Label fx:id="adminPanelLabel" style="-fx-padding: 10;" text="Show admin panel">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                              </Label>
+                              <HBox prefHeight="40.0" prefWidth="476.0" style="-fx-padding: 10;">
+                                 <children>
+                                    <PasswordField id="adminPassword" fx:id="adminPassword" promptText="Password" />
+                                    <Button id="loginBtn" fx:id="loginBtn" mnemonicParsing="false" onAction="#onAdmin" prefHeight="26.0" prefWidth="55.0" text="Log in" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="640.0" prefWidth="360.0">
+                     <children>
+                        <Label fx:id="recentEventsLabel" prefHeight="44.0" prefWidth="1066.0" style="-fx-padding: 10;" text="Join recent events (double click)">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                        </Label>
+                        <TableView id="eventTable" fx:id="eventTable" prefHeight="596.0" prefWidth="360.0">
+                           <columns>
+                              <TableColumn id="eventNameColumn" fx:id="eventNameColumn" prefWidth="180.0" text="Event name" />
+                              <TableColumn id="invitationCodeColumn" fx:id="invitationCodeColumn" minWidth="0.0" prefWidth="180.0" text="Invitation code" />
+                           </columns>
+                           <VBox.margin>
+                              <Insets bottom="15.0" right="15.0" />
+                           </VBox.margin>
+                        </TableView>
                      </children>
                   </VBox>
                </children>
-            </VBox>
-            <VBox prefHeight="640.0" prefWidth="360.0">
-               <children>
-                  <Label fx:id="recentEventsLabel" prefHeight="44.0" prefWidth="1066.0" style="-fx-padding: 10;" text="Join recent events (double click)">
-                     <font>
-                        <Font size="17.0" />
-                     </font>
-                  </Label>
-                  <TableView id="eventTable" fx:id="eventTable" prefHeight="596.0" prefWidth="360.0">
-                    <columns>
-                      <TableColumn id="eventNameColumn" fx:id="eventNameColumn" prefWidth="180.0" text="Event name" />
-                        <TableColumn id="invitationCodeColumn" fx:id="invitationCodeColumn" minWidth="0.0" prefWidth="180.0" text="Invitation code" />
-                    </columns>
-                     <VBox.margin>
-                        <Insets bottom="15.0" right="15.0" />
-                     </VBox.margin>
-                  </TableView>
-               </children>
-            </VBox>
-         </children>
-      </HBox>
+            </HBox>
+         </center>
+      </BorderPane>
    </children>
 </AnchorPane>

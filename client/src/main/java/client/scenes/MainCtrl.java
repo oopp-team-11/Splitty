@@ -23,8 +23,14 @@ import client.utils.WebsocketSessionHandler;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
@@ -32,9 +38,12 @@ import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonWriter;
+import java.io.*;
+import java.net.MalformedURLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -73,6 +82,8 @@ public class MainCtrl {
 
     private TranslationSupplier translationSupplier;
     private LinkedHashMap<String, Locale> availableLanguages;
+
+    private MenuButton languageSwitchButton;
 
     /**
      * Initializes javafx scenes and their controllers, sets start screen as the currently shown screen
@@ -119,6 +130,7 @@ public class MainCtrl {
         this.adminPanelScene = new Scene(adminPanel.getValue());
 
         this.adminDataHandler = new AdminDataHandler();
+        this.languageSwitchButton = new MenuButton();
 
         setAvailableLanguagesFromFiles();
 
@@ -126,6 +138,8 @@ public class MainCtrl {
         setServerIp();
 
         setTranslationSupplier();
+
+        setLanguageSwitchButton();
 
         startWebSocket();
 
@@ -174,6 +188,7 @@ public class MainCtrl {
      */
     public void showStartScreen() {
         primaryStage.setTitle("Start Screen");
+
         primaryStage.setScene(startScreenScene);
         primaryStage.setResizable(false);
         try {
@@ -375,5 +390,100 @@ public class MainCtrl {
      */
     public TranslationSupplier getTranslationSupplier() {
         return translationSupplier;
+    }
+
+    /**
+     * Getter for language switch button
+     * @return generated menubutton to use on multiple scenes
+     */
+    public MenuButton getLanguageSwitchButton(){
+        return languageSwitchButton;
+    }
+
+    private void setLanguageSwitchButton(){
+        getAvailableLanguages().values().forEach(locale ->
+        {
+            MenuItem newOption = new MenuItem();
+            newOption.setText(locale.getDisplayLanguage() + " - " + locale.getDisplayLanguage(locale));
+
+            //Does some conversion to get the correct country code of this option
+            String countryCode;
+            try{
+                var reader = Json.createReader(new FileReader("locales/" +
+                        getAvailableLanguages().values().stream().filter(
+                                locale1 -> locale1.getDisplayLanguage().equals(newOption.getText().split(" - ")[0])
+                        ).toList().getFirst() + ".json"));
+                JsonObject json = reader.readObject();
+                reader.close();
+
+                countryCode = json.get("Country Code in ISO 3166-1-alpha-3 code")
+                        .toString().replaceAll("\"", "");
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
+            ImageView imageView = new ImageView(new Image("/flags/" + countryCode + ".png"));
+            imageView.setPreserveRatio(true);
+            imageView.setSmooth(true);
+            imageView.setFitWidth(16);
+
+            newOption.setGraphic(imageView);
+            newOption.setOnAction(actionEvent -> {
+                        try {
+                            FileSystemUtils fileSystemUtils = new FileSystemUtils();
+                            fileSystemUtils.changeLanguageInFile("client-config.json",
+                                    getAvailableLanguages().values().stream().filter(
+                                            locale1 -> locale1.getDisplayLanguage().equals(
+                                                    ((MenuItem) actionEvent.getSource()).getText().split(" - ")[0])
+                                    ).toList().getFirst().getLanguage());
+                            setTranslationSupplier();
+                            ((ImageView) languageSwitchButton.getGraphic()).setImage(
+                                    ((ImageView)((MenuItem) actionEvent.getSource()).getGraphic()).getImage());
+                            startScreenCtrl.translate(translationSupplier);
+                            eventOverviewCtrl.translate(translationSupplier);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+            );
+            languageSwitchButton.getItems().addLast(newOption);
+        });
+
+        MenuItem item = new MenuItem("Download template...");
+        item.setOnAction(event -> {
+                    DirectoryChooser chooser = new DirectoryChooser();
+                    chooser.setTitle("Select Folder");
+                    var dir = chooser.showDialog(primaryStage);
+                    FileWriter writer;
+                    try {
+                        writer = new FileWriter(dir + "/template.json");
+                        JsonWriter jsonWriter = Json.createWriter(writer);
+                        JsonReader jsonReader = Json.createReader(new FileReader("locales/en.json"));
+
+                        jsonWriter.write(jsonReader.readObject());
+                        writer.flush();
+                        writer.close();
+                        jsonWriter.close();
+
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                }
+        );
+
+        languageSwitchButton.getItems().addLast(item);
+
+        ImageView imageView = new ImageView(
+                new Image("/flags/" +
+                        getTranslationSupplier()
+                                .getTranslation("Country Code in ISO 3166-1-alpha-3 code")
+                                .replaceAll("\"", "")
+                        + ".png"));
+        imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
+        imageView.setFitWidth(16);
+
+        languageSwitchButton.setGraphic(imageView);
     }
 }

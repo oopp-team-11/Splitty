@@ -13,14 +13,17 @@ import jakarta.ws.rs.core.Response;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.SubScene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.application.Platform;
 
@@ -44,11 +47,7 @@ import javax.json.JsonObject;
 public class StartScreenCtrl implements Initializable, Translatable {
     private final MainCtrl mainCtrl;
     @FXML
-    public MenuButton languages;
-    @FXML
-    public ComboBox<Locale> languages_old;
-    @FXML
-    public ImageView imageview;
+    public Pane languageSwitchPlaceHolder;
 
     @FXML
     private Button createBtn;
@@ -178,63 +177,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
             joinInvitationCode.clear();
             startLongPolling(eventIds);
 
-            mainCtrl.getAvailableLanguages().values().forEach(locale ->
-            {
-                MenuItem newOption = new MenuItem();
-                newOption.setText(locale.getDisplayLanguage() + " - " + locale.getDisplayLanguage(locale));
-
-                //Does some conversion to get the correct country code of this option
-                String countryCode;
-                try{
-                    var reader = Json.createReader(new FileReader("locales/" +
-                            mainCtrl.getAvailableLanguages().values().stream().filter(
-                                    locale1 -> locale1.getDisplayLanguage().equals(newOption.getText().split(" - ")[0])
-                            ).toList().getFirst() + ".json"));
-                    JsonObject json = reader.readObject();
-                    reader.close();
-
-                    countryCode = json.get("Country Code in ISO 3166-1-alpha-3 code")
-                            .toString().replaceAll("\"", "");
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-
-                ImageView imageView = new ImageView(new Image("/flags/" + countryCode + ".png"));
-                imageView.setPreserveRatio(true);
-                imageView.setSmooth(true);
-                imageView.setFitWidth(16);
-
-                newOption.setGraphic(imageView);
-                newOption.setOnAction(actionEvent -> {
-                    try {
-                        fileSystemUtils.changeLanguageInFile("client-config.json",
-                                mainCtrl.getAvailableLanguages().values().stream().filter(
-                                        locale1 -> locale1.getDisplayLanguage().equals(
-                                                ((MenuItem) actionEvent.getSource()).getText().split(" - ")[0])
-                                ).toList().getFirst().getLanguage());
-                        mainCtrl.setTranslationSupplier();
-                        translate(mainCtrl.getTranslationSupplier());
-                        ((ImageView) languages.getGraphic()).setImage(
-                                ((ImageView)((MenuItem) actionEvent.getSource()).getGraphic()).getImage());
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                );
-                languages.getItems().addLast(newOption);
-            });
-
-            ImageView imageView = new ImageView(
-                    new Image("/flags/" +
-                            mainCtrl.getTranslationSupplier()
-                                    .getTranslation("Country Code in ISO 3166-1-alpha-3 code")
-                                    .replaceAll("\"", "")
-                            + ".png"));
-            imageView.setPreserveRatio(true);
-            imageView.setSmooth(true);
-            imageView.setFitWidth(16);
-
-            languages.setGraphic(imageView);
+            languageSwitchPlaceHolder.getChildren().clear();
+            languageSwitchPlaceHolder.getChildren().add(mainCtrl.getLanguageSwitchButton());
 
         } catch (IOException | InterruptedException e) {
             System.out.println("Failed to get recent events: " + e.getMessage());

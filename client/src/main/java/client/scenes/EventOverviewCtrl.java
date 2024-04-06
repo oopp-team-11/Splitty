@@ -16,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 import java.util.HashMap;
@@ -25,6 +26,8 @@ import java.util.Map;
  * class CreateParticipantController
  */
 public class EventOverviewCtrl implements Translatable {
+    @FXML
+    public Pane languageSwitchPlaceHolder;
     @FXML
     public Label expensesLabel;
     @FXML
@@ -130,6 +133,10 @@ public class EventOverviewCtrl implements Translatable {
         });
 
         sendInvitesConfirmation.setText("");
+
+
+        languageSwitchPlaceHolder.getChildren().clear();
+        languageSwitchPlaceHolder.getChildren().add(mainCtrl.getLanguageSwitchButton());
     }
 
     /**

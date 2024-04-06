@@ -7,108 +7,127 @@
 
 <AnchorPane prefHeight="640.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventOverviewCtrl">
    <children>
-      <GridPane prefHeight="640.0" prefWidth="600.0">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints maxHeight="245.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="245.0" minHeight="1.0" prefHeight="1.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="401.0" minHeight="10.0" prefHeight="401.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-         <children>
-            <Label fx:id="participantsLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="341.0" prefWidth="909.0" text="Participants " textAlignment="CENTER" GridPane.rowIndex="1">
-               <font>
-                  <Font name="System Bold" size="16.0" />
-               </font>
-            </Label>
-            <Label fx:id="expensesLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="341.0" prefWidth="909.0" text="Expenses" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
-               <font>
-                  <Font name="System Bold" size="16.0" />
-               </font>
-            </Label>
-            <Button mnemonicParsing="false" onAction="#addParticipant" fx:id="addParticipantBtn" prefHeight="737.0" prefWidth="855.0" text="Add Participant" GridPane.rowIndex="3">
-               <GridPane.margin>
-                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-               </GridPane.margin></Button>
-            <Button mnemonicParsing="false" onAction="#addExpense" fx:id="addExpenseBtn" prefHeight="679.0" prefWidth="1117.0" text="Add Expense" GridPane.columnIndex="1" GridPane.rowIndex="3">
-               <GridPane.margin>
-                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-               </GridPane.margin></Button>
-            <VBox GridPane.columnIndex="1">
+      <BorderPane prefHeight="640.0" prefWidth="700.0">
+         <left>
+            <HBox fillHeight="false" prefHeight="100.0" prefWidth="100.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="sendInvitesButton" alignment="CENTER" mnemonicParsing="false" onAction="#sendInvites" prefHeight="402.0" prefWidth="301.0" text="Send Invites">
+                  <Pane fx:id="languageSwitchPlaceHolder" prefHeight="50.0" prefWidth="50.0">
+                     <HBox.margin>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </HBox.margin></Pane>
+                  <Separator orientation="VERTICAL" prefHeight="640.0" prefWidth="5.0">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Separator>
+               </children>
+            </HBox>
+         </left>
+         <center>
+            <GridPane prefHeight="640.0" prefWidth="600.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="245.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="245.0" minHeight="1.0" prefHeight="1.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="401.0" minHeight="10.0" prefHeight="401.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <Label fx:id="participantsLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="341.0" prefWidth="909.0" text="Participants " textAlignment="CENTER" GridPane.rowIndex="1">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
-                     <VBox.margin>
-                        <Insets left="15.0" right="15.0" top="15.0" />
-                     </VBox.margin>
-                  </Button>
-                  <Label fx:id="sendInvitesConfirmation" alignment="CENTER" prefHeight="396.0" prefWidth="301.0" textAlignment="CENTER">
-                     <VBox.margin>
-                        <Insets left="15.0" right="15.0" />
-                     </VBox.margin></Label>
-               </children>
-            </VBox>
-            <HBox prefHeight="100.0" prefWidth="300.0">
-               <children>
-                  <Button id="HomeButton" alignment="CENTER" mnemonicParsing="false" onAction="#goToHome" prefHeight="65.0" prefWidth="65.0" text="⌂">
+                  </Label>
+                  <Label fx:id="expensesLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="341.0" prefWidth="909.0" text="Expenses" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
-                        <Font size="52.0" />
+                        <Font name="System Bold" size="16.0" />
                      </font>
-                     <HBox.margin>
+                  </Label>
+                  <Button mnemonicParsing="false" onAction="#addParticipant" fx:id="addParticipantBtn" prefHeight="737.0" prefWidth="855.0" text="Add Participant" GridPane.rowIndex="3">
+                     <GridPane.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                     </HBox.margin>
-                     <padding>
-                        <Insets left="10.0" right="10.0" top="-10.0" />
-                     </padding>
-                  </Button>
-                  <Pane prefHeight="95.0" prefWidth="155.0">
+                     </GridPane.margin></Button>
+                  <Button mnemonicParsing="false" onAction="#addExpense" fx:id="addExpenseBtn" prefHeight="679.0" prefWidth="1117.0" text="Add Expense" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </GridPane.margin></Button>
+                  <VBox GridPane.columnIndex="1">
                      <children>
-                        <TextField fx:id="editEventTextField" disable="true" layoutY="17.0" prefHeight="41.0" prefWidth="155.0" visible="false" />
-                        <Label fx:id="eventNameLabel" alignment="CENTER" prefHeight="95.0" prefWidth="155.0" textAlignment="CENTER">
+                        <Button fx:id="sendInvitesButton" alignment="CENTER" mnemonicParsing="false" onAction="#sendInvites" prefHeight="402.0" prefWidth="301.0" text="Send Invites">
                            <font>
-                              <Font name="System Bold Italic" size="18.0" />
+                              <Font name="System Bold" size="16.0" />
                            </font>
+                           <VBox.margin>
+                              <Insets left="15.0" right="15.0" top="15.0" />
+                           </VBox.margin>
+                        </Button>
+                        <Label fx:id="sendInvitesConfirmation" alignment="CENTER" prefHeight="396.0" prefWidth="301.0" textAlignment="CENTER">
+                           <VBox.margin>
+                              <Insets left="15.0" right="15.0" />
+                           </VBox.margin></Label>
+                     </children>
+                  </VBox>
+                  <HBox prefHeight="100.0" prefWidth="300.0">
+                     <children>
+                        <Button id="HomeButton" alignment="CENTER" mnemonicParsing="false" onAction="#goToHome" prefHeight="65.0" prefWidth="65.0" text="⌂">
+                           <font>
+                              <Font size="52.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                           </HBox.margin>
+                           <padding>
+                              <Insets left="10.0" right="10.0" top="-10.0" />
+                           </padding>
+                        </Button>
+                        <Pane prefHeight="95.0" prefWidth="155.0">
+                           <children>
+                              <TextField fx:id="editEventTextField" disable="true" layoutY="17.0" prefHeight="41.0" prefWidth="155.0" visible="false" />
+                              <Label fx:id="eventNameLabel" alignment="CENTER" prefHeight="95.0" prefWidth="155.0" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold Italic" size="18.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </Pane>
+                        <Label fx:id="editTitle" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" text="✎" textAlignment="CENTER">
+                           <font>
+                              <Font size="23.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets bottom="15.0" top="25.0" />
+                           </HBox.margin>
                         </Label>
                      </children>
-                  </Pane>
-                  <Label fx:id="editTitle" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" text="✎" textAlignment="CENTER">
-                     <font>
-                        <Font size="23.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets bottom="15.0" top="25.0" />
-                     </HBox.margin>
-                  </Label>
+                  </HBox>
+                  <TableView fx:id="participantsList" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
+                     <columns>
+                        <TableColumn fx:id="firstNameColumn" prefWidth="85.0" text="First Name" />
+                        <TableColumn fx:id="lastNameColumn" prefWidth="85.0" text="Last Name" />
+                        <TableColumn fx:id="editColumn" prefWidth="50.0" text="Edit" />
+                        <TableColumn fx:id="deleteColumn" prefWidth="50.0" text="Delete" />
+                     </columns>
+                     <GridPane.margin>
+                        <Insets left="15.0" right="15.0" />
+                     </GridPane.margin>
+                  </TableView>
+                  <TableView fx:id="expensesList" layoutX="25.0" layoutY="160.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <columns>
+                        <TableColumn fx:id="titleColumn" prefWidth="85.0" text="Title" />
+                        <TableColumn fx:id="amountColumn" prefWidth="85.0" text="Amount" />
+                        <TableColumn fx:id="editColumn1" prefWidth="50.0" text="Edit" />
+                        <TableColumn fx:id="deleteColumn1" prefWidth="50.0" text="Delete" />
+                     </columns>
+                     <GridPane.margin>
+                        <Insets left="15.0" right="15.0" />
+                     </GridPane.margin>
+                  </TableView>
                </children>
-            </HBox>
-            <TableView fx:id="participantsList" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
-               <columns>
-                  <TableColumn fx:id="firstNameColumn" prefWidth="85.0" text="First Name" />
-                  <TableColumn fx:id="lastNameColumn" prefWidth="85.0" text="Last Name" />
-                  <TableColumn fx:id="editColumn" prefWidth="50.0" text="Edit" />
-                  <TableColumn fx:id="deleteColumn" prefWidth="50.0" text="Delete" />
-               </columns>
-               <GridPane.margin>
-                  <Insets left="15.0" right="15.0" />
-               </GridPane.margin>
-            </TableView>
-            <TableView fx:id="expensesList" layoutX="25.0" layoutY="160.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-               <columns>
-                  <TableColumn fx:id="titleColumn" prefWidth="85.0" text="Title" />
-                  <TableColumn fx:id="amountColumn" prefWidth="85.0" text="Amount" />
-                  <TableColumn fx:id="editColumn1" prefWidth="50.0" text="Edit" />
-                  <TableColumn fx:id="deleteColumn1" prefWidth="50.0" text="Delete" />
-               </columns>
-               <GridPane.margin>
-                  <Insets left="15.0" right="15.0" />
-               </GridPane.margin>
-            </TableView>
-         </children>
-      </GridPane>
+            </GridPane>
+         </center>
+      </BorderPane>
    </children>
 </AnchorPane>
