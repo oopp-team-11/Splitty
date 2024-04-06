@@ -185,7 +185,7 @@ public class ParticipantController {
         participant.setIban(receivedParticipant.getIban());
         participant.setBic(receivedParticipant.getBic());
 
-        eventLastActivityService.updateLastActivity(participant.getEvent().getId());
+        eventLastActivityService.updateLastActivity(receivedParticipant.getEventId());
         participant = participantRepository.save(participant);
 
 
@@ -212,7 +212,7 @@ public class ParticipantController {
 
         Participant participant = participantRepository.getReferenceById(receivedParticipant.getId());
 
-        eventLastActivityService.updateLastActivity(participant.getEvent().getId());
+        eventLastActivityService.updateLastActivity(receivedParticipant.getEventId());
         participantRepository.delete(participant);
 
 
