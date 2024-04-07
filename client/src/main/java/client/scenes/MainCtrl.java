@@ -247,13 +247,14 @@ public class MainCtrl {
 
     /**
      * Show event overview
-     * @param event Event, which will be shown
      */
-    public void showEventOverview(Event event) {
+    public void showEventOverview() {
         primaryStage.setTitle("Event overview");
         primaryStage.setScene(eventOverviewScene);
         primaryStage.setResizable(false);
-        eventOverviewCtrl.setEvent(event);
+        eventOverviewCtrl.setEvent(dataHandler.getEvent());
+        eventOverviewCtrl.refreshParticipantsData();
+        eventOverviewCtrl.refreshEventData();
         eventOverviewCtrl.translate(this.translationSupplier);
     }
 

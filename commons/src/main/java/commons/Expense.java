@@ -73,6 +73,14 @@ public class Expense {
     }
 
     /**
+     * Setter for the involved list
+     * @param involveds
+     */
+    public void setInvolveds(List<Involved> involveds) {
+        this.involveds = involveds;
+    }
+
+    /**
      * An empty Expense constructor for object mappers.
      */
     public Expense() {
@@ -93,7 +101,6 @@ public class Expense {
         this.amount = amount;
         this.paidById = paidById;
         this.invitationCode = invitationCode;
-        this.involveds = new InvolvedList();
     }
 
     /**

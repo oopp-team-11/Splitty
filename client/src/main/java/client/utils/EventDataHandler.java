@@ -2,9 +2,11 @@ package client.utils;
 
 import commons.Event;
 import commons.Expense;
+import commons.Involved;
 import commons.Participant;
 import javafx.application.Platform;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,9 +28,9 @@ public class EventDataHandler {
 
     /***
      * std constructor
-     * @param event
-     * @param participants
-     * @param expenses
+     * @param event event
+     * @param participants participants
+     * @param expenses expenses
      */
     public EventDataHandler(Event event, List<Participant> participants, List<Expense> expenses) {
         this.event = event;
@@ -58,13 +60,10 @@ public class EventDataHandler {
      * @param event the initial event object
      */
     public void setEvent(Event event) {
-        if (this.event == null) {
-            this.event = event;
-            Platform.runLater(() -> sessionHandler.getMainCtrl().showEventOverview(event));
-        } else {
-            this.event = event;
+        boolean refresh = this.event != null;
+        this.event = event;
+        if (refresh)
             Platform.runLater(() -> sessionHandler.getMainCtrl().refreshEventData());
-        }
     }
 
     /**
@@ -73,8 +72,10 @@ public class EventDataHandler {
      * @param participants Initial list of participants
      */
     public void setParticipants(List<Participant> participants) {
+        boolean refresh = this.participants != null;
         this.participants = participants;
-        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshParticipantsData());
+        if (refresh)
+            Platform.runLater(() -> sessionHandler.getMainCtrl().refreshParticipantsData());
     }
 
     /**
@@ -83,8 +84,14 @@ public class EventDataHandler {
      * @param expenses Initial list of expenses.
      */
     public void setExpenses(List<Expense> expenses) {
+        boolean refresh = this.expenses != null;
         this.expenses = expenses;
-        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
+        for (Expense expense : expenses)
+            assignParticipantsInExpense(expense);
+        if (refresh)
+            Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
+        else
+            Platform.runLater(() -> sessionHandler.getMainCtrl().showEventOverview());
     }
 
     /***
@@ -113,10 +120,10 @@ public class EventDataHandler {
 
     /***
      * helper method that handles the state of the participant
-     * @param uuid
+     * @param uuid uuid of participant
      * @return Participant
      */
-    private Participant getParticipantById(UUID uuid) {
+    public Participant getParticipantById(UUID uuid) {
         for (var participant : participants) {
             if (participant.getId().equals(uuid)) {
                 return participant;
@@ -127,8 +134,8 @@ public class EventDataHandler {
 
     /***
      * helper method that updates the participant
-     * @param toUpdate
-     * @param fromUpdate
+     * @param toUpdate locally stored participant
+     * @param fromUpdate participant storing new data
      */
     private void updateParticipant(Participant toUpdate, Participant fromUpdate) {
         toUpdate.setFirstName(fromUpdate.getFirstName());
@@ -140,12 +147,12 @@ public class EventDataHandler {
 
     /**
      * contains by id for participants
-     * @param receivedParticipant
-     * @return
+     * @param participantId participant id to check if exists
+     * @return boolean whether it exists
      */
-    private boolean containsParticipantById(Participant receivedParticipant) {
+    private boolean containsParticipantById(UUID participantId) {
         for (var participant : participants) {
-            if (participant.getId().equals(receivedParticipant.getId())) {
+            if (participant.getId().equals(participantId)) {
                 return true;
             }
         }
@@ -154,12 +161,12 @@ public class EventDataHandler {
 
     /**
      * contains by id for expenses
-     * @param receivedExpense
-     * @return
+     * @param expenseId expense to check whether exists locally
+     * @return boolean whether it exists
      */
-    private boolean containsExpenseById(Expense receivedExpense) {
+    private boolean containsExpenseById(UUID expenseId) {
         for (var expense : expenses) {
-            if (expense.getId().equals(receivedExpense.getId())) {
+            if (expense.getId().equals(expenseId)) {
                 return true;
             }
         }
@@ -172,10 +179,9 @@ public class EventDataHandler {
      * @param receivedParticipant the new Participant
      */
     public void getCreateParticipant(Participant receivedParticipant) {
-        if (containsParticipantById(receivedParticipant)) {
-            // logic of refetching list of participants
+        if (containsParticipantById(receivedParticipant.getId())) {
+            // logic of refreshing list of participants
             sessionHandler.refreshParticipants();
-            // TODO: logic of pop-up
             return;
         }
         participants.add(receivedParticipant);
@@ -188,21 +194,21 @@ public class EventDataHandler {
      * @param receivedParticipant the participant to be deleted
      */
     public void getDeleteParticipant(Participant receivedParticipant) {
-        if (!containsParticipantById(receivedParticipant)) {
-            //logic of refetching
+        Participant localParticipant = getParticipantById(receivedParticipant.getId());
+        if (localParticipant == null) {
             sessionHandler.refreshParticipants();
-            // TODO: logic of pop-up
             return;
         }
-
-        participants.remove(getParticipantById(receivedParticipant.getId()));
-        for (Expense expense : expenses){
-            if(expense.getPaidById() == receivedParticipant.getId()){
-                expenses.remove(expense);
-            }
+        participants.remove(localParticipant);
+        expenses.removeIf(expense -> expense.getPaidById().equals(receivedParticipant.getId()));
+        for (var expense : expenses) {
+            if (expense.getInvolveds() != null)
+                expense.getInvolveds()
+                        .removeIf(involved -> involved.getParticipantId().equals(receivedParticipant.getId()));
         }
-        sessionHandler.refreshExpenses();
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshParticipantsData());
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
+        //TODO: Refresh the Detailed Expense UI or go back to eventOverview
     }
 
     /**
@@ -211,15 +217,17 @@ public class EventDataHandler {
      * @param receivedParticipant new data for the already existing participant
      */
     public void getUpdateParticipant(Participant receivedParticipant) {
-        if (!containsParticipantById(receivedParticipant)) {
-            //logic of refetching
+        Participant localParticipant = getParticipantById(receivedParticipant.getId());
+        if (localParticipant == null) {
             sessionHandler.refreshParticipants();
-            // TODO: logic of pop-up
             return;
         }
-
-        updateParticipant(getParticipantById(receivedParticipant.getId()), receivedParticipant);
+        updateParticipant(localParticipant, receivedParticipant);
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshParticipantsData());
+        //Refresh the list of expense to refresh potential changes of paidBy names in the UI
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
+        //TODO: Refresh the Detailed Expense UI to refresh to refresh potential changes of paidBy and involved
+        // names in the UI
     }
 
     /**
@@ -231,7 +239,6 @@ public class EventDataHandler {
         if (event == null) {
             // logic of pop-up
             sessionHandler.refreshEvent();
-            // TODO: logic of pop-up
             return;
         }
 
@@ -240,14 +247,45 @@ public class EventDataHandler {
     }
 
     /**
-     * Receives the request to delete all data related to current event and change the scene to start screen
+     * Sets all data related to current event to null
      */
-    public void getDeleteEvent() {
-        // Maybe some smarter logic will be needed
+    public void setAllToNull() {
         event = null;
         participants = null;
         expenses = null;
+    }
+
+    /**
+     * Receives the request to delete all data related to current event and change the scene to start screen
+     */
+    public void getDeleteEvent() {
+        sessionHandler.unsubscribeFromCurrentEvent();
+        setAllToNull();
         Platform.runLater(() -> sessionHandler.getMainCtrl().showStartScreen());
+    }
+
+    /**
+     * Sets the participant fields in expense paidBy and list of involved
+     *
+     * @param expense expense in which to set the participants
+     */
+    public void assignParticipantsInExpense(Expense expense) {
+        expense.setPaidBy(getParticipantById(expense.getPaidById()));
+        if (expense.getPaidBy() == null) {
+            expenses = null; //This allows for a sequential refresh
+            sessionHandler.refreshParticipants();
+            return;
+        }
+        if (expense.getInvolveds() != null) {
+            for (Involved involved : expense.getInvolveds()) {
+                involved.setParticipant(getParticipantById(involved.getParticipantId()));
+                if (involved.getParticipant() == null) {
+                    expenses = null; //This allows for a sequential refresh
+                    sessionHandler.refreshParticipants();
+                    return;
+                }
+            }
+        }
     }
 
     /**
@@ -256,13 +294,12 @@ public class EventDataHandler {
      * @param receivedExpense the new Expense
      */
     public void getCreateExpense(Expense receivedExpense) {
-        if (containsExpenseById(receivedExpense)) {
-            // logic of refetching expenses from server
+        if (containsExpenseById(receivedExpense.getId())) {
+            // logic of refreshing expenses from server
             sessionHandler.refreshExpenses();
-            // TODO: logic of pop-up
             return;
         }
-
+        assignParticipantsInExpense(receivedExpense);
         expenses.add(receivedExpense);
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
     }
@@ -273,15 +310,15 @@ public class EventDataHandler {
      * @param receivedExpense an expense object containing updated fields
      */
     public void getUpdateExpense(Expense receivedExpense) {
-        if (!containsExpenseById(receivedExpense)) {
-            // logic of refetching expenses
+        Expense localExpense = getExpenseById(receivedExpense.getId());
+        if (localExpense == null) {
             sessionHandler.refreshExpenses();
-            // TODO: logic of pop-up
             return;
         }
-
-        updateExpense(getExpenseById(receivedExpense.getId()), receivedExpense);
+        updateExpense(localExpense, receivedExpense);
+        assignParticipantsInExpense(localExpense);
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
+        //TODO: Refresh the Detailed Expense UI if appropriate
     }
 
     /**
@@ -290,31 +327,22 @@ public class EventDataHandler {
      * @param receivedExpense the Expense that should be deleted
      */
     public void getDeleteExpense(Expense receivedExpense) {
-        if (!containsExpenseById(receivedExpense)) {
-            // logic of refetching expenses
+        Expense localExpense = getExpenseById(receivedExpense.getId());
+        if (localExpense == null) {
             sessionHandler.refreshExpenses();
-            // TODO: logic of pop-up
             return;
         }
-
-        expenses.remove(getExpenseById(receivedExpense.getId()));
+        expenses.remove(localExpense);
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
+        //TODO: Refresh the Detailed Expense UI or go back to eventOverview
     }
-
-    /**
-     * Handles received updates on a Participant object
-     *
-     * @param receivedParticipant received Participant object
-     * @param methodType          type of change
-     */
-
 
     /***
      * returns expense by id
-     * @param uuid
+     * @param uuid uuid of an expense
      * @return Expense
      */
-    private Expense getExpenseById(UUID uuid) {
+    public Expense getExpenseById(UUID uuid) {
         for (var expense : expenses) {
             if (expense.getId().equals(uuid)) {
                 return expense;
@@ -323,14 +351,84 @@ public class EventDataHandler {
         return null;
     }
 
+    /**
+     * Filters the expense list by participant who paid for it
+     * @param participant Participant to filter by
+     * @return returns a new list of expenses, which the provided participant paid for
+     */
+    public List<Expense> getExpensesByParticipant(Participant participant) {
+        List<Expense> expensesByParticipant = new ArrayList<>();
+        for (var expense : expenses) {
+            if (expense.getPaidById().equals(participant.getId())) {
+                expensesByParticipant.add(expense);
+            }
+        }
+        return expensesByParticipant;
+    }
+
+    /**
+     * Filters the expense list by participant who is involved in it
+     * @param involvedParticipant Participant to filter by
+     * @return returns a new list of expenses, which the provided participant is involved in
+     */
+    public List<Expense> getExpensesByInvolvedParticipant(Participant involvedParticipant) {
+        List<Expense> expensesByInvolvedParticipant = new ArrayList<>();
+        for (var expense : expenses) {
+            for (var involved : expense.getInvolveds()) {
+                if (involved.getParticipantId().equals(involvedParticipant.getId())) {
+                    expensesByInvolvedParticipant.add(expense);
+                }
+            }
+        }
+        return expensesByInvolvedParticipant;
+    }
+
     /***
      * updates the toUpdate expense with fromUpdate expense
-     * @param toUpdate
-     * @param fromUpdate
+     * @param toUpdate locally existing expense
+     * @param fromUpdate expense containing new data
      */
     private static void updateExpense(Expense toUpdate, Expense fromUpdate) {
         toUpdate.setTitle(fromUpdate.getTitle());
         toUpdate.setAmount(fromUpdate.getAmount());
         toUpdate.setPaidById(fromUpdate.getPaidById());
+        toUpdate.setInvolveds(fromUpdate.getInvolveds());
+    }
+
+    /**
+     * Returns an involved object from provided expense and involved id
+     * @param expense Expense in which to search involved
+     * @param id id of involved
+     * @return involved object from expense object
+     */
+    public Involved getInvolvedById(Expense expense, UUID id) {
+        for (var involved : expense.getInvolveds()) {
+            if (involved.getId().equals(id))
+                return involved;
+        }
+        return null;
+    }
+
+    /**
+     * Handle updates of Involved object
+     *
+     * @param receivedInvolved received involved object with updated data
+     */
+    public void getUpdateInvolved(Involved receivedInvolved) {
+        Expense localExpense = getExpenseById(receivedInvolved.getExpenseId());
+        if (localExpense == null) {
+            sessionHandler.refreshExpenses();
+            return;
+        }
+        Involved localInvolved = getInvolvedById(localExpense, receivedInvolved.getId());
+        if (localInvolved == null) {
+            sessionHandler.refreshExpenses();
+            return;
+        }
+        updateInvolved(localInvolved, receivedInvolved);
+    }
+
+    private void updateInvolved(Involved toUpdate, Involved fromUpdate) {
+        toUpdate.setIsSettled(fromUpdate.getIsSettled());
     }
 }

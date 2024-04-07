@@ -4,6 +4,7 @@ import client.Main;
 import client.scenes.MainCtrl;
 import commons.Event;
 import commons.Expense;
+import commons.Involved;
 import commons.Participant;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -31,8 +32,14 @@ class EventDataHandlerTest {
     Participant p2;
     Expense e1;
     Expense e2;
+    Involved i1;
+    Involved i2;
+    Involved i3;
+    Involved i4;
     List<Participant> participants;
     List<Expense> expenses;
+    List<Involved> involveds1;
+    List<Involved> involveds2;
     WebsocketSessionHandler sessionMock;
     Application app;
 
@@ -53,6 +60,18 @@ class EventDataHandlerTest {
         setId(e1, UUID.randomUUID());
         e2 = new Expense(p2, "2", 2.0);
         setId(e2, UUID.randomUUID());
+        i1 = new Involved(UUID.randomUUID(), true, e1.getId(), p1.getId());
+        i2 = new Involved(UUID.randomUUID(), false, e1.getId(), p2.getId());
+        i3 = new Involved(UUID.randomUUID(), false, e2.getId(), p1.getId());
+        i4 = new Involved(UUID.randomUUID(), true, e2.getId(), p2.getId());
+        involveds1 = new ArrayList<>();
+        involveds1.add(i1);
+        involveds1.add(i2);
+        involveds2 = new ArrayList<>();
+        involveds2.add(i3);
+        involveds2.add(i4);
+        e1.setInvolveds(involveds1);
+        e2.setInvolveds(involveds2);
         participants = new ArrayList<>();
         participants.add(p1);
         participants.add(p2);
@@ -75,8 +94,6 @@ class EventDataHandlerTest {
     private static void setId(Participant toSet, UUID newId) throws IllegalAccessException {
         FieldUtils.writeField(toSet, "id", newId, true);
     }
-
-
 
     @Test
     void noExpenseToDelete() {
@@ -148,6 +165,7 @@ class EventDataHandlerTest {
         assertEquals(p2, handler.getParticipants().getFirst());
         assertEquals(1, handler.getExpenses().size());
         assertEquals(e2, handler.getExpenses().getFirst());
+        assertEquals(1, e2.getInvolveds().size());
     }
 
     @Test
@@ -161,21 +179,34 @@ class EventDataHandlerTest {
 
     @Test
     void receiveExpenseCreate() {
-        var e3 = new Expense(p2, "Antihypetrain", 3.0);
+        var e3 = new Expense(UUID.randomUUID(), "Antihypetrain", 3.0, p2.getId(), event.getId());
+        Involved i5 = new Involved(UUID.randomUUID(), true, e3.getId(), p2.getId());
+        List<Involved> involveds = new ArrayList<>();
+        involveds.add(i5);
+        e3.setInvolveds(involveds);
         try {
             handler.getCreateExpense(e3);
         }catch (IllegalStateException ignored){}
 
         assertEquals(e3, handler.getExpenses().getLast());
+        assertEquals(p2, e3.getPaidBy());
+        assertEquals(p2, e3.getInvolveds().getFirst().getParticipant());
     }
 
     @Test
     void receiveExpenseUpdate() {
-        e1.setTitle("Antihype");
+        var newE1 = new Expense(e1.getId(), "Antihype", 1.0, e1.getPaidById(), e1.getInvitationCode());
+        Involved i5 = new Involved(UUID.randomUUID(), true, newE1.getId(), p2.getId());
+        List<Involved> involveds = new ArrayList<>();
+        involveds.add(i5);
+        newE1.setInvolveds(involveds);
         try {
-            handler.getUpdateExpense(e1);
+            handler.getUpdateExpense(newE1);
         }catch (IllegalStateException ignored){}
         assertEquals(e1, handler.getExpenses().getFirst());
+        assertEquals("Antihype", e1.getTitle());
+        assertEquals(p1, e1.getPaidBy());
+        assertEquals(p2, e1.getInvolveds().getFirst().getParticipant());
     }
 
     @Test
@@ -196,7 +227,109 @@ class EventDataHandlerTest {
     }
 
     @Test
-    void checkAlreadyCreatedParticipant() {
+    void assignPaidByRefresh() {
+        e1.setPaidById(UUID.randomUUID());
+        handler.assignParticipantsInExpense(e1);
+        assertNull(handler.getExpenses());
+        verify(sessionMock).refreshParticipants();
+    }
 
+    @Test
+    void assignInvolvedRefresh() {
+        e1.getInvolveds().getFirst().setParticipantId(UUID.randomUUID());
+        handler.assignParticipantsInExpense(e1);
+        assertNull(handler.getExpenses());
+        verify(sessionMock).refreshParticipants();
+    }
+
+    @Test
+    void setAllToNull() {
+        handler.setAllToNull();
+        assertNull(handler.getExpenses());
+        assertNull(handler.getParticipants());
+        assertNull(handler.getEvent());
+    }
+
+    @Test
+    void getExpenseById() {
+        assertEquals(e2, handler.getExpenseById(e2.getId()));
+    }
+
+    @Test
+    void getExpenseByIdNull() {
+        assertNull(handler.getExpenseById(UUID.randomUUID()));
+    }
+
+    @Test
+    void getParticipantById() {
+        assertEquals(p2, handler.getParticipantById(p2.getId()));
+    }
+
+    @Test
+    void getParticipantByIdNull() {
+        assertNull(handler.getParticipantById(UUID.randomUUID()));
+    }
+
+    @Test
+    void getExpensesByParticipant() {
+        List<Expense> expenses = handler.getExpensesByParticipant(p1);
+        assertNotNull(expenses);
+        assertEquals(1, expenses.size());
+        assertEquals(e1, expenses.getFirst());
+    }
+
+    @Test
+    void getExpensesByInvolvedParticipant() {
+        List<Expense> expenses = handler.getExpensesByInvolvedParticipant(p1);
+        assertNotNull(expenses);
+        assertEquals(2, expenses.size());
+        assertEquals(e1, expenses.getFirst());
+        assertEquals(e2, expenses.getLast());
+    }
+
+    @Test
+    void setEvent() {
+        EventDataHandler handler1 = new EventDataHandler();
+        handler1.setEvent(event);
+        assertEquals(event, handler1.getEvent());
+    }
+
+    @Test
+    void setParticipants() {
+        EventDataHandler handler1 = new EventDataHandler();
+        handler1.setParticipants(participants);
+        assertEquals(participants, handler1.getParticipants());
+    }
+
+    @Test
+    void getInvolvedById() {
+        assertEquals(i1, handler.getInvolvedById(e1, i1.getId()));
+    }
+
+    @Test
+    void getInvolvedByIdNull() {
+        assertNull(handler.getInvolvedById(e1, UUID.randomUUID()));
+    }
+
+    @Test
+    void getUpdateInvolved() {
+        boolean notI1Settled = !i1.getIsSettled();
+        Involved newI1 = new Involved(i1.getId(), notI1Settled, i1.getExpenseId(), i1.getParticipantId());
+        handler.getUpdateInvolved(newI1);
+        assertEquals(notI1Settled, i1.getIsSettled());
+    }
+
+    @Test
+    void getUpdateInvolvedExpenseNotFound() {
+        Involved newI1 = new Involved(i1.getId(), i1.getIsSettled(), UUID.randomUUID(), i1.getParticipantId());
+        handler.getUpdateInvolved(newI1);
+        verify(sessionMock).refreshExpenses();
+    }
+
+    @Test
+    void getUpdateInvolvedNotFound() {
+        Involved newI1 = new Involved(UUID.randomUUID(), i1.getIsSettled(), i1.getExpenseId(), i1.getParticipantId());
+        handler.getUpdateInvolved(newI1);
+        verify(sessionMock).refreshExpenses();
     }
 }

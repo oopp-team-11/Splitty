@@ -144,7 +144,7 @@ public class CreateParticipantCtrl implements Translatable {
                 "create"
         );
 
-        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
+        mainCtrl.showEventOverview();
 
     }
 
@@ -152,6 +152,6 @@ public class CreateParticipantCtrl implements Translatable {
      * Method for aborting creating participant
      */
     public void abort() {
-        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
+        mainCtrl.showEventOverview();
     }
 }

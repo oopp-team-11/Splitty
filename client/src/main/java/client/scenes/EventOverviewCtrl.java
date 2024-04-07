@@ -310,7 +310,7 @@ public class EventOverviewCtrl implements Translatable {
      */
     public void goToHome() {
         mainCtrl.getSessionHandler().unsubscribeFromCurrentEvent();
-        mainCtrl.getDataHandler().setEvent(null);
+        mainCtrl.getDataHandler().setAllToNull();
         mainCtrl.showStartScreen();
     }
 }

@@ -36,7 +36,10 @@ public class ReadEventHandler implements StompFrameHandler {
         StatusEntity status = (StatusEntity) payload;
         switch (status.getStatusCode()) {
             case OK -> {
+                boolean init = dataHandler.getEvent() == null;
                 dataHandler.setEvent(status.getEvent());
+                if (init)
+                    mainCtrl.getSessionHandler().afterInitialEventRead();
             }
             case BAD_REQUEST -> {
                 System.out.println("Server did not find invitationCode in the message. This should never happen.");

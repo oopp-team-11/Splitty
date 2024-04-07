@@ -126,7 +126,7 @@ public class EditParticipantCtrl implements Translatable {
 
         mainCtrl.getSessionHandler().sendParticipant(participant, "update");
 
-        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
+        mainCtrl.showEventOverview();
 
     }
 
@@ -134,6 +134,6 @@ public class EditParticipantCtrl implements Translatable {
      * Method for aborting creating participant
      */
     public void abort() {
-        mainCtrl.showEventOverview(mainCtrl.getDataHandler().getEvent());
+        mainCtrl.showEventOverview();
     }
 }
