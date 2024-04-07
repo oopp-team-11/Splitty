@@ -161,15 +161,6 @@ public class Involved {
     /**
      * std setter
      *
-     * @param participant participant to set
-     */
-    public void setParticipant(Participant participant) {
-        this.participant = participant;
-    }
-
-    /**
-     * std setter
-     *
      * @param settled
      */
     public void setIsSettled(boolean settled) {
