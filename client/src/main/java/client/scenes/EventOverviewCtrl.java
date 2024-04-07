@@ -16,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 import java.util.HashMap;
@@ -25,6 +26,8 @@ import java.util.Map;
  * class CreateParticipantController
  */
 public class EventOverviewCtrl implements Translatable {
+    @FXML
+    public Pane languageSwitchPlaceHolder;
     @FXML
     public Label expensesLabel;
     @FXML
@@ -50,9 +53,15 @@ public class EventOverviewCtrl implements Translatable {
     @FXML
     public TableColumn<Expense, Button> deleteColumn1;
     @FXML
-    public Label editTitle;
+    public Button editTitle;
     @FXML
     public TextField editEventTextField;
+    @FXML
+    public Label changeLanguageLabel;
+    @FXML
+    public Label goToStartScreenLabel;
+    @FXML
+    public Label editTitleLabel;
     @FXML
     private Label participantsLabel;
     @FXML
@@ -122,7 +131,13 @@ public class EventOverviewCtrl implements Translatable {
         });
         expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));
 
-        editTitle.onMouseClickedProperty().set(event1 -> editingTitle());
+        editTitle.onMouseClickedProperty().set(event1 -> {
+            if (editEventTextField.isVisible()){
+                stopEditingTitle();
+            }else {
+                editingTitle();
+            }
+        });
         editEventTextField.onKeyPressedProperty().set(keyEvent -> {
             if(keyEvent.getCode().equals(KeyCode.ENTER)){
                 stopEditingTitle();
@@ -130,6 +145,10 @@ public class EventOverviewCtrl implements Translatable {
         });
 
         sendInvitesConfirmation.setText("");
+
+
+        languageSwitchPlaceHolder.getChildren().clear();
+        languageSwitchPlaceHolder.getChildren().add(mainCtrl.getLanguageSwitchButton());
     }
 
     /**
@@ -157,12 +176,14 @@ public class EventOverviewCtrl implements Translatable {
     }
 
     private void editingTitle(){
+        editTitle.setStyle("-fx-base: #49873a");
         editEventTextField.setText(mainCtrl.getDataHandler().getEvent().getTitle());
         editEventTextField.setVisible(true);
         editEventTextField.setDisable(false);
         eventNameLabel.setVisible(false);
     }
     private void stopEditingTitle(){
+        editTitle.setStyle("");
         Event updatedEvent = mainCtrl.getDataHandler().getEvent();
         updatedEvent.setTitle(editEventTextField.getText());
         mainCtrl.getSessionHandler().sendEvent(updatedEvent, "update");
@@ -184,6 +205,9 @@ public class EventOverviewCtrl implements Translatable {
         labels.put(this.expensesLabel, "Expenses");
         labels.put(this.addParticipantBtn, "AddAParticipant");
         labels.put(this.addExpenseBtn, "AddAnExpense");
+        labels.put(this.changeLanguageLabel, "ChangeLanguageLabel");
+        labels.put(this.goToStartScreenLabel, "GoToStartScreenLabel");
+        labels.put(this.editTitleLabel, "EditTitleLabel");
         labels.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;

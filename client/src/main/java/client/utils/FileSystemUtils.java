@@ -267,9 +267,6 @@ public class FileSystemUtils {
                 //TODO: Pop-up showing error, but it is only a warning
                 return getTranslationSupplier(path);
             }
-            if(lang.equals("en")){
-                return null;
-            }
             return new TranslationSupplier(lang);
         }
         catch (Exception e) {
@@ -289,6 +286,47 @@ public class FileSystemUtils {
                     "You need to delete en and put it there.");
             //TODO: Pop-up showing error, but it is only a warning
             return getTranslationSupplier(path);
+        }
+    }
+
+    /**
+     * Method for changing language in config file
+     * @param path path to client-config.json
+     * @param language language to set it to
+     * @throws IOException possible error throw
+     */
+    public void changeLanguageInFile(String path, String language) throws IOException {
+        try{
+            JsonReader reader = Json.createReader(new FileReader(path));
+            JsonObject oldJson = reader.readObject();
+            reader.close();
+
+            JsonObject newJson = Json.createObjectBuilder()
+                    .add("server-ip", oldJson.get("server-ip"))
+                    .add("lang", language)
+                    .build();
+
+            FileWriter file = new FileWriter(path);
+            file.write(newJson.toString());
+            file.flush();
+            file.close();
+        }
+        catch (Exception e) {
+            JsonObject json = Json.createObjectBuilder()
+                    .add("server-ip", "localhost:8080")
+                    .add("lang", "en")
+                    .build();
+
+            FileWriter file = new FileWriter(path);
+            file.write(json.toString());
+            file.flush();
+            file.close();
+
+            System.err.println(path + " is the wrong format. \n" +
+                    "Created new default file, please put the language if it isn't en(english) " +
+                    "in client-config.json.\n" +
+                    "You need to delete en and put it there.");
+            //TODO: Pop-up showing error, but it is only a warning
         }
     }
 }
