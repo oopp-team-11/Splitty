@@ -301,4 +301,35 @@ class EventDataHandlerTest {
         assertEquals(participants, handler1.getParticipants());
     }
 
+    @Test
+    void getInvolvedById() {
+        assertEquals(i1, handler.getInvolvedById(e1, i1.getId()));
+    }
+
+    @Test
+    void getInvolvedByIdNull() {
+        assertNull(handler.getInvolvedById(e1, UUID.randomUUID()));
+    }
+
+    @Test
+    void getUpdateInvolved() {
+        boolean notI1Settled = !i1.getIsSettled();
+        Involved newI1 = new Involved(i1.getId(), notI1Settled, i1.getExpenseId(), i1.getParticipantId());
+        handler.getUpdateInvolved(newI1);
+        assertEquals(notI1Settled, i1.getIsSettled());
+    }
+
+    @Test
+    void getUpdateInvolvedExpenseNotFound() {
+        Involved newI1 = new Involved(i1.getId(), i1.getIsSettled(), UUID.randomUUID(), i1.getParticipantId());
+        handler.getUpdateInvolved(newI1);
+        verify(sessionMock).refreshExpenses();
+    }
+
+    @Test
+    void getUpdateInvolvedNotFound() {
+        Involved newI1 = new Involved(UUID.randomUUID(), i1.getIsSettled(), i1.getExpenseId(), i1.getParticipantId());
+        handler.getUpdateInvolved(newI1);
+        verify(sessionMock).refreshExpenses();
+    }
 }
