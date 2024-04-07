@@ -123,7 +123,7 @@ public class EventDataHandler {
      * @param uuid uuid of participant
      * @return Participant
      */
-    private Participant getParticipantById(UUID uuid) {
+    public Participant getParticipantById(UUID uuid) {
         for (var participant : participants) {
             if (participant.getId().equals(uuid)) {
                 return participant;
@@ -346,7 +346,7 @@ public class EventDataHandler {
      * @param uuid uuid of an expense
      * @return Expense
      */
-    private Expense getExpenseById(UUID uuid) {
+    public Expense getExpenseById(UUID uuid) {
         for (var expense : expenses) {
             if (expense.getId().equals(uuid)) {
                 return expense;
