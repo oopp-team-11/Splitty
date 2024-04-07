@@ -17,9 +17,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.application.Platform;
-import java.io.IOException;
+
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
@@ -28,11 +30,17 @@ import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import client.interfaces.Translatable;
+import org.json.JSONException;
+
 /**
  * Start Screen controller for showing start screen and entering to events
  */
 public class StartScreenCtrl implements Initializable, Translatable {
     private final MainCtrl mainCtrl;
+    @FXML
+    public Pane languageSwitchPlaceHolder;
+    @FXML
+    public Label changeLanguageLabel;
 
     @FXML
     private Button createBtn;
@@ -129,6 +137,7 @@ public class StartScreenCtrl implements Initializable, Translatable {
         labels.put(this.newEventName, "EventName");
         labels.put(this.joinInvitationCode, "InvitationCode");
         labels.put(this.adminPassword, "AdminPassword");
+        labels.put(this.changeLanguageLabel, "ChangeLanguageLabel");
         labels.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
@@ -161,9 +170,13 @@ public class StartScreenCtrl implements Initializable, Translatable {
             newEventName.clear();
             joinInvitationCode.clear();
             startLongPolling(eventIds);
+
+            languageSwitchPlaceHolder.getChildren().clear();
+            languageSwitchPlaceHolder.getChildren().add(mainCtrl.getLanguageSwitchButton());
+
         } catch (IOException | InterruptedException e) {
             System.out.println("Failed to get recent events: " + e.getMessage());
-        } catch (org.json.JSONException e) {
+        } catch (JSONException e) {
             System.out.println("Failed to parse server response: " + e.getMessage());
         }
     }

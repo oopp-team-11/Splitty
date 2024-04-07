@@ -25,6 +25,11 @@ import commons.Expense;
 import commons.Participant;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
@@ -32,8 +37,13 @@ import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonWriter;
+import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Main scene controller. It oversights currently active scenes, switches between them,
@@ -69,6 +79,9 @@ public class MainCtrl {
     private AdminDataHandler adminDataHandler;
 
     private TranslationSupplier translationSupplier;
+    private LinkedHashMap<String, Locale> availableLanguages;
+
+    private MenuButton languageSwitchButton;
 
     /**
      * Initializes javafx scenes and their controllers, sets start screen as the currently shown screen
@@ -115,17 +128,41 @@ public class MainCtrl {
         this.adminPanelScene = new Scene(adminPanel.getValue());
 
         this.adminDataHandler = new AdminDataHandler();
+        this.languageSwitchButton = new MenuButton();
+
+        setAvailableLanguagesFromFiles();
 
         // Needs to be before the start websocket method
         setServerIp();
 
         setTranslationSupplier();
 
+        setLanguageSwitchButton();
+
         startWebSocket();
 
         showStartScreen();
 
         primaryStage.show();
+    }
+
+    private void setAvailableLanguagesFromFiles() {
+        File locales = new File("locales");
+        List<String> listOfLocalesNames = new ArrayList<>(Arrays.stream(Objects.requireNonNull(locales.listFiles()))
+                .map(File::getName).map(string -> string.replace(".json", "")).toList());
+        listOfLocalesNames.add("en");
+
+        HashMap<String, Locale> localeHashMap = new HashMap<>();
+        listOfLocalesNames.forEach(localeName ->
+                localeHashMap.put(localeName, new Locale.Builder().setLanguage(localeName).build()));
+
+        this.availableLanguages = localeHashMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.comparing(Locale::getDisplayLanguage)))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
     }
 
     /**
@@ -138,7 +175,7 @@ public class MainCtrl {
 
     /**
      * std setter
-     * @param adminDataHandler
+     * @param adminDataHandler data handler
      */
     public void setAdminDataHandler(AdminDataHandler adminDataHandler) {
         this.adminDataHandler = adminDataHandler;
@@ -149,6 +186,7 @@ public class MainCtrl {
      */
     public void showStartScreen() {
         primaryStage.setTitle("Start Screen");
+
         primaryStage.setScene(startScreenScene);
         primaryStage.setResizable(false);
         try {
@@ -165,7 +203,7 @@ public class MainCtrl {
      * @param event Event, which the participant will belong to
      */
     public void showCreateParticipant(Event event) {
-        primaryStage.setTitle("Add participant ui");
+        primaryStage.setTitle("Add participant");
         primaryStage.setScene(createParticipantScene);
         primaryStage.setResizable(false);
         createParticipantCtrl.setEvent(event);
@@ -177,7 +215,7 @@ public class MainCtrl {
      * @param participant Participant that will be edited
      */
     public void showEditParticipant(Participant participant) {
-        primaryStage.setTitle("Edit participant ui");
+        primaryStage.setTitle("Edit participant");
         primaryStage.setScene(editParticipantScene);
         primaryStage.setResizable(false);
         editParticipantCtrl.setParticipant(participant);
@@ -189,7 +227,7 @@ public class MainCtrl {
      * @param expense expense that will be edited
      */
     public void showEditExpense(Expense expense) {
-        primaryStage.setTitle("Edit expense ui");
+        primaryStage.setTitle("Edit expense");
         primaryStage.setScene(editExpenseScene);
         primaryStage.setResizable(false);
         editExpenseCtrl.setExpense(expense);
@@ -200,7 +238,7 @@ public class MainCtrl {
      * Show edit expense ui
      */
     public void showAddExpense() {
-        primaryStage.setTitle("Edit expense ui");
+        primaryStage.setTitle("Add expense");
         primaryStage.setScene(addExpenseScene);
         primaryStage.setResizable(false);
         addExpenseCtrl.setFields();
@@ -228,6 +266,7 @@ public class MainCtrl {
         primaryStage.setScene(adminPanelScene);
         primaryStage.setResizable(false);
         adminPanelCtrl.makeSetUp();
+        adminPanelCtrl.translate(this.translationSupplier);
     }
 
     /**
@@ -288,7 +327,10 @@ public class MainCtrl {
         }
     }
 
-    private void setTranslationSupplier(){
+    /**
+     * Method for setting the correct language in all scenes
+     */
+    public void setTranslationSupplier(){
         FileSystemUtils utils = new FileSystemUtils();
         try {
             this.translationSupplier = utils.getTranslationSupplier("client-config.json");
@@ -332,5 +374,127 @@ public class MainCtrl {
         if(primaryStage.getTitle().equals("Event overview")){
             eventOverviewCtrl.refreshExpensesData();
         }
+    }
+
+    /**
+     * Getter for available languages
+     * @return available languages in a linked hashmap
+     */
+    public LinkedHashMap<String, Locale> getAvailableLanguages() {
+        return availableLanguages;
+    }
+
+    /**
+     * Getter for the translation Supplier
+     * @return current translationSupplier
+     */
+    public TranslationSupplier getTranslationSupplier() {
+        return translationSupplier;
+    }
+
+    /**
+     * Getter for language switch button
+     * @return generated menubutton to use on multiple scenes
+     */
+    public MenuButton getLanguageSwitchButton(){
+        return languageSwitchButton;
+    }
+
+    private void setLanguageSwitchButton(){
+        getAvailableLanguages().values().forEach(locale ->
+        {
+            MenuItem newOption = new MenuItem();
+            newOption.setText(locale.getDisplayLanguage() + " - " + locale.getDisplayLanguage(locale));
+
+            //Does some conversion to get the correct country code of this option
+            String countryCode;
+            try{
+                var reader = Json.createReader(new FileReader("locales/" +
+                        getAvailableLanguages().values().stream().filter(
+                                locale1 -> locale1.getDisplayLanguage().equals(newOption.getText().split(" - ")[0])
+                        ).toList().getFirst() + ".json"));
+                JsonObject json = reader.readObject();
+                reader.close();
+
+                countryCode = json.get("Country Code in ISO 3166-1-alpha-3 code")
+                        .toString().replaceAll("\"", "");
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
+            ImageView imageView = new ImageView(new Image("/flags/" + countryCode + ".png"));
+            imageView.setPreserveRatio(true);
+            imageView.setSmooth(true);
+            imageView.setFitWidth(16);
+
+            newOption.setGraphic(imageView);
+            newOption.setOnAction(actionEvent -> {
+                    try {
+                        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+                        fileSystemUtils.changeLanguageInFile("client-config.json",
+                                getAvailableLanguages().values().stream().filter(
+                                        locale1 -> locale1.getDisplayLanguage().equals(
+                                                ((MenuItem) actionEvent.getSource()).getText().split(" - ")[0])
+                                ).toList().getFirst().getLanguage());
+                        setTranslationSupplier();
+                        ((ImageView) languageSwitchButton.getGraphic()).setImage(
+                                ((ImageView)((MenuItem) actionEvent.getSource()).getGraphic()).getImage());
+                        startScreenCtrl.translate(translationSupplier);
+                        eventOverviewCtrl.translate(translationSupplier);
+                        adminPanelCtrl.translate(translationSupplier);
+                        languageSwitchButton.getItems().stream()
+                                .filter(item -> (item.getUserData() != null
+                                        && item.getUserData().equals("template download")))
+                                .toList().getFirst().setText(
+                                        translationSupplier.getTranslation("DownloadTemplate")
+                                                .replaceAll("\"", ""));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            );
+            languageSwitchButton.getItems().addLast(newOption);
+        });
+
+        MenuItem item = new MenuItem(translationSupplier.getTranslation("DownloadTemplate")
+                .replaceAll("\"", ""));
+        item.setUserData("template download");
+        item.setOnAction(event -> {
+                DirectoryChooser chooser = new DirectoryChooser();
+                chooser.setTitle("Select Folder");
+                var dir = chooser.showDialog(primaryStage);
+                if (dir == null) return;
+                FileWriter writer;
+                try {
+                    writer = new FileWriter(dir + "/template.json");
+                    JsonWriter jsonWriter = Json.createWriter(writer);
+                    JsonReader jsonReader = Json.createReader(new FileReader("locales/en.json"));
+
+                    jsonWriter.write(jsonReader.readObject());
+                    writer.flush();
+                    writer.close();
+                    jsonWriter.close();
+
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        );
+
+        languageSwitchButton.getItems().addLast(item);
+
+        ImageView imageView = new ImageView(
+                new Image("/flags/" +
+                        getTranslationSupplier()
+                                .getTranslation("Country Code in ISO 3166-1-alpha-3 code")
+                                .replaceAll("\"", "")
+                        + ".png"));
+        imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
+        imageView.setFitWidth(16);
+
+        languageSwitchButton.setGraphic(imageView);
+        languageSwitchButton.setMaxSize(50, 50);
     }
 }
