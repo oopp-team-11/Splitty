@@ -1,13 +1,18 @@
 package commons;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -30,11 +35,42 @@ public class Expense {
     @Column(nullable = false)
     private double amount;
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "expense", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Involved> involveds;
+
     @Transient
     private UUID paidById;
 
     @Transient
     private UUID invitationCode;
+
+    @Transient
+    private double amountOwed;
+
+    /**
+     * std getter
+     * @return amount owed
+     */
+    public double getAmountOwed() {
+        return amountOwed;
+    }
+
+    /**
+     * std setter
+     * @param amountOwed
+     */
+    public void setAmountOwed(double amountOwed) {
+        this.amountOwed = amountOwed;
+    }
+
+    /**
+     * std getter
+     * @return list of involveds
+     */
+    public List<Involved> getInvolveds() {
+        return involveds;
+    }
 
     /**
      * An empty Expense constructor for object mappers.
@@ -57,6 +93,7 @@ public class Expense {
         this.amount = amount;
         this.paidById = paidById;
         this.invitationCode = invitationCode;
+        this.involveds = new InvolvedList();
     }
 
     /**
@@ -164,13 +201,13 @@ public class Expense {
 
         return new EqualsBuilder().append(amount, expense.amount).append(id, expense.id)
                 .append(title, expense.title).append(paidById, expense.paidById)
-                .append(invitationCode, expense.invitationCode).isEquals();
+                .append(invitationCode, expense.invitationCode).append(involveds, expense.involveds).isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(id).append(title)
-                .append(amount).append(paidById).append(invitationCode).toHashCode();
+                .append(amount).append(paidById).append(invitationCode).append(involveds).toHashCode();
     }
 
     @Override
@@ -181,6 +218,7 @@ public class Expense {
                 .append("amount", amount)
                 .append("paidById", paidById)
                 .append("invitationCode", invitationCode)
+                .append(involveds)
                 .toString();
     }
 }
