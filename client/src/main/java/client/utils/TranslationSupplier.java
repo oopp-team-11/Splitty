@@ -44,12 +44,4 @@ public class TranslationSupplier {
      * @return Either the correct translation or null
      */
     public String getTranslation(String key) { return translationMap.get(key); }
-
-    /**
-     * Getter for current language
-     * @return current language as String
-     */
-    public String getCurrentLanguage() {
-        return currentLanguage;
-    }
 }

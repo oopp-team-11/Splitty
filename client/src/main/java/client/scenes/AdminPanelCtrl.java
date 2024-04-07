@@ -10,8 +10,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -22,8 +24,14 @@ import java.util.ArrayList;
  * admin panel controller
  */
 public class AdminPanelCtrl {
-
-
+    @FXML
+    public Pane languageSwitchPlaceHolder;
+    @FXML
+    public Button startScreenButton;
+    @FXML
+    public Label changeLanguageLabel;
+    @FXML
+    public Label goToStartScreenLabel;
     @FXML
     private TableColumn<Event, String> invitationCode;
     @FXML
@@ -76,6 +84,9 @@ public class AdminPanelCtrl {
             button.setOnAction(event1 -> jsonDump(event.getValue()));
             return new SimpleObjectProperty<>(button);
         });
+
+        languageSwitchPlaceHolder.getChildren().clear();
+        languageSwitchPlaceHolder.getChildren().add(mainCtrl.getLanguageSwitchButton());
 
         refreshData();
     }

@@ -35,5 +35,9 @@
   "AdminPassword": "Password",
   "AdminPanelLabel": "Show admin panel",
   "Log in": "Log in",
-  "InvitationSendText": "Code is put on the clipboard."
+  "InvitationSendText": "Code is put on the clipboard.",
+  "DownloadTemplate": "Download template...",
+  "ChangeLanguageLabel": "Change Language",
+  "GoToStartScreenLabel": "Go to start screen",
+  "EditTitleLabel": "Edit title"
 }

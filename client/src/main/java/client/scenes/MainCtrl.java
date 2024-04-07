@@ -23,7 +23,6 @@ import client.utils.WebsocketSessionHandler;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuButton;
@@ -43,7 +42,6 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonWriter;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -177,7 +175,7 @@ public class MainCtrl {
 
     /**
      * std setter
-     * @param adminDataHandler
+     * @param adminDataHandler data handler
      */
     public void setAdminDataHandler(AdminDataHandler adminDataHandler) {
         this.adminDataHandler = adminDataHandler;
@@ -205,7 +203,7 @@ public class MainCtrl {
      * @param event Event, which the participant will belong to
      */
     public void showCreateParticipant(Event event) {
-        primaryStage.setTitle("Add participant ui");
+        primaryStage.setTitle("Add participant");
         primaryStage.setScene(createParticipantScene);
         primaryStage.setResizable(false);
         createParticipantCtrl.setEvent(event);
@@ -217,7 +215,7 @@ public class MainCtrl {
      * @param participant Participant that will be edited
      */
     public void showEditParticipant(Participant participant) {
-        primaryStage.setTitle("Edit participant ui");
+        primaryStage.setTitle("Edit participant");
         primaryStage.setScene(editParticipantScene);
         primaryStage.setResizable(false);
         editParticipantCtrl.setParticipant(participant);
@@ -229,7 +227,7 @@ public class MainCtrl {
      * @param expense expense that will be edited
      */
     public void showEditExpense(Expense expense) {
-        primaryStage.setTitle("Edit expense ui");
+        primaryStage.setTitle("Edit expense");
         primaryStage.setScene(editExpenseScene);
         primaryStage.setResizable(false);
         editExpenseCtrl.setExpense(expense);
@@ -240,7 +238,7 @@ public class MainCtrl {
      * Show edit expense ui
      */
     public void showAddExpense() {
-        primaryStage.setTitle("Edit expense ui");
+        primaryStage.setTitle("Add expense");
         primaryStage.setScene(addExpenseScene);
         primaryStage.setResizable(false);
         addExpenseCtrl.setFields();
@@ -429,47 +427,57 @@ public class MainCtrl {
 
             newOption.setGraphic(imageView);
             newOption.setOnAction(actionEvent -> {
-                        try {
-                            FileSystemUtils fileSystemUtils = new FileSystemUtils();
-                            fileSystemUtils.changeLanguageInFile("client-config.json",
-                                    getAvailableLanguages().values().stream().filter(
-                                            locale1 -> locale1.getDisplayLanguage().equals(
-                                                    ((MenuItem) actionEvent.getSource()).getText().split(" - ")[0])
-                                    ).toList().getFirst().getLanguage());
-                            setTranslationSupplier();
-                            ((ImageView) languageSwitchButton.getGraphic()).setImage(
-                                    ((ImageView)((MenuItem) actionEvent.getSource()).getGraphic()).getImage());
-                            startScreenCtrl.translate(translationSupplier);
-                            eventOverviewCtrl.translate(translationSupplier);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+                    try {
+                        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+                        fileSystemUtils.changeLanguageInFile("client-config.json",
+                                getAvailableLanguages().values().stream().filter(
+                                        locale1 -> locale1.getDisplayLanguage().equals(
+                                                ((MenuItem) actionEvent.getSource()).getText().split(" - ")[0])
+                                ).toList().getFirst().getLanguage());
+                        setTranslationSupplier();
+                        ((ImageView) languageSwitchButton.getGraphic()).setImage(
+                                ((ImageView)((MenuItem) actionEvent.getSource()).getGraphic()).getImage());
+                        startScreenCtrl.translate(translationSupplier);
+                        eventOverviewCtrl.translate(translationSupplier);
+                        languageSwitchButton.getItems().stream()
+                                .filter(item -> (item.getUserData() != null
+                                        && item.getUserData().equals("template download")))
+                                .toList().getFirst().setText(
+                                        translationSupplier.getTranslation("DownloadTemplate")
+                                                .replaceAll("\"", "")
+                                );
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
+                }
             );
             languageSwitchButton.getItems().addLast(newOption);
         });
 
-        MenuItem item = new MenuItem("Download template...");
+        MenuItem item = new MenuItem(translationSupplier.getTranslation("DownloadTemplate")
+                .replaceAll("\"", ""));
+        item.setUserData("template download");
         item.setOnAction(event -> {
-                    DirectoryChooser chooser = new DirectoryChooser();
-                    chooser.setTitle("Select Folder");
-                    var dir = chooser.showDialog(primaryStage);
-                    FileWriter writer;
-                    try {
-                        writer = new FileWriter(dir + "/template.json");
-                        JsonWriter jsonWriter = Json.createWriter(writer);
-                        JsonReader jsonReader = Json.createReader(new FileReader("locales/en.json"));
+                DirectoryChooser chooser = new DirectoryChooser();
+                chooser.setTitle("Select Folder");
+                var dir = chooser.showDialog(primaryStage);
+                if (dir == null) return;
+                FileWriter writer;
+                try {
+                    writer = new FileWriter(dir + "/template.json");
+                    JsonWriter jsonWriter = Json.createWriter(writer);
+                    JsonReader jsonReader = Json.createReader(new FileReader("locales/en.json"));
 
-                        jsonWriter.write(jsonReader.readObject());
-                        writer.flush();
-                        writer.close();
-                        jsonWriter.close();
+                    jsonWriter.write(jsonReader.readObject());
+                    writer.flush();
+                    writer.close();
+                    jsonWriter.close();
 
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
+
+            }
         );
 
         languageSwitchButton.getItems().addLast(item);
@@ -485,5 +493,6 @@ public class MainCtrl {
         imageView.setFitWidth(16);
 
         languageSwitchButton.setGraphic(imageView);
+        languageSwitchButton.setMaxSize(50, 50);
     }
 }

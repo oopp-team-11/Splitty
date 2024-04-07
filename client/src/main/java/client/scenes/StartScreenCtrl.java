@@ -13,16 +13,10 @@ import jakarta.ws.rs.core.Response;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.SubScene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.application.Platform;
@@ -38,9 +32,6 @@ import java.util.stream.Collectors;
 import client.interfaces.Translatable;
 import org.json.JSONException;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-
 /**
  * Start Screen controller for showing start screen and entering to events
  */
@@ -48,6 +39,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
     private final MainCtrl mainCtrl;
     @FXML
     public Pane languageSwitchPlaceHolder;
+    @FXML
+    public Label changeLanguageLabel;
 
     @FXML
     private Button createBtn;
@@ -144,6 +137,7 @@ public class StartScreenCtrl implements Initializable, Translatable {
         labels.put(this.newEventName, "EventName");
         labels.put(this.joinInvitationCode, "InvitationCode");
         labels.put(this.adminPassword, "AdminPassword");
+        labels.put(this.changeLanguageLabel, "ChangeLanguageLabel");
         labels.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;

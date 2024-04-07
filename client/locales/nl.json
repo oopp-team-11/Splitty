@@ -35,5 +35,9 @@
   "AdminPassword": "Wachtwoord",
   "AdminPanelLabel": "Ga naar Administrator paneel",
   "Log in": "Log in",
-  "InvitationSendText": "Code staat op het klembord"
+  "InvitationSendText": "Code staat op het klembord",
+  "DownloadTemplate": "Download sjabloon...",
+  "ChangeLanguageLabel": "Verander Taal",
+  "GoToStartScreenLabel": "Ga naar start pagina",
+  "EditTitleLabel": "Bewerk Titel"
 }
