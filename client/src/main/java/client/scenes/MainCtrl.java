@@ -141,7 +141,8 @@ public class MainCtrl {
 
         startWebSocket();
 
-        showStartScreen();
+//        showStartScreen();
+        showAdminPanel();
 
         primaryStage.show();
     }
@@ -265,6 +266,7 @@ public class MainCtrl {
         primaryStage.setScene(adminPanelScene);
         primaryStage.setResizable(false);
         adminPanelCtrl.makeSetUp();
+        adminPanelCtrl.translate(this.translationSupplier);
     }
 
     /**
@@ -439,6 +441,7 @@ public class MainCtrl {
                                 ((ImageView)((MenuItem) actionEvent.getSource()).getGraphic()).getImage());
                         startScreenCtrl.translate(translationSupplier);
                         eventOverviewCtrl.translate(translationSupplier);
+                        adminPanelCtrl.translate(translationSupplier);
                         languageSwitchButton.getItems().stream()
                                 .filter(item -> (item.getUserData() != null
                                         && item.getUserData().equals("template download")))

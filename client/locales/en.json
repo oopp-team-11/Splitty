@@ -39,5 +39,10 @@
   "DownloadTemplate": "Download template...",
   "ChangeLanguageLabel": "Change Language",
   "GoToStartScreenLabel": "Go to start screen",
-  "EditTitleLabel": "Edit title"
+  "EditTitleLabel": "Edit title",
+  "JSONImport": "JSON Import",
+  "CreationDate": "Creation date",
+  "LastActivityDate": "Last Activity Date",
+  "DeleteEvent": "Delete Event",
+  "JSONDump": "JSON Dump"
 }

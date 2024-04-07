@@ -39,5 +39,10 @@
   "DownloadTemplate": "Download sjabloon...",
   "ChangeLanguageLabel": "Verander Taal",
   "GoToStartScreenLabel": "Ga naar start pagina",
-  "EditTitleLabel": "Bewerk Titel"
+  "EditTitleLabel": "Bewerk Titel",
+  "JSONImport": "JSON Importeren",
+  "CreationDate": "Aanmaakdatum",
+  "LastActivityDate": "Laatste activiteitsdatum",
+  "DeleteEvent": "Evenement verwijderen",
+  "JSONDump": "JSON Dump"
 }
