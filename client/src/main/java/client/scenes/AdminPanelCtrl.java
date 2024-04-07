@@ -9,6 +9,7 @@ import com.google.inject.Inject;
 import commons.Event;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
@@ -99,7 +100,7 @@ public class AdminPanelCtrl implements Translatable {
     public void refreshData() {
         eventTableView.getColumns().getFirst().setVisible(false);
         eventTableView.getColumns().getFirst().setVisible(false);
-//        eventTableView.setItems(FXCollections.observableList(mainCtrl.getAdminDataHandler().getEvents()));
+        eventTableView.setItems(FXCollections.observableList(mainCtrl.getAdminDataHandler().getEvents()));
     }
 
     /**
