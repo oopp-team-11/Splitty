@@ -40,9 +40,9 @@
   "ChangeLanguageLabel": "Zmień język",
   "GoToStartScreenLabel": "Przejdź do ekranu głównego",
   "EditTitleLabel": "Edytuj tytuł",
-  "JSONImport": "Importuj plik JSON",
+  "JSONImport": "Importuj JSON",
   "CreationDate": "Data utworzenia",
   "LastActivityDate": "Data ostatniej aktywności",
   "DeleteEvent": "Usuń wydarzenie",
-  "JSONDump": "Pobierz plik JSON"
+  "JSONDump": "Pobierz JSON"
 }

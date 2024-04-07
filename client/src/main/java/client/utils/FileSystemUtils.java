@@ -1,6 +1,5 @@
 package client.utils;
 
-import client.scenes.MainCtrl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.Event;
 
@@ -290,6 +289,12 @@ public class FileSystemUtils {
         }
     }
 
+    /**
+     * Method for changing language in config file
+     * @param path path to client-config.json
+     * @param language language to set it to
+     * @throws IOException possible error throw
+     */
     public void changeLanguageInFile(String path, String language) throws IOException {
         try{
             JsonReader reader = Json.createReader(new FileReader(path));

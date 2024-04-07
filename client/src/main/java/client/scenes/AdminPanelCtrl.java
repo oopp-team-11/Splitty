@@ -1,29 +1,29 @@
 package client.scenes;
 
+import client.interfaces.Translatable;
 import client.utils.FileSystemUtils;
 import client.utils.ServerUtils;
+import client.utils.TranslationSupplier;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import commons.Event;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * admin panel controller
  */
-public class AdminPanelCtrl {
+public class AdminPanelCtrl implements Translatable {
     @FXML
     public Pane languageSwitchPlaceHolder;
     @FXML
@@ -46,6 +46,8 @@ public class AdminPanelCtrl {
     private TableColumn<Event, Button> jsonDump;
     @FXML
     private TableView<Event> eventTableView;
+    @FXML
+    private Button jsonImport;
 
     private MainCtrl mainCtrl;
     private FileSystemUtils fileSystemUtils;
@@ -97,7 +99,7 @@ public class AdminPanelCtrl {
     public void refreshData() {
         eventTableView.getColumns().getFirst().setVisible(false);
         eventTableView.getColumns().getFirst().setVisible(false);
-        eventTableView.setItems(FXCollections.observableList(mainCtrl.getAdminDataHandler().getEvents()));
+//        eventTableView.setItems(FXCollections.observableList(mainCtrl.getAdminDataHandler().getEvents()));
     }
 
     /**
@@ -146,4 +148,40 @@ public class AdminPanelCtrl {
     }
 
 
+    /**
+     * Translates the current scene using a translationSupplier
+     * @param translationSupplier an instance of a translationSupplier. If null, the default english will be displayed.
+     */
+    @Override
+    public void translate(TranslationSupplier translationSupplier) {
+        if (translationSupplier == null) return;
+        Map<Control, String> labels = new HashMap<>();
+
+        labels.put(this.jsonImport, "JSONImport");
+        labels.put(this.changeLanguageLabel, "ChangeLanguageLabel");
+        labels.put(this.goToStartScreenLabel, "GoToStartScreenLabel");
+
+        labels.forEach((key, val) -> {
+            var translation = translationSupplier.getTranslation(val);
+            if (translation == null) return;
+            if (key instanceof Labeled)
+                ((Labeled) key).setText(translation.replaceAll("\"", ""));
+            if (key instanceof TextField)
+                ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
+        });
+        Map<TableColumn, String> tableColumns = new HashMap<>();
+
+        tableColumns.put(this.title, "EventName");
+        tableColumns.put(this.invitationCode, "InvitationCode");
+        tableColumns.put(this.creationDate, "CreationDate");
+        tableColumns.put(this.deleteEvent, "DeleteEvent");
+        tableColumns.put(this.lastActivityDate, "LastActivityDate");
+        tableColumns.put(this.jsonDump, "JSONDump");
+
+        tableColumns.forEach((key, val) -> {
+            var translation = translationSupplier.getTranslation(val);
+            if (translation == null) return;
+            key.setText(translation.replaceAll("\"", ""));
+        });
+    }
 }
