@@ -141,8 +141,7 @@ public class MainCtrl {
 
         startWebSocket();
 
-//        showStartScreen();
-        showAdminPanel();
+        showStartScreen();
 
         primaryStage.show();
     }
@@ -447,8 +446,7 @@ public class MainCtrl {
                                         && item.getUserData().equals("template download")))
                                 .toList().getFirst().setText(
                                         translationSupplier.getTranslation("DownloadTemplate")
-                                                .replaceAll("\"", "")
-                                );
+                                                .replaceAll("\"", ""));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
