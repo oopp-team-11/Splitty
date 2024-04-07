@@ -90,6 +90,12 @@ class InvolvedTest {
     }
 
     @Test
+    void setParticipant() {
+        involved.setParticipant(participant);
+        assertEquals(participant, involved.getParticipant());
+    }
+
+    @Test
     void setIsSettled() {
         involved.setIsSettled(true);
         assertTrue(involved.getIsSettled());
@@ -97,7 +103,11 @@ class InvolvedTest {
 
     @Test
     void testEquals() {
-        Involved involved2 = involved;
+        Involved involved2 = new Involved(involved.getId(), involved.getIsSettled(),
+                involved.getExpenseId(), involved.getParticipantId());
+        try {
+            setId(involved2, involved.getId());
+        } catch (IllegalAccessException ignored) {}
         assertEquals(involved2, involved);
         involved2 = new Involved();
         assertNotEquals(involved2, involved);
