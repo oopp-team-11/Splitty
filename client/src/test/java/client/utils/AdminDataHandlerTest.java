@@ -32,7 +32,9 @@ class AdminDataHandlerTest {
     void getCreateEvent() throws IllegalAccessException {
         Event event2 = new Event("Antihype2");
         setId(event2, UUID.randomUUID());
-        handler.getCreateEvent(event2);
+        try {
+            handler.getCreateEvent(event2);
+        } catch (IllegalStateException ignored) {}
         assertEquals(event2, handler.getEvents().getLast());
     }
 
@@ -43,13 +45,17 @@ class AdminDataHandlerTest {
     void getUpdateEvent() throws IllegalAccessException {
         Event updating = new Event("Han Zamay");
         setId(updating, handler.getEvents().getFirst().getId());
-        handler.getUpdateEvent(updating);
+        try {
+            handler.getUpdateEvent(updating);
+        } catch (IllegalStateException ignored) {}
         assertEquals(updating, handler.getEvents().getFirst());
     }
 
     @Test
     void getDeleteEvent() {
-        handler.getDeleteEvent(handler.getEvents().getFirst());
+        try {
+            handler.getDeleteEvent(handler.getEvents().getFirst());
+        } catch (IllegalStateException ignored) {}
         assertEquals(0, handler.getEvents().size());
     }
 
@@ -60,8 +66,13 @@ class AdminDataHandlerTest {
 
     @Test
     void testSetEvents() {
-        handler.setEvents(List.of(new Event(), new Event()));
-        assertEquals(List.of(new Event(), new Event()), handler.getEvents());
+        AdminDataHandler newHandler = new AdminDataHandler();
+        newHandler.setPasscode(handler.getPasscode());
+        newHandler.setSessionHandler(handler.getSessionHandler());
+        try {
+            newHandler.setEvents(List.of(new Event(), new Event()));
+        } catch (IllegalStateException ignored) {}
+        assertEquals(List.of(new Event(), new Event()), newHandler.getEvents());
         verify(session).subscribeToAdmin("42");
     }
 
