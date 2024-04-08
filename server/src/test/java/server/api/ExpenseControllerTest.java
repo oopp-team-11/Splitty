@@ -9,8 +9,10 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.EventLastActivityService;
 import server.database.EventRepository;
 import server.database.ExpenseRepository;
+import server.database.InvolvedRepository;
 import server.database.ParticipantRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -234,8 +236,13 @@ public class ExpenseControllerTest {
         event.addParticipant(participant1);
         event.addParticipant(participant2);
         Expense expense1 = new Expense(participant1, "expense1", 1.1);
+        Involved involved1 = new Involved(false, expense1, participant1);
+        Involved involved2 = new Involved(false, expense1, participant2);
+        expense1.setInvolveds(List.of(involved1, involved2));
         participant1.addExpense(expense1);
         Expense expense2 = new Expense(participant2, "expense2", 2.2);
+        Involved involved3 = new Involved(false, expense2, participant1);
+        expense2.setInvolveds(List.of(involved3));
         participant2.addExpense(expense2);
         expense1 = expenseRepository.save(expense1);
         expense2 = expenseRepository.save(expense2);
@@ -250,11 +257,13 @@ public class ExpenseControllerTest {
         assertEquals(expense1.getAmount(), readExpense1.getAmount());
         assertEquals(expense1.getInvitationCode(), readExpense1.getInvitationCode());
         assertEquals(expense1.getPaidById(), readExpense1.getPaidById());
+        assertEquals(expense1.getInvolveds(), readExpense1.getInvolveds());
         assertEquals(expense2.getId(), readExpense2.getId());
         assertEquals(expense2.getTitle(), readExpense2.getTitle());
         assertEquals(expense2.getAmount(), readExpense2.getAmount());
         assertEquals(expense2.getInvitationCode(), readExpense2.getInvitationCode());
         assertEquals(expense2.getPaidById(), readExpense2.getPaidById());
+        assertEquals(expense2.getInvolveds(), readExpense2.getInvolveds());
     }
 
     @Test

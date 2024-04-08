@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import server.EventLastActivityService;
 import server.database.EventRepository;
 import server.database.ExpenseRepository;
+import server.database.InvolvedRepository;
 import server.database.ParticipantRepository;
 
 import java.util.List;
@@ -144,6 +145,7 @@ public class ExpenseController {
             for (Expense expense : participantExpenses) {
                 Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount()
                         , participant.getId(), invitationCode);
+                sentExpense.setInvolveds(expense.getInvolveds());
                 expenses.add(sentExpense);
             }
         }
