@@ -246,7 +246,7 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
     public void sendAdminEvent(String passcode, Event receivedEvent, String methodType)
     {
         StompHeaders headers = new StompHeaders();
-        headers.setDestination("app/admin/event:"+methodType); //delete/import/dump
+        headers.setDestination("/app/admin/event:"+methodType); //delete/import/dump
         headers.setPasscode(passcode);
         session.send(headers, receivedEvent);
     }

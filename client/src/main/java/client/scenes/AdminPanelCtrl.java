@@ -116,7 +116,8 @@ public class AdminPanelCtrl implements Translatable {
      * @param event
      */
     public void deleteEvent(Event event) {
-        // TODO: propagate change to the websockets
+        mainCtrl.getSessionHandler().sendAdminEvent(mainCtrl.getAdminDataHandler().getPasscode(),
+                event, "delete");
     }
 
     /**
