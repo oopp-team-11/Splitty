@@ -44,6 +44,11 @@ should specifically be live.
 - "The feedback can be provided in several forms: screen content changes, labels in the application show a
   message, self-destructing notification pop-ups, changed button text, etc." Does this mean we should
 support several ways or does it just list several examples of what we can choose from?
+- To see the total sum of all expenses, the share per person and how much each person owes
+  to/is owed by the group, so all participants can meet and settle their debts.
+  (This is the bare minimum to settle the debt and inconvenient. It will be extended later)
+We decided to go for the extended expense, but not for the open debt system. What should we
+do about the second part of that requirement then?
 - We store the email in the DB. Sebastian pointed out to only store the emails in a config file
 for the email notifications extended feature. We don't plan to do this feature. Should we still
 delete the email field from the server?
