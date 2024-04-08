@@ -75,6 +75,7 @@ public class AdminDataHandler {
      */
     public void setDataToNull() {
         events = null;
+        passcode = null;
     }
 
     /**
@@ -113,12 +114,11 @@ public class AdminDataHandler {
      */
     public void getCreateEvent(Event receivedEvent) {
         if (containsById(receivedEvent)) {
-            // TODO: logic of refetching
-            // sessionHandler.refreshAllEvents();
-            // TODO: logic of pop-up
+            sessionHandler.sendReadEvents(passcode);
             return;
         }
         events.add(receivedEvent);
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshAdminData());
     }
 
     /**
@@ -146,13 +146,13 @@ public class AdminDataHandler {
      * @param receivedEvent
      */
     public void getUpdateEvent(Event receivedEvent) {
-        if (!containsById(receivedEvent)) {
-            // TODO: logic of refetching
-            // sessionHandler.refreshAllEvents();
-            // TODO: logic of pop-up
+        Event localEvent = getEventById(receivedEvent);
+        if (localEvent == null) {
+            sessionHandler.sendReadEvents(passcode);
             return;
         }
-        updateEvent(getEventById(receivedEvent), receivedEvent);
+        updateEvent(localEvent, receivedEvent);
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshAdminData());
     }
 
     /**
@@ -160,12 +160,12 @@ public class AdminDataHandler {
      * @param receivedEvent
      */
     public void getDeleteEvent(Event receivedEvent) {
-        if (!containsById(receivedEvent)) {
-            // TODO: logic of refetching
-            // sessionHandler.refreshAllEvents();
-            // TODO: logic of pop-up
+        Event localEvent = getEventById(receivedEvent);
+        if (localEvent == null) {
+            sessionHandler.sendReadEvents(passcode);
             return;
         }
-        events.remove(getEventById(receivedEvent));
+        events.remove(localEvent);
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshAdminData());
     }
 }

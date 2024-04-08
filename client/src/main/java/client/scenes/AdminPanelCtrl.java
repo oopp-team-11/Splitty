@@ -70,7 +70,7 @@ public class AdminPanelCtrl implements Translatable {
      * method that performs initial setup for scene
      */
     public void makeSetUp() {
-        invitationCode.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getId(), toString()));
+        invitationCode.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getId().toString()));
         title.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getTitle()));
         creationDate.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getCreationDate().toString()));
         lastActivityDate.
@@ -99,7 +99,7 @@ public class AdminPanelCtrl implements Translatable {
      */
     public void refreshData() {
         eventTableView.getColumns().getFirst().setVisible(false);
-        eventTableView.getColumns().getFirst().setVisible(false);
+        eventTableView.getColumns().getFirst().setVisible(true);
         eventTableView.setItems(FXCollections.observableList(mainCtrl.getAdminDataHandler().getEvents()));
     }
 
