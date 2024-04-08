@@ -23,8 +23,8 @@ public class Event {
 
     @JsonView(Views.UpdateInvitationsCodes.class)
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
     @JsonView(Views.UpdateInvitationsCodes.class)
     @Column(nullable = false)
     private String title;
@@ -36,7 +36,8 @@ public class Event {
     private LocalDateTime lastActivity;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST},
+            orphanRemoval = true)
     private List<Participant> participants;
 
     /**

@@ -23,7 +23,9 @@ public class FileSystemUtils {
     public void jsonDump(Event event)  {
         try {
             String fileTitle = event.getId().toString();
-            String fileData = new ObjectMapper().writeValueAsString(event);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.findAndRegisterModules();
+            String fileData = mapper.writeValueAsString(event);
             FileWriter file = new FileWriter(fileTitle);
             file.write(fileData);
             file.flush();

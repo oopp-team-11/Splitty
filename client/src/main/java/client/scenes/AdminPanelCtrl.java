@@ -107,7 +107,8 @@ public class AdminPanelCtrl implements Translatable {
      * @param event
      */
     public void jsonDump(Event event) {
-        fileSystemUtils.jsonDump(event);
+        mainCtrl.getSessionHandler().sendAdminEvent(mainCtrl.getAdminDataHandler().getPasscode(),
+                event, "dump");
     }
 
     /**
@@ -130,10 +131,13 @@ public class AdminPanelCtrl implements Translatable {
         if (selectedFile != null) {
             Event event;
             try {
-                event = new ObjectMapper().readValue(selectedFile, Event.class);
-                // TODO: Import event into application (WebSockets)
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.findAndRegisterModules();
+                event = mapper.readValue(selectedFile, Event.class);
+                mainCtrl.getSessionHandler().sendAdminEvent(mainCtrl.getAdminDataHandler().getPasscode(),
+                        event, "import");
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                //TODO: Add a pop-up
             }
         }
     }

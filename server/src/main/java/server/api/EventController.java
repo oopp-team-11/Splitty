@@ -80,10 +80,13 @@ public class EventController {
         if (isNullOrEmpty(title)) {
             return ResponseEntity.badRequest().build();
         }
-        Event event = new Event(title);
-        event.setCreationDate(LocalDateTime.now());
-        event.setLastActivity(event.getCreationDate());
-        repo.save(event);
+        UUID id = UUID.randomUUID();
+        while (repo.existsById(id)) {
+            id = UUID.randomUUID();
+        }
+        LocalDateTime now = LocalDateTime.now();
+        Event event = new Event(id, title, now, now);
+        event = repo.save(event);
         template.convertAndSend("/topic/admin/event:create", event);
         return ResponseEntity.ok(event);
     }

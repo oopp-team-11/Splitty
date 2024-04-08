@@ -69,26 +69,26 @@ public class AdminController {
     /**
      * Handles read websocket endpoint for event
      *
-     * @param invitationCode invitationCode of the requested event
+     * @param receivedEvent Event to create a json dump of
      * @param password contains the admin password, sent as a header
      * @return returns a StatusEntity<Event> body contains Event if status code is OK
      * returns null in body otherwise
      */
     @MessageMapping("/admin/event:dump")
     @SendToUser(value = "/queue/admin/event:dump", broadcast = false)
-    public StatusEntity dumpEvent(UUID invitationCode, @Header(name = "passcode") String password) {
+    public StatusEntity dumpEvent(Event receivedEvent, @Header(name = "passcode") String password) {
         String adminPassword = passwordService.getAdminPassword();
 
         if (!adminPassword.equals(password)) {
             return StatusEntity.badRequest(true, "Incorrect Password!");
         }
 
-        if(invitationCode == null)
-            return StatusEntity.badRequest(true, (Event) null);
-        if(!eventRepo.existsById(invitationCode))
-            return StatusEntity.notFound(true, (Event) null);
+        if(receivedEvent == null)
+            return StatusEntity.badRequest(true, "Event is null.");
+        if(!eventRepo.existsById(receivedEvent.getId()))
+            return StatusEntity.notFound(true, "Event does not exist in the database.");
 
-        Event event = eventRepo.getReferenceById(invitationCode);
+        Event event = eventRepo.getReferenceById(receivedEvent.getId());
         for (Participant participant : event.getParticipants()) {
             for (Expense expense : participant.getMadeExpenses()) {
                 for (Involved involved : expense.getInvolveds()) {
@@ -119,34 +119,47 @@ public class AdminController {
     /**
      * Handles read websocket endpoint for event
      *
-     * @param event The event to import
+     * @param receivedEvent The event to import
      * @param password contains the admin password, sent as a header
      * @return returns a StatusEntity<String> body containing "Success" if the operation was successful.
      * returns an error message if something went wrong.
      */
     @MessageMapping("/admin/event:import")
     @SendToUser(value = "/queue/reply", broadcast = false)
-    public StatusEntity importEvent(Event event, @Header(name = "passcode") String password) {
+    public StatusEntity importEvent(Event receivedEvent, @Header(name = "passcode") String password) {
         String adminPassword = passwordService.getAdminPassword();
 
         if (!adminPassword.equals(password)) {
             return StatusEntity.badRequest(true, "Incorrect Password!");
         }
 
-        if (event == null || eventRepo.existsById(event.getId())) {
-            return StatusEntity.badRequest(true, "Event already exists");
+        if (receivedEvent == null) {
+            return StatusEntity.badRequest(true, "Event object cannot be null.");
         }
 
+        boolean eventExists = eventRepo.existsById(receivedEvent.getId());
+        if (eventExists) {
+            Event currentEvent = eventRepo.getReferenceById(receivedEvent.getId());
+            participantRepo.deleteAll(currentEvent.getParticipants());
+        }
+        Event event = null;
+
         try {
-            eventRepo.save(event);
-            participantRepo.saveAll(event.getParticipants());
-            for (Participant participant : event.getParticipants()) {
-                for (Expense expense : participant.getMadeExpenses()) {
-                    expenseRepo.save(expense);
-                    for (Involved involved : expense.getInvolveds()) {
-                        var involvedParticipant = participantRepo.getReferenceById(involved.getParticipantId());
-                        involved.setParticipant(involvedParticipant);
-                        involved.setExpense(expense);
+            event = new Event(receivedEvent.getId(), receivedEvent.getTitle(), receivedEvent.getCreationDate(),
+                    receivedEvent.getLastActivity());
+            event = eventRepo.save(event);
+            for (Participant receivedParticipant : receivedEvent.getParticipants()) {
+                Participant participant = new Participant(event,
+                        receivedParticipant.getFirstName(), receivedParticipant.getLastName(),
+                        receivedParticipant.getEmail(), receivedParticipant.getIban(), receivedParticipant.getBic());
+                participant = participantRepo.save(participant);
+                for (Expense receivedExpense : receivedParticipant.getMadeExpenses()) {
+                    Expense expense = new Expense(participant, receivedExpense.getTitle(),
+                            receivedExpense.getAmount());
+                    expense = expenseRepo.save(expense);
+                    for (Involved receivedInvolved : receivedExpense.getInvolveds()) {
+                        var involvedParticipant = participantRepo.getReferenceById(receivedInvolved.getParticipantId());
+                        Involved involved = new Involved(receivedInvolved.getIsSettled(), expense, involvedParticipant);
                         involvedRepo.save(involved);
                     }
                 }
@@ -155,6 +168,10 @@ public class AdminController {
             return StatusEntity.badRequest(true, "Request body contains null entity");
         }
 
-        return StatusEntity.ok("Success");
+        if (!eventExists)
+            template.convertAndSend("/topic/admin/event:create", event);
+        else
+            template.convertAndSend("/topic/admin/event:update", event);
+        return StatusEntity.ok("Event has been imported.");
     }
 }
