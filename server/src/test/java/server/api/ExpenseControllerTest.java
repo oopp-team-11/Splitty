@@ -60,6 +60,8 @@ public class ExpenseControllerTest {
                 null
         ));
         Expense expense = new Expense(participant, "expense", 21.37);
+        Involved involved = new Involved(false, expense, participant);
+        expense.setInvolveds(List.of(involved));
 
         System.out.println(expense.getInvitationCode());
         assertEquals(StatusEntity.StatusCode.OK, expenseController.createExpense(expense).getStatusCode());
@@ -72,6 +74,7 @@ public class ExpenseControllerTest {
         assertEquals(expense.getAmount(), sentExpense.getAmount());
         assertEquals(expense.getInvitationCode(), sentExpense.getInvitationCode());
         assertEquals(expense.getPaidById(), sentExpense.getPaidById());
+        assertEquals(expense.getInvolveds(), sentExpense.getInvolveds());
     }
 
     @Test
@@ -144,11 +147,40 @@ public class ExpenseControllerTest {
     }
 
     @Test
+    void ExpenseInvolvedListNull() {
+        Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
+                "abcd@gmail.com", null, null, UUID.randomUUID());
+        sentParticipant = participantRepository.save(sentParticipant);
+        Expense expense = new Expense(sentParticipant, "expense", 69);
+        try {
+            setId(expense, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
+        assertEquals(StatusEntity.badRequest(true, "Expense should involve a participant"),
+                expenseController.isExpenseBadRequest(expense));
+    }
+
+    @Test
+    void ExpenseInvolvedListEmpty() {
+        Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
+                "abcd@gmail.com", null, null, UUID.randomUUID());
+        sentParticipant = participantRepository.save(sentParticipant);
+        Expense expense = new Expense(sentParticipant, "expense", 69);
+        expense.setInvolveds(List.of());
+        try {
+            setId(expense, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
+        assertEquals(StatusEntity.badRequest(true, "Expense should involve a participant"),
+                expenseController.isExpenseBadRequest(expense));
+    }
+
+    @Test
     void ExpenseOKRequest() {
         Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
                 "abcd@gmail.com", null, null, UUID.randomUUID());
         sentParticipant = participantRepository.save(sentParticipant);
         Expense expense = new Expense(sentParticipant, "expense", 69);
+        Involved involved = new Involved(false, expense, sentParticipant);
+        expense.setInvolveds(List.of(involved));
         try {
             setId(expense, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}

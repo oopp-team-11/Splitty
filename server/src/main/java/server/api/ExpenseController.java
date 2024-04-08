@@ -13,7 +13,9 @@ import server.database.ExpenseRepository;
 import server.database.InvolvedRepository;
 import server.database.ParticipantRepository;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -74,6 +76,11 @@ public class ExpenseController {
             return StatusEntity.notFound(true, "Provided participant who paid for the expense does not exist");
         if (receivedExpense.getInvitationCode() == null)
             return StatusEntity.badRequest(true, "InvitationCode of event should be provided");
+        if (receivedExpense.getInvolveds() == null || receivedExpense.getInvolveds().isEmpty())
+            return StatusEntity.badRequest(true, "Expense should involve a participant");
+        Set<Involved> involvedSet = new HashSet<>(receivedExpense.getInvolveds());
+        if(involvedSet.size() != receivedExpense.getInvolveds().size())
+            return StatusEntity.badRequest(true, "Expense cannot involve duplicates of participants");
         return StatusEntity.ok((String) null);
     }
 
@@ -108,6 +115,7 @@ public class ExpenseController {
 
         Participant paidBy = participantRepository.getReferenceById(receivedExpense.getPaidById());
         Expense expense = new Expense(paidBy, receivedExpense.getTitle(), receivedExpense.getAmount());
+        expense.setInvolveds(receivedExpense.getInvolveds());
 
         eventLastActivityService.updateLastActivity(receivedExpense.getInvitationCode());
 
@@ -115,6 +123,7 @@ public class ExpenseController {
 
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(), paidBy.getId(),
                 receivedExpense.getInvitationCode());
+        sentExpense.setInvolveds(expense.getInvolveds());
         template.convertAndSend("/topic/" + sentExpense.getInvitationCode() + "/expense:create",
                 sentExpense);
 
