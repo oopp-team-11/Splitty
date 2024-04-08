@@ -83,7 +83,7 @@ public class ExpenseController {
     private static StatusEntity isInvolvedBadRequest(Expense receivedExpense) {
         if (receivedExpense.getInvolveds() == null || receivedExpense.getInvolveds().isEmpty())
             return StatusEntity.badRequest(true, "Expense should involve a participant");
-        Set<Involved> involvedSet = new HashSet<>(receivedExpense.getInvolveds());
+        Set<UUID> involvedSet = new HashSet<>(receivedExpense.getInvolveds().stream().map(Involved::getId).toList());
         Set<UUID> participantSet = new HashSet<>(
                 receivedExpense.getInvolveds().stream().map(Involved::getParticipantId).toList()
         );
@@ -190,12 +190,15 @@ public class ExpenseController {
         if (badRequest.isUnsolvable())
             return badRequest;
 
-        var oldInvolveds = new ArrayList<>(expenseRepository.getReferenceById(receivedExpense.getId()).getInvolveds());
-        oldInvolveds.removeAll(receivedExpense.getInvolveds());
-        involvedRepository.deleteAll(oldInvolveds);
+        var oldInvolveds = expenseRepository.getReferenceById(receivedExpense.getId()).getInvolveds()
+                .stream().map(Involved::getId)
+                .filter(id -> !receivedExpense.getInvolveds().stream().map(Involved::getId).toList().contains(id))
+                .toList();
+        involvedRepository.deleteAllById(oldInvolveds);
 
-        var newInvolveds = new ArrayList<>(receivedExpense.getInvolveds());
-        newInvolveds.removeAll(expenseRepository.getReferenceById(receivedExpense.getId()).getInvolveds());
+        var newInvolveds = receivedExpense.getInvolveds().stream()
+                .filter(involved -> !expenseRepository.getReferenceById(receivedExpense.getId()).getInvolveds()
+                        .stream().map(Involved::getId).toList().contains(involved.getId())).toList();
         involvedRepository.saveAll(newInvolveds);
 
         Participant newPaidBy = participantRepository.getReferenceById(receivedExpense.getPaidById());

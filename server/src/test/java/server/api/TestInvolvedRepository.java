@@ -177,7 +177,7 @@ public class TestInvolvedRepository implements InvolvedRepository {
 
     @Override
     public void deleteById(UUID aUUID) {
-
+        delete(find(aUUID).get());
     }
 
     @Override
@@ -187,7 +187,8 @@ public class TestInvolvedRepository implements InvolvedRepository {
 
     @Override
     public void deleteAllById(Iterable<? extends UUID> uuids) {
-
+        for(UUID uuid : uuids)
+            deleteById(uuid);
     }
 
     @Override

@@ -47,6 +47,10 @@ public class ExpenseControllerTest {
         FieldUtils.writeField(toSet, "id", newId, true);
     }
 
+    private static void setId(Involved toSet, UUID newId) throws IllegalAccessException {
+        FieldUtils.writeField(toSet, "id", newId, true);
+    }
+
     @Test
     void checkCreateExpense() {
         Event event = eventRepository.save(new Event("testEvent"));
@@ -228,6 +232,9 @@ public class ExpenseControllerTest {
                 "surname", "abcd@gmail.com", null, null, event.getId()));
         Expense expense = new Expense(participant, "expense", 21.37);
         Involved involved = new Involved(true, expense, participant);
+        try {
+            setId(involved, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
         expense.setInvolveds(List.of(involved));
         expense = expenseRepository.save(expense);
         Participant newParticipant = participantRepository.save(new Participant(UUID.randomUUID(), "new name",
@@ -236,6 +243,9 @@ public class ExpenseControllerTest {
         expense.setAmount(69.42);
         expense.setPaidById(newParticipant.getId());
         Involved involved2 = new Involved(false, expense, newParticipant);
+        try {
+            setId(involved2, UUID.randomUUID());
+        } catch (IllegalAccessException ignored) {}
         expense.setInvolveds(List.of(involved, involved2));
 
         assertEquals(StatusEntity.StatusCode.OK, expenseController.updateExpense(expense).getStatusCode());
