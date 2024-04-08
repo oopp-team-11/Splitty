@@ -4,6 +4,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,6 +50,13 @@ public class ExpenseTest {
 
     private static void setId(Expense toSet, UUID newId) throws IllegalAccessException {
         FieldUtils.writeField(toSet, "id", newId, true);
+    }
+
+    @Test
+    void getAndSetDate() {
+        var date = LocalDate.now();
+        expense.setDate(date);
+        assertEquals(date, expense.getDate());
     }
 
     @Test

@@ -4,6 +4,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,6 +47,12 @@ class ParticipantTest {
         FieldUtils.writeField(toSet, "id", newId, true);
     }
 
+    @Test
+    void getAndSetInvolvedin() {
+        var invs = List.of(new Involved(), new Involved(true, new Expense(), participant));
+        participant.setInvolvedIn(invs);
+        assertEquals(invs, participant.getInvolvedIn());
+    }
     @Test
     void server2ClientConstructor() {
         Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),

@@ -12,7 +12,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,7 +40,7 @@ public class Expense {
     @OneToMany(mappedBy = "expense", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Involved> involveds;
 
-    private LocalDateTime date;
+    private LocalDate date;
 
     @Transient
     private UUID paidById;
@@ -55,7 +55,7 @@ public class Expense {
      * std getter
      * @return date of the expense
      */
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
@@ -63,7 +63,7 @@ public class Expense {
      * std setter
      * @param date
      */
-    public void setDate(LocalDateTime date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -115,7 +115,7 @@ public class Expense {
      * @param invitationCode Event invitationCode of the Expense
      * @param date
      */
-    public Expense(UUID id, String title, double amount, UUID paidById, UUID invitationCode, LocalDateTime date) {
+    public Expense(UUID id, String title, double amount, UUID paidById, UUID invitationCode, LocalDate date) {
         this.id = id;
         this.title = title;
         this.amount = amount;
@@ -137,7 +137,7 @@ public class Expense {
         this.amount = amount;
         this.paidById = paidBy.getId();
         this.invitationCode = paidBy.getEventId();
-        this.date = LocalDateTime.now();
+        this.date = LocalDate.now();
     }
 
     /***

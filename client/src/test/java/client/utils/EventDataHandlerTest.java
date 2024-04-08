@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -181,7 +182,7 @@ class EventDataHandlerTest {
     @Test
     void receiveExpenseCreate() {
         var e3 = new Expense(UUID.randomUUID(), "Antihypetrain", 3.0, p2.getId(), event.getId(),
-                LocalDateTime.now());
+                LocalDate.now());
         Involved i5 = new Involved(UUID.randomUUID(), true, e3.getId(), p2.getId(), UUID.randomUUID());
         List<Involved> involveds = new ArrayList<>();
         involveds.add(i5);
@@ -198,7 +199,7 @@ class EventDataHandlerTest {
     @Test
     void receiveExpenseUpdate() {
         var newE1 = new Expense(e1.getId(), "Antihype", 1.0, e1.getPaidById(), e1.getInvitationCode(),
-                LocalDateTime.now());
+                LocalDate.now());
         Involved i5 = new Involved(UUID.randomUUID(), true, newE1.getId(), p2.getId(), event.getId());
         List<Involved> involveds = new ArrayList<>();
         involveds.add(i5);
