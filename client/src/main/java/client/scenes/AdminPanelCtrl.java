@@ -142,9 +142,8 @@ public class AdminPanelCtrl implements Translatable {
      * method that switches to the start screen
      */
     public void goToStartScreen() {
-        // TODO: logic of unsubscribing from the websocket's endpoints
-        // mainCtrl.getAdminSessionHandler().unsubscribeFromCurrentAdminPanel();
-        mainCtrl.getAdminDataHandler().setEvents(new ArrayList<>());
+        mainCtrl.getSessionHandler().unsubscribeFromAdmin();
+        mainCtrl.getAdminDataHandler().setDataToNull();
         mainCtrl.showStartScreen();
     }
 

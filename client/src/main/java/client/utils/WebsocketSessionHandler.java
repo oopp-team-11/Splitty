@@ -41,6 +41,7 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
         this.eventSubscriptions = new ArrayList<>();
         this.adminSubscriptions = new ArrayList<>();
         dataHandler.setSessionHandler(this);
+        adminDataHandler.setSessionHandler(this);
     }
 
     /**

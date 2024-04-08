@@ -1,6 +1,7 @@
 package client.utils;
 
 import commons.Event;
+import javafx.application.Platform;
 
 import java.util.List;
 
@@ -59,8 +60,21 @@ public class AdminDataHandler {
      * @param events
      */
     public void setEvents(List<Event> events) {
+        boolean refresh = this.events != null;
         this.events = events;
-        sessionHandler.subscribeToAdmin(passcode);
+        if (refresh)
+            Platform.runLater(() -> sessionHandler.getMainCtrl().refreshAdminData());
+        else {
+            sessionHandler.subscribeToAdmin(passcode);
+            Platform.runLater(() -> sessionHandler.getMainCtrl().showAdminPanel());
+        }
+    }
+
+    /**
+     * Sets admin local data to null
+     */
+    public void setDataToNull() {
+        events = null;
     }
 
     /**

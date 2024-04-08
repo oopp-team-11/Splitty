@@ -25,7 +25,7 @@ public class AdminCreateEventHandler implements StompFrameHandler {
 
     @Override
     public Type getPayloadType(StompHeaders headers) {
-        return StatusEntity.class;
+        return Event.class;
     }
 
     @Override

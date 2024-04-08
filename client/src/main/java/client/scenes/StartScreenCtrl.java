@@ -246,7 +246,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
     public void onAdmin() {
         System.out.println("ONADMIN");
         String password = adminPassword.getText();
-        //mainCtrl.getSessionHandler().sendAdminEventsRead(password);
+        mainCtrl.getAdminDataHandler().setPasscode(password);
+        mainCtrl.getSessionHandler().sendReadEvents(password);
     }
 
     private static void serverErrorAlert(Exception exception) {

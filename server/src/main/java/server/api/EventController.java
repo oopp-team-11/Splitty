@@ -84,6 +84,7 @@ public class EventController {
         event.setCreationDate(LocalDateTime.now());
         event.setLastActivity(event.getCreationDate());
         repo.save(event);
+        template.convertAndSend("/topic/admin/event:create", event);
         return ResponseEntity.ok(event);
     }
 
@@ -201,6 +202,7 @@ public class EventController {
 
         Event sentEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(), event.getLastActivity());
         template.convertAndSend("/topic/" + sentEvent.getId() + "/event:delete", sentEvent);
+        template.convertAndSend("/topic/admin/event:delete", sentEvent);
         return StatusEntity.ok("event:delete " + sentEvent.getId());
     }
 
