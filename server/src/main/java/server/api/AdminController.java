@@ -104,7 +104,7 @@ public class AdminController {
 //        System.out.println(eventString);
 
 
-        return StatusEntity.ok(event);
+        return StatusEntity.ok(sentEvent);
     }
 
     /**
