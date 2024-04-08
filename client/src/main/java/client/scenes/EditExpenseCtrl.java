@@ -123,7 +123,8 @@ public class EditExpenseCtrl implements Translatable {
                     }
                 }
 
-                expense = new Expense(expense.getId(), expenseTitle.getText(), Double.parseDouble(expenseAmount.getText()),
+                expense = new Expense(expense.getId(), expenseTitle.getText(),
+                        Double.parseDouble(expenseAmount.getText()),
                         person.getId(), expense.getInvitationCode());
                 mainCtrl.getSessionHandler().sendExpense(expense, "update");
             }

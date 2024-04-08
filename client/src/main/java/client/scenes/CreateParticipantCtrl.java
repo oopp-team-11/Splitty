@@ -6,16 +6,13 @@ import client.utils.ServerUtils;
 import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
 import commons.Event;
-import commons.Expense;
 import commons.Participant;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 /***
