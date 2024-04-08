@@ -27,10 +27,11 @@ public class AdminDataHandler {
      * @param sessionHandler websocket session handler
      * @param passcode client's passcode
      */
-    public AdminDataHandler(List<Event> events, WebsocketSessionHandler sessionHandler, String passcode) {
+    public AdminDataHandler(List<Event> events, WebsocketSessionHandler sessionHandler, String passcode, File jsonDumpDir) {
         this.events = events;
         this.sessionHandler = sessionHandler;
         this.passcode = passcode;
+        this.jsonDumpDir = jsonDumpDir;
     }
 
     /**
