@@ -6,13 +6,17 @@ import client.utils.ServerUtils;
 import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
 import commons.Event;
+import commons.Expense;
 import commons.Participant;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 /***
  * class CreateParticipantController
@@ -114,11 +118,8 @@ public class CreateParticipantCtrl implements Translatable {
 
     /**
      * When button gets clicked, send POST request to participants
-     * @throws IOException when error occurred while sending the request to server
-     * @throws InterruptedException when error occurred while sending the request to server
      */
-    public void onCreate() throws IOException, InterruptedException {
-        System.out.println("ONCREATE");
+    public void onCreate() {
 
         String firstNameString = firstName.getText();
         String lastNameString = lastName.getText();
@@ -126,25 +127,49 @@ public class CreateParticipantCtrl implements Translatable {
         String bicString = bic.getText();
         String emailString = email.getText();
 
-        if(firstNameString.isEmpty() || lastNameString.isEmpty())
-        {
-            System.err.println("Error. First name and last name are mandatory.");
-            return;
+        if(firstNameString.isEmpty()){
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("First name field is empty, please fill in a first name.");
+            alert.showAndWait();
+        } else if (lastNameString.isEmpty()) {
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Last name field is empty, please fill in a last name.");
+            alert.showAndWait();
+        } else if (emailString.isEmpty()) {
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Email address field is empty, please fill in an Email address.");
+            alert.showAndWait();
+        } else if (!Pattern.compile("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$").matcher(emailString).matches()){
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Email address is not an email address or is the wrong format.");
+            alert.showAndWait();
+        } else {
+
+            var alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Are you sure you want to add this participant?");
+            var result = alert.showAndWait();
+            if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
+                mainCtrl.getSessionHandler().sendParticipant(
+                        new Participant(mainCtrl.getDataHandler().getEvent(),
+                                firstNameString,
+                                lastNameString,
+                                emailString,
+                                ibanString,
+                                bicString
+                        ),
+                        "create"
+                );
+
+                mainCtrl.showEventOverview();
+            }else {
+                mainCtrl.showEventOverview();
+            }
         }
-
-
-        mainCtrl.getSessionHandler().sendParticipant(
-                new Participant(mainCtrl.getDataHandler().getEvent(),
-                        firstNameString,
-                        lastNameString,
-                        emailString,
-                        ibanString,
-                        bicString
-                ),
-                "create"
-        );
-
-        mainCtrl.showEventOverview();
 
     }
 

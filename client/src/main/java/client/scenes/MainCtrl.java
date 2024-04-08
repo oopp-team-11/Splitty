@@ -23,8 +23,11 @@ import client.utils.WebsocketSessionHandler;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
+import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -32,6 +35,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
@@ -186,7 +190,6 @@ public class MainCtrl {
      */
     public void showStartScreen() {
         primaryStage.setTitle("Start Screen");
-
         primaryStage.setScene(startScreenScene);
         primaryStage.setResizable(false);
         try {

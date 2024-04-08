@@ -18,6 +18,7 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -110,7 +111,15 @@ public class EventOverviewCtrl implements Translatable {
 
         deleteColumn.setCellValueFactory(participant -> {
             Button button = new Button("X");
-            button.setOnAction(event1 -> deleteParticipant(participant.getValue()));
+            button.setOnAction(event1 -> {
+                var alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText("Are you sure you want to delete this participant?");
+                var result = alert.showAndWait();
+                if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
+                    deleteParticipant(participant.getValue());
+                }
+            });
             return new SimpleObjectProperty<>(button);
         });
         participantsList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
@@ -126,7 +135,15 @@ public class EventOverviewCtrl implements Translatable {
 
         deleteColumn1.setCellValueFactory(expense -> {
             Button button = new Button("X");
-            button.setOnAction(event1 -> deleteExpense(expense.getValue()));
+            button.setOnAction(event1 -> {
+                var alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText("Are you sure you want to delete this expense?");
+                var result = alert.showAndWait();
+                if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
+                    deleteExpense(expense.getValue());
+                }
+            });
             return new SimpleObjectProperty<>(button);
         });
         expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));

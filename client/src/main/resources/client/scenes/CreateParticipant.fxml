@@ -5,16 +5,16 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CreateParticipantCtrl">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CreateParticipantCtrl">
    <children>
-      <VBox prefHeight="640.0" prefWidth="600.0">
+      <VBox prefHeight="700.0" prefWidth="850.0">
          <children>
-            <Label alignment="CENTER" fx:id="addParticipantLabel" prefHeight="50.0" prefWidth="570.0" style="-fx-padding: 10;" text="Add a participant">
+            <Label fx:id="addParticipantLabel" alignment="CENTER" prefHeight="50.0" prefWidth="570.0" style="-fx-padding: 10;" text="Add a participant">
                <font>
                   <Font size="17.0" />
                </font>
             </Label>
-            <GridPane prefHeight="560.0" prefWidth="570.0">
+            <GridPane prefHeight="560.0" prefWidth="570.0" VBox.vgrow="ALWAYS">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -34,31 +34,31 @@
                   <TextField fx:id="iban" promptText="IBAN" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <TextField fx:id="bic" promptText="BIC" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
-                  <Label alignment="CENTER" prefHeight="173.0" prefWidth="987.0" text="Participants First Name:" fx:id="participantFirstNameLabel">
+                  <Label fx:id="participantFirstNameLabel" alignment="CENTER" prefHeight="173.0" prefWidth="987.0" text="Participants First Name:">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
                   </Label>
 
-                  <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants Last Name:" fx:id="participantLastNameLabel" GridPane.rowIndex="1">
+                  <Label fx:id="participantLastNameLabel" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants Last Name:" GridPane.rowIndex="1">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
                   </Label>
 
-                  <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants Email Adress:" fx:id="participantEmailLabel" GridPane.rowIndex="2">
+                  <Label fx:id="participantEmailLabel" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants Email Adress:" GridPane.rowIndex="2">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
                   </Label>
 
-                  <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants IBAN:" fx:id="participantIBANLabel" GridPane.rowIndex="3">
+                  <Label fx:id="participantIBANLabel" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants IBAN:" GridPane.rowIndex="3">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
                   </Label>
 
-                  <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants BIC:" fx:id="participantBICLabel" GridPane.rowIndex="4">
+                  <Label fx:id="participantBICLabel" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="173.0" prefWidth="987.0" text="Participants BIC:" GridPane.rowIndex="4">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
