@@ -135,7 +135,13 @@ public class TestInvolvedRepository implements InvolvedRepository {
 
     @Override
     public <S extends Involved> List<S> saveAll(Iterable<S> entities) {
-        return null;
+        List<S> list = new ArrayList<>();
+        for(S entity : entities)
+        {
+            if(involveds.add(entity))
+                list.add(entity);
+        }
+        return list;
     }
 
     @Override
@@ -186,7 +192,8 @@ public class TestInvolvedRepository implements InvolvedRepository {
 
     @Override
     public void deleteAll(Iterable<? extends Involved> entities) {
-
+        for(Involved involved : entities)
+            delete(involved);
     }
 
     @Override
