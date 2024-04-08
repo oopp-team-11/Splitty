@@ -37,7 +37,7 @@ public class Expense {
     private double amount;
 
     @JsonManagedReference(value = "ExpenseToInvolved")
-    @OneToMany(mappedBy = "expense", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "expense", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Involved> involveds;
 
     private LocalDateTime date;
