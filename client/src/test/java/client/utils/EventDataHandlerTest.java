@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -60,10 +61,10 @@ class EventDataHandlerTest {
         setId(e1, UUID.randomUUID());
         e2 = new Expense(p2, "2", 2.0);
         setId(e2, UUID.randomUUID());
-        i1 = new Involved(UUID.randomUUID(), true, e1.getId(), p1.getId());
-        i2 = new Involved(UUID.randomUUID(), false, e1.getId(), p2.getId());
-        i3 = new Involved(UUID.randomUUID(), false, e2.getId(), p1.getId());
-        i4 = new Involved(UUID.randomUUID(), true, e2.getId(), p2.getId());
+        i1 = new Involved(UUID.randomUUID(), true, e1.getId(), p1.getId(), event.getId());
+        i2 = new Involved(UUID.randomUUID(), false, e1.getId(), p2.getId(), event.getId());
+        i3 = new Involved(UUID.randomUUID(), false, e2.getId(), p1.getId(), event.getId());
+        i4 = new Involved(UUID.randomUUID(), true, e2.getId(), p2.getId(), event.getId());
         involveds1 = new ArrayList<>();
         involveds1.add(i1);
         involveds1.add(i2);
@@ -179,8 +180,9 @@ class EventDataHandlerTest {
 
     @Test
     void receiveExpenseCreate() {
-        var e3 = new Expense(UUID.randomUUID(), "Antihypetrain", 3.0, p2.getId(), event.getId());
-        Involved i5 = new Involved(UUID.randomUUID(), true, e3.getId(), p2.getId());
+        var e3 = new Expense(UUID.randomUUID(), "Antihypetrain", 3.0, p2.getId(), event.getId(),
+                LocalDateTime.now());
+        Involved i5 = new Involved(UUID.randomUUID(), true, e3.getId(), p2.getId(), UUID.randomUUID());
         List<Involved> involveds = new ArrayList<>();
         involveds.add(i5);
         e3.setInvolveds(involveds);
@@ -195,8 +197,9 @@ class EventDataHandlerTest {
 
     @Test
     void receiveExpenseUpdate() {
-        var newE1 = new Expense(e1.getId(), "Antihype", 1.0, e1.getPaidById(), e1.getInvitationCode());
-        Involved i5 = new Involved(UUID.randomUUID(), true, newE1.getId(), p2.getId());
+        var newE1 = new Expense(e1.getId(), "Antihype", 1.0, e1.getPaidById(), e1.getInvitationCode(),
+                LocalDateTime.now());
+        Involved i5 = new Involved(UUID.randomUUID(), true, newE1.getId(), p2.getId(), event.getId());
         List<Involved> involveds = new ArrayList<>();
         involveds.add(i5);
         newE1.setInvolveds(involveds);
@@ -314,21 +317,21 @@ class EventDataHandlerTest {
     @Test
     void getUpdateInvolved() {
         boolean notI1Settled = !i1.getIsSettled();
-        Involved newI1 = new Involved(i1.getId(), notI1Settled, i1.getExpenseId(), i1.getParticipantId());
+        Involved newI1 = new Involved(i1.getId(), notI1Settled, i1.getExpenseId(), i1.getParticipantId(), event.getId());
         handler.getUpdateInvolved(newI1);
         assertEquals(notI1Settled, i1.getIsSettled());
     }
 
     @Test
     void getUpdateInvolvedExpenseNotFound() {
-        Involved newI1 = new Involved(i1.getId(), i1.getIsSettled(), UUID.randomUUID(), i1.getParticipantId());
+        Involved newI1 = new Involved(i1.getId(), i1.getIsSettled(), UUID.randomUUID(), i1.getParticipantId(), event.getId());
         handler.getUpdateInvolved(newI1);
         verify(sessionMock).refreshExpenses();
     }
 
     @Test
     void getUpdateInvolvedNotFound() {
-        Involved newI1 = new Involved(UUID.randomUUID(), i1.getIsSettled(), i1.getExpenseId(), i1.getParticipantId());
+        Involved newI1 = new Involved(UUID.randomUUID(), i1.getIsSettled(), i1.getExpenseId(), i1.getParticipantId(), event.getId());
         handler.getUpdateInvolved(newI1);
         verify(sessionMock).refreshExpenses();
     }

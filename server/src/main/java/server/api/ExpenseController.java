@@ -113,7 +113,7 @@ public class ExpenseController {
         expense = expenseRepository.save(expense);
 
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(), paidBy.getId(),
-                receivedExpense.getInvitationCode());
+                receivedExpense.getInvitationCode(), expense.getDate());
         template.convertAndSend("/topic/" + sentExpense.getInvitationCode() + "/expense:create",
                 sentExpense);
 
@@ -143,7 +143,7 @@ public class ExpenseController {
             List<Expense> participantExpenses = participant.getMadeExpenses();
             for (Expense expense : participantExpenses) {
                 Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount()
-                        , participant.getId(), invitationCode);
+                        , participant.getId(), invitationCode, expense.getDate());
                 expenses.add(sentExpense);
             }
         }
@@ -181,7 +181,7 @@ public class ExpenseController {
 
 
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
-                receivedExpense.getPaidById(), receivedExpense.getInvitationCode());
+                receivedExpense.getPaidById(), receivedExpense.getInvitationCode(), expense.getDate());
         template.convertAndSend("/topic/" + sentExpense.getInvitationCode() + "/expense:update", sentExpense);
         return StatusEntity.ok("expense:update " + sentExpense.getId());
     }
@@ -209,7 +209,7 @@ public class ExpenseController {
         expenseRepository.delete(expense);
 
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
-                receivedExpense.getPaidById(), receivedExpense.getInvitationCode());
+                receivedExpense.getPaidById(), receivedExpense.getInvitationCode(), receivedExpense.getDate());
         template.convertAndSend("/topic/" + sentExpense.getInvitationCode() + "/expense:delete",
                 sentExpense);
         return StatusEntity.ok("expense:delete " + sentExpense.getId());

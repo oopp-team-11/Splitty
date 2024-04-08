@@ -12,6 +12,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,9 +36,11 @@ public class Expense {
     @Column(nullable = false)
     private double amount;
 
-    @JsonManagedReference
+    @JsonManagedReference(value = "ExpenseToInvolved")
     @OneToMany(mappedBy = "expense", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Involved> involveds;
+
+    private LocalDateTime date;
 
     @Transient
     private UUID paidById;
@@ -47,6 +50,22 @@ public class Expense {
 
     @Transient
     private double amountOwed;
+
+    /**
+     * std getter
+     * @return date of the expense
+     */
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    /**
+     * std setter
+     * @param date
+     */
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
 
     /**
      * std getter
@@ -94,13 +113,15 @@ public class Expense {
      * @param amount amount paid of the Expense
      * @param paidById ID of the Participant who paid for the expense
      * @param invitationCode Event invitationCode of the Expense
+     * @param date
      */
-    public Expense(UUID id, String title, double amount, UUID paidById, UUID invitationCode) {
+    public Expense(UUID id, String title, double amount, UUID paidById, UUID invitationCode, LocalDateTime date) {
         this.id = id;
         this.title = title;
         this.amount = amount;
         this.paidById = paidById;
         this.invitationCode = invitationCode;
+        this.date = date;
     }
 
     /**
@@ -116,6 +137,7 @@ public class Expense {
         this.amount = amount;
         this.paidById = paidBy.getId();
         this.invitationCode = paidBy.getEventId();
+        this.date = LocalDateTime.now();
     }
 
     /***
@@ -208,13 +230,15 @@ public class Expense {
 
         return new EqualsBuilder().append(amount, expense.amount).append(id, expense.id)
                 .append(title, expense.title).append(paidById, expense.paidById)
-                .append(invitationCode, expense.invitationCode).append(involveds, expense.involveds).isEquals();
+                .append(invitationCode, expense.invitationCode).append(involveds, expense.involveds)
+                .append(date, expense.date).isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(id).append(title)
-                .append(amount).append(paidById).append(invitationCode).append(involveds).toHashCode();
+                .append(amount).append(paidById).append(invitationCode).append(involveds)
+                .append(date).toHashCode();
     }
 
     @Override
@@ -226,6 +250,7 @@ public class Expense {
                 .append("paidById", paidById)
                 .append("invitationCode", invitationCode)
                 .append(involveds)
+                .append(date)
                 .toString();
     }
 }

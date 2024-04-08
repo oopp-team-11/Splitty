@@ -35,6 +35,8 @@ class InvolvedTest {
 
     UUID invId;
 
+    UUID invitationCode;
+
     @BeforeEach
     void makeSetUp() throws IllegalAccessException {
         participant = new Participant();
@@ -46,6 +48,8 @@ class InvolvedTest {
         involved = new Involved(false, expense, participant);
         invId = UUID.randomUUID();
         setId(involved, invId);
+        invitationCode = UUID.randomUUID();
+        involved.setInvitationCode(invitationCode);
     }
     @Test
     void getExpenseId() {
@@ -104,7 +108,7 @@ class InvolvedTest {
     @Test
     void testEquals() {
         Involved involved2 = new Involved(involved.getId(), involved.getIsSettled(),
-                involved.getExpenseId(), involved.getParticipantId());
+                involved.getExpenseId(), involved.getParticipantId(), invitationCode);
         try {
             setId(involved2, involved.getId());
         } catch (IllegalAccessException ignored) {}

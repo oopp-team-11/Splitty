@@ -97,7 +97,8 @@ public class AdminController {
                     var eId = involved.getExpenseId();
                     var iId = involved.getId();
                     var isSettled = involved.getIsSettled();
-                    involved = new Involved(iId, isSettled, eId, pId);
+                    var invitationCodeId = involved.getInvitationCode();
+                    involved = new Involved(iId, isSettled, eId, pId, invitationCodeId);
                 }
             }
         }

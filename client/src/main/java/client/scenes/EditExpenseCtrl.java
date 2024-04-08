@@ -92,7 +92,7 @@ public class EditExpenseCtrl implements Translatable {
 
         if (person != null) {
             expense = new Expense(expense.getId(), expenseTitle.getText(), Double.parseDouble(expenseAmount.getText()),
-                    person.getId(), expense.getInvitationCode());
+                    person.getId(), expense.getInvitationCode(), expense.getDate());
             mainCtrl.getSessionHandler().sendExpense(expense, "update");
 
             mainCtrl.showEventOverview();

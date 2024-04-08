@@ -37,6 +37,7 @@ public class ExpenseTest {
         );
         expense = new Expense(participant1, "Cookies", 69.69);
         expenseEqual = new Expense(participant1, "Cookies", 69.69);
+        expenseEqual.setDate(expense.getDate());
         expenseNotEqual = new Expense();
         try {
             UUID id = UUID.randomUUID();
@@ -66,12 +67,13 @@ public class ExpenseTest {
     @Test
     void server2ClientConstructor() {
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
-                expense.getPaidById(), expense.getInvitationCode());
+                expense.getPaidById(), expense.getInvitationCode(), expense.getDate());
         assertEquals(expense.getId(), sentExpense.getId());
         assertEquals(expense.getTitle(), sentExpense.getTitle());
         assertEquals(expense.getAmount(), sentExpense.getAmount());
         assertEquals(expense.getPaidById(), sentExpense.getPaidById());
         assertEquals(expense.getInvitationCode(), sentExpense.getInvitationCode());
+        assertEquals(expense.getDate(), sentExpense.getDate());
     }
 
     @Test

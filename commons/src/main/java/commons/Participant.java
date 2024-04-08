@@ -39,8 +39,29 @@ public class Participant {
     @OneToMany(mappedBy = "paidBy", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     List<Expense> madeExpenses;
 
+
+    @JsonManagedReference(value = "ParticipantToInvolved")
+    @OneToMany(mappedBy = "participant", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    List<Involved> involvedIn;
+
     @Transient
     private UUID eventId;
+
+    /**
+     * std getter
+     * @return list of involved
+     */
+    public List<Involved> getInvolvedIn() {
+        return involvedIn;
+    }
+
+    /**
+     * std setter
+     * @param involvedIn
+     */
+    public void setInvolvedIn(List<Involved> involvedIn) {
+        this.involvedIn = involvedIn;
+    }
 
     /**
      * Constructor
@@ -90,6 +111,7 @@ public class Participant {
         this.bic = bic;
         this.madeExpenses = new ExpenseList();
         this.eventId = event.getId();
+        this.involvedIn = new InvolvedList();
     }
 
     /**
