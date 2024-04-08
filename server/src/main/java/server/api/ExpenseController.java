@@ -165,6 +165,7 @@ public class ExpenseController {
                 Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount()
                         , participant.getId(), invitationCode);
                 sentExpense.setInvolveds(expense.getInvolveds());
+                sentExpense.setAmountOwed(sentExpense.getAmount()/sentExpense.getInvolveds().size());
                 expenses.add(sentExpense);
             }
         }
