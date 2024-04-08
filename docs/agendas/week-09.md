@@ -53,13 +53,19 @@ delete the email field from the server?
 - Check on Jakub's progress on updating Expense controllers
 - Check on David's progress on updating the models
 - Check on Marios's progress on supporting the involved:update endpoint
+- We agreed that the deadline for the three aforementioned points is before today's meeting.
+Let's check, if we managed to meet this deadline.
 - Check on Boaz's progress on pop-ups and accessibility features
 - We still have left the product pitch to do.
+- Thursday midnight seems to be a reasonable deadline for making changes to our code since
+GitLab might be unresponsive on Friday.
+- All the backend should be probably be finished by Tuesday midnight. No more big features planned for the backend.
 
 ### UI work left:
 
 - Accessibility
 - Detailed expense overview
+- Detailed participant overview
 - Revamp for event overview to include filtering the expense list. 
 See the date and who paid for the expense.
 
