@@ -101,7 +101,6 @@ public class AdminDataHandler {
         if (containsById(receivedEvent)) {
             // TODO: logic of refetching
             // sessionHandler.refreshAllEvents();
-            // TODO: logic of pop-up
             return;
         }
         events.add(receivedEvent);
@@ -135,7 +134,6 @@ public class AdminDataHandler {
         if (!containsById(receivedEvent)) {
             // TODO: logic of refetching
             // sessionHandler.refreshAllEvents();
-            // TODO: logic of pop-up
             return;
         }
         updateEvent(getEventById(receivedEvent), receivedEvent);
@@ -149,7 +147,6 @@ public class AdminDataHandler {
         if (!containsById(receivedEvent)) {
             // TODO: logic of refetching
             // sessionHandler.refreshAllEvents();
-            // TODO: logic of pop-up
             return;
         }
         events.remove(getEventById(receivedEvent));
