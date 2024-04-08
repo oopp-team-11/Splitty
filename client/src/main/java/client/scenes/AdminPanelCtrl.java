@@ -79,6 +79,7 @@ public class AdminPanelCtrl implements Translatable {
 
         deleteEvent.setCellValueFactory(event -> {
             Button button = new Button("X");
+            button.setStyle("-fx-base: #7f1a1a");
             button.setOnAction(event1 -> {
                 var alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.initModality(Modality.APPLICATION_MODAL);
@@ -93,6 +94,7 @@ public class AdminPanelCtrl implements Translatable {
 
         jsonDump.setCellValueFactory(event -> {
             Button button = new Button("⬇");
+            button.setStyle("-fx-base: #277799");
             button.setOnAction(event1 -> jsonDump(event.getValue()));
             return new SimpleObjectProperty<>(button);
         });

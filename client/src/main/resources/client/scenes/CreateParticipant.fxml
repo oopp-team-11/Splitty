@@ -64,13 +64,13 @@
                      </font>
                   </Label>
 
-                  <Button id="CreateParticipant" fx:id="cancelBtn" layoutX="310.0" layoutY="492.0" mnemonicParsing="false" onAction="#abort" prefHeight="660.0" prefWidth="1357.0" text="Abort" GridPane.rowIndex="5">
+                  <Button id="CreateParticipant" fx:id="cancelBtn" layoutX="310.0" layoutY="492.0" mnemonicParsing="false" style="-fx-base: #7f1a1a;" onAction="#abort" prefHeight="660.0" prefWidth="1357.0" text="Abort" GridPane.rowIndex="5">
                      <GridPane.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </GridPane.margin>
                   </Button>
 
-                  <Button id="CreateParticipant" fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate" prefHeight="660.0" prefWidth="1357.0" text="Add" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                  <Button id="CreateParticipant" fx:id="createBtn" mnemonicParsing="false" style="-fx-base: #49873a;" onAction="#onCreate" prefHeight="660.0" prefWidth="1357.0" text="Add" GridPane.columnIndex="1" GridPane.rowIndex="5">
                      <GridPane.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </GridPane.margin></Button>

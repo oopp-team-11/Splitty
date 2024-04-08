@@ -105,12 +105,14 @@ public class EventOverviewCtrl implements Translatable {
 
         editColumn.setCellValueFactory(participant -> {
             Button button = new Button("✎");
+            button.setStyle("-fx-base: #49873a");
             button.setOnAction(event1 -> editParticipant(participant.getValue()));
             return new SimpleObjectProperty<>(button);
         });
 
         deleteColumn.setCellValueFactory(participant -> {
             Button button = new Button("X");
+            button.setStyle("-fx-base: #7f1a1a");
             button.setOnAction(event1 -> {
                 var alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.initModality(Modality.APPLICATION_MODAL);
@@ -129,12 +131,14 @@ public class EventOverviewCtrl implements Translatable {
 
         editColumn1.setCellValueFactory(expense -> {
             Button button = new Button("✎");
+            button.setStyle("-fx-base: #49873a");
             button.setOnAction(event1 -> editExpense(expense.getValue()));
             return new SimpleObjectProperty<>(button);
         });
 
         deleteColumn1.setCellValueFactory(expense -> {
             Button button = new Button("X");
+            button.setStyle("-fx-base: #7f1a1a");
             button.setOnAction(event1 -> {
                 var alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.initModality(Modality.APPLICATION_MODAL);

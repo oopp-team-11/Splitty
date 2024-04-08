@@ -28,12 +28,12 @@
                 <Label fx:id="whoPaidLabel" alignment="CENTER" prefHeight="514.0" prefWidth="794.0" text="Who paid?" textAlignment="CENTER" GridPane.rowIndex="1" />
                 <Label fx:id="whatForLabel" alignment="CENTER" prefHeight="577.0" prefWidth="852.0" text="What for?" GridPane.rowIndex="2" />
                 <Label fx:id="howMuchLabel" alignment="CENTER" prefHeight="636.0" prefWidth="857.0" text="How Much?" GridPane.rowIndex="3" />
-                <Button fx:id="createBtn" mnemonicParsing="false" onAction="#editExpense" prefHeight="821.0" prefWidth="953.0" text="Edit" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                <Button fx:id="createBtn" mnemonicParsing="false" onAction="#editExpense" style="-fx-base: #49873a;" prefHeight="821.0" prefWidth="953.0" text="Edit" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </GridPane.margin>
             </Button>
-                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#abort" prefHeight="751.0" prefWidth="1252.0" text="Abort" GridPane.rowIndex="4">
+                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#abort" style="-fx-base: #7f1a1a;" prefHeight="751.0" prefWidth="1252.0" text="Abort" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </GridPane.margin>

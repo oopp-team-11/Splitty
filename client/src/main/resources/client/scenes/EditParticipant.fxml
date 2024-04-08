@@ -64,13 +64,13 @@
                      </font>
                   </Label>
 
-                  <Button fx:id="abortEditButton" layoutX="310.0" layoutY="492.0" mnemonicParsing="false" onAction="#abort" prefHeight="660.0" prefWidth="1357.0" text="Abort" GridPane.rowIndex="5">
+                  <Button fx:id="abortEditButton" layoutX="310.0" layoutY="492.0" mnemonicParsing="false" onAction="#abort" style="-fx-base: #7f1a1a;" prefHeight="660.0" prefWidth="1357.0" text="Abort" GridPane.rowIndex="5">
                      <GridPane.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </GridPane.margin>
                   </Button>
 
-                  <Button fx:id="editParticipantButton" mnemonicParsing="false" onAction="#onEdit" prefHeight="660.0" prefWidth="1357.0" text="Edit" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                  <Button fx:id="editParticipantButton" mnemonicParsing="false" onAction="#onEdit" style="-fx-base: #49873a;" prefHeight="660.0" prefWidth="1357.0" text="Edit" GridPane.columnIndex="1" GridPane.rowIndex="5">
                      <GridPane.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </GridPane.margin>
