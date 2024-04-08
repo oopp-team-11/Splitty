@@ -3,6 +3,7 @@ package client.utils;
 import commons.Event;
 import javafx.application.Platform;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -12,6 +13,7 @@ public class AdminDataHandler {
     private List<Event> events;
     private WebsocketSessionHandler sessionHandler;
     private String passcode;
+    private File jsonDumpDir;
 
     /**
      * empty constructor
@@ -29,6 +31,24 @@ public class AdminDataHandler {
         this.events = events;
         this.sessionHandler = sessionHandler;
         this.passcode = passcode;
+    }
+
+    /**
+     * Getter for directory of jsonDump
+     *
+     * @return returns a File representing a directory for dumping json
+     */
+    public File getJsonDumpDir() {
+        return jsonDumpDir;
+    }
+
+    /**
+     * Setter for directory of jsonDump
+     *
+     * @param jsonDumpDir the chosen directory to save dump
+     */
+    public void setJsonDumpDir(File jsonDumpDir) {
+        this.jsonDumpDir = jsonDumpDir;
     }
 
     /**
@@ -76,6 +96,7 @@ public class AdminDataHandler {
     public void setDataToNull() {
         events = null;
         passcode = null;
+        jsonDumpDir = null;
     }
 
     /**

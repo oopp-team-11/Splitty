@@ -13,6 +13,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -107,6 +108,9 @@ public class AdminPanelCtrl implements Translatable {
      * @param event
      */
     public void jsonDump(Event event) {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Download");
+        mainCtrl.getAdminDataHandler().setJsonDumpDir(directoryChooser.showDialog(null));
         mainCtrl.getSessionHandler().sendAdminEvent(mainCtrl.getAdminDataHandler().getPasscode(),
                 event, "dump");
     }

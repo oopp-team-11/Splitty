@@ -17,16 +17,18 @@ public class FileSystemUtils {
 
     /**
      * method tht performs json dump
+     * @param jsonDumpDir
      * @param event
      * @throws IOException
      */
-    public void jsonDump(Event event)  {
+    public void jsonDump(File jsonDumpDir, Event event)  {
         try {
-            String fileTitle = event.getId().toString();
+            String fileTitle = "event-" + event.getId().toString();
+            File fileDir = new File(jsonDumpDir.getPath() + File.separator + fileTitle);
             ObjectMapper mapper = new ObjectMapper();
             mapper.findAndRegisterModules();
             String fileData = mapper.writeValueAsString(event);
-            FileWriter file = new FileWriter(fileTitle);
+            FileWriter file = new FileWriter(fileDir);
             file.write(fileData);
             file.flush();
             file.close();
