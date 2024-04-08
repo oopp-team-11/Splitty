@@ -1,20 +1,14 @@
 package server.api;
 import commons.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.request.async.DeferredResult;
-import server.EventLastActivityService;
 import server.PasswordService;
 import server.database.EventRepository;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 import server.database.ExpenseRepository;
 import server.database.InvolvedRepository;
@@ -31,13 +25,9 @@ public class AdminController {
     private final ExpenseRepository expenseRepo;
     private final InvolvedRepository involvedRepo;
 
-    private final Map<UUID, List<DeferredResult<ResponseEntity<Map<UUID, String>>>>> deferredResults;
-
     private final SimpMessagingTemplate template;
 
     private final PasswordService passwordService;
-
-    private final EventLastActivityService eventLastActivityService;
 
     /**
      * Constructor for the EventController.
@@ -49,21 +39,17 @@ public class AdminController {
      * @param expenseRepo
      * @param involvedRepository
      * @param passwordService          The PasswordService provided by the server
-     * @param eventLastActivityService The EventLastActivityService provided by the server
      */
     @Autowired
     public AdminController(SimpMessagingTemplate template, EventRepository eventRepo,
                            ParticipantRepository participantRepo, ExpenseRepository expenseRepo,
-                           InvolvedRepository involvedRepository, PasswordService passwordService,
-                           EventLastActivityService eventLastActivityService) {
+                           InvolvedRepository involvedRepository, PasswordService passwordService) {
         this.template = template;
         this.eventRepo = eventRepo;
         this.participantRepo = participantRepo;
         this.expenseRepo = expenseRepo;
         this.involvedRepo = involvedRepository;
         this.passwordService = passwordService;
-        this.deferredResults = new ConcurrentHashMap<>();
-        this.eventLastActivityService = eventLastActivityService;
     }
 
     /**
@@ -89,15 +75,20 @@ public class AdminController {
             return StatusEntity.notFound(true, "Event does not exist in the database.");
 
         Event event = eventRepo.getReferenceById(receivedEvent.getId());
+        Event sentEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(), event.getLastActivity());
         for (Participant participant : event.getParticipants()) {
+            Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
+                    participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getIban(),
+                    participant.getEventId());
+            sentEvent.addParticipant(sentParticipant);
             for (Expense expense : participant.getMadeExpenses()) {
+                Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
+                        expense.getPaidById(), expense.getInvitationCode());
+                sentParticipant.addExpense(sentExpense);
                 for (Involved involved : expense.getInvolveds()) {
-                    // create new involved with expense and participant equal to null to avoid cyclic reference
-                    var pId = involved.getParticipantId();
-                    var eId = involved.getExpenseId();
-                    var iId = involved.getId();
-                    var isSettled = involved.getIsSettled();
-                    involved = new Involved(iId, isSettled, eId, pId);
+                    Involved sentInvolved = new Involved(involved.getId(), involved.getIsSettled(),
+                            involved.getExpenseId(), involved.getParticipantId());
+                    sentExpense.getInvolveds().add(sentInvolved);
                 }
             }
         }

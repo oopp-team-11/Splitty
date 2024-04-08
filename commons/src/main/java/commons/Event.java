@@ -10,6 +10,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,6 +54,7 @@ public class Event {
         this.title = title;
         this.creationDate = creationDate;
         this.lastActivity = lastActivity;
+        this.participants = new ParticipantList();
     }
 
     /**
