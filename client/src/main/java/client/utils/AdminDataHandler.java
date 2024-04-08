@@ -99,7 +99,6 @@ public class AdminDataHandler {
     public void setDataToNull() {
         events = null;
         passcode = null;
-        jsonDumpDir = null;
     }
 
     /**
