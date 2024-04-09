@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,12 +79,22 @@ public class AdminPanelCtrl implements Translatable {
 
         deleteEvent.setCellValueFactory(event -> {
             Button button = new Button("X");
-            button.setOnAction(event1 -> deleteEvent(event.getValue()));
+            button.setStyle("-fx-base: #7f1a1a");
+            button.setOnAction(event1 -> {
+                var alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText("Are you sure you want to delete this event?");
+                var result = alert.showAndWait();
+                if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
+                    deleteEvent(event.getValue());
+                }
+            });
             return new SimpleObjectProperty<>(button);
         });
 
         jsonDump.setCellValueFactory(event -> {
             Button button = new Button("⬇");
+            button.setStyle("-fx-base: #277799");
             button.setOnAction(event1 -> jsonDump(event.getValue()));
             return new SimpleObjectProperty<>(button);
         });

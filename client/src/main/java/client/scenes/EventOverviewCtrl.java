@@ -18,6 +18,7 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -104,13 +105,23 @@ public class EventOverviewCtrl implements Translatable {
 
         editColumn.setCellValueFactory(participant -> {
             Button button = new Button("✎");
+            button.setStyle("-fx-base: #49873a");
             button.setOnAction(event1 -> editParticipant(participant.getValue()));
             return new SimpleObjectProperty<>(button);
         });
 
         deleteColumn.setCellValueFactory(participant -> {
             Button button = new Button("X");
-            button.setOnAction(event1 -> deleteParticipant(participant.getValue()));
+            button.setStyle("-fx-base: #7f1a1a");
+            button.setOnAction(event1 -> {
+                var alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText("Are you sure you want to delete this participant?");
+                var result = alert.showAndWait();
+                if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
+                    deleteParticipant(participant.getValue());
+                }
+            });
             return new SimpleObjectProperty<>(button);
         });
         participantsList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
@@ -120,13 +131,23 @@ public class EventOverviewCtrl implements Translatable {
 
         editColumn1.setCellValueFactory(expense -> {
             Button button = new Button("✎");
+            button.setStyle("-fx-base: #49873a");
             button.setOnAction(event1 -> editExpense(expense.getValue()));
             return new SimpleObjectProperty<>(button);
         });
 
         deleteColumn1.setCellValueFactory(expense -> {
             Button button = new Button("X");
-            button.setOnAction(event1 -> deleteExpense(expense.getValue()));
+            button.setStyle("-fx-base: #7f1a1a");
+            button.setOnAction(event1 -> {
+                var alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText("Are you sure you want to delete this expense?");
+                var result = alert.showAndWait();
+                if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
+                    deleteExpense(expense.getValue());
+                }
+            });
             return new SimpleObjectProperty<>(button);
         });
         expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));

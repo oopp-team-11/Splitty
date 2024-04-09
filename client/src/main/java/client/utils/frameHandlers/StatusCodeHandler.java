@@ -2,6 +2,9 @@ package client.utils.frameHandlers;
 
 import client.scenes.MainCtrl;
 import commons.StatusEntity;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.stage.Modality;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
@@ -30,6 +33,55 @@ public class StatusCodeHandler implements StompFrameHandler {
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
         StatusEntity status = (StatusEntity) payload;
-        //TODO: mainCtrl.notifyAboutResponse(status)
+        switch (status.getStatusCode()){
+            case OK -> Platform.runLater(() ->{
+                var alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                String message = "Successfully " +
+                        status.getMessage().split(" ")[0].split(":")[1] + "d "
+                        + status.getMessage().split(" ")[0].split(":")[0] + "!";
+                alert.setContentText(message);
+                alert.setHeaderText("Success");
+                alert.showAndWait();
+            });
+            case NOT_FOUND -> {
+                if(status.isUnsolvable()) {
+                    Platform.runLater(() -> {
+                        var alert = new Alert(Alert.AlertType.ERROR);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setContentText(status.getMessage());
+                        alert.setHeaderText("Not Found");
+                        alert.showAndWait();
+                    });
+                }else {
+                    Platform.runLater(() -> {
+                        var alert = new Alert(Alert.AlertType.WARNING);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setContentText(status.getMessage());
+                        alert.setHeaderText("Not Found");
+                        alert.showAndWait();
+                    });
+                }
+            }
+            case BAD_REQUEST -> {
+                if(status.isUnsolvable()) {
+                    Platform.runLater(() -> {
+                        var alert = new Alert(Alert.AlertType.ERROR);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setContentText(status.getMessage());
+                        alert.setHeaderText("Bad Request");
+                        alert.showAndWait();
+                    });
+                }else {
+                    Platform.runLater(() -> {
+                        var alert = new Alert(Alert.AlertType.WARNING);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setContentText(status.getMessage());
+                        alert.setHeaderText("Bad Request");
+                        alert.showAndWait();
+                    });
+                }
+            }
+        }
     }
 }
