@@ -91,7 +91,8 @@ public class AdminPanelCtrl implements Translatable {
         languageSwitchPlaceHolder.getChildren().clear();
         languageSwitchPlaceHolder.getChildren().add(mainCtrl.getLanguageSwitchButton());
 
-        mainCtrl.getAdminDataHandler().setJsonDumpDir(fileSystemUtils.setBackupsDirectory());
+        if (mainCtrl.getAdminDataHandler().getJsonDumpDir() == null)
+            mainCtrl.getAdminDataHandler().setJsonDumpDir(fileSystemUtils.setBackupsDirectory());
 
         refreshData();
     }
@@ -113,9 +114,12 @@ public class AdminPanelCtrl implements Translatable {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("Select directory");
         directoryChooser.setInitialDirectory(mainCtrl.getAdminDataHandler().getJsonDumpDir());
-        mainCtrl.getAdminDataHandler().setJsonDumpDir(directoryChooser.showDialog(null));
-        mainCtrl.getSessionHandler().sendAdminEvent(mainCtrl.getAdminDataHandler().getPasscode(),
-                event, "dump");
+        File chosenDirectory = directoryChooser.showDialog(null);
+        if (chosenDirectory != null) {
+            mainCtrl.getAdminDataHandler().setJsonDumpDir(chosenDirectory);
+            mainCtrl.getSessionHandler().sendAdminEvent(mainCtrl.getAdminDataHandler().getPasscode(),
+                    event, "dump");
+        }
     }
 
     /**
