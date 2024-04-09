@@ -193,6 +193,14 @@ public class StartScreenCtrl implements Initializable, Translatable {
         System.out.println("ONCREATE");
         String eventName = newEventName.getText();
 
+        if(eventName.isEmpty()){
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Event name is empty, please add a name");
+            alert.showAndWait();
+            return;
+        }
+
         UUID invitationCode;
         try {
             invitationCode = serverUtils.createEvent(eventName, "http://" + mainCtrl.getServerIp());
