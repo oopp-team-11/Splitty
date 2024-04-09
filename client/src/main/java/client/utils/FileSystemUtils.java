@@ -2,6 +2,7 @@ package client.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.Event;
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.stage.Modality;
 
@@ -52,12 +53,20 @@ public class FileSystemUtils {
             file.write(fileData);
             file.flush();
             file.close();
-            //TODO: pop-up notification
+            Platform.runLater(() -> {
+                var alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText("Successfully saved JSON file to chosen backup directory.");
+                alert.setHeaderText("Success");
+                alert.showAndWait();
+            });
         } catch (IOException e) {
-            var alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Error: " + e.getMessage());
-            alert.showAndWait();
+            Platform.runLater(() -> {
+                var alert = new Alert(Alert.AlertType.ERROR);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText("Error: " + e.getMessage());
+                alert.showAndWait();
+            });
         }
     }
 
