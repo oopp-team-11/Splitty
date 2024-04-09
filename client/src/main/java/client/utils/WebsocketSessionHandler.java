@@ -4,6 +4,7 @@ import client.scenes.MainCtrl;
 import client.utils.frameHandlers.*;
 import commons.Event;
 import commons.Expense;
+import commons.Involved;
 import commons.Participant;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -100,6 +101,8 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
                 new UpdateExpenseHandler(dataHandler)));
         eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/expense:create",
                 new CreateExpenseHandler(dataHandler)));
+        eventSubscriptions.add(session.subscribe("/topic/" + invitationCode + "/involved:update",
+                new UpdateInvolvedHandler(dataHandler)));
     }
 
     /**
@@ -206,6 +209,16 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
      */
     public void sendExpense(Expense expense, String methodType) {
         session.send("/app/expense:" + methodType, expense);
+    }
+
+    /**
+     * Sends a message to the server with an Involved update
+     *
+     * @param involved an updated Involved object
+     * @param methodType supports {"update"}
+     */
+    public void sendInvolved(Involved involved, String methodType) {
+        session.send("/app/involved:" + methodType, involved);
     }
 
     /**
