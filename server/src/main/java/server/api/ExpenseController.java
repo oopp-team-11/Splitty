@@ -203,17 +203,17 @@ public class ExpenseController {
 
         Participant newPaidBy = participantRepository.getReferenceById(receivedExpense.getPaidById());
         Expense expense = expenseRepository.getReferenceById(receivedExpense.getId());
+        var newAmountOwed = receivedExpense.getAmount() / receivedExpense.getInvolveds().size();
+        if(newAmountOwed != expense.getAmountOwed())
+        {
+            receivedExpense.setAmountOwed(newAmountOwed);
+            for(Involved involved : receivedExpense.getInvolveds())
+                involved.setIsSettled(false);
+        }
         expense.setPaidBy(newPaidBy);
         expense.setAmount(receivedExpense.getAmount());
         expense.setTitle(receivedExpense.getTitle());
         expense.setInvolveds(receivedExpense.getInvolveds());
-        var newAmountOwed = receivedExpense.getAmount() / receivedExpense.getInvolveds().size();
-        if(newAmountOwed != receivedExpense.getAmountOwed())
-        {
-            receivedExpense.setAmountOwed(newAmountOwed);
-            for(Involved involved : expense.getInvolveds())
-                involved.setIsSettled(false);
-        }
 
         expense = expenseRepository.save(expense);
 
