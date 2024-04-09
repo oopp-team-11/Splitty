@@ -163,7 +163,8 @@ class ParticipantTest {
 
     @Test
     void addExpense() {
-        Expense expense = new Expense(participant, "Expense", 69.);
+        // TODO: Maybe some smarter initialisation instead of the two nulls
+        Expense expense = new Expense(participant, "Expense", 69., null, null);
         participant.addExpense(expense);
         assertEquals(expense, participant.getMadeExpenses().getLast());
     }
@@ -175,7 +176,8 @@ class ParticipantTest {
 
     @Test
     void getMadeExpenses() {
-        Expense expense = new Expense(participant, "Expense", 69.);
+        // TODO: Maybe some smarter initialisation instead of the two nulls
+        Expense expense = new Expense(participant, "Expense", 69., null, null);
         participant.addExpense(expense);
         assertEquals(expense, participant.getMadeExpenses().getFirst());
     }

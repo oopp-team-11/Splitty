@@ -186,7 +186,6 @@ public class MainCtrl {
      */
     public void showStartScreen() {
         primaryStage.setTitle("Start Screen");
-
         primaryStage.setScene(startScreenScene);
         primaryStage.setResizable(false);
         try {
@@ -373,6 +372,15 @@ public class MainCtrl {
     public void refreshExpensesData() {
         if(primaryStage.getTitle().equals("Event overview")){
             eventOverviewCtrl.refreshExpensesData();
+        }
+    }
+
+    /**
+     * Method for refreshing data in Admin Panel
+     */
+    public void refreshAdminData() {
+        if (primaryStage.getTitle().equals("Admin Panel")) {
+            adminPanelCtrl.refreshData();
         }
     }
 

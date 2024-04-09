@@ -58,9 +58,9 @@ class EventDataHandlerTest {
         setId(p1, UUID.randomUUID());
         p2 = new Participant(event, "1", "2", "3", "4", "5");
         setId(p2, UUID.randomUUID());
-        e1 = new Expense(p1, "1", 1.0);
+        e1 = new Expense(p1, "1", 1.0, LocalDate.now(), null);
         setId(e1, UUID.randomUUID());
-        e2 = new Expense(p2, "2", 2.0);
+        e2 = new Expense(p2, "2", 2.0, LocalDate.now(), null);
         setId(e2, UUID.randomUUID());
         i1 = new Involved(UUID.randomUUID(), true, e1.getId(), p1.getId(), event.getId());
         i2 = new Involved(UUID.randomUUID(), false, e1.getId(), p2.getId(), event.getId());
@@ -99,12 +99,12 @@ class EventDataHandlerTest {
 
     @Test
     void noExpenseToDelete() {
-        handler.getDeleteExpense(new Expense(p1, "Hype Train", 1.5));
+        handler.getDeleteExpense(new Expense(p1, "Hype Train", 1.5, null, null));
         verify(sessionMock, times(1)).refreshExpenses();
     }
     @Test
     void noExpenseToUpdate() {
-        handler.getUpdateExpense(new Expense(p1, "Hype Train", 1.5));
+        handler.getUpdateExpense(new Expense(p1, "Hype Train", 1.5, null, null));
         verify(sessionMock, times(1)).refreshExpenses();
     }
     @Test
@@ -182,7 +182,7 @@ class EventDataHandlerTest {
     @Test
     void receiveExpenseCreate() {
         var e3 = new Expense(UUID.randomUUID(), "Antihypetrain", 3.0, p2.getId(), event.getId(),
-                LocalDate.now());
+                LocalDate.now(), null);
         Involved i5 = new Involved(UUID.randomUUID(), true, e3.getId(), p2.getId(), UUID.randomUUID());
         List<Involved> involveds = new ArrayList<>();
         involveds.add(i5);
@@ -199,7 +199,7 @@ class EventDataHandlerTest {
     @Test
     void receiveExpenseUpdate() {
         var newE1 = new Expense(e1.getId(), "Antihype", 1.0, e1.getPaidById(), e1.getInvitationCode(),
-                LocalDate.now());
+                LocalDate.now(), null);
         Involved i5 = new Involved(UUID.randomUUID(), true, newE1.getId(), p2.getId(), event.getId());
         List<Involved> involveds = new ArrayList<>();
         involveds.add(i5);
@@ -335,5 +335,10 @@ class EventDataHandlerTest {
         Involved newI1 = new Involved(UUID.randomUUID(), i1.getIsSettled(), i1.getExpenseId(), i1.getParticipantId(), event.getId());
         handler.getUpdateInvolved(newI1);
         verify(sessionMock).refreshExpenses();
+    }
+
+    @Test
+    void sumOfAllExpenses() {
+        assertEquals(e1.getAmount() + e2.getAmount(), handler.sumOfAllExpenses());
     }
 }

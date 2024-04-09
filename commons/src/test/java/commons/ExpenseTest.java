@@ -36,8 +36,9 @@ public class ExpenseTest {
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123"
         );
-        expense = new Expense(participant1, "Cookies", 69.69);
-        expenseEqual = new Expense(participant1, "Cookies", 69.69);
+        // TODO: Some smarter initialisation might be needed (instead of two nulls)
+        expense = new Expense(participant1, "Cookies", 69.69, null, null);
+        expenseEqual = new Expense(participant1, "Cookies", 69.69, null, null);
         expenseEqual.setDate(expense.getDate());
         expenseNotEqual = new Expense();
         try {
@@ -74,8 +75,9 @@ public class ExpenseTest {
 
     @Test
     void server2ClientConstructor() {
+        // TODO: Some smarter initialisation might be needed (instead of the null)
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
-                expense.getPaidById(), expense.getInvitationCode(), expense.getDate());
+                expense.getPaidById(), expense.getInvitationCode(), expense.getDate(), null);
         assertEquals(expense.getId(), sentExpense.getId());
         assertEquals(expense.getTitle(), sentExpense.getTitle());
         assertEquals(expense.getAmount(), sentExpense.getAmount());

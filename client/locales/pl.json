@@ -1,13 +1,13 @@
 {
   "Country Code in ISO 3166-1-alpha-3 code": "pol",
 
-  "CreateNewEventLabel": "Stwórz nowe wydarzenie",
+  "CreateNewEventLabel": "Stwórz wydarzenie",
   "JoinEventLabel": "Dołącz do wydarzenia",
   "RecentEventsLabel": "Niedawne wydarzenia",
   "Create": "Stwórz",
   "Join": "Dołącz",
   "EventName":"Nazwa wydarzenia",
-  "InvitationCode":"Kod zaproszeniowy",
+  "InvitationCode":"Kod zaproszenia",
   "Email": "Email",
   "FirstName": "Imię",
   "LastName": "Nazwisko",
@@ -32,7 +32,7 @@
   "WhoPaidLabel": "Kto zapłacił?",
   "HowMuchLabel": "Ile?",
   "WhatForLabel": "Za co?",
-  "AdminPassword": "Hasło administratora",
+  "AdminPassword": "Hasło",
   "AdminPanelLabel": "Panel administratora",
   "Log in": "Zaloguj się",
   "InvitationSendText": "Kod skopiowano do schowka.",
@@ -42,7 +42,7 @@
   "EditTitleLabel": "Edytuj tytuł",
   "JSONImport": "Importuj JSON",
   "CreationDate": "Data utworzenia",
-  "LastActivityDate": "Data ostatniej aktywności",
+  "LastActivityDate": "Ostatnia aktywność",
   "DeleteEvent": "Usuń wydarzenie",
   "JSONDump": "Pobierz JSON"
 }

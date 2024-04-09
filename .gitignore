@@ -44,6 +44,7 @@ out/
 auxil/
 
 ### Custom ###
+backups/
 participant/participant.json
 config.json
 client-config.json

@@ -11,11 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
+import java.io.File;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class AdminDumpEventHandlerTest {
     private AdminDataHandler dataHandler;
@@ -54,9 +54,10 @@ class AdminDumpEventHandlerTest {
         try {
             setFileUtils(handler, utils);
         } catch (IllegalAccessException ignored) {}
-
+        File file = new File("/tmp/test.txt");
+        when(dataHandler.getJsonDumpDir()).thenReturn(file);
         StatusEntity status = StatusEntity.ok(event);
         handler.handleFrame(headers, status);
-        verify(utils).jsonDump(status.getEvent());
+        verify(utils).jsonDump(file, status.getEvent());
     }
 }

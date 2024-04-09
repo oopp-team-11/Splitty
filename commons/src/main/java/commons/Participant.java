@@ -90,6 +90,7 @@ public class Participant {
         this.iban = iban;
         this.bic = bic;
         this.eventId = eventId;
+        this.madeExpenses = new ExpenseList();
     }
 
     /**

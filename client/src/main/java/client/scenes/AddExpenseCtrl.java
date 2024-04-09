@@ -12,6 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -74,20 +75,53 @@ public class AddExpenseCtrl implements Translatable {
      * Add expense to event and participant
      */
     public void addExpense() {
-        Participant person = null;
-        String[] names = expensePaidBy.getValue().split(" ");
-        for (Participant participant : mainCtrl.getDataHandler().getParticipants()){
-            if(Objects.equals(participant.getFirstName(), names[0])
-                    && Objects.equals(participant.getLastName(), names[1])){
-                person = participant;
+        if(expensePaidBy.getValue() == null){
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Paid By field is empty, please choose a participant.");
+            alert.showAndWait();
+        } else if (expenseTitle.getText().isEmpty()) {
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Expense title field is empty, please add a title.");
+            alert.showAndWait();
+        } else if (expenseAmount.getText().isEmpty()) {
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Expense amount field is empty, please fill in an amount.");
+            alert.showAndWait();
+        } else {
+            try{
+                var ignored = Double.parseDouble(expenseAmount.getText());
+            }catch (NumberFormatException e){
+                var alert = new Alert(Alert.AlertType.WARNING);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText("Expense amount field is not a number, please fill in a number. " +
+                        "\n(don't use commas, use periods instead)");
+                alert.showAndWait();
+                return;
+            }
+
+            var alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Are you sure you want to add this expense?");
+            var result = alert.showAndWait();
+            if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
+                Participant person = null;
+                String[] names = expensePaidBy.getValue().split(" ");
+                for (Participant participant : mainCtrl.getDataHandler().getParticipants()){
+                    if(Objects.equals(participant.getFirstName(), names[0])
+                            && Objects.equals(participant.getLastName(), names[1])){
+                        person = participant;
+                    }
+                }
+                // TODO: add data when you will adjust the scene (see two nulls in the constructor below)
+                Expense newExpense = new Expense(person,
+                        expenseTitle.getText(),
+                        Double.parseDouble(expenseAmount.getText()), null, null);
+                mainCtrl.getSessionHandler().sendExpense(newExpense, "create");
             }
         }
-        Expense newExpense = new Expense(person,
-                expenseTitle.getText(),
-                Double.parseDouble(expenseAmount.getText()));
-        mainCtrl.getSessionHandler().sendExpense(newExpense, "create");
-
-        mainCtrl.showEventOverview();
     }
 
     /**

@@ -2,6 +2,9 @@ package client.utils.frameHandlers;
 
 import client.utils.AdminDataHandler;
 import commons.StatusEntity;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.stage.Modality;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
@@ -35,8 +38,23 @@ public class AdminReadEventsHandler implements StompFrameHandler {
                 dataHandler.setEvents(status.getEventList());
             }
             case BAD_REQUEST, NOT_FOUND -> {
-                System.out.println(status.getMessage());
-                //todo: show pop-up
+                if(status.isUnsolvable()){
+                    Platform.runLater(() ->{
+                        var alert = new Alert(Alert.AlertType.ERROR);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setContentText("Error: " + status.getMessage());
+                        alert.showAndWait();
+                        dataHandler.getSessionHandler().getMainCtrl().showStartScreen();
+                    });
+                } else {
+                    Platform.runLater(() ->{
+                        var alert = new Alert(Alert.AlertType.WARNING);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setContentText("Warning: " + status.getMessage());
+                        alert.showAndWait();
+                        dataHandler.getSessionHandler().getMainCtrl().showStartScreen();
+                    });
+                }
             }
         }
     }

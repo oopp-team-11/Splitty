@@ -3,6 +3,9 @@ package client.utils.frameHandlers;
 import client.scenes.MainCtrl;
 import client.utils.EventDataHandler;
 import commons.StatusEntity;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.stage.Modality;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
@@ -42,10 +45,58 @@ public class ReadEventHandler implements StompFrameHandler {
                     mainCtrl.getSessionHandler().afterInitialEventRead();
             }
             case BAD_REQUEST -> {
-                System.out.println("Server did not find invitationCode in the message. This should never happen.");
+                if(status.isUnsolvable()) {
+                    Platform.runLater(() -> {
+                        var alert = new Alert(Alert.AlertType.ERROR);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setContentText("""
+                                Invalid invitation code, try again.
+                                Error: Server did not find invitation code.
+                                The invitation code should be in the form of:
+                                XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX (in UUID format)""");
+                        alert.showAndWait();
+                        mainCtrl.showStartScreen();
+                    });
+                } else {
+                    Platform.runLater(() -> {
+                        var alert = new Alert(Alert.AlertType.WARNING);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setContentText("""
+                                Invalid invitation code, try again.
+                                Warning: Server did not find invitation code.
+                                The invitation code should be in the form of:
+                                XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX (in UUID format)""");
+                        alert.showAndWait();
+                        mainCtrl.showStartScreen();
+                    });
+                }
             }
             case NOT_FOUND -> {
-                //TODO: Fallback to start-screen
+                if(status.isUnsolvable()) {
+                    Platform.runLater(() -> {
+                        var alert = new Alert(Alert.AlertType.ERROR);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setContentText("""
+                                Invalid invitation code, try again.
+                                Error: Event not found, make sure it is correct.
+                                The invitation code should be in the form of:
+                                XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX (in UUID format)""");
+                        alert.showAndWait();
+                        mainCtrl.showStartScreen();
+                    });
+                } else {
+                    Platform.runLater(() -> {
+                        var alert = new Alert(Alert.AlertType.WARNING);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setContentText("""
+                                Invalid invitation code, try again.
+                                Warning: Event not found, make sure it is correct.
+                                The invitation code should be in the form of:
+                                XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX (in UUID format)""");
+                        alert.showAndWait();
+                        mainCtrl.showStartScreen();
+                    });
+                }
             }
         }
     }

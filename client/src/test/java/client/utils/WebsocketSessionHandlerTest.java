@@ -314,7 +314,8 @@ class WebsocketSessionHandlerTest {
         handler.afterConnected(session, headers);
         Participant participant = new Participant(new Event("dummyEvent"), "John", "Doe",
                 null, null, null);
-        Expense expense = new Expense(participant, "sampleExpense", 4.20);
+        // TODO: Probably adding some data in the constructor instead of the two nulls
+        Expense expense = new Expense(participant, "sampleExpense", 4.20, null, null);
 
         ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Object> payloadCaptor = ArgumentCaptor.forClass(Object.class);
@@ -410,7 +411,7 @@ class WebsocketSessionHandlerTest {
         verify(session, times(1)).send(headersCaptor.capture(), payloadCaptor.capture());
 
         StompHeaders expectedHeaders = new StompHeaders();
-        expectedHeaders.setDestination("app/admin/event:delete");
+        expectedHeaders.setDestination("/app/admin/event:delete");
         expectedHeaders.setPasscode("42");
 
         StompHeaders capturedHeaders = headersCaptor.getValue();
