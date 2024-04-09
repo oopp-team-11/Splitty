@@ -6,6 +6,7 @@ import commons.Involved;
 import commons.Participant;
 import javafx.application.Platform;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -404,6 +405,7 @@ public class EventDataHandler {
         toUpdate.setTitle(fromUpdate.getTitle());
         toUpdate.setAmount(fromUpdate.getAmount());
         toUpdate.setPaidById(fromUpdate.getPaidById());
+        toUpdate.setDate(fromUpdate.getDate());
         toUpdate.setInvolveds(fromUpdate.getInvolveds());
     }
 

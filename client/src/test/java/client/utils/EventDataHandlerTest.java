@@ -198,8 +198,9 @@ class EventDataHandlerTest {
 
     @Test
     void receiveExpenseUpdate() {
+        LocalDate now = LocalDate.now();
         var newE1 = new Expense(e1.getId(), "Antihype", 1.0, e1.getPaidById(), e1.getInvitationCode(),
-                LocalDate.now(), null);
+                now, null);
         Involved i5 = new Involved(UUID.randomUUID(), true, newE1.getId(), p2.getId(), event.getId());
         List<Involved> involveds = new ArrayList<>();
         involveds.add(i5);
@@ -210,6 +211,7 @@ class EventDataHandlerTest {
         assertEquals(e1, handler.getExpenses().getFirst());
         assertEquals("Antihype", e1.getTitle());
         assertEquals(p1, e1.getPaidBy());
+        assertEquals(now, e1.getDate());
         assertEquals(p2, e1.getInvolveds().getFirst().getParticipant());
     }
 
