@@ -82,16 +82,13 @@ public class AdminController {
                     participant.getEventId());
             sentEvent.addParticipant(sentParticipant);
             for (Expense expense : participant.getMadeExpenses()) {
-                // TODO: Add data to the constructor instead of the two nulls
                 Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
-                        expense.getPaidById(), expense.getInvitationCode(), null, null);
+                        expense.getPaidById(), expense.getInvitationCode(), expense.getDate(), new InvolvedList());
                 sentParticipant.addExpense(sentExpense);
                 for (Involved involved : expense.getInvolveds()) {
-
                     Involved sentInvolved = new Involved(involved.getId(), involved.getIsSettled(),
                             involved.getExpenseId(), involved.getParticipantId(), involved.getInvitationCode());
                     sentExpense.getInvolveds().add(sentInvolved);
-
                 }
             }
         }
@@ -148,9 +145,8 @@ public class AdminController {
                         receivedParticipant.getIban(), receivedParticipant.getBic());
                 participant = participantRepo.save(participant);
                 for (Expense receivedExpense : receivedParticipant.getMadeExpenses()) {
-                    // TODO: Maybe some another initialisation for expense below will be required
                     Expense expense = new Expense(participant, receivedExpense.getTitle(),
-                            receivedExpense.getAmount(), receivedExpense.getDate(), receivedExpense.getInvolveds());
+                            receivedExpense.getAmount(), receivedExpense.getDate(), new InvolvedList());
                     expense = expenseRepo.save(expense);
                     for (Involved receivedInvolved : receivedExpense.getInvolveds()) {
                         var involvedParticipant = participantRepo.getReferenceById(receivedInvolved.getParticipantId());
