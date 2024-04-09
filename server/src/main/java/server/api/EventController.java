@@ -80,10 +80,14 @@ public class EventController {
         if (isNullOrEmpty(title)) {
             return ResponseEntity.badRequest().build();
         }
-        Event event = new Event(title);
-        event.setCreationDate(LocalDateTime.now());
-        event.setLastActivity(event.getCreationDate());
-        repo.save(event);
+        UUID id = UUID.randomUUID();
+        while (repo.existsById(id)) {
+            id = UUID.randomUUID();
+        }
+        LocalDateTime now = LocalDateTime.now();
+        Event event = new Event(id, title, now, now);
+        event = repo.save(event);
+        template.convertAndSend("/topic/admin/event:create", event);
         return ResponseEntity.ok(event);
     }
 
@@ -147,7 +151,7 @@ public class EventController {
 
         Event sentEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(), event.getLastActivity());
         template.convertAndSend("/topic/" + sentEvent.getId() + "/event:update", sentEvent);
-        return StatusEntity.ok("event:update " + sentEvent.getId());
+        return StatusEntity.ok("Event was successfully updated");
     }
 
     /**
@@ -162,9 +166,9 @@ public class EventController {
     public StatusEntity readEvent(UUID invitationCode)
     {
         if(invitationCode == null)
-            return StatusEntity.badRequest(true, (Event) null);
+            return StatusEntity.badRequest(true, "Invitation code should not be null");
         if(!repo.existsById(invitationCode))
-            return StatusEntity.notFound(true, (Event) null);
+            return StatusEntity.notFound(true, "Event with provided Invitation code does not exist");
 
         Event event = repo.getReferenceById(invitationCode);
 
@@ -201,7 +205,8 @@ public class EventController {
 
         Event sentEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(), event.getLastActivity());
         template.convertAndSend("/topic/" + sentEvent.getId() + "/event:delete", sentEvent);
-        return StatusEntity.ok("event:delete " + sentEvent.getId());
+        template.convertAndSend("/topic/admin/event:delete", sentEvent);
+        return StatusEntity.ok("Event was successfully deleted");
     }
 
 

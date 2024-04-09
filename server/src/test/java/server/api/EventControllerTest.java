@@ -105,7 +105,7 @@ public class EventControllerTest {
 
         Event receivedEvent = new Event(event.getId(), "foo", event.getCreationDate(), event.getLastActivity());
 
-        assertEquals(ok("event:update " + event.getId()), sut.updateEvent(receivedEvent));
+        assertEquals(ok("Event was successfully updated"), sut.updateEvent(receivedEvent));
 
         Event sentEvent = new Event(event.getId(), "foo", event.getCreationDate(), event.getLastActivity());
         verify(messagingTemplate).convertAndSend("/topic/" + sentEvent.getId() + "/event:update", sentEvent);
@@ -153,7 +153,7 @@ public class EventControllerTest {
         Event receivedEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(),
                 event.getLastActivity());
 
-        assertEquals(ok("event:delete " + event.getId()), sut.deleteEvent(receivedEvent, passwordService.getAdminPassword()));
+        assertEquals(ok("Event was successfully deleted"), sut.deleteEvent(receivedEvent, passwordService.getAdminPassword()));
 
         verify(messagingTemplate).convertAndSend("/topic/"+event.getId()+"/event:delete", receivedEvent);
         assertFalse(eventRepo.existsById(receivedEvent.getId()));
@@ -204,13 +204,13 @@ public class EventControllerTest {
 
     @Test
     void checkReadEventCodeNotProvided() {
-        assertEquals(StatusEntity.badRequest(true, (Event) null), sut.readEvent(null));
+        assertEquals(StatusEntity.badRequest(true, "Invitation code should not be null"), sut.readEvent(null));
     }
 
     @Test
     void checkReadEventNotFound() {
         UUID uuid = UUID.randomUUID();
-        assertEquals(StatusEntity.notFound(true, (Event) null), sut.readEvent(uuid));
+        assertEquals(StatusEntity.notFound(true, "Event with provided Invitation code does not exist"), sut.readEvent(uuid));
 
         assertFalse(eventRepo.existsById(uuid));
     }

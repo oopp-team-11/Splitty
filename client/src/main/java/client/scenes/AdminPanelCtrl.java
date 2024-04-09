@@ -13,12 +13,12 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,7 +71,7 @@ public class AdminPanelCtrl implements Translatable {
      * method that performs initial setup for scene
      */
     public void makeSetUp() {
-        invitationCode.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getId(), toString()));
+        invitationCode.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getId().toString()));
         title.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getTitle()));
         creationDate.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getCreationDate().toString()));
         lastActivityDate.
@@ -102,6 +102,9 @@ public class AdminPanelCtrl implements Translatable {
         languageSwitchPlaceHolder.getChildren().clear();
         languageSwitchPlaceHolder.getChildren().add(mainCtrl.getLanguageSwitchButton());
 
+        if (mainCtrl.getAdminDataHandler().getJsonDumpDir() == null)
+            mainCtrl.getAdminDataHandler().setJsonDumpDir(fileSystemUtils.setBackupsDirectory());
+
         refreshData();
     }
 
@@ -110,7 +113,7 @@ public class AdminPanelCtrl implements Translatable {
      */
     public void refreshData() {
         eventTableView.getColumns().getFirst().setVisible(false);
-        eventTableView.getColumns().getFirst().setVisible(false);
+        eventTableView.getColumns().getFirst().setVisible(true);
         eventTableView.setItems(FXCollections.observableList(mainCtrl.getAdminDataHandler().getEvents()));
     }
 
@@ -119,7 +122,15 @@ public class AdminPanelCtrl implements Translatable {
      * @param event
      */
     public void jsonDump(Event event) {
-        fileSystemUtils.jsonDump(event);
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Select directory");
+        directoryChooser.setInitialDirectory(mainCtrl.getAdminDataHandler().getJsonDumpDir());
+        File chosenDirectory = directoryChooser.showDialog(null);
+        if (chosenDirectory != null) {
+            mainCtrl.getAdminDataHandler().setJsonDumpDir(chosenDirectory);
+            mainCtrl.getSessionHandler().sendAdminEvent(mainCtrl.getAdminDataHandler().getPasscode(),
+                    event, "dump");
+        }
     }
 
     /**
@@ -127,7 +138,8 @@ public class AdminPanelCtrl implements Translatable {
      * @param event
      */
     public void deleteEvent(Event event) {
-        // TODO: propagate change to the websockets
+        mainCtrl.getSessionHandler().sendAdminEvent(mainCtrl.getAdminDataHandler().getPasscode(),
+                event, "delete");
     }
 
     /**
@@ -135,16 +147,20 @@ public class AdminPanelCtrl implements Translatable {
      */
     public void jsonImport() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open");
+        fileChooser.setTitle("Select file to import");
         fileChooser.setInitialFileName("");
+        fileChooser.setInitialDirectory(mainCtrl.getAdminDataHandler().getJsonDumpDir());
         File selectedFile = fileChooser.showOpenDialog(null);
         if (selectedFile != null) {
             Event event;
             try {
-                event = new ObjectMapper().readValue(selectedFile, Event.class);
-                // TODO: Import event into application (WebSockets)
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.findAndRegisterModules();
+                event = mapper.readValue(selectedFile, Event.class);
+                mainCtrl.getSessionHandler().sendAdminEvent(mainCtrl.getAdminDataHandler().getPasscode(),
+                        event, "import");
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                //TODO: Add a pop-up
             }
         }
     }
@@ -153,9 +169,8 @@ public class AdminPanelCtrl implements Translatable {
      * method that switches to the start screen
      */
     public void goToStartScreen() {
-        // TODO: logic of unsubscribing from the websocket's endpoints
-        // mainCtrl.getAdminSessionHandler().unsubscribeFromCurrentAdminPanel();
-        mainCtrl.getAdminDataHandler().setEvents(new ArrayList<>());
+        mainCtrl.getSessionHandler().unsubscribeFromAdmin();
+        mainCtrl.getAdminDataHandler().setDataToNull();
         mainCtrl.showStartScreen();
     }
 

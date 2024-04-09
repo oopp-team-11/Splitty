@@ -7,6 +7,8 @@ import javafx.stage.Modality;
 
 import javax.json.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,18 +20,39 @@ public class FileSystemUtils {
     //private static final String CLIENT_JSON_PATH = "client.json";
 
     /**
+     * Set the default backup directory or create it, if it doesn't exist
+     *
+     * @return returns a File with directory
+     */
+    public File setBackupsDirectory() {
+        String directoryPath = System.getProperty("user.dir") + File.separator + "backups";
+        try {
+            Files.createDirectories(Path.of(directoryPath));
+        } catch (IOException e) {
+            System.err.println("Could not create backup directory. Setting a default directory.");
+            return new File("");
+        }
+        return new File(directoryPath);
+    }
+
+    /**
      * method tht performs json dump
+     * @param jsonDumpDir
      * @param event
      * @throws IOException
      */
-    public void jsonDump(Event event)  {
+    public void jsonDump(File jsonDumpDir, Event event)  {
         try {
-            String fileTitle = event.getId().toString();
-            String fileData = new ObjectMapper().writeValueAsString(event);
-            FileWriter file = new FileWriter(fileTitle);
+            String fileTitle = "event-" + event.getId().toString();
+            File fileDir = new File(jsonDumpDir.getPath() + File.separator + fileTitle);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.findAndRegisterModules();
+            String fileData = mapper.writeValueAsString(event);
+            FileWriter file = new FileWriter(fileDir);
             file.write(fileData);
             file.flush();
             file.close();
+            //TODO: pop-up notification
         } catch (IOException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);

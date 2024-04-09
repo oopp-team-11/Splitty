@@ -255,7 +255,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
     public void onAdmin() {
         System.out.println("ONADMIN");
         String password = adminPassword.getText();
-        //mainCtrl.getSessionHandler().sendAdminEventsRead(password);
+        mainCtrl.getAdminDataHandler().setPasscode(password);
+        mainCtrl.getSessionHandler().sendReadEvents(password);
     }
 
     private static void serverErrorAlert(Exception exception) {
@@ -314,6 +315,15 @@ public class StartScreenCtrl implements Initializable, Translatable {
                         }
                     }
                 } catch (Exception e) {
+                    Platform.runLater(() -> {
+                        var alert = new Alert(Alert.AlertType.ERROR);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setContentText("""
+                            Server connection error,
+                            Server is unavailable, please try again.""");
+                        alert.showAndWait();
+                        mainCtrl.showStartScreen();
+                    });
                     System.out.println("Failed to get updated events: " + e.getMessage());
                     e.printStackTrace();
                     break;

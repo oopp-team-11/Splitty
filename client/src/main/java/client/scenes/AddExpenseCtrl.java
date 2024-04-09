@@ -119,9 +119,6 @@ public class AddExpenseCtrl implements Translatable {
                         expenseTitle.getText(),
                         Double.parseDouble(expenseAmount.getText()));
                 mainCtrl.getSessionHandler().sendExpense(newExpense, "create");
-                mainCtrl.showEventOverview();
-            }else {
-                mainCtrl.showEventOverview();
             }
         }
     }

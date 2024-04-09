@@ -131,7 +131,7 @@ public class ParticipantController {
                 receivedParticipant.getEventId());
         template.convertAndSend("/topic/" + sentParticipant.getEventId() + "/participant:create",
                 sentParticipant);
-        return StatusEntity.ok("participant:create " + sentParticipant.getId());
+        return StatusEntity.ok("Participant was successfully created");
     }
 
     /**
@@ -194,7 +194,7 @@ public class ParticipantController {
                 receivedParticipant.getEventId());
         template.convertAndSend("/topic/" + sentParticipant.getEventId() + "/participant:update",
                 sentParticipant);
-        return StatusEntity.ok("participant:update " + sentParticipant.getId());
+        return StatusEntity.ok("Participant was successfully updated");
     }
 
     /**
@@ -222,6 +222,6 @@ public class ParticipantController {
                 receivedParticipant.getEventId());
         template.convertAndSend("/topic/" + sentParticipant.getEventId() + "/participant:delete",
                 sentParticipant);
-        return StatusEntity.ok("participant:delete " + sentParticipant.getId());
+        return StatusEntity.ok("Participant was successfully deleted");
     }
 }

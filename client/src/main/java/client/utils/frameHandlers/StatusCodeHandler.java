@@ -34,15 +34,13 @@ public class StatusCodeHandler implements StompFrameHandler {
     public void handleFrame(StompHeaders headers, Object payload) {
         StatusEntity status = (StatusEntity) payload;
         switch (status.getStatusCode()){
-            case OK -> Platform.runLater(() ->{
+            case OK -> Platform.runLater(() -> {
                 var alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.initModality(Modality.APPLICATION_MODAL);
-                String message = "Successfully " +
-                        status.getMessage().split(" ")[0].split(":")[1] + "d "
-                        + status.getMessage().split(" ")[0].split(":")[0] + "!";
-                alert.setContentText(message);
+                alert.setContentText(status.getMessage());
                 alert.setHeaderText("Success");
                 alert.showAndWait();
+                mainCtrl.showEventOverview();
             });
             case NOT_FOUND -> {
                 if(status.isUnsolvable()) {

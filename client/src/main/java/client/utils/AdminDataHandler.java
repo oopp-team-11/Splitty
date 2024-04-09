@@ -1,7 +1,9 @@
 package client.utils;
 
 import commons.Event;
+import javafx.application.Platform;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -11,6 +13,7 @@ public class AdminDataHandler {
     private List<Event> events;
     private WebsocketSessionHandler sessionHandler;
     private String passcode;
+    private File jsonDumpDir;
 
     /**
      * empty constructor
@@ -23,11 +26,32 @@ public class AdminDataHandler {
      * @param events List of all events
      * @param sessionHandler websocket session handler
      * @param passcode client's passcode
+     * @param jsonDumpDir jsonDump directory
      */
-    public AdminDataHandler(List<Event> events, WebsocketSessionHandler sessionHandler, String passcode) {
+    public AdminDataHandler(List<Event> events, WebsocketSessionHandler sessionHandler, String passcode,
+                            File jsonDumpDir) {
         this.events = events;
         this.sessionHandler = sessionHandler;
         this.passcode = passcode;
+        this.jsonDumpDir = jsonDumpDir;
+    }
+
+    /**
+     * Getter for directory of jsonDump
+     *
+     * @return returns a File representing a directory for dumping json
+     */
+    public File getJsonDumpDir() {
+        return jsonDumpDir;
+    }
+
+    /**
+     * Setter for directory of jsonDump
+     *
+     * @param jsonDumpDir the chosen directory to save dump
+     */
+    public void setJsonDumpDir(File jsonDumpDir) {
+        this.jsonDumpDir = jsonDumpDir;
     }
 
     /**
@@ -59,8 +83,22 @@ public class AdminDataHandler {
      * @param events
      */
     public void setEvents(List<Event> events) {
+        boolean refresh = this.events != null;
         this.events = events;
-        sessionHandler.subscribeToAdmin(passcode);
+        if (refresh)
+            Platform.runLater(() -> sessionHandler.getMainCtrl().refreshAdminData());
+        else {
+            sessionHandler.subscribeToAdmin(passcode);
+            Platform.runLater(() -> sessionHandler.getMainCtrl().showAdminPanel());
+        }
+    }
+
+    /**
+     * Sets admin local data to null
+     */
+    public void setDataToNull() {
+        events = null;
+        passcode = null;
     }
 
     /**
@@ -99,11 +137,11 @@ public class AdminDataHandler {
      */
     public void getCreateEvent(Event receivedEvent) {
         if (containsById(receivedEvent)) {
-            // TODO: logic of refetching
-            // sessionHandler.refreshAllEvents();
+            sessionHandler.sendReadEvents(passcode);
             return;
         }
         events.add(receivedEvent);
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshAdminData());
     }
 
     /**
@@ -131,12 +169,13 @@ public class AdminDataHandler {
      * @param receivedEvent
      */
     public void getUpdateEvent(Event receivedEvent) {
-        if (!containsById(receivedEvent)) {
-            // TODO: logic of refetching
-            // sessionHandler.refreshAllEvents();
+        Event localEvent = getEventById(receivedEvent);
+        if (localEvent == null) {
+            sessionHandler.sendReadEvents(passcode);
             return;
         }
-        updateEvent(getEventById(receivedEvent), receivedEvent);
+        updateEvent(localEvent, receivedEvent);
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshAdminData());
     }
 
     /**
@@ -144,11 +183,12 @@ public class AdminDataHandler {
      * @param receivedEvent
      */
     public void getDeleteEvent(Event receivedEvent) {
-        if (!containsById(receivedEvent)) {
-            // TODO: logic of refetching
-            // sessionHandler.refreshAllEvents();
+        Event localEvent = getEventById(receivedEvent);
+        if (localEvent == null) {
+            sessionHandler.sendReadEvents(passcode);
             return;
         }
-        events.remove(getEventById(receivedEvent));
+        events.remove(localEvent);
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshAdminData());
     }
 }

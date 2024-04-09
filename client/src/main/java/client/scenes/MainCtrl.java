@@ -376,6 +376,15 @@ public class MainCtrl {
     }
 
     /**
+     * Method for refreshing data in Admin Panel
+     */
+    public void refreshAdminData() {
+        if (primaryStage.getTitle().equals("Admin Panel")) {
+            adminPanelCtrl.refreshData();
+        }
+    }
+
+    /**
      * Getter for available languages
      * @return available languages in a linked hashmap
      */

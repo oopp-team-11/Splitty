@@ -38,7 +38,7 @@ public class AdminDumpEventHandler implements StompFrameHandler {
         StatusEntity status = (StatusEntity) payload;
         switch (status.getStatusCode()) {
             case OK -> {
-                utils.jsonDump(status.getEvent());
+                utils.jsonDump(dataHandler.getJsonDumpDir(), status.getEvent());
             }
             case BAD_REQUEST, NOT_FOUND -> {
                 if(status.isUnsolvable()){
