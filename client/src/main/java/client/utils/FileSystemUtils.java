@@ -2,6 +2,8 @@ package client.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.Event;
+import javafx.scene.control.Alert;
+import javafx.stage.Modality;
 
 import javax.json.*;
 import java.io.*;
@@ -52,7 +54,10 @@ public class FileSystemUtils {
             file.close();
             //TODO: pop-up notification
         } catch (IOException e) {
-            // TODO: pop-up notification
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Error: " + e.getMessage());
+            alert.showAndWait();
         }
     }
 
@@ -196,11 +201,13 @@ public class FileSystemUtils {
             file.flush();
             file.close();
 
-            System.err.println(path + " doesn't exist. \n" +
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText(path + " doesn't exist. \n" +
                     "Created new default file, please put the server url if it isn't localhost:8080 " +
                     "in client-config.json.\n" +
                     "You need to delete localhost:8080 and put it there.");
-            //TODO: Pop-up showing error, but it is only a warning
+            alert.showAndWait();
 
             return getServerIP(path);
         }
@@ -222,11 +229,13 @@ public class FileSystemUtils {
                 file.flush();
                 file.close();
 
-                System.err.println(path + " is the wrong format. \n" +
+                var alert = new Alert(Alert.AlertType.WARNING);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText(path + " is the wrong format. \n" +
                         "Created new default file, please put the server url if it isn't localhost:8080 " +
                         "in client-config.json.\n" +
                         "You need to delete localhost:8080 and put it there.");
-                //TODO: Pop-up showing error, but it is only a warning
+                alert.showAndWait();
                 return getServerIP(path);
             } else if (serverIp.contains("http://") || serverIp.contains("ws://") ||
                     serverIp.contains("https://") || serverIp.contains("wss://")) {
@@ -250,11 +259,13 @@ public class FileSystemUtils {
             file.flush();
             file.close();
 
-            System.err.println(path + " is the wrong format. \n" +
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText(path + " is the wrong format. \n" +
                     "Created new default file, please put the server url if it isn't localhost:8080 " +
                     "in client-config.json.\n" +
                     "You need to delete localhost:8080 and put it there.");
-            //TODO: Pop-up showing error, but it is only a warning
+            alert.showAndWait();
             return getServerIP(path);
         }
     }
@@ -283,11 +294,13 @@ public class FileSystemUtils {
                 file.flush();
                 file.close();
 
-                System.err.println(path + " is the wrong format. \n" +
+                var alert = new Alert(Alert.AlertType.WARNING);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText(path + " is the wrong format. \n" +
                         "Created new default file, please put the language if it isn't en(english) " +
                         "in client-config.json.\n" +
                         "You need to delete en and put it there.");
-                //TODO: Pop-up showing error, but it is only a warning
+                alert.showAndWait();
                 return getTranslationSupplier(path);
             }
             return new TranslationSupplier(lang);
@@ -303,11 +316,13 @@ public class FileSystemUtils {
             file.flush();
             file.close();
 
-            System.err.println(path + " is the wrong format. \n" +
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText(path + " is the wrong format. \n" +
                     "Created new default file, please put the language if it isn't en(english) " +
                     "in client-config.json.\n" +
                     "You need to delete en and put it there.");
-            //TODO: Pop-up showing error, but it is only a warning
+            alert.showAndWait();
             return getTranslationSupplier(path);
         }
     }
@@ -345,11 +360,13 @@ public class FileSystemUtils {
             file.flush();
             file.close();
 
-            System.err.println(path + " is the wrong format. \n" +
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText(path + " is the wrong format. \n" +
                     "Created new default file, please put the language if it isn't en(english) " +
                     "in client-config.json.\n" +
                     "You need to delete en and put it there.");
-            //TODO: Pop-up showing error, but it is only a warning
+            alert.showAndWait();
         }
     }
 }

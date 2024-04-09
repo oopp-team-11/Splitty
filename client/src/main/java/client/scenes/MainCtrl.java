@@ -186,7 +186,6 @@ public class MainCtrl {
      */
     public void showStartScreen() {
         primaryStage.setTitle("Start Screen");
-
         primaryStage.setScene(startScreenScene);
         primaryStage.setResizable(false);
         try {

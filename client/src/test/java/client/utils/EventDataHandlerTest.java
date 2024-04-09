@@ -332,4 +332,9 @@ class EventDataHandlerTest {
         handler.getUpdateInvolved(newI1);
         verify(sessionMock).refreshExpenses();
     }
+
+    @Test
+    void sumOfAllExpenses() {
+        assertEquals(e1.getAmount() + e2.getAmount(), handler.sumOfAllExpenses());
+    }
 }

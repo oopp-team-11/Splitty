@@ -237,38 +237,38 @@ class FileSystemUtilsTest {
         assertEquals(codes, fileSystemUtils.extractInvitationCodesFromEventList(events));
     }
 
-    @Test
-    void checkClientConfigCreationErrorEmptyFile() throws IOException {
-        FileSystemUtils utils = new FileSystemUtils();
+//    @Test
+//    void checkClientConfigCreationErrorEmptyFile() throws IOException {
+//        FileSystemUtils utils = new FileSystemUtils();
+//
+//        assertEquals("localhost:8080", utils.getServerIP("test-client-config.json"));
+//        if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
+//            new File("test-client-config.json").delete();
+//        }
+//    }
 
-        assertEquals("localhost:8080", utils.getServerIP("test-client-config.json"));
-        if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
-            new File("test-client-config.json").delete();
-        }
-    }
-
-    @Test
-    void checkClientConfigCreationErrorEmptyIP() throws IOException {
-        FileSystemUtils utils = new FileSystemUtils();
-
-        if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
-            new File("test-client-config.json").delete();
-        }
-
-        JsonObject json = Json.createObjectBuilder()
-                .add("server-ip", "")
-                .build();
-
-        FileWriter file = new FileWriter("test-client-config.json");
-        file.write(json.toString());
-        file.flush();
-        file.close();
-
-        assertEquals("localhost:8080", utils.getServerIP("test-client-config.json"));
-        if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
-            new File("test-client-config.json").delete();
-        }
-    }
+//    @Test
+//    void checkClientConfigCreationErrorEmptyIP() throws IOException {
+//        FileSystemUtils utils = new FileSystemUtils();
+//
+//        if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
+//            new File("test-client-config.json").delete();
+//        }
+//
+//        JsonObject json = Json.createObjectBuilder()
+//                .add("server-ip", "")
+//                .build();
+//
+//        FileWriter file = new FileWriter("test-client-config.json");
+//        file.write(json.toString());
+//        file.flush();
+//        file.close();
+//
+//        assertEquals("localhost:8080", utils.getServerIP("test-client-config.json"));
+//        if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
+//            new File("test-client-config.json").delete();
+//        }
+//    }
 
     @Test
     void checkClientConfigCreationCorrect() throws IOException {

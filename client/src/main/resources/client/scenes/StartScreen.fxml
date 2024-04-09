@@ -13,12 +13,15 @@
                <children>
                   <StackPane HBox.hgrow="ALWAYS">
                      <children>
-                        <VBox spacing="50.0">
+                        <VBox alignment="BOTTOM_CENTER" spacing="50.0">
                            <children>
                               <Label fx:id="changeLanguageLabel" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" text="Change language" textAlignment="CENTER" wrapText="true" />
                            </children>
+                           <StackPane.margin>
+                              <Insets bottom="50.0" />
+                           </StackPane.margin>
                         </VBox>
-                        <VBox prefWidth="100.0" spacing="50.0">
+                        <VBox alignment="BOTTOM_CENTER" prefWidth="100.0" spacing="50.0">
                            <children>
                               <Pane fx:id="languageSwitchPlaceHolder" maxHeight="50.0" maxWidth="50.0" prefHeight="50.0" prefWidth="50.0" />
 

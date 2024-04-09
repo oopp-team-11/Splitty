@@ -5,9 +5,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AddExpenseCtrl">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AddExpenseCtrl">
    <children>
-      <GridPane alignment="CENTER" prefHeight="640.0" prefWidth="600.0">
+      <GridPane alignment="CENTER" prefHeight="700.0" prefWidth="850.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -28,11 +28,11 @@
             <Label fx:id="whoPaidLabel" alignment="CENTER" prefHeight="514.0" prefWidth="794.0" text="Who paid?" textAlignment="CENTER" GridPane.rowIndex="1" />
             <Label fx:id="whatForLabel" alignment="CENTER" prefHeight="577.0" prefWidth="852.0" text="What for?" GridPane.rowIndex="2" />
             <Label fx:id="howMuchLabel" alignment="CENTER" prefHeight="636.0" prefWidth="857.0" text="How Much?" GridPane.rowIndex="3" />
-            <Button fx:id="createBtn" mnemonicParsing="false" onAction="#addExpense" prefHeight="821.0" prefWidth="953.0" text="Add" GridPane.columnIndex="1" GridPane.rowIndex="4">
+            <Button fx:id="createBtn" mnemonicParsing="false" onAction="#addExpense" prefHeight="821.0" prefWidth="953.0" style="-fx-base: #49873a;" text="Add" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </GridPane.margin></Button>
-            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#abort" prefHeight="751.0" prefWidth="1252.0" text="Abort" GridPane.rowIndex="4">
+            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#abort" prefHeight="751.0" prefWidth="1252.0" style="-fx-base: #7f1a1a;" text="Abort" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </GridPane.margin></Button>

@@ -166,16 +166,21 @@ public class StartScreenCtrl implements Initializable, Translatable {
             var events = serverUtils.getRecentEvents("http://" + mainCtrl.getServerIp(), "config.json");
             ObservableList<Event> data = FXCollections.observableList(events);
             eventTable.setItems(data);
-            List<UUID> eventIds = eventTable.getItems().stream().map(Event::getId).collect(Collectors.toList());
             newEventName.clear();
             joinInvitationCode.clear();
+            List<UUID> eventIds = data.stream().map(Event::getId).collect(Collectors.toList());
             startLongPolling(eventIds);
 
             languageSwitchPlaceHolder.getChildren().clear();
             languageSwitchPlaceHolder.getChildren().add(mainCtrl.getLanguageSwitchButton());
 
         } catch (IOException | InterruptedException e) {
-            System.out.println("Failed to get recent events: " + e.getMessage());
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("""
+                            Server connection error,
+                            Server is unavailable, please try again.""");
+            alert.showAndWait();
         } catch (JSONException e) {
             System.out.println("Failed to parse server response: " + e.getMessage());
         }
@@ -187,6 +192,14 @@ public class StartScreenCtrl implements Initializable, Translatable {
     public void onCreate() {
         System.out.println("ONCREATE");
         String eventName = newEventName.getText();
+
+        if(eventName.isEmpty()){
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Event name is empty, please add a name");
+            alert.showAndWait();
+            return;
+        }
 
         UUID invitationCode;
         try {
@@ -210,21 +223,17 @@ public class StartScreenCtrl implements Initializable, Translatable {
      * Method that is called when the join button is clicked
      */
     public void onJoin() {
-        // todo: send get request to /events with invitation code
-        // if status == 200
-        //      event = response body
-        //      MainCtrl.showEventScreen(event)
-        // else
-        //      MainCtrl.showUserCreationScreen(invitationCode)
         System.out.println("ONJOIN: " + joinInvitationCode.getText());
         UUID invitationCode;
         try {
             invitationCode = UUID.fromString(joinInvitationCode.getText());
-        } catch (NumberFormatException e) {
-            var alert = new Alert(Alert.AlertType.ERROR);
+        } catch (IllegalArgumentException e) {
+            var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setContentText("Invalid invitation code, try again." +
-                    "\nError: " + (e.getMessage() != null ? e.getMessage() : "No error message available."));
+                    "\nError: " + (e.getMessage() != null ? e.getMessage() : "No error message available.") +
+                    "\n\nThe invitation code should be in the form of:\nXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX " +
+                    "(in UUID format)");
             alert.showAndWait();
             return;
         }
@@ -308,6 +317,7 @@ public class StartScreenCtrl implements Initializable, Translatable {
                 } catch (Exception e) {
                     System.out.println("Failed to get updated events: " + e.getMessage());
                     e.printStackTrace();
+                    break;
                 }
             }
         });

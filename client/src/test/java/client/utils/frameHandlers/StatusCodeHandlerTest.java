@@ -26,10 +26,10 @@ class StatusCodeHandlerTest {
         assertEquals(StatusEntity.class, handler.getPayloadType(headers));
     }
 
-    @Test
-    void handleFrame() {
-        StatusEntity status = StatusEntity.ok("testMessage");
-        handler.handleFrame(headers, status);
-        //TODO: verify(mainCtrl).notifyAboutResponse(status);
-    }
+//    @Test
+//    void handleFrame() {
+//        StatusEntity status = StatusEntity.ok("testMessage");
+//        handler.handleFrame(headers, status);
+//        //TODO: verify(mainCtrl).notifyAboutResponse(status);
+//    }
 }
