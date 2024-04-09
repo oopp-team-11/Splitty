@@ -77,6 +77,8 @@ public class ExpenseController {
             return StatusEntity.notFound(true, "Provided participant who paid for the expense does not exist");
         if (receivedExpense.getInvitationCode() == null)
             return StatusEntity.badRequest(true, "InvitationCode of event should be provided");
+        if (receivedExpense.getDate() == null)
+            return StatusEntity.badRequest(true, "Date should be provided");
         return isInvolvedBadRequest(receivedExpense);
     }
 
