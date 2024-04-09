@@ -6,7 +6,6 @@ import commons.Involved;
 import commons.Participant;
 import javafx.application.Platform;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
