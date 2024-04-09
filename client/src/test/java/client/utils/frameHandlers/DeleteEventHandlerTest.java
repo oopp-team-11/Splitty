@@ -24,12 +24,12 @@ class DeleteEventHandlerTest {
 
     @Test
     void getPayloadType() {
-        assertNull(handler.getPayloadType(headers));
+        assertEquals(Event.class, handler.getPayloadType(headers));
     }
 
     @Test
     void handleFrame() {
-        handler.handleFrame(headers, null);
+        handler.handleFrame(headers, new Event());
         verify(dataHandler).getDeleteEvent();
     }
 }

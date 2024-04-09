@@ -11,6 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -81,22 +82,56 @@ public class EditExpenseCtrl implements Translatable {
      * Edit expense to event and participant
      */
     public void editExpense() {
-        Participant person = null;
-        String[] fullName = expensePaidBy.getValue().toString().split(" ");
-        for (Participant participant : mainCtrl.getDataHandler().getParticipants()){
-            if(Objects.equals(participant.getFirstName(), fullName[0])
-                    && Objects.equals(participant.getLastName(), fullName[1])){
-                person = participant;
+        if(expensePaidBy.getValue() == null){
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Paid By field is empty, please choose a participant.");
+            alert.showAndWait();
+        } else if (expenseTitle.getText().isEmpty()) {
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Expense title field is empty, please add a title.");
+            alert.showAndWait();
+        } else if (expenseAmount.getText().isEmpty()) {
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Expense amount field is empty, please fill in an amount.");
+            alert.showAndWait();
+        } else {
+            try{
+                var ignored = Double.parseDouble(expenseAmount.getText());
+            }catch (NumberFormatException e){
+                var alert = new Alert(Alert.AlertType.WARNING);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText("Expense amount field is not a number, please fill in a number. " +
+                        "\n(don't use commas, use periods instead)");
+                alert.showAndWait();
+                return;
             }
-        }
 
-        if (person != null) {
-            expense = new Expense(expense.getId(), expenseTitle.getText(), Double.parseDouble(expenseAmount.getText()),
-                    person.getId(), expense.getInvitationCode());
-            mainCtrl.getSessionHandler().sendExpense(expense, "update");
+            var alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Are you sure you want to edit this expense?");
+            var result = alert.showAndWait();
+            if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
+                Participant person = null;
+                String[] fullName = expensePaidBy.getValue().toString().split(" ");
+                for (Participant participant : mainCtrl.getDataHandler().getParticipants()) {
+                    if (Objects.equals(participant.getFirstName(), fullName[0])
+                            && Objects.equals(participant.getLastName(), fullName[1])) {
+                        person = participant;
+                    }
+                }
+
+                expense = new Expense(expense.getId(), expenseTitle.getText(),
+                        Double.parseDouble(expenseAmount.getText()),
+                        person.getId(), expense.getInvitationCode());
+                mainCtrl.getSessionHandler().sendExpense(expense, "update");
+            }
 
             mainCtrl.showEventOverview();
         }
+
     }
 
     /**

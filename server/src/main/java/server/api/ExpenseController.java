@@ -137,7 +137,7 @@ public class ExpenseController {
         template.convertAndSend("/topic/" + sentExpense.getInvitationCode() + "/expense:create",
                 sentExpense);
 
-        return StatusEntity.ok("expense:create " + sentExpense.getId());
+        return StatusEntity.ok("Expense was successfully created");
     }
 
     /**
@@ -225,7 +225,7 @@ public class ExpenseController {
         sentExpense.setInvolveds(expense.getInvolveds());
         sentExpense.setAmountOwed(newAmountOwed);
         template.convertAndSend("/topic/" + sentExpense.getInvitationCode() + "/expense:update", sentExpense);
-        return StatusEntity.ok("expense:update " + sentExpense.getId());
+        return StatusEntity.ok("Expense was successfully updated");
     }
 
     /**
@@ -254,6 +254,6 @@ public class ExpenseController {
                 receivedExpense.getPaidById(), receivedExpense.getInvitationCode());
         template.convertAndSend("/topic/" + sentExpense.getInvitationCode() + "/expense:delete",
                 sentExpense);
-        return StatusEntity.ok("expense:delete " + sentExpense.getId());
+        return StatusEntity.ok("Expense was successfully deleted");
     }
 }

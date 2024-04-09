@@ -1,6 +1,7 @@
 package client.utils.frameHandlers;
 
 import client.utils.EventDataHandler;
+import commons.Event;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
@@ -23,7 +24,7 @@ public class DeleteEventHandler implements StompFrameHandler {
 
     @Override
     public Type getPayloadType(StompHeaders headers) {
-        return null;
+        return Event.class;
     }
 
     @Override

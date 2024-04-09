@@ -3,6 +3,9 @@ package client.utils.frameHandlers;
 import client.scenes.MainCtrl;
 import client.utils.EventDataHandler;
 import commons.StatusEntity;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.stage.Modality;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
@@ -42,10 +45,46 @@ public class ReadParticipantsHandler implements StompFrameHandler {
                     mainCtrl.getSessionHandler().afterInitialParticipantsRead();
             }
             case BAD_REQUEST -> {
-                System.out.println("Server did not find invitationCode in the message. This should never happen.");
+                if(status.isUnsolvable()) {
+                    Platform.runLater(() -> {
+                        Platform.runLater(() ->{
+                            var alert = new Alert(Alert.AlertType.ERROR);
+                            alert.initModality(Modality.APPLICATION_MODAL);
+                            alert.setContentText("Error: Bad request, reloading event.");
+                            alert.showAndWait();
+                            mainCtrl.showEventOverview();
+                        });
+                    });
+                } else {
+                    Platform.runLater(() -> {
+                        Platform.runLater(() ->{
+                            var alert = new Alert(Alert.AlertType.WARNING);
+                            alert.initModality(Modality.APPLICATION_MODAL);
+                            alert.setContentText("Warning: Bad request, reloading event.");
+                            alert.showAndWait();
+                            mainCtrl.showEventOverview();
+                        });
+                    });
+                }
             }
             case NOT_FOUND -> {
-                //TODO: Fallback to start-screen
+                if(status.isUnsolvable()) {
+                    Platform.runLater(() ->{
+                        var alert = new Alert(Alert.AlertType.ERROR);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setContentText("Error: Participant not found, reloading event.");
+                        alert.showAndWait();
+                        mainCtrl.showEventOverview();
+                    });
+                } else {
+                    Platform.runLater(() ->{
+                        var alert = new Alert(Alert.AlertType.ERROR);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setContentText("Warning: Participant not found, reloading event.");
+                        alert.showAndWait();
+                        mainCtrl.showEventOverview();
+                    });
+                }
             }
         }
     }

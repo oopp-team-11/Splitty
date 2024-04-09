@@ -410,7 +410,7 @@ class WebsocketSessionHandlerTest {
         verify(session, times(1)).send(headersCaptor.capture(), payloadCaptor.capture());
 
         StompHeaders expectedHeaders = new StompHeaders();
-        expectedHeaders.setDestination("app/admin/event:delete");
+        expectedHeaders.setDestination("/app/admin/event:delete");
         expectedHeaders.setPasscode("42");
 
         StompHeaders capturedHeaders = headersCaptor.getValue();

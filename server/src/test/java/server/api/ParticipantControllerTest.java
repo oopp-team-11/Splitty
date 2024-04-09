@@ -172,7 +172,7 @@ public class ParticipantControllerTest {
 
         assertTrue(participantRepository.existsById(participant.getId()));
 
-        assertEquals(StatusEntity.ok("participant:delete " + participant.getId()),
+        assertEquals(StatusEntity.ok("Participant was successfully deleted"),
                 participantController.deleteParticipant(participant));
 
         ArgumentCaptor<Participant> argumentCaptor = ArgumentCaptor.forClass(Participant.class);

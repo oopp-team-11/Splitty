@@ -383,6 +383,19 @@ public class EventDataHandler {
         return expensesByInvolvedParticipant;
     }
 
+    /**
+     * Sums all amounts of expenses
+     *
+     * @return returns double representing a sum of all expenses
+     */
+    public double sumOfAllExpenses() {
+        double sumOfExpenses = 0;
+        for (var expense : expenses) {
+            sumOfExpenses += expense.getAmount();
+        }
+        return sumOfExpenses;
+    }
+
     /***
      * updates the toUpdate expense with fromUpdate expense
      * @param toUpdate locally existing expense

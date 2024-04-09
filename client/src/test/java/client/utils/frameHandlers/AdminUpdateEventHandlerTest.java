@@ -2,8 +2,6 @@ package client.utils.frameHandlers;
 
 import client.utils.AdminDataHandler;
 import commons.Event;
-import commons.EventList;
-import commons.StatusEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -26,7 +24,7 @@ class AdminUpdateEventHandlerTest {
 
     @Test
     void getPayloadType() {
-        assertEquals(StatusEntity.class, handler.getPayloadType(headers));
+        assertEquals(Event.class, handler.getPayloadType(headers));
     }
 
     @Test
