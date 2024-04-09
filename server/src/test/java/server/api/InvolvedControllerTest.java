@@ -84,8 +84,8 @@ public class InvolvedControllerTest {
         verify(involvedRepository, times(1)).getReferenceById(involved.getId());
         verify(involvedRepository, times(1)).save(involved);
         verify(eventLastActivityService, times(1)).updateLastActivity(participant.getEventId());
-        verify(template, times(1)).convertAndSend("/topic/" + involved.getId() + "/involved:update", involved);
-        verify(template, times(1)).convertAndSend(eq("/topic/" + involved.getId() + "/involved:update"), captor.capture());
+        verify(template, times(1)).convertAndSend("/topic/" + involved.getInvitationCode() + "/involved:update", involved);
+        verify(template, times(1)).convertAndSend(eq("/topic/" + involved.getInvitationCode() + "/involved:update"), captor.capture());
 
 
         assertEquals(involved, captor.getValue());

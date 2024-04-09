@@ -59,14 +59,14 @@ public class InvolvedController {
 
         involved = involvedRepository.save(involved);
 
-        eventLastActivityService.updateLastActivity(receivedInvolved.getParticipant().getEventId());
+        eventLastActivityService.updateLastActivity(receivedInvolved.getInvitationCode());
 
         Involved sentInvolved = new Involved(involved.getId(),
                 involved.getIsSettled(), involved.getExpense().getId(),
-                involved.getParticipant().getId(), involved.getInvitationCode());
+                involved.getParticipant().getId(), receivedInvolved.getInvitationCode());
 
 
-        template.convertAndSend("/topic/" + sentInvolved.getId() + "/involved:update", sentInvolved);
+        template.convertAndSend("/topic/" + sentInvolved.getInvitationCode()+ "/involved:update", sentInvolved);
         return StatusEntity.ok("involved:update " + sentInvolved.getId());
     }
 }
