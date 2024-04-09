@@ -11,7 +11,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.EventLastActivityService;
 import server.database.InvolvedRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -49,20 +51,23 @@ public class InvolvedControllerTest {
         UUID participantId = UUID.randomUUID();
         UUID expenseId = UUID.randomUUID();
         UUID eventId = UUID.randomUUID();
+        LocalDate date = LocalDate.now();
 
 
         Event event = new Event(eventId, "Test Event", LocalDateTime.now(), LocalDateTime.now());
 
-        Participant participant = new Participant(participantId, "John", "Doe" , "john.doe@example.com"
+        Participant participant = new Participant(participantId, "John", "Doe"
         , "DE89370400440532013000", "COBADEFFXXX", event.getId());
 
-        Expense expense = new Expense(expenseId,"Lunch", 10.0, participant.getId(), event.getId());
+        Expense expense = new Expense(expenseId,"Lunch", 10.0, participant.getId(), event.getId(), date, null);
         expense.setPaidBy(participant);
 
-        Involved involved = new Involved(id, true, expenseId, participantId);
+        Involved involved = new Involved(id, true, expenseId, participantId, eventId);
         involved.setParticipant(participant);
         involved.setExpense(expense);
 
+        List<Involved> involvedList = List.of(involved);
+        expense.setInvolveds(involvedList);
 
         when(involvedRepository.existsById(involved.getId())).thenReturn(true);
         when(involvedRepository.getReferenceById(involved.getId())).thenReturn(involved);
@@ -101,11 +106,11 @@ public class InvolvedControllerTest {
     @Test
     public void testUpdateInvolved_InvalidInvolvedId() {
         UUID id = UUID.randomUUID();
-        Involved involved = new Involved(id, true, UUID.randomUUID(), UUID.randomUUID());
+        Involved involved = new Involved(id, true, UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
         when(involvedRepository.existsById(involved.getId())).thenReturn(false);
 
         StatusEntity result = involvedController.updateInvolved(involved);
-        StatusEntity expected = StatusEntity.badRequest(true, "Involved object not found in database");
+        StatusEntity expected = StatusEntity.notFound(true, "Involved object not found in database");
 
         verify(involvedRepository, times(0)).getReferenceById(involved.getId());
         verify(involvedRepository, times(0)).save(any(Involved.class));
