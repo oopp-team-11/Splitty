@@ -25,7 +25,6 @@ public class EventTest {
                 event,
                 "John",
                 "Doe",
-                "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123"
         ));
@@ -33,7 +32,6 @@ public class EventTest {
                 event,
                 "Lorem",
                 "Ipsum",
-                "l.ipsum@domain.com",
                 "NL69 XING 4269 2137 00",
                 "CDNANL2A666"
         ));
@@ -44,7 +42,6 @@ public class EventTest {
                 eventEqual,
                 "John",
                 "Doe",
-                "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123"
         ));
@@ -52,7 +49,6 @@ public class EventTest {
                 eventEqual,
                 "Lorem",
                 "Ipsum",
-                "l.ipsum@domain.com",
                 "NL69 XING 4269 2137 00",
                 "CDNANL2A666"
         ));
@@ -127,7 +123,6 @@ public class EventTest {
             event,
             "Average",
             "Joe",
-            "ajoe@domain.com",
             "NL69 AJOE 4269 2137 00",
             "CDNANL2A666"
         );

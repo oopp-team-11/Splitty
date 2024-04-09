@@ -108,7 +108,6 @@ public class EditExpenseCtrl implements Translatable {
                 alert.showAndWait();
                 return;
             }
-
             var alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setContentText("Are you sure you want to edit this expense?");
@@ -122,12 +121,13 @@ public class EditExpenseCtrl implements Translatable {
                         person = participant;
                     }
                 }
-
+                // TODO: Add data when you will adjust the scene (see two nulls in the constructor below)
                 expense = new Expense(expense.getId(), expenseTitle.getText(),
                         Double.parseDouble(expenseAmount.getText()),
-                        person.getId(), expense.getInvitationCode());
+                        person.getId(), expense.getInvitationCode(), null, null);
                 mainCtrl.getSessionHandler().sendExpense(expense, "update");
             }
+
 
             mainCtrl.showEventOverview();
         }

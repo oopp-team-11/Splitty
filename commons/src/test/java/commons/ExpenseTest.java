@@ -4,6 +4,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,7 +24,6 @@ public class ExpenseTest {
                 event,
                 "John",
                 "Doe",
-                "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123"
         );
@@ -31,12 +31,13 @@ public class ExpenseTest {
                 event,
                 "John",
                 "Burger",
-                "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123"
         );
-        expense = new Expense(participant1, "Cookies", 69.69);
-        expenseEqual = new Expense(participant1, "Cookies", 69.69);
+        // TODO: Some smarter initialisation might be needed (instead of two nulls)
+        expense = new Expense(participant1, "Cookies", 69.69, null, null);
+        expenseEqual = new Expense(participant1, "Cookies", 69.69, null, null);
+        expenseEqual.setDate(expense.getDate());
         expenseNotEqual = new Expense();
         try {
             UUID id = UUID.randomUUID();
@@ -48,6 +49,13 @@ public class ExpenseTest {
 
     private static void setId(Expense toSet, UUID newId) throws IllegalAccessException {
         FieldUtils.writeField(toSet, "id", newId, true);
+    }
+
+    @Test
+    void getAndSetDate() {
+        var date = LocalDate.now();
+        expense.setDate(date);
+        assertEquals(date, expense.getDate());
     }
 
     @Test
@@ -65,13 +73,15 @@ public class ExpenseTest {
 
     @Test
     void server2ClientConstructor() {
+        // TODO: Some smarter initialisation might be needed (instead of the null)
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
-                expense.getPaidById(), expense.getInvitationCode());
+                expense.getPaidById(), expense.getInvitationCode(), expense.getDate(), null);
         assertEquals(expense.getId(), sentExpense.getId());
         assertEquals(expense.getTitle(), sentExpense.getTitle());
         assertEquals(expense.getAmount(), sentExpense.getAmount());
         assertEquals(expense.getPaidById(), sentExpense.getPaidById());
         assertEquals(expense.getInvitationCode(), sentExpense.getInvitationCode());
+        assertEquals(expense.getDate(), sentExpense.getDate());
     }
 
     @Test
