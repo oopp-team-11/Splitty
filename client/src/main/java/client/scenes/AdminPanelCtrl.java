@@ -111,7 +111,7 @@ public class AdminPanelCtrl implements Translatable {
      */
     public void jsonDump(Event event) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("Download");
+        directoryChooser.setTitle("Select directory");
         directoryChooser.setInitialDirectory(mainCtrl.getAdminDataHandler().getJsonDumpDir());
         mainCtrl.getAdminDataHandler().setJsonDumpDir(directoryChooser.showDialog(null));
         mainCtrl.getSessionHandler().sendAdminEvent(mainCtrl.getAdminDataHandler().getPasscode(),
@@ -132,7 +132,7 @@ public class AdminPanelCtrl implements Translatable {
      */
     public void jsonImport() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open");
+        fileChooser.setTitle("Select file to import");
         fileChooser.setInitialFileName("");
         fileChooser.setInitialDirectory(mainCtrl.getAdminDataHandler().getJsonDumpDir());
         File selectedFile = fileChooser.showOpenDialog(null);
