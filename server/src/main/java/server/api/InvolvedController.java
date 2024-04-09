@@ -51,22 +51,19 @@ public class InvolvedController {
         }
 
         if(!involvedRepository.existsById(receivedInvolved.getId())) {
-            return StatusEntity.badRequest(true, "Involved object not found in database");
+            return StatusEntity.notFound(true, "Involved object not found in database");
         }
 
         Involved involved = involvedRepository.getReferenceById(receivedInvolved.getId());
         involved.setIsSettled(receivedInvolved.getIsSettled());
-        involved.setExpense(receivedInvolved.getExpense());
-        involved.setParticipant(receivedInvolved.getParticipant());
 
         involved = involvedRepository.save(involved);
 
         eventLastActivityService.updateLastActivity(receivedInvolved.getParticipant().getEventId());
 
         Involved sentInvolved = new Involved(involved.getId(),
-                involved.getIsSettled(), involved.getExpense().getId(), involved.getParticipant().getId());
-        sentInvolved.setExpense(involved.getExpense());
-        sentInvolved.setParticipant(involved.getParticipant());
+                involved.getIsSettled(), involved.getExpense().getId(),
+                involved.getParticipant().getId(), involved.getInvitationCode());
 
 
         template.convertAndSend("/topic/" + sentInvolved.getId() + "/involved:update", sentInvolved);
