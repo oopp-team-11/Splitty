@@ -91,6 +91,8 @@ public class AdminPanelCtrl implements Translatable {
         languageSwitchPlaceHolder.getChildren().clear();
         languageSwitchPlaceHolder.getChildren().add(mainCtrl.getLanguageSwitchButton());
 
+        mainCtrl.getAdminDataHandler().setJsonDumpDir(fileSystemUtils.setBackupsDirectory());
+
         refreshData();
     }
 

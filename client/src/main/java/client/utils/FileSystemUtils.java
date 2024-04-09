@@ -5,6 +5,8 @@ import commons.Event;
 
 import javax.json.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -14,6 +16,22 @@ import java.util.UUID;
  */
 public class FileSystemUtils {
     //private static final String CLIENT_JSON_PATH = "client.json";
+
+    /**
+     * Set the default backup directory or create it, if it doesn't exist
+     *
+     * @return returns a File with directory
+     */
+    public File setBackupsDirectory() {
+        String directoryPath = System.getProperty("user.dir") + File.separator + "backups";
+        try {
+            Files.createDirectories(Path.of(directoryPath));
+        } catch (IOException e) {
+            System.err.println("Could not create backup directory. Setting a default directory.");
+            return new File("");
+        }
+        return new File(directoryPath);
+    }
 
     /**
      * method tht performs json dump

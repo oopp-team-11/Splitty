@@ -107,7 +107,6 @@ class AdminDataHandlerTest {
         handler.setDataToNull();
         assertNull(handler.getEvents());
         assertNull(handler.getPasscode());
-        assertNull(handler.getJsonDumpDir());
     }
 
     @Test
