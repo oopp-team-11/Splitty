@@ -404,6 +404,7 @@ public class EventDataHandler {
         toUpdate.setTitle(fromUpdate.getTitle());
         toUpdate.setAmount(fromUpdate.getAmount());
         toUpdate.setPaidById(fromUpdate.getPaidById());
+        toUpdate.setDate(fromUpdate.getDate());
         toUpdate.setInvolveds(fromUpdate.getInvolveds());
     }
 
