@@ -40,6 +40,7 @@ public class StatusCodeHandler implements StompFrameHandler {
                 alert.setContentText(status.getMessage());
                 alert.setHeaderText("Success");
                 alert.showAndWait();
+                mainCtrl.showEventOverview();
             });
             case NOT_FOUND -> {
                 if(status.isUnsolvable()) {

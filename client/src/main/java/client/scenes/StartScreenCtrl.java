@@ -315,6 +315,15 @@ public class StartScreenCtrl implements Initializable, Translatable {
                         }
                     }
                 } catch (Exception e) {
+                    Platform.runLater(() -> {
+                        var alert = new Alert(Alert.AlertType.ERROR);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setContentText("""
+                            Server connection error,
+                            Server is unavailable, please try again.""");
+                        alert.showAndWait();
+                        mainCtrl.showStartScreen();
+                    });
                     System.out.println("Failed to get updated events: " + e.getMessage());
                     e.printStackTrace();
                     break;
