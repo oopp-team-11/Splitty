@@ -295,7 +295,7 @@ class WebsocketSessionHandlerTest {
     void sendParticipant() {
         handler.afterConnected(session, headers);
         Participant participant = new Participant(new Event("dummyEvent"), "John", "Doe",
-                null, null, null);
+                 null, null);
 
         ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Object> payloadCaptor = ArgumentCaptor.forClass(Object.class);
@@ -313,7 +313,7 @@ class WebsocketSessionHandlerTest {
     void sendExpense() {
         handler.afterConnected(session, headers);
         Participant participant = new Participant(new Event("dummyEvent"), "John", "Doe",
-                null, null, null);
+                 null, null);
         // TODO: Probably adding some data in the constructor instead of the two nulls
         Expense expense = new Expense(participant, "sampleExpense", 4.20, null, null);
 

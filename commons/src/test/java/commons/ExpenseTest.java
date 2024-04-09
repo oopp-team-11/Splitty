@@ -24,7 +24,6 @@ public class ExpenseTest {
                 event,
                 "John",
                 "Doe",
-                "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123"
         );
@@ -32,7 +31,6 @@ public class ExpenseTest {
                 event,
                 "John",
                 "Burger",
-                "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123"
         );

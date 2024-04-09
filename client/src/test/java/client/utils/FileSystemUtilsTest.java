@@ -198,7 +198,6 @@ class FileSystemUtilsTest {
                 event1,
                 "John",
                 "Doe",
-                "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123"
         );
@@ -206,7 +205,6 @@ class FileSystemUtilsTest {
                 event1,
                 "Lorem",
                 "Ipsum",
-                "l.ipsum@domain.com",
                 "NL69 XING 4269 2137 00",
                 "CDNANL2A666"
         );
@@ -214,7 +212,6 @@ class FileSystemUtilsTest {
                 event2,
                 "John",
                 "Doe",
-                "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123"
         );
@@ -222,7 +219,6 @@ class FileSystemUtilsTest {
                 event2,
                 "Lorem",
                 "Ipsum",
-                "l.ipsum@domain.com",
                 "NL69 XING 4269 2137 00",
                 "CDNANL2A666"
         );

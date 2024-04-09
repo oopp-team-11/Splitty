@@ -78,7 +78,7 @@ public class AdminController {
         Event sentEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(), event.getLastActivity());
         for (Participant participant : event.getParticipants()) {
             Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
-                    participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getIban(),
+                    participant.getLastName(), participant.getIban(), participant.getIban(),
                     participant.getEventId());
             sentEvent.addParticipant(sentParticipant);
             for (Expense expense : participant.getMadeExpenses()) {
@@ -145,7 +145,7 @@ public class AdminController {
             for (Participant receivedParticipant : receivedEvent.getParticipants()) {
                 Participant participant = new Participant(event,
                         receivedParticipant.getFirstName(), receivedParticipant.getLastName(),
-                        receivedParticipant.getEmail(), receivedParticipant.getIban(), receivedParticipant.getBic());
+                        receivedParticipant.getIban(), receivedParticipant.getBic());
                 participant = participantRepo.save(participant);
                 for (Expense receivedExpense : receivedParticipant.getMadeExpenses()) {
                     // TODO: Maybe some another initialisation for expense below will be required

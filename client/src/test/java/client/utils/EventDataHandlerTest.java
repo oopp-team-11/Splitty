@@ -54,9 +54,9 @@ class EventDataHandlerTest {
     public void setup() throws IllegalAccessException {
         event = new Event("Trap");
         setId(event, UUID.randomUUID());
-        p1 = new Participant(event, "1", "2", "3", "4", "5");
+        p1 = new Participant(event, "1", "2",  "4", "5");
         setId(p1, UUID.randomUUID());
-        p2 = new Participant(event, "1", "2", "3", "4", "5");
+        p2 = new Participant(event, "1", "2",  "4", "5");
         setId(p2, UUID.randomUUID());
         e1 = new Expense(p1, "1", 1.0, LocalDate.now(), null);
         setId(e1, UUID.randomUUID());
@@ -124,13 +124,13 @@ class EventDataHandlerTest {
 
     @Test
     void noParticipantForUpdate() {
-        handler.getUpdateParticipant(new Participant(event, "a", "b", "c", "d", "e"));
+        handler.getUpdateParticipant(new Participant(event, "a", "b",  "d", "e"));
         verify(sessionMock, times(1)).refreshParticipants();
     }
 
     @Test
     void participantAlreadyDeleted() {
-        handler.getDeleteParticipant(new Participant(event, "a", "b", "c", "d", "e"));
+        handler.getDeleteParticipant(new Participant(event, "a", "b",  "d", "e"));
         verify(sessionMock, times(1)).refreshParticipants();
     }
 
@@ -142,7 +142,7 @@ class EventDataHandlerTest {
 
     @Test
     void receiveParticipantCreate() {
-        var p3 = new Participant(event, "A", "B", "C", "D", "E");
+        var p3 = new Participant(event, "A", "B",  "D", "E");
         try {
             handler.getCreateParticipant(p3);
         }catch (IllegalStateException ignored){}

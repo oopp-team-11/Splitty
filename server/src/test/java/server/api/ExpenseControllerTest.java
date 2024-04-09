@@ -53,7 +53,6 @@ public class ExpenseControllerTest {
                 event,
                 "abc",
                 "def",
-                "a@b.c",
                 null,
                 null
         ));
@@ -76,7 +75,7 @@ public class ExpenseControllerTest {
     @Test
     void expenseParticipantNotFound() {
         Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
-                "abcd@gmail.com", null, null, UUID.randomUUID());
+                 null, null, UUID.randomUUID());
         // TODO: maybe some smarter initialising of the involveds
         Expense expense = new Expense(sentParticipant, "expense", 21.37, null, null);
         expense = expenseRepository.save(expense);
@@ -94,7 +93,7 @@ public class ExpenseControllerTest {
     @Test
     void ExpenseTitleNull() {
         Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
-                "abcd@gmail.com", null, null, UUID.randomUUID());
+                 null, null, UUID.randomUUID());
         sentParticipant = participantRepository.save(sentParticipant);
         // TODO: maybe some smarter initialising of the involveds
         Expense expense = new Expense(sentParticipant, null, 69, null, null);
@@ -109,7 +108,7 @@ public class ExpenseControllerTest {
     @Test
     void ExpenseAmountNotPositive() {
         Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
-                "abcd@gmail.com", null, null, UUID.randomUUID());
+                 null, null, UUID.randomUUID());
         sentParticipant = participantRepository.save(sentParticipant);
         // TODO: maybe some smarter initialising of the involveds
         Expense expense = new Expense(sentParticipant, "expense", 0, null, null);
@@ -123,7 +122,7 @@ public class ExpenseControllerTest {
     @Test
     void ExpenseGetPaidByIDNull() {
         Participant sentParticipant = new Participant(null, "name", "surname",
-                "abcd@gmail.com", null, null, UUID.randomUUID());
+                 null, null, UUID.randomUUID());
         // TODO: maybe some smarter initialising of the involveds
         Expense expense = new Expense(sentParticipant, "expense", 69, null, null);
         try {
@@ -136,7 +135,7 @@ public class ExpenseControllerTest {
     @Test
     void ExpenseInvitationCodeNull() {
         Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
-                "abcd@gmail.com", null, null, null);
+                 null, null, null);
         sentParticipant = participantRepository.save(sentParticipant);
         // TODO: maybe some smarter initialising of the involveds
         Expense expense = new Expense(sentParticipant, "expense", 69, null, null);
@@ -150,7 +149,7 @@ public class ExpenseControllerTest {
     @Test
     void ExpenseOKRequest() {
         Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
-                "abcd@gmail.com", null, null, UUID.randomUUID());
+                 null, null, UUID.randomUUID());
         sentParticipant = participantRepository.save(sentParticipant);
         // TODO: maybe some smarter initialising of the involveds
         Expense expense = new Expense(sentParticipant, "expense", 69, null, null);
@@ -164,12 +163,12 @@ public class ExpenseControllerTest {
     void checkUpdateExpense() {
         Event event = eventRepository.save(new Event("testEvent"));
         Participant participant = participantRepository.save(new Participant(UUID.randomUUID(), "name",
-                "surname", "abcd@gmail.com", null, null, event.getId()));
+                "surname",  null, null, event.getId()));
         // TODO: maybe some smarter initialising of the involveds
         Expense expense = new Expense(participant, "expense", 21.37, null, null);
         expense = expenseRepository.save(expense);
         Participant newParticipant = participantRepository.save(new Participant(UUID.randomUUID(), "new name",
-                "new surname", "abcd@gmail.com", null, null, event.getId()));
+                "new surname",  null, null, event.getId()));
         expense.setTitle("NewTitle");
         expense.setAmount(69.42);
         expense.setPaidById(newParticipant.getId());
@@ -213,7 +212,7 @@ public class ExpenseControllerTest {
     void checkDeleteExpense() {
         Event event = eventRepository.save(new Event("testEvent"));
         Participant participant = participantRepository.save(new Participant(UUID.randomUUID(), "name",
-                "surname", "abcd@gmail.com", null, null, event.getId()));
+                "surname",  null, null, event.getId()));
         // TODO: maybe some smarter initialising of the involveds
         Expense expense = new Expense(participant, "expense", 21.37, null, null);
         expense = expenseRepository.save(expense);
@@ -235,9 +234,9 @@ public class ExpenseControllerTest {
         Event event = new Event("testEvent");
         event = eventRepository.save(event);
         Participant participant1 = new Participant(event, "name1",
-                "surname1", "abc@gmail.com", "ibanTest", "bicTest");
+                "surname1",  "ibanTest", "bicTest");
         Participant participant2 = new Participant(event, "name2",
-                "surname2", "abc@gmail.com", "ibanTest", "bicTest");
+                "surname2",  "ibanTest", "bicTest");
         participant1 = participantRepository.save(participant1);
         participant2 = participantRepository.save(participant2);
         event.addParticipant(participant1);
