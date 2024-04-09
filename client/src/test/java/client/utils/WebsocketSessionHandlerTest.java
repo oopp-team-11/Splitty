@@ -16,6 +16,7 @@ import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -334,10 +335,14 @@ class WebsocketSessionHandlerTest {
     @Test
     void sendInvolved() {
         handler.afterConnected(session, headers);
-        Participant participant = new Participant(new Event("dummyEvent"), "John", "Doe",
+
+        Event event = new Event("dummyEvent");
+        Participant participant = new Participant(event.getId(), "John", "Doe",
                 null, null, null);
-        Expense expense = new Expense(participant, "sampleExpense", 4.20);
+        Expense expense = new Expense(participant, "sampleExpense", 4.20, LocalDate.now(), null);
         Involved involved = new Involved(true, expense, participant);
+
+        expense.setInvolveds(List.of(involved));
 
         ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Object> payloadCaptor = ArgumentCaptor.forClass(Object.class);
