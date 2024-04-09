@@ -115,9 +115,10 @@ public class AddExpenseCtrl implements Translatable {
                         person = participant;
                     }
                 }
+                // TODO: add data when you will adjust the scene (see two nulls in the constructor below)
                 Expense newExpense = new Expense(person,
                         expenseTitle.getText(),
-                        Double.parseDouble(expenseAmount.getText()));
+                        Double.parseDouble(expenseAmount.getText()), null, null);
                 mainCtrl.getSessionHandler().sendExpense(newExpense, "create");
             }
         }

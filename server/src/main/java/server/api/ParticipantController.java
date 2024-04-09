@@ -16,7 +16,6 @@ import server.database.ParticipantRepository;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 /**
  * Class that represents the participant controller
@@ -70,12 +69,6 @@ public class ParticipantController {
         if (isNullOrEmpty(receivedParticipant.getLastName())) {
             return StatusEntity.badRequest(false, "Last name should not be empty");
         }
-        if(isNullOrEmpty(receivedParticipant.getEmail()) ||
-                !Pattern.compile("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$").
-                        matcher(receivedParticipant.getEmail()).matches())
-        {
-            return StatusEntity.badRequest(false, "Provided email is of invalid format");
-        }
 
         return StatusEntity.ok((String) null);
     }
@@ -118,7 +111,6 @@ public class ParticipantController {
                 event,
                 receivedParticipant.getFirstName(),
                 receivedParticipant.getLastName(),
-                receivedParticipant.getEmail(),
                 receivedParticipant.getIban(),
                 receivedParticipant.getBic()
         );
@@ -127,7 +119,7 @@ public class ParticipantController {
 
 
         Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
-                participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
+                participant.getLastName(), participant.getIban(), participant.getBic(),
                 receivedParticipant.getEventId());
         template.convertAndSend("/topic/" + sentParticipant.getEventId() + "/participant:create",
                 sentParticipant);
@@ -153,7 +145,7 @@ public class ParticipantController {
 
         for(Participant participant : participants) {
             Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
-                    participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
+                    participant.getLastName(), participant.getIban(), participant.getBic(),
                     invitationCode);
             sentParticipants.add(sentParticipant);
         }
@@ -181,7 +173,6 @@ public class ParticipantController {
         Participant participant = participantRepository.getReferenceById(receivedParticipant.getId());
         participant.setFirstName(receivedParticipant.getFirstName());
         participant.setLastName(receivedParticipant.getLastName());
-        participant.setEmail(receivedParticipant.getEmail());
         participant.setIban(receivedParticipant.getIban());
         participant.setBic(receivedParticipant.getBic());
 
@@ -190,7 +181,7 @@ public class ParticipantController {
 
 
         Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
-                participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
+                participant.getLastName(), participant.getIban(), participant.getBic(),
                 receivedParticipant.getEventId());
         template.convertAndSend("/topic/" + sentParticipant.getEventId() + "/participant:update",
                 sentParticipant);
@@ -218,7 +209,7 @@ public class ParticipantController {
 
 
         Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
-                participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
+                participant.getLastName(), participant.getIban(), participant.getBic(),
                 receivedParticipant.getEventId());
         template.convertAndSend("/topic/" + sentParticipant.getEventId() + "/participant:delete",
                 sentParticipant);

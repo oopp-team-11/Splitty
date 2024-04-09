@@ -19,11 +19,13 @@ public class Involved {
     private boolean isSettled;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonBackReference(value = "ExpenseToInvolved")
     @JoinColumn(name = "EXPENSE_ID")
     private Expense expense;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @JsonBackReference(value = "ParticipantToInvolved")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PARTICIPANT_ID")
     private Participant participant;
 
     @Transient
@@ -31,6 +33,25 @@ public class Involved {
 
     @Transient
     private UUID participantId;
+
+    @Transient
+    private UUID invitationCode;
+
+    /**
+     * std getter
+     * @return invitation code of the event
+     */
+    public UUID getInvitationCode() {
+        return invitationCode;
+    }
+
+    /**
+     * std setter
+     * @param invitationCode
+     */
+    public void setInvitationCode(UUID invitationCode) {
+        this.invitationCode = invitationCode;
+    }
 
     /**
      * Server2DataBase constructor
@@ -44,6 +65,7 @@ public class Involved {
         this.participant = participant;
         this.expenseId = expense.getId();
         this.participantId = participant.getId();
+        this.invitationCode = participant.getEventId();
     }
 
     /**
@@ -59,12 +81,14 @@ public class Involved {
      * @param isSettled
      * @param expenseId
      * @param participantId
+     * @param invitationCode
      */
-    public Involved(UUID id, boolean isSettled, UUID expenseId, UUID participantId) {
+    public Involved(UUID id, boolean isSettled, UUID expenseId, UUID participantId, UUID invitationCode) {
         this.id = id;
         this.isSettled = isSettled;
         this.expenseId = expenseId;
         this.participantId = participantId;
+        this.invitationCode = invitationCode;
     }
 
     /**
@@ -174,12 +198,13 @@ public class Involved {
         Involved involved = (Involved) obj;
         return isSettled == involved.isSettled && Objects.equals(id, involved.id) &&
                 Objects.equals(expenseId, involved.expenseId) &&
-                Objects.equals(participantId, involved.participantId);
+                Objects.equals(participantId, involved.participantId) &&
+                Objects.equals(invitationCode, involved.invitationCode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, isSettled, expenseId, participantId);
+        return Objects.hash(id, isSettled, expenseId, participantId, invitationCode);
     }
 
 
@@ -191,6 +216,7 @@ public class Involved {
                 ", isSettled=" + isSettled +
                 ", expenseId=" + expenseId +
                 ", participantId=" + participantId +
+                ", invitationCode=" + invitationCode +
                 '}';
     }
 }

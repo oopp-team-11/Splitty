@@ -106,14 +106,17 @@ public class ExpenseController {
             return badRequest;
 
         Participant paidBy = participantRepository.getReferenceById(receivedExpense.getPaidById());
-        Expense expense = new Expense(paidBy, receivedExpense.getTitle(), receivedExpense.getAmount());
+        // TODO: Maybe some smarter logic when initialising involveds
+        Expense expense = new Expense(paidBy, receivedExpense.getTitle(), receivedExpense.getAmount(),
+                receivedExpense.getDate(), receivedExpense.getInvolveds());
 
         eventLastActivityService.updateLastActivity(receivedExpense.getInvitationCode());
 
         expense = expenseRepository.save(expense);
 
+        // TODO: maybe some smarter initialising of the involveds
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(), paidBy.getId(),
-                receivedExpense.getInvitationCode());
+                receivedExpense.getInvitationCode(), expense.getDate(), expense.getInvolveds());
         template.convertAndSend("/topic/" + sentExpense.getInvitationCode() + "/expense:create",
                 sentExpense);
 
@@ -142,8 +145,9 @@ public class ExpenseController {
         for (Participant participant : participants) {
             List<Expense> participantExpenses = participant.getMadeExpenses();
             for (Expense expense : participantExpenses) {
+                // TODO: maybe some smarter initialising of the involveds
                 Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount()
-                        , participant.getId(), invitationCode);
+                        , participant.getId(), invitationCode, expense.getDate(), expense.getInvolveds());
                 expenses.add(sentExpense);
             }
         }
@@ -179,9 +183,10 @@ public class ExpenseController {
 
         eventLastActivityService.updateLastActivity(receivedExpense.getInvitationCode());
 
-
+        // TODO: maybe some smarter initialising of the involveds
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
-                receivedExpense.getPaidById(), receivedExpense.getInvitationCode());
+                receivedExpense.getPaidById(), receivedExpense.getInvitationCode(),
+                expense.getDate(), expense.getInvolveds());
         template.convertAndSend("/topic/" + sentExpense.getInvitationCode() + "/expense:update", sentExpense);
         return StatusEntity.ok("Expense was successfully updated");
     }
@@ -208,8 +213,10 @@ public class ExpenseController {
         eventLastActivityService.updateLastActivity(receivedExpense.getInvitationCode());
         expenseRepository.delete(expense);
 
+        // TODO: maybe some smarter initialising of the involveds
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
-                receivedExpense.getPaidById(), receivedExpense.getInvitationCode());
+                receivedExpense.getPaidById(), receivedExpense.getInvitationCode(),
+                receivedExpense.getDate(), receivedExpense.getInvolveds());
         template.convertAndSend("/topic/" + sentExpense.getInvitationCode() + "/expense:delete",
                 sentExpense);
         return StatusEntity.ok("Expense was successfully deleted");

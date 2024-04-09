@@ -80,7 +80,6 @@ public class EditParticipantCtrl implements Translatable {
         this.participant = participant;
         firstName.setText(participant.getFirstName());
         lastName.setText(participant.getLastName());
-        email.setText(participant.getEmail());
         iban.setText(participant.getIban());
         bic.setText(participant.getBic());
     }
@@ -151,7 +150,6 @@ public class EditParticipantCtrl implements Translatable {
             if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
                 participant.setFirstName(firstName.getText());
                 participant.setLastName(lastName.getText());
-                participant.setEmail(email.getText());
                 participant.setIban(iban.getText());
                 participant.setBic(bic.getText());
 
