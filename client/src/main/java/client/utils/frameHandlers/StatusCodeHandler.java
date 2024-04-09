@@ -38,7 +38,7 @@ public class StatusCodeHandler implements StompFrameHandler {
                 var alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.initModality(Modality.APPLICATION_MODAL);
                 alert.setContentText(status.getMessage());
-                alert.setHeaderText("Success");
+                alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("Success"));
                 alert.showAndWait();
                 mainCtrl.showEventOverview();
             });
@@ -48,7 +48,7 @@ public class StatusCodeHandler implements StompFrameHandler {
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(status.getMessage());
-                        alert.setHeaderText("Not Found");
+                        alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("NotFound"));
                         alert.showAndWait();
                     });
                 }else {
@@ -56,7 +56,7 @@ public class StatusCodeHandler implements StompFrameHandler {
                         var alert = new Alert(Alert.AlertType.WARNING);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(status.getMessage());
-                        alert.setHeaderText("Not Found");
+                        alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("NotFound"));
                         alert.showAndWait();
                     });
                 }
@@ -67,7 +67,7 @@ public class StatusCodeHandler implements StompFrameHandler {
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(status.getMessage());
-                        alert.setHeaderText("Bad Request");
+                        alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("BadRequest"));
                         alert.showAndWait();
                     });
                 }else {
@@ -75,7 +75,7 @@ public class StatusCodeHandler implements StompFrameHandler {
                         var alert = new Alert(Alert.AlertType.WARNING);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(status.getMessage());
-                        alert.setHeaderText("Bad Request");
+                        alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("BadRequest"));
                         alert.showAndWait();
                     });
                 }

@@ -177,9 +177,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
         } catch (IOException | InterruptedException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("""
-                            Server connection error,
-                            Server is unavailable, please try again.""");
+            alert.setContentText(mainCtrl.getTranslationSupplier()
+                    .getTranslation("ServerConnectionError"));
             alert.showAndWait();
         } catch (JSONException e) {
             System.out.println("Failed to parse server response: " + e.getMessage());
@@ -196,7 +195,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
         if(eventName.isEmpty()){
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Event name is empty, please add a name");
+            alert.setContentText(mainCtrl.getTranslationSupplier()
+                    .getTranslation("EventNameEmpty"));
             alert.showAndWait();
             return;
         }
@@ -230,10 +230,10 @@ public class StartScreenCtrl implements Initializable, Translatable {
         } catch (IllegalArgumentException e) {
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Invalid invitation code, try again." +
-                    "\nError: " + (e.getMessage() != null ? e.getMessage() : "No error message available.") +
-                    "\n\nThe invitation code should be in the form of:\nXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX " +
-                    "(in UUID format)");
+            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("InvalidInvitationCode") +
+                    "\n" + mainCtrl.getTranslationSupplier().getTranslation("Error")
+                    + (e.getMessage() != null ? e.getMessage() : "No error message available.") +
+                    "\n" + mainCtrl.getTranslationSupplier().getTranslation("InvitationCodeForm"));
             alert.showAndWait();
             return;
         }
@@ -259,20 +259,20 @@ public class StartScreenCtrl implements Initializable, Translatable {
         mainCtrl.getSessionHandler().sendReadEvents(password);
     }
 
-    private static void serverErrorAlert(Exception exception) {
+    private void serverErrorAlert(Exception exception) {
         var alert = new Alert(Alert.AlertType.ERROR);
         alert.initModality(Modality.APPLICATION_MODAL);
-        alert.setContentText("Something went wrong while trying to connect to server." +
-                "\nError: " +
+        alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ServerErrorAlert") +
+                "\n" + mainCtrl.getTranslationSupplier().getTranslation("Error") +
                 (exception.getMessage() != null ? exception.getMessage() : "No error message available."));
         alert.showAndWait();
     }
 
-    private static void fileSaveErrorAlert(Exception exception) {
+    private void fileSaveErrorAlert(Exception exception) {
         var alert = new Alert(Alert.AlertType.ERROR);
         alert.initModality(Modality.APPLICATION_MODAL);
-        alert.setContentText("Something went wrong while saving invitation code to disk." +
-                "\nError: " +
+        alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("FileSaveErrorAlert") +
+                "\n" + mainCtrl.getTranslationSupplier().getTranslation("Error") +
                 (exception.getMessage() != null ? exception.getMessage() : "No error message available."));
         alert.showAndWait();
     }
@@ -318,9 +318,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
                     Platform.runLater(() -> {
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText("""
-                            Server connection error,
-                            Server is unavailable, please try again.""");
+                        alert.setContentText(mainCtrl.getTranslationSupplier()
+                                .getTranslation("ServerConnectionError"));
                         alert.showAndWait();
                         mainCtrl.showStartScreen();
                     });

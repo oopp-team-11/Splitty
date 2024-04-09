@@ -50,7 +50,9 @@ public class ReadExpensesHandler implements StompFrameHandler {
                         Platform.runLater(() ->{
                             var alert = new Alert(Alert.AlertType.ERROR);
                             alert.initModality(Modality.APPLICATION_MODAL);
-                            alert.setContentText("Error: Bad request, reloading event.");
+                            alert.setContentText(mainCtrl.getTranslationSupplier()
+                                    .getTranslation("Error") + mainCtrl.getTranslationSupplier()
+                                    .getTranslation("EventBadRequest"));
                             alert.showAndWait();
                             mainCtrl.showEventOverview();
                         });
@@ -60,7 +62,9 @@ public class ReadExpensesHandler implements StompFrameHandler {
                         Platform.runLater(() ->{
                             var alert = new Alert(Alert.AlertType.WARNING);
                             alert.initModality(Modality.APPLICATION_MODAL);
-                            alert.setContentText("Warning: Bad request, reloading event.");
+                            alert.setContentText(mainCtrl.getTranslationSupplier()
+                                    .getTranslation("Warning") + mainCtrl.getTranslationSupplier()
+                                    .getTranslation("EventBadRequest"));
                             alert.showAndWait();
                             mainCtrl.showEventOverview();
                         });
@@ -72,7 +76,9 @@ public class ReadExpensesHandler implements StompFrameHandler {
                     Platform.runLater(() ->{
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText("Error: Expense not found, reloading event.");
+                        alert.setContentText(mainCtrl.getTranslationSupplier()
+                                .getTranslation("Error") + mainCtrl.getTranslationSupplier()
+                                .getTranslation("ExpenseNotFound"));
                         alert.showAndWait();
                         mainCtrl.showEventOverview();
                     });
@@ -80,7 +86,9 @@ public class ReadExpensesHandler implements StompFrameHandler {
                     Platform.runLater(() ->{
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText("Warning: Expense not found, reloading event.");
+                        alert.setContentText(mainCtrl.getTranslationSupplier()
+                                .getTranslation("Warning") + mainCtrl.getTranslationSupplier()
+                                .getTranslation("ExpenseNotFound"));
                         alert.showAndWait();
                         mainCtrl.showEventOverview();
                     });
