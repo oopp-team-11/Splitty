@@ -195,6 +195,17 @@ public class ExpenseController {
         if (badRequest.isUnsolvable())
             return badRequest;
 
+        Expense expense = expenseRepository.getReferenceById(receivedExpense.getId());
+
+        var oldAmountOwed = expense.getAmount() / expense.getInvolveds().size();
+        var newAmountOwed = receivedExpense.getAmount() / receivedExpense.getInvolveds().size();
+        if(newAmountOwed != oldAmountOwed)
+        {
+            receivedExpense.setAmountOwed(newAmountOwed);
+            for(Involved involved : receivedExpense.getInvolveds())
+                involved.setIsSettled(false);
+        }
+
         var oldInvolveds = expenseRepository.getReferenceById(receivedExpense.getId()).getInvolveds()
                 .stream().map(Involved::getId)
                 .filter(id -> !receivedExpense.getInvolveds().stream().map(Involved::getId).toList().contains(id))
@@ -207,14 +218,6 @@ public class ExpenseController {
         involvedRepository.saveAll(newInvolveds);
 
         Participant newPaidBy = participantRepository.getReferenceById(receivedExpense.getPaidById());
-        Expense expense = expenseRepository.getReferenceById(receivedExpense.getId());
-        var newAmountOwed = receivedExpense.getAmount() / receivedExpense.getInvolveds().size();
-        if(newAmountOwed != expense.getAmountOwed())
-        {
-            receivedExpense.setAmountOwed(newAmountOwed);
-            for(Involved involved : receivedExpense.getInvolveds())
-                involved.setIsSettled(false);
-        }
         expense.setPaidBy(newPaidBy);
         expense.setAmount(receivedExpense.getAmount());
         expense.setTitle(receivedExpense.getTitle());
@@ -224,9 +227,8 @@ public class ExpenseController {
 
         eventLastActivityService.updateLastActivity(receivedExpense.getInvitationCode());
 
-        // TODO: maybe some smarter initialising of the involveds
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
-                receivedExpense.getPaidById(), receivedExpense.getInvitationCode(),
+                expense.getPaidById(), expense.getInvitationCode(),
                 expense.getDate(), expense.getInvolveds());
         sentExpense.setAmountOwed(newAmountOwed);
 
