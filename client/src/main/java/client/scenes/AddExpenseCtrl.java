@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -40,6 +41,14 @@ public class AddExpenseCtrl implements Translatable {
     private Label whatForLabel;
     @FXML
     private Label howMuchLabel;
+    @FXML
+    private ScrollPane involvedScrollPane;
+    @FXML
+    private Label whoIsInvolvedLabel;
+    @FXML
+    private Label dateOfExpenseLabel;
+    @FXML
+    private DatePicker expenseDatePicker;
     private MainCtrl mainCtrl;
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
@@ -69,6 +78,9 @@ public class AddExpenseCtrl implements Translatable {
         expensePaidBy.setItems(participants);
         expenseTitle.clear();
         expenseAmount.clear();
+        //TODO: Override converter to catch parsing exception
+        // https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/DatePicker.html#setConverter-javafx.util.StringConverter-
+        expenseDatePicker.setValue(LocalDate.now());
     }
 
     /**
@@ -90,7 +102,12 @@ public class AddExpenseCtrl implements Translatable {
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setContentText("Expense amount field is empty, please fill in an amount.");
             alert.showAndWait();
-        } else {
+        } else if (expenseDatePicker.getValue() == null) {
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Expense date field is empty, please fill in a date.");
+            alert.showAndWait();
+        } else{
             try{
                 var ignored = Double.parseDouble(expenseAmount.getText());
             }catch (NumberFormatException e){
