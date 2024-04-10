@@ -3,6 +3,7 @@ package client.scenes;
 import client.interfaces.Translatable;
 import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
+import commons.Expense;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
@@ -40,6 +41,25 @@ public class DetailedExpenseCtrl implements Translatable {
 
     private MainCtrl mainCtrl;
 
+    private Expense expense;
+
+    /**
+     * std getter
+     * @return expense
+     */
+    public Expense getExpense() {
+        return expense;
+    }
+
+    /**
+     * sets up the scene
+     * @param expense
+     */
+    public void setExpense(Expense expense) {
+        this.expense = expense;
+
+    }
+
     /***
      * constructor with injection
      * @param mainCtrl
@@ -69,7 +89,10 @@ public class DetailedExpenseCtrl implements Translatable {
         });
     }
 
+    /**
+     * Method for going back to the event overview
+     */
     public void goToEventOverview() {
-
+        mainCtrl.showEventOverview();
     }
 }
