@@ -51,8 +51,9 @@ public class ReadParticipantsHandler implements StompFrameHandler {
                             var alert = new Alert(Alert.AlertType.ERROR);
                             alert.initModality(Modality.APPLICATION_MODAL);
                             alert.setContentText(mainCtrl.getTranslationSupplier()
-                                    .getTranslation("Error") + mainCtrl.getTranslationSupplier()
-                                    .getTranslation("EventBadRequest"));
+                                    .getTranslation("Error").replaceAll("\"", "")
+                                    + mainCtrl.getTranslationSupplier()
+                                    .getTranslation("EventBadRequest").replaceAll("\"", ""));
                             alert.showAndWait();
                             mainCtrl.showEventOverview();
                         });
@@ -63,8 +64,9 @@ public class ReadParticipantsHandler implements StompFrameHandler {
                             var alert = new Alert(Alert.AlertType.WARNING);
                             alert.initModality(Modality.APPLICATION_MODAL);
                             alert.setContentText(mainCtrl.getTranslationSupplier()
-                                    .getTranslation("Warning") + mainCtrl.getTranslationSupplier()
-                                    .getTranslation("EventBadRequest"));
+                                    .getTranslation("Warning").replaceAll("\"", "")
+                                    + mainCtrl.getTranslationSupplier()
+                                    .getTranslation("EventBadRequest").replaceAll("\"", ""));
                             alert.showAndWait();
                             mainCtrl.showEventOverview();
                         });
@@ -77,8 +79,9 @@ public class ReadParticipantsHandler implements StompFrameHandler {
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(mainCtrl.getTranslationSupplier()
-                                .getTranslation("Error") + mainCtrl.getTranslationSupplier()
-                                .getTranslation("ParticipantNotFound"));
+                                .getTranslation("Error").replaceAll("\"", "")
+                                + mainCtrl.getTranslationSupplier()
+                                .getTranslation("ParticipantNotFound").replaceAll("\"", ""));
                         alert.showAndWait();
                         mainCtrl.showEventOverview();
                     });
@@ -87,8 +90,9 @@ public class ReadParticipantsHandler implements StompFrameHandler {
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(mainCtrl.getTranslationSupplier()
-                                .getTranslation("Warning") + mainCtrl.getTranslationSupplier()
-                                .getTranslation("ParticipantNotFound"));
+                                .getTranslation("Warning").replaceAll("\"", "")
+                                + mainCtrl.getTranslationSupplier()
+                                .getTranslation("ParticipantNotFound").replaceAll("\"", ""));
                         alert.showAndWait();
                         mainCtrl.showEventOverview();
                     });

@@ -180,7 +180,7 @@ public class StartScreenCtrl implements Initializable, Translatable {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setContentText(mainCtrl.getTranslationSupplier()
-                    .getTranslation("ServerConnectionError"));
+                    .getTranslation("ServerConnectionError").replaceAll("\"", ""));
             alert.showAndWait();
         } catch (JSONException e) {
             System.out.println("Failed to parse server response: " + e.getMessage());
@@ -198,7 +198,7 @@ public class StartScreenCtrl implements Initializable, Translatable {
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setContentText(mainCtrl.getTranslationSupplier()
-                    .getTranslation("EventNameEmpty"));
+                    .getTranslation("EventNameEmpty").replaceAll("\"", ""));
             alert.showAndWait();
             return;
         }
@@ -232,10 +232,13 @@ public class StartScreenCtrl implements Initializable, Translatable {
         } catch (IllegalArgumentException e) {
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("InvalidInvitationCode") +
+            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("InvalidInvitationCode")
+                    .replaceAll("\"", "")+
                     "\n" + mainCtrl.getTranslationSupplier().getTranslation("Error")
+                    .replaceAll("\"", "")
                     + (e.getMessage() != null ? e.getMessage() : "No error message available.") +
-                    "\n" + mainCtrl.getTranslationSupplier().getTranslation("InvitationCodeForm"));
+                    "\n" + mainCtrl.getTranslationSupplier().getTranslation("InvitationCodeForm")
+                    .replaceAll("\"", ""));
             alert.showAndWait();
             return;
         }
@@ -264,8 +267,10 @@ public class StartScreenCtrl implements Initializable, Translatable {
     private void serverErrorAlert(Exception exception) {
         var alert = new Alert(Alert.AlertType.ERROR);
         alert.initModality(Modality.APPLICATION_MODAL);
-        alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ServerErrorAlert") +
-                "\n" + mainCtrl.getTranslationSupplier().getTranslation("Error") +
+        alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ServerErrorAlert")
+                .replaceAll("\"", "") +
+                "\n" + mainCtrl.getTranslationSupplier().getTranslation("Error")
+                .replaceAll("\"", "")+
                 (exception.getMessage() != null ? exception.getMessage() : "No error message available."));
         alert.showAndWait();
     }
@@ -273,8 +278,10 @@ public class StartScreenCtrl implements Initializable, Translatable {
     private void fileSaveErrorAlert(Exception exception) {
         var alert = new Alert(Alert.AlertType.ERROR);
         alert.initModality(Modality.APPLICATION_MODAL);
-        alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("FileSaveErrorAlert") +
-                "\n" + mainCtrl.getTranslationSupplier().getTranslation("Error") +
+        alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("FileSaveErrorAlert")
+                .replaceAll("\"", "")+
+                "\n" + mainCtrl.getTranslationSupplier().getTranslation("Error")
+                .replaceAll("\"", "")+
                 (exception.getMessage() != null ? exception.getMessage() : "No error message available."));
         alert.showAndWait();
     }
@@ -321,7 +328,7 @@ public class StartScreenCtrl implements Initializable, Translatable {
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(mainCtrl.getTranslationSupplier()
-                                .getTranslation("ServerConnectionError"));
+                                .getTranslation("ServerConnectionError").replaceAll("\"", ""));
                         alert.showAndWait();
                         mainCtrl.showStartScreen();
                     });

@@ -61,6 +61,7 @@
   "InvitationCodeForm": "Kod zaproszenia powinien być w formie: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX (w formacie UUID)",
   "ServerErrorAlert": "Nastąpił błąd podczas łączenia się z serwerem",
   "FileSaveErrorAlert": "Nastąpił błąd podczas zapisywania kodu zaproszenia na dysku",
+  "ExpensePaidByEmpty": "Paid By field is empty, please choose a participant.  (to be translated...)",
   "ExpenseTitleEmpty": "Expense title field is empty, please add a title. (to be translated...)",
   "ExpenseAmountEmpty": "Expense amount field is empty, please fill in an amount.",
   "ExpenseAmountWrongFormatEmpty": "Expense amount field is not a number or is negative or equal to zero, please fill in a positive number. (don't use commas, use periods instead) (to be translated...)",

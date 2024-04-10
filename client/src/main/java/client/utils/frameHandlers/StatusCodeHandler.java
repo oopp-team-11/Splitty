@@ -38,7 +38,8 @@ public class StatusCodeHandler implements StompFrameHandler {
                 var alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.initModality(Modality.APPLICATION_MODAL);
                 alert.setContentText(status.getMessage());
-                alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("Success"));
+                alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("Success")
+                        .replaceAll("\"", ""));
                 alert.showAndWait();
                 if (!mainCtrl.getPrimaryStageTitle().equals("Admin Panel"))
                     mainCtrl.showEventOverview();
@@ -49,7 +50,8 @@ public class StatusCodeHandler implements StompFrameHandler {
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(status.getMessage());
-                        alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("NotFound"));
+                        alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("NotFound")
+                                .replaceAll("\"", ""));
                         alert.showAndWait();
                     });
                 }else {
@@ -57,7 +59,8 @@ public class StatusCodeHandler implements StompFrameHandler {
                         var alert = new Alert(Alert.AlertType.WARNING);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(status.getMessage());
-                        alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("NotFound"));
+                        alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("NotFound")
+                                .replaceAll("\"", ""));
                         alert.showAndWait();
                     });
                 }
@@ -68,7 +71,8 @@ public class StatusCodeHandler implements StompFrameHandler {
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(status.getMessage());
-                        alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("BadRequest"));
+                        alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("BadRequest")
+                                .replaceAll("\"", ""));
                         alert.showAndWait();
                     });
                 }else {
@@ -76,7 +80,8 @@ public class StatusCodeHandler implements StompFrameHandler {
                         var alert = new Alert(Alert.AlertType.WARNING);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(status.getMessage());
-                        alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("BadRequest"));
+                        alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("BadRequest")
+                                .replaceAll("\"", ""));
                         alert.showAndWait();
                     });
                 }
