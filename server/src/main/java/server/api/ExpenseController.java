@@ -127,20 +127,18 @@ public class ExpenseController {
         Participant paidBy = participantRepository.getReferenceById(receivedExpense.getPaidById());
 
         Expense expense = new Expense(paidBy, receivedExpense.getTitle(), receivedExpense.getAmount(),
-                receivedExpense.getDate(), receivedExpense.getInvolveds());
+                receivedExpense.getDate(), receivedExpense.getInvolveds()); //getInvolveds() might need a check
 
         eventLastActivityService.updateLastActivity(receivedExpense.getInvitationCode());
 
         expense = expenseRepository.save(expense);
 
-        List<Involved> involveds = new ArrayList<>();
+        List<Involved> involveds = new InvolvedList();
         for(Involved involved : expense.getInvolveds())
         {
-            involved.setExpense(expense);
-            involved.setExpenseId(expense.getId());
-            involved.setParticipant(expense.getPaidBy());
-            involved.setParticipantId(expense.getPaidBy().getId());
-            involved.setInvitationCode(expense.getInvitationCode());
+            Involved thisInvolved = new Involved(involved.getId(), involved.getIsSettled(),
+                    expense.getId(), expense.getPaidBy().getId(), receivedExpense.getInvitationCode());
+            involveds.add(thisInvolved);
             involveds.add(involved);
         }
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(), paidBy.getId(),
@@ -175,15 +173,12 @@ public class ExpenseController {
         for (Participant participant : participants) {
             List<Expense> participantExpenses = participant.getMadeExpenses();
             for (Expense expense : participantExpenses) {
-                List<Involved> involveds = new ArrayList<>();
+                List<Involved> involveds = new InvolvedList();
                 for(Involved involved : expense.getInvolveds())
                 {
-                    involved.setExpense(expense);
-                    involved.setExpenseId(expense.getId());
-                    involved.setParticipant(participant);
-                    involved.setParticipantId(participant.getId());
-                    involved.setInvitationCode(expense.getInvitationCode());
-                    involveds.add(involved);
+                    Involved thisInvolved = new Involved(involved.getId(), involved.getIsSettled(),
+                            expense.getId(), participant.getId(), invitationCode);
+                    involveds.add(thisInvolved);
                 }
                 Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount()
                         , participant.getId(), invitationCode, expense.getDate(), involveds);
@@ -217,48 +212,46 @@ public class ExpenseController {
 
         var oldAmountOwed = expense.getAmount() / expense.getInvolveds().size();
         var newAmountOwed = receivedExpense.getAmount() / receivedExpense.getInvolveds().size();
-        if(newAmountOwed != oldAmountOwed)
-        {
-            receivedExpense.setAmountOwed(newAmountOwed);
-            for(Involved involved : receivedExpense.getInvolveds())
-                involved.setIsSettled(false);
-        }
 
         var oldInvolveds = expenseRepository.getReferenceById(receivedExpense.getId()).getInvolveds()
-                .stream().map(Involved::getId)
-                .filter(id -> !receivedExpense.getInvolveds().stream().map(Involved::getId).toList().contains(id))
+                .stream()
+                .filter(involved -> !receivedExpense.getInvolveds().stream().map(Involved::getParticipantId)
+                        .toList().contains(involved.getParticipant().getId()))
                 .toList();
-        involvedRepository.deleteAllById(oldInvolveds);
+        expense.getInvolveds().removeAll(oldInvolveds);
 
         var newInvolveds = receivedExpense.getInvolveds().stream()
                 .filter(involved -> !expenseRepository.getReferenceById(receivedExpense.getId()).getInvolveds()
-                        .stream().map(Involved::getId).toList().contains(involved.getId())).toList();
-        involvedRepository.saveAll(newInvolveds);
+                        .stream().map(Involved::getParticipant).map(Participant::getId).toList()
+                        .contains(involved.getParticipantId())).toList();
+        expense.getInvolveds().addAll(newInvolveds);
+
+        if(newAmountOwed != oldAmountOwed)
+        {
+            expense.setAmountOwed(newAmountOwed);
+            for(Involved involved : expense.getInvolveds())
+                involved.setIsSettled(false);
+        }
 
         Participant newPaidBy = participantRepository.getReferenceById(receivedExpense.getPaidById());
         expense.setPaidBy(newPaidBy);
-        expense.setPaidById(newPaidBy.getId());
         expense.setAmount(receivedExpense.getAmount());
         expense.setTitle(receivedExpense.getTitle());
-        expense.setInvolveds(receivedExpense.getInvolveds());
 
         expense = expenseRepository.save(expense);
 
         eventLastActivityService.updateLastActivity(receivedExpense.getInvitationCode());
 
-        List<Involved> involveds = new ArrayList<>();
+        List<Involved> involveds = new InvolvedList();
         for(Involved involved : expense.getInvolveds())
         {
-            involved.setExpense(expense);
-            involved.setExpenseId(expense.getId());
-            involved.setParticipant(expense.getPaidBy());
-            involved.setParticipantId(expense.getPaidBy().getId());
-            involved.setInvitationCode(expense.getInvitationCode());
-            involveds.add(involved);
+            Involved thisInvolved = new Involved(involved.getId(), involved.getIsSettled(),
+                    expense.getId(), expense.getPaidBy().getId(), receivedExpense.getInvitationCode());
+            involveds.add(thisInvolved);
         }
 
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
-                expense.getPaidById(), expense.getInvitationCode(),
+                expense.getPaidById(), receivedExpense.getInvitationCode(),
                 expense.getDate(), involveds);
         sentExpense.setAmountOwed(newAmountOwed);
 
@@ -288,21 +281,8 @@ public class ExpenseController {
         eventLastActivityService.updateLastActivity(receivedExpense.getInvitationCode());
         expenseRepository.delete(expense);
 
-        List<Involved> involveds = new ArrayList<>();
-        for(Involved involved : expense.getInvolveds())
-        {
-            involved.setExpense(expense);
-            involved.setExpenseId(expense.getId());
-            involved.setParticipant(expense.getPaidBy());
-            involved.setParticipantId(expense.getPaidBy().getId());
-            involved.setInvitationCode(expense.getInvitationCode());
-            involveds.add(involved);
-        }
-        Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
-                receivedExpense.getPaidById(), receivedExpense.getInvitationCode(),
-                receivedExpense.getDate(), involveds);
-        template.convertAndSend("/topic/" + sentExpense.getInvitationCode() + "/expense:delete",
-                sentExpense);
+        template.convertAndSend("/topic/" + receivedExpense.getInvitationCode() + "/expense:delete",
+                receivedExpense);
         return StatusEntity.ok("Expense was successfully deleted");
     }
 }
