@@ -219,6 +219,7 @@ public class ExpenseController {
 
         Participant newPaidBy = participantRepository.getReferenceById(receivedExpense.getPaidById());
         expense.setPaidBy(newPaidBy);
+        expense.setPaidById(newPaidBy.getId());
         expense.setAmount(receivedExpense.getAmount());
         expense.setTitle(receivedExpense.getTitle());
         expense.setInvolveds(receivedExpense.getInvolveds());

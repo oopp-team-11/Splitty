@@ -108,7 +108,6 @@ public class ExpenseControllerTest {
         Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
                  null, null, UUID.randomUUID());
         sentParticipant = participantRepository.save(sentParticipant);
-        // TODO: maybe some smarter initialising of the involveds
         Expense expense = new Expense(sentParticipant, null, 69, null, null);
         try {
             setId(expense, UUID.randomUUID());
@@ -123,7 +122,6 @@ public class ExpenseControllerTest {
         Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
                  null, null, UUID.randomUUID());
         sentParticipant = participantRepository.save(sentParticipant);
-        // TODO: maybe some smarter initialising of the involveds
         Expense expense = new Expense(sentParticipant, "expense", 0, null, null);
         try {
             setId(expense, UUID.randomUUID());
@@ -136,7 +134,6 @@ public class ExpenseControllerTest {
     void ExpenseGetPaidByIDNull() {
         Participant sentParticipant = new Participant(null, "name", "surname",
                  null, null, UUID.randomUUID());
-        // TODO: maybe some smarter initialising of the involveds
         Expense expense = new Expense(sentParticipant, "expense", 69, null, null);
         try {
             setId(expense, UUID.randomUUID());
@@ -150,7 +147,6 @@ public class ExpenseControllerTest {
         Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
                  null, null, null);
         sentParticipant = participantRepository.save(sentParticipant);
-        // TODO: maybe some smarter initialising of the involveds
         Expense expense = new Expense(sentParticipant, "expense", 69, null, null);
         try {
             setId(expense, UUID.randomUUID());
@@ -256,6 +252,8 @@ public class ExpenseControllerTest {
         } catch (IllegalAccessException ignored) {}
         expense.setInvolveds(List.of(involved));
         expense = expenseRepository.save(expense);
+        expense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(), expense.getPaidById(),
+                expense.getInvitationCode(), expense.getDate(), expense.getInvolveds());
         Participant newParticipant = participantRepository.save(new Participant(UUID.randomUUID(), "new name",
                 "new surname",  null, null, event.getId()));
         expense.setTitle("NewTitle");
@@ -292,9 +290,9 @@ public class ExpenseControllerTest {
         Involved involved = new Involved(true, expense, participant);
         expense.setInvolveds(List.of(involved));
         expense = expenseRepository.save(expense);
+        expense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(), expense.getPaidById(),
+                expense.getInvitationCode(), expense.getDate(), expense.getInvolveds());
         expense.setTitle("NewTitle");
-        expense.setAmount(69.42);
-        expense.setAmountOwed(69.42);
         expense.setPaidById(participant.getId());
 
         assertEquals(StatusEntity.StatusCode.OK, expenseController.updateExpense(expense).getStatusCode());
@@ -343,7 +341,6 @@ public class ExpenseControllerTest {
         Event event = eventRepository.save(new Event("testEvent"));
         Participant participant = participantRepository.save(new Participant(UUID.randomUUID(), "name",
                 "surname",  null, null, event.getId()));
-        // TODO: maybe some smarter initialising of the involveds
         Expense expense = new Expense(participant, "expense", 21.37, null, null);
         expense = expenseRepository.save(expense);
 
