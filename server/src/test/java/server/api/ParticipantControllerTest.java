@@ -1,9 +1,7 @@
 package server.api;
 
-import commons.Event;
-import commons.Participant;
-import commons.ParticipantList;
-import commons.StatusEntity;
+import commons.*;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -110,6 +108,8 @@ public class ParticipantControllerTest {
                  "iban", "bic");
         participant = participantRepository.save(participant);
 
+        participant = new Participant(participant.getId(), participant.getFirstName(), participant.getLastName(),
+                participant.getIban(), participant.getBic(), participant.getEventId());
         participant.setLastName("foowoman");
 
         assertEquals(StatusEntity.StatusCode.OK, participantController.updateParticipant(participant).getStatusCode());
