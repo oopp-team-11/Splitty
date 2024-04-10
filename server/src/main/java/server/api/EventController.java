@@ -203,6 +203,8 @@ public class EventController {
         Event event = repo.getReferenceById(receivedEvent.getId());
         repo.delete(event);
 
+        eventUpdated(event.getId(), null);
+
         Event sentEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(), event.getLastActivity());
         template.convertAndSend("/topic/" + sentEvent.getId() + "/event:delete", sentEvent);
         template.convertAndSend("/topic/admin/event:delete", sentEvent);
