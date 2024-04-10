@@ -137,9 +137,8 @@ public class ExpenseController {
         for(Involved involved : expense.getInvolveds())
         {
             Involved thisInvolved = new Involved(involved.getId(), involved.getIsSettled(),
-                    expense.getId(), expense.getPaidBy().getId(), receivedExpense.getInvitationCode());
+                    expense.getId(), involved.getParticipant().getId(), receivedExpense.getInvitationCode());
             involveds.add(thisInvolved);
-            involveds.add(involved);
         }
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(), paidBy.getId(),
                 receivedExpense.getInvitationCode(), expense.getDate(), involveds);
@@ -177,7 +176,7 @@ public class ExpenseController {
                 for(Involved involved : expense.getInvolveds())
                 {
                     Involved thisInvolved = new Involved(involved.getId(), involved.getIsSettled(),
-                            expense.getId(), participant.getId(), invitationCode);
+                            expense.getId(), involved.getParticipant().getId(), invitationCode);
                     involveds.add(thisInvolved);
                 }
                 Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount()
@@ -218,13 +217,20 @@ public class ExpenseController {
                 .filter(involved -> !receivedExpense.getInvolveds().stream().map(Involved::getParticipantId)
                         .toList().contains(involved.getParticipant().getId()))
                 .toList();
-        expense.getInvolveds().removeAll(oldInvolveds);
+//        InvolvedList involvedList = new InvolvedList();
+//        involvedList.addAll(expense.getInvolveds());
+//        involvedList.removeAll(oldInvolveds);
+//        expense.setInvolveds(involvedList);
 
         var newInvolveds = receivedExpense.getInvolveds().stream()
                 .filter(involved -> !expenseRepository.getReferenceById(receivedExpense.getId()).getInvolveds()
                         .stream().map(Involved::getParticipant).map(Participant::getId).toList()
                         .contains(involved.getParticipantId())).toList();
-        expense.getInvolveds().addAll(newInvolveds);
+        InvolvedList involvedList = new InvolvedList();
+        involvedList.addAll(expense.getInvolveds());
+        involvedList.removeAll(oldInvolveds);
+        involvedList.addAll(newInvolveds);
+        expense.setInvolveds(involvedList);
 
         if(newAmountOwed != oldAmountOwed)
         {
@@ -246,12 +252,12 @@ public class ExpenseController {
         for(Involved involved : expense.getInvolveds())
         {
             Involved thisInvolved = new Involved(involved.getId(), involved.getIsSettled(),
-                    expense.getId(), expense.getPaidBy().getId(), receivedExpense.getInvitationCode());
+                    expense.getId(), involved.getParticipant().getId(), receivedExpense.getInvitationCode());
             involveds.add(thisInvolved);
         }
 
         Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
-                expense.getPaidById(), receivedExpense.getInvitationCode(),
+                newPaidBy.getId(), receivedExpense.getInvitationCode(),
                 expense.getDate(), involveds);
         sentExpense.setAmountOwed(newAmountOwed);
 

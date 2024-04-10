@@ -80,7 +80,10 @@ public class ExpenseControllerTest {
         assertEquals(expense.getAmount(), sentExpense.getAmount());
         assertEquals(expense.getInvitationCode(), sentExpense.getInvitationCode());
         assertEquals(expense.getPaidById(), sentExpense.getPaidById());
-        assertEquals(expense.getInvolveds(), sentExpense.getInvolveds());
+        List<Involved> involveds = expense.getInvolveds();
+        for(Involved thisInvolved : involveds)
+            thisInvolved.setExpenseId(sentExpense.getId());
+        assertEquals(involveds, sentExpense.getInvolveds());
         assertEquals(expense.getDate(), sentExpense.getDate());
         assertEquals(expense.getAmount() / expense.getInvolveds().size(), sentExpense.getAmountOwed());
     }
@@ -275,7 +278,10 @@ public class ExpenseControllerTest {
         assertEquals(expense.getAmount(), sentExpense.getAmount());
         assertEquals(expense.getInvitationCode(), sentExpense.getInvitationCode());
         assertEquals(expense.getPaidById(), sentExpense.getPaidById());
-        assertEquals(expense.getInvolveds(), sentExpense.getInvolveds());
+        List<Involved> involveds = expense.getInvolveds();
+        for(Involved thisInvolved : involveds)
+            thisInvolved.setExpenseId(expense.getId());
+        assertEquals(involveds, sentExpense.getInvolveds());
         assertEquals(expense.getDate(), sentExpense.getDate());
         assertEquals(expense.getAmount()/expense.getInvolveds().size(),sentExpense.getAmountOwed());
         assertFalse(sentExpense.getInvolveds().getFirst().getIsSettled());
@@ -305,9 +311,11 @@ public class ExpenseControllerTest {
         assertEquals(expense.getAmount(), sentExpense.getAmount());
         assertEquals(expense.getInvitationCode(), sentExpense.getInvitationCode());
         assertEquals(expense.getPaidById(), sentExpense.getPaidById());
-        assertEquals(expense.getInvolveds(), sentExpense.getInvolveds());
+        List<Involved> involveds = expense.getInvolveds();
+        for(Involved thisInvolved : involveds)
+            thisInvolved.setExpenseId(sentExpense.getId());
+        assertEquals(involveds, sentExpense.getInvolveds());
         assertEquals(expense.getAmount(),sentExpense.getAmountOwed());
-        assertEquals(expense.getInvolveds(), sentExpense.getInvolveds());
         assertEquals(expense.getDate(), sentExpense.getDate());
         assertEquals(expense.getAmount() / expense.getInvolveds().size(),sentExpense.getAmountOwed());
         assertTrue(sentExpense.getInvolveds().getFirst().getIsSettled());
@@ -392,14 +400,20 @@ public class ExpenseControllerTest {
         assertEquals(expense1.getAmount(), readExpense1.getAmount());
         assertEquals(expense1.getInvitationCode(), readExpense1.getInvitationCode());
         assertEquals(expense1.getPaidById(), readExpense1.getPaidById());
-        assertEquals(expense1.getInvolveds(), readExpense1.getInvolveds());
+        List<Involved> involveds = expense1.getInvolveds();
+        for(Involved thisInvolved : involveds)
+            thisInvolved.setExpenseId(readExpense1.getId());
+        assertEquals(involveds, readExpense1.getInvolveds());
         assertEquals(expense1.getAmount()/expense1.getInvolveds().size(), readExpense1.getAmountOwed());
         assertEquals(expense2.getId(), readExpense2.getId());
         assertEquals(expense2.getTitle(), readExpense2.getTitle());
         assertEquals(expense2.getAmount(), readExpense2.getAmount());
         assertEquals(expense2.getInvitationCode(), readExpense2.getInvitationCode());
         assertEquals(expense2.getPaidById(), readExpense2.getPaidById());
-        assertEquals(expense2.getInvolveds(), readExpense2.getInvolveds());
+        involveds = expense2.getInvolveds();
+        for(Involved thisInvolved : involveds)
+            thisInvolved.setExpenseId(readExpense2.getId());
+        assertEquals(involveds, readExpense2.getInvolveds());
         assertEquals(expense2.getAmount()/expense2.getInvolveds().size(), readExpense2.getAmountOwed());
     }
 
