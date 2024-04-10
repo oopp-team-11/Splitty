@@ -50,8 +50,10 @@ public class ReadEventHandler implements StompFrameHandler {
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(mainCtrl.getTranslationSupplier()
-                                .getTranslation("InvalidInvitationCode") + mainCtrl.getTranslationSupplier()
-                                .getTranslation("ReadEventBadRequestUnsolvable") + mainCtrl.getTranslationSupplier()
+                                .getTranslation("InvalidInvitationCode") + "\n"
+                                + mainCtrl.getTranslationSupplier().getTranslation("Error")
+                                + mainCtrl.getTranslationSupplier()
+                                .getTranslation("ReadEventBadRequest") + mainCtrl.getTranslationSupplier()
                                 .getTranslation("InvitationCodeForm"));
                         alert.showAndWait();
                         mainCtrl.showStartScreen();
@@ -61,8 +63,10 @@ public class ReadEventHandler implements StompFrameHandler {
                         var alert = new Alert(Alert.AlertType.WARNING);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(mainCtrl.getTranslationSupplier()
-                                .getTranslation("InvalidInvitationCode") + mainCtrl.getTranslationSupplier()
-                                .getTranslation("ReadEventBadRequestSolvable") + mainCtrl.getTranslationSupplier()
+                                .getTranslation("InvalidInvitationCode") + "\n"
+                                + mainCtrl.getTranslationSupplier().getTranslation("Warning")
+                                + mainCtrl.getTranslationSupplier()
+                                .getTranslation("ReadEventBadRequest") + mainCtrl.getTranslationSupplier()
                                 .getTranslation("InvitationCodeForm"));
                         alert.showAndWait();
                         mainCtrl.showStartScreen();
@@ -75,8 +79,10 @@ public class ReadEventHandler implements StompFrameHandler {
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(mainCtrl.getTranslationSupplier()
-                                .getTranslation("InvalidInvitationCode") + mainCtrl.getTranslationSupplier()
-                                .getTranslation("ReadEventNotFoundUnsolvable") + mainCtrl.getTranslationSupplier()
+                                .getTranslation("InvalidInvitationCode") + "\n"
+                                + mainCtrl.getTranslationSupplier().getTranslation("Error")
+                                + mainCtrl.getTranslationSupplier()
+                                .getTranslation("ReadEventNotFound") + mainCtrl.getTranslationSupplier()
                                 .getTranslation("InvitationCodeForm"));
                         alert.showAndWait();
                         mainCtrl.showStartScreen();
@@ -86,8 +92,10 @@ public class ReadEventHandler implements StompFrameHandler {
                         var alert = new Alert(Alert.AlertType.WARNING);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(mainCtrl.getTranslationSupplier()
-                                .getTranslation("InvalidInvitationCode") + mainCtrl.getTranslationSupplier()
-                                .getTranslation("ReadEventNotFoundSolvable") + mainCtrl.getTranslationSupplier()
+                                .getTranslation("InvalidInvitationCode") + "\n"
+                                + mainCtrl.getTranslationSupplier().getTranslation("Warning")
+                                + mainCtrl.getTranslationSupplier()
+                                .getTranslation("ReadEventNotFound") + mainCtrl.getTranslationSupplier()
                                 .getTranslation("InvitationCodeForm"));
                         alert.showAndWait();
                         mainCtrl.showStartScreen();

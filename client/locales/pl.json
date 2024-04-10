@@ -44,5 +44,21 @@
   "CreationDate": "Data utworzenia",
   "LastActivityDate": "Ostatnia aktywność",
   "DeleteEvent": "Usuń wydarzenie",
-  "JSONDump": "Pobierz JSON"
+  "JSONDump": "Pobierz JSON",
+  "ReadEventBadRequest": "Serwer nie znalazł kodu zaproszenia.",
+  "ReadEventNotFound": "Nie znaleziono wydarzenia. Upewnij się, że jest prawidłowe.",
+  "Error": "Błąd: ",
+  "Warning": "Ostrzeżenie: ",
+  "Success": "Sukces",
+  "NotFound": "Nie znaleziono",
+  "BadRequest": "Niepoprawne żądanie",
+  "EventBadRequest": "Niepoprawne żądanie, przeładowywanie wydarzenia.",
+  "ExpenseNotFound": "Nie znaleziono wydatku, przeładowywanie wydarzenia.",
+  "ParticipantNotFound": "Nie znaleziono uczestnika, przeładowywanie wydarzenia",
+  "ServerConnectionError": "Błąd połączenia z serwerem,\nSerwer jest nie dostępny, proszę spróbować ponownie.",
+  "EventNameEmpty": "Nazwa wydarzenia jest pusta, proszę dodać nazwę",
+  "InvalidInvitationCode": "Niepoprawny kod zaproszenia. Spróbuj ponownie",
+  "InvitationCodeForm": "\nKod zaproszenia powinien być w formie:\nXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX (w formacie UUID)",
+  "ServerErrorAlert": "Nastąpił błąd podczas łączenia się z serwerem",
+  "FileSaveErrorAlert": "Nastąpił błąd podczas zapisywania kodu zaproszenia na dysku"
 }

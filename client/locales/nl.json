@@ -44,5 +44,21 @@
   "CreationDate": "Aanmaakdatum",
   "LastActivityDate": "Laatste activiteitsdatum",
   "DeleteEvent": "Evenement verwijderen",
-  "JSONDump": "JSON Dump"
+  "JSONDump": "JSON Dump",
+  "ReadEventBadRequest": "Server did not find invitation code.",
+  "ReadEventNotFound": "Event not found, make sure it is correct.",
+  "Error": "Error: ",
+  "Warning": "Warning: ",
+  "Success": "Success",
+  "NotFound": "Not found",
+  "BadRequest": "Bad request",
+  "EventBadRequest": "Bad request, reloading event.",
+  "ExpenseNotFound": "Expense not found, reloading event.",
+  "ParticipantNotFound": "Participant not found, reloading event.",
+  "ServerConnectionError": "Server connection error,\nServer is unavailable, please try again.",
+  "EventNameEmpty": "Event name is empty, please add a name",
+  "InvalidInvitationCode": "Invalid invitation code, try again.",
+  "InvitationCodeForm": "\nThe invitation code should be in the form of:\nXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX (in UUID format)",
+  "ServerErrorAlert": "Something went wrong while trying to connect to server.",
+  "FileSaveErrorAlert": "Something went wrong while saving invitation code to disk."
 }
