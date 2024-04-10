@@ -72,7 +72,7 @@ public class CreateParticipantCtrl implements Translatable {
     @Inject
     public CreateParticipantCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
-        this.fileSystemUtils = new FileSystemUtils();
+        this.fileSystemUtils = new FileSystemUtils(mainCtrl.getTranslationSupplier());
         this.serverUtils = new ServerUtils();
     }
 
@@ -122,33 +122,28 @@ public class CreateParticipantCtrl implements Translatable {
         String lastNameString = lastName.getText();
         String ibanString = iban.getText();
         String bicString = bic.getText();
-        String emailString = email.getText();
 
         if(firstNameString.isEmpty()){
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("First name field is empty, please fill in a first name.");
+            alert.setContentText(mainCtrl.getTranslationSupplier()
+                    .getTranslation("ParticipantFirstNameEmpty")
+                    .replaceAll("\"", ""));
             alert.showAndWait();
         } else if (lastNameString.isEmpty()) {
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Last name field is empty, please fill in a last name.");
-            alert.showAndWait();
-        } else if (emailString.isEmpty()) {
-            var alert = new Alert(Alert.AlertType.WARNING);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Email address field is empty, please fill in an Email address.");
-            alert.showAndWait();
-        } else if (!Pattern.compile("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$").matcher(emailString).matches()){
-            var alert = new Alert(Alert.AlertType.WARNING);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Email address is not an email address or is the wrong format.");
+            alert.setContentText(mainCtrl.getTranslationSupplier()
+                    .getTranslation("ParticipantLastNameEmpty")
+                    .replaceAll("\"", ""));
             alert.showAndWait();
         } else {
 
             var alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Are you sure you want to add this participant?");
+            alert.setContentText(mainCtrl.getTranslationSupplier()
+                    .getTranslation("ConfirmationCreateParticipant")
+                    .replaceAll("\"", ""));
             var result = alert.showAndWait();
             if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
                 mainCtrl.getSessionHandler().sendParticipant(

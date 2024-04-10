@@ -326,7 +326,7 @@ public class MainCtrl {
     }
 
     private void setServerIp(){
-        FileSystemUtils utils = new FileSystemUtils();
+        FileSystemUtils utils = new FileSystemUtils(getTranslationSupplier());
         try {
             this.serverIp = utils.getServerIP("client-config.json");
         } catch (FileNotFoundException e) {
@@ -340,7 +340,7 @@ public class MainCtrl {
      * Method for setting the correct language in all scenes
      */
     public void setTranslationSupplier(){
-        FileSystemUtils utils = new FileSystemUtils();
+        FileSystemUtils utils = new FileSystemUtils(getTranslationSupplier());
         try {
             this.translationSupplier = utils.getTranslationSupplier("client-config.json");
         } catch (FileNotFoundException e) {
@@ -448,7 +448,7 @@ public class MainCtrl {
             newOption.setGraphic(imageView);
             newOption.setOnAction(actionEvent -> {
                     try {
-                        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+                        FileSystemUtils fileSystemUtils = new FileSystemUtils(getTranslationSupplier());
                         fileSystemUtils.changeLanguageInFile("client-config.json",
                                 getAvailableLanguages().values().stream().filter(
                                         locale1 -> locale1.getDisplayLanguage().equals(

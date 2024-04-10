@@ -42,7 +42,10 @@ public class AdminReadEventsHandler implements StompFrameHandler {
                     Platform.runLater(() ->{
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText("Error: " + status.getMessage());
+                        alert.setContentText(dataHandler.getSessionHandler().getMainCtrl()
+                                .getTranslationSupplier().getTranslation("Error")
+                                .replaceAll("\"", "")
+                                + status.getMessage());
                         alert.showAndWait();
                         dataHandler.getSessionHandler().getMainCtrl().showStartScreen();
                     });
@@ -50,7 +53,10 @@ public class AdminReadEventsHandler implements StompFrameHandler {
                     Platform.runLater(() ->{
                         var alert = new Alert(Alert.AlertType.WARNING);
                         alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText("Warning: " + status.getMessage());
+                        alert.setContentText(dataHandler.getSessionHandler().getMainCtrl()
+                                .getTranslationSupplier().getTranslation("Warning")
+                                .replaceAll("\"", "")
+                                + status.getMessage());
                         alert.showAndWait();
                         dataHandler.getSessionHandler().getMainCtrl().showStartScreen();
                     });

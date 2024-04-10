@@ -52,7 +52,7 @@ public class AddExpenseCtrl implements Translatable {
     @Inject
     public AddExpenseCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
-        this.fileSystemUtils = new FileSystemUtils();
+        this.fileSystemUtils = new FileSystemUtils(mainCtrl.getTranslationSupplier());
         this.serverUtils = new ServerUtils();
     }
 
@@ -78,33 +78,42 @@ public class AddExpenseCtrl implements Translatable {
         if(expensePaidBy.getValue() == null){
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Paid By field is empty, please choose a participant.");
+            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ExpensePaidByEmpty")
+                    .replaceAll("\"", ""));
             alert.showAndWait();
         } else if (expenseTitle.getText().isEmpty()) {
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Expense title field is empty, please add a title.");
+            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ExpenseTitleEmpty")
+                    .replaceAll("\"", ""));
             alert.showAndWait();
         } else if (expenseAmount.getText().isEmpty()) {
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Expense amount field is empty, please fill in an amount.");
+            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ExpenseAmountEmpty")
+                    .replaceAll("\"", ""));
             alert.showAndWait();
         } else {
             try{
                 var ignored = Double.parseDouble(expenseAmount.getText());
+                if (ignored <= 0){
+                    throw new NumberFormatException("Amount is negative.");
+                }
             }catch (NumberFormatException e){
                 var alert = new Alert(Alert.AlertType.WARNING);
                 alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText("Expense amount field is not a number, please fill in a number. " +
-                        "\n(don't use commas, use periods instead)");
+                alert.setContentText(mainCtrl.getTranslationSupplier()
+                        .getTranslation("ExpenseAmountWrongFormatEmpty")
+                        .replaceAll("\"", ""));
                 alert.showAndWait();
                 return;
             }
 
             var alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Are you sure you want to add this expense?");
+            alert.setContentText(mainCtrl.getTranslationSupplier()
+                    .getTranslation("ConfirmationAddingExpense")
+                    .replaceAll("\"", ""));
             var result = alert.showAndWait();
             if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
                 Participant person = null;

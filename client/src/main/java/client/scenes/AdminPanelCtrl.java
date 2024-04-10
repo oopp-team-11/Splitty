@@ -64,7 +64,7 @@ public class AdminPanelCtrl implements Translatable {
     public AdminPanelCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         serverUtils = new ServerUtils();
-        fileSystemUtils = new FileSystemUtils();
+        fileSystemUtils = new FileSystemUtils(mainCtrl.getTranslationSupplier());
     }
 
     /**
@@ -83,7 +83,9 @@ public class AdminPanelCtrl implements Translatable {
             button.setOnAction(event1 -> {
                 var alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText("Are you sure you want to delete this event?");
+                alert.setContentText(mainCtrl.getTranslationSupplier()
+                        .getTranslation("ConfirmationDeleteEvent")
+                        .replaceAll("\"", ""));
                 var result = alert.showAndWait();
                 if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
                     deleteEvent(event.getValue());

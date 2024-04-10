@@ -105,7 +105,7 @@ public class ServerUtils {
      * @throws InterruptedException if something goes wrong with the request
      */
     public List<Event> getRecentEvents(String server, String path) throws IOException, InterruptedException {
-        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        FileSystemUtils fileSystemUtils = new FileSystemUtils(null);
         List<UUID> codes = fileSystemUtils.readInvitationCodes(path);
 
         URI uri = URI.create(server + "/events?query=titles&invitationCodes=" + codes.toString()

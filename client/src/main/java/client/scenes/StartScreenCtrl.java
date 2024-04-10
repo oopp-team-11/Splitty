@@ -91,7 +91,7 @@ public class StartScreenCtrl implements Initializable, Translatable {
     @Inject
     public StartScreenCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
-        fileSystemUtils = new FileSystemUtils();
+        fileSystemUtils = new FileSystemUtils(mainCtrl.getTranslationSupplier());
         serverUtils = new ServerUtils();
         pollingThread = null;
     }
@@ -170,6 +170,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
             joinInvitationCode.clear();
             List<UUID> eventIds = data.stream().map(Event::getId).collect(Collectors.toList());
             startLongPolling(eventIds);
+
+            adminPassword.clear();
 
             languageSwitchPlaceHolder.getChildren().clear();
             languageSwitchPlaceHolder.getChildren().add(mainCtrl.getLanguageSwitchButton());

@@ -18,6 +18,11 @@ import java.util.UUID;
  * Client utility class for file handling
  */
 public class FileSystemUtils {
+    public FileSystemUtils(TranslationSupplier translationSupplier) {
+        this.translationSupplier = translationSupplier;
+    }
+
+    private TranslationSupplier translationSupplier;
     //private static final String CLIENT_JSON_PATH = "client.json";
 
     /**
@@ -56,15 +61,18 @@ public class FileSystemUtils {
             Platform.runLater(() -> {
                 var alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText("Successfully saved JSON file to chosen backup directory.");
-                alert.setHeaderText("Success");
+                alert.setContentText(translationSupplier.getTranslation("SuccessfullyJsonDump")
+                        .replaceAll("\"", ""));
+                alert.setHeaderText(translationSupplier.getTranslation("Success")
+                        .replaceAll("\"", ""));
                 alert.showAndWait();
             });
         } catch (IOException e) {
             Platform.runLater(() -> {
                 var alert = new Alert(Alert.AlertType.ERROR);
                 alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText("Error: " + e.getMessage());
+                alert.setContentText(translationSupplier.getTranslation("Error")
+                        .replaceAll("\"", "") + e.getMessage());
                 alert.showAndWait();
             });
         }
@@ -212,10 +220,8 @@ public class FileSystemUtils {
 
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(path + " doesn't exist. \n" +
-                    "Created new default file, please put the server url if it isn't localhost:8080 " +
-                    "in client-config.json.\n" +
-                    "You need to delete localhost:8080 and put it there.");
+            alert.setContentText(path + translationSupplier.getTranslation("ServerIPEmpty")
+                    .replaceAll("\"", ""));
             alert.showAndWait();
 
             return getServerIP(path);
@@ -240,10 +246,8 @@ public class FileSystemUtils {
 
                 var alert = new Alert(Alert.AlertType.WARNING);
                 alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText(path + " is the wrong format. \n" +
-                        "Created new default file, please put the server url if it isn't localhost:8080 " +
-                        "in client-config.json.\n" +
-                        "You need to delete localhost:8080 and put it there.");
+                alert.setContentText(path + translationSupplier.getTranslation("ServerIPWrongFormat")
+                        .replaceAll("\"", ""));
                 alert.showAndWait();
                 return getServerIP(path);
             } else if (serverIp.contains("http://") || serverIp.contains("ws://") ||
@@ -270,10 +274,8 @@ public class FileSystemUtils {
 
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(path + " is the wrong format. \n" +
-                    "Created new default file, please put the server url if it isn't localhost:8080 " +
-                    "in client-config.json.\n" +
-                    "You need to delete localhost:8080 and put it there.");
+            alert.setContentText(path + translationSupplier.getTranslation("ServerIPWrongFormat")
+                    .replaceAll("\"", ""));
             alert.showAndWait();
             return getServerIP(path);
         }
@@ -305,10 +307,8 @@ public class FileSystemUtils {
 
                 var alert = new Alert(Alert.AlertType.WARNING);
                 alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText(path + " is the wrong format. \n" +
-                        "Created new default file, please put the language if it isn't en(english) " +
-                        "in client-config.json.\n" +
-                        "You need to delete en and put it there.");
+                alert.setContentText(path + translationSupplier.getTranslation("LanguageEmpty")
+                        .replaceAll("\"", ""));
                 alert.showAndWait();
                 return getTranslationSupplier(path);
             }
@@ -327,10 +327,8 @@ public class FileSystemUtils {
 
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(path + " is the wrong format. \n" +
-                    "Created new default file, please put the language if it isn't en(english) " +
-                    "in client-config.json.\n" +
-                    "You need to delete en and put it there.");
+            alert.setContentText(path + translationSupplier.getTranslation("LanguageWrongFormat")
+                    .replaceAll("\"", ""));
             alert.showAndWait();
             return getTranslationSupplier(path);
         }
@@ -371,10 +369,8 @@ public class FileSystemUtils {
 
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(path + " is the wrong format. \n" +
-                    "Created new default file, please put the language if it isn't en(english) " +
-                    "in client-config.json.\n" +
-                    "You need to delete en and put it there.");
+            alert.setContentText(path + translationSupplier.getTranslation("LanguageWrongFormat")
+                    .replaceAll("\"", ""));
             alert.showAndWait();
         }
     }

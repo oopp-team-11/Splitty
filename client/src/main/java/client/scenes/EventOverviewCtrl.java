@@ -87,7 +87,7 @@ public class EventOverviewCtrl implements Translatable {
     @Inject
     public EventOverviewCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
-        this.fileSystemUtils = new FileSystemUtils();
+        this.fileSystemUtils = new FileSystemUtils(mainCtrl.getTranslationSupplier());
         this.serverUtils = new ServerUtils();
     }
 
@@ -116,7 +116,8 @@ public class EventOverviewCtrl implements Translatable {
             button.setOnAction(event1 -> {
                 var alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText("Are you sure you want to delete this participant?");
+                alert.setContentText(mainCtrl.getTranslationSupplier()
+                        .getTranslation("ConfirmationDeleteParticipant"));
                 var result = alert.showAndWait();
                 if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
                     deleteParticipant(participant.getValue());
@@ -142,7 +143,8 @@ public class EventOverviewCtrl implements Translatable {
             button.setOnAction(event1 -> {
                 var alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText("Are you sure you want to delete this expense?");
+                alert.setContentText(mainCtrl.getTranslationSupplier()
+                        .getTranslation("ConfirmationDeleteParticipant"));
                 var result = alert.showAndWait();
                 if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
                     deleteExpense(expense.getValue());
