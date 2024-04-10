@@ -146,6 +146,15 @@ public class MainCtrl {
         primaryStage.show();
     }
 
+    /**
+     * getter for primary stage title
+     *
+     * @return returns the primary stage title
+     */
+    public String getPrimaryStageTitle() {
+        return primaryStage.getTitle();
+    }
+
     private void setAvailableLanguagesFromFiles() {
         File locales = new File("locales");
         List<String> listOfLocalesNames = new ArrayList<>(Arrays.stream(Objects.requireNonNull(locales.listFiles()))
@@ -248,6 +257,7 @@ public class MainCtrl {
      * Show event overview
      */
     public void showEventOverview() {
+
         primaryStage.setTitle("Event overview");
         primaryStage.setScene(eventOverviewScene);
         primaryStage.setResizable(false);

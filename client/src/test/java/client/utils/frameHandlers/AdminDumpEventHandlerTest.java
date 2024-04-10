@@ -58,6 +58,6 @@ class AdminDumpEventHandlerTest {
         when(dataHandler.getJsonDumpDir()).thenReturn(file);
         StatusEntity status = StatusEntity.ok(event);
         handler.handleFrame(headers, status);
-        verify(utils).jsonDump(file, status.getEvent());
+        verify(utils).jsonDump(file, event);
     }
 }
