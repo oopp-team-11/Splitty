@@ -42,5 +42,10 @@
   "CreationDate": "Aanmaakdatum",
   "LastActivityDate": "Laatste activiteitsdatum",
   "DeleteEvent": "Evenement verwijderen",
-  "JSONDump": "JSON Dump"
+  "JSONDump": "JSON Dump",
+  "Date": "Please, add translation",
+  "Share per person": "Please, add translation",
+  "Paid by": "Please, add translation",
+  "Banking Details": "Please, add translation",
+  "List of Involved": "Please, add translation"
 }

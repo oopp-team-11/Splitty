@@ -4,9 +4,10 @@ import client.interfaces.Translatable;
 import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class DetailedExpenseCtrl implements Translatable {
 
@@ -39,6 +40,10 @@ public class DetailedExpenseCtrl implements Translatable {
 
     private MainCtrl mainCtrl;
 
+    /***
+     * constructor with injection
+     * @param mainCtrl
+     */
     @Inject
     public DetailedExpenseCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
@@ -46,6 +51,25 @@ public class DetailedExpenseCtrl implements Translatable {
 
     @Override
     public void translate(TranslationSupplier translationSupplier) {
+        if (translationSupplier == null) return;
+        Map<Control, String> labels = new HashMap<>();
+        labels.put(this.title, "Title");
+        labels.put(this.amount, "Amount");
+        labels.put(this.date, "Date");
+        labels.put(this.amountOwed, "Share per person");
+        labels.put(this.paidBy, "Paid by");
+        labels.put(this.bankingDetails, "Banking Details");
+        labels.put(this.involvedList, "List of Involved");
+        labels.put(this.abortBtn, "Cancel");
+        labels.put(this.editBtn, "Edit");
+        labels.forEach((key, val) -> {
+            var translation = translationSupplier.getTranslation(val);
+            if (translation == null) return;
+            ((Labeled) key).setText(translation.replaceAll("\"", ""));
+        });
+    }
+
+    public void goToEventOverview() {
 
     }
 }
