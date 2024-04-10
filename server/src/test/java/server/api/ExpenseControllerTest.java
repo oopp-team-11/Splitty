@@ -332,6 +332,7 @@ public class ExpenseControllerTest {
     @Test
     void ExistingExpenseOK() {
         Expense expense = new Expense();
+        expense.setInvolveds(List.of(new Involved(false, expense, new Participant())));
         expense = expenseRepository.save(expense);
         assertEquals(StatusEntity.ok((ExpenseList) null), expenseController.isExistingExpenseBadRequest(expense));
     }
@@ -342,6 +343,7 @@ public class ExpenseControllerTest {
         Participant participant = participantRepository.save(new Participant(UUID.randomUUID(), "name",
                 "surname",  null, null, event.getId()));
         Expense expense = new Expense(participant, "expense", 21.37, null, null);
+        expense.setInvolveds(List.of(new Involved(false, expense, participant)));
         expense = expenseRepository.save(expense);
 
         assertEquals(StatusEntity.StatusCode.OK, expenseController.deleteExpense(expense).getStatusCode());
