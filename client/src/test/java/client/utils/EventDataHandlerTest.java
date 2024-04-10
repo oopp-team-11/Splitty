@@ -16,6 +16,8 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -52,18 +54,18 @@ class EventDataHandlerTest {
     public void setup() throws IllegalAccessException {
         event = new Event("Trap");
         setId(event, UUID.randomUUID());
-        p1 = new Participant(event, "1", "2", "3", "4", "5");
+        p1 = new Participant(event, "1", "2",  "4", "5");
         setId(p1, UUID.randomUUID());
-        p2 = new Participant(event, "1", "2", "3", "4", "5");
+        p2 = new Participant(event, "1", "2",  "4", "5");
         setId(p2, UUID.randomUUID());
-        e1 = new Expense(p1, "1", 1.0);
+        e1 = new Expense(p1, "1", 1.0, LocalDate.now(), null);
         setId(e1, UUID.randomUUID());
-        e2 = new Expense(p2, "2", 2.0);
+        e2 = new Expense(p2, "2", 2.0, LocalDate.now(), null);
         setId(e2, UUID.randomUUID());
-        i1 = new Involved(UUID.randomUUID(), true, e1.getId(), p1.getId());
-        i2 = new Involved(UUID.randomUUID(), false, e1.getId(), p2.getId());
-        i3 = new Involved(UUID.randomUUID(), false, e2.getId(), p1.getId());
-        i4 = new Involved(UUID.randomUUID(), true, e2.getId(), p2.getId());
+        i1 = new Involved(UUID.randomUUID(), true, e1.getId(), p1.getId(), event.getId());
+        i2 = new Involved(UUID.randomUUID(), false, e1.getId(), p2.getId(), event.getId());
+        i3 = new Involved(UUID.randomUUID(), false, e2.getId(), p1.getId(), event.getId());
+        i4 = new Involved(UUID.randomUUID(), true, e2.getId(), p2.getId(), event.getId());
         involveds1 = new ArrayList<>();
         involveds1.add(i1);
         involveds1.add(i2);
@@ -97,12 +99,12 @@ class EventDataHandlerTest {
 
     @Test
     void noExpenseToDelete() {
-        handler.getDeleteExpense(new Expense(p1, "Hype Train", 1.5));
+        handler.getDeleteExpense(new Expense(p1, "Hype Train", 1.5, null, null));
         verify(sessionMock, times(1)).refreshExpenses();
     }
     @Test
     void noExpenseToUpdate() {
-        handler.getUpdateExpense(new Expense(p1, "Hype Train", 1.5));
+        handler.getUpdateExpense(new Expense(p1, "Hype Train", 1.5, null, null));
         verify(sessionMock, times(1)).refreshExpenses();
     }
     @Test
@@ -122,13 +124,13 @@ class EventDataHandlerTest {
 
     @Test
     void noParticipantForUpdate() {
-        handler.getUpdateParticipant(new Participant(event, "a", "b", "c", "d", "e"));
+        handler.getUpdateParticipant(new Participant(event, "a", "b",  "d", "e"));
         verify(sessionMock, times(1)).refreshParticipants();
     }
 
     @Test
     void participantAlreadyDeleted() {
-        handler.getDeleteParticipant(new Participant(event, "a", "b", "c", "d", "e"));
+        handler.getDeleteParticipant(new Participant(event, "a", "b",  "d", "e"));
         verify(sessionMock, times(1)).refreshParticipants();
     }
 
@@ -140,7 +142,7 @@ class EventDataHandlerTest {
 
     @Test
     void receiveParticipantCreate() {
-        var p3 = new Participant(event, "A", "B", "C", "D", "E");
+        var p3 = new Participant(event, "A", "B",  "D", "E");
         try {
             handler.getCreateParticipant(p3);
         }catch (IllegalStateException ignored){}
@@ -179,8 +181,9 @@ class EventDataHandlerTest {
 
     @Test
     void receiveExpenseCreate() {
-        var e3 = new Expense(UUID.randomUUID(), "Antihypetrain", 3.0, p2.getId(), event.getId());
-        Involved i5 = new Involved(UUID.randomUUID(), true, e3.getId(), p2.getId());
+        var e3 = new Expense(UUID.randomUUID(), "Antihypetrain", 3.0, p2.getId(), event.getId(),
+                LocalDate.now(), null);
+        Involved i5 = new Involved(UUID.randomUUID(), true, e3.getId(), p2.getId(), UUID.randomUUID());
         List<Involved> involveds = new ArrayList<>();
         involveds.add(i5);
         e3.setInvolveds(involveds);
@@ -195,8 +198,10 @@ class EventDataHandlerTest {
 
     @Test
     void receiveExpenseUpdate() {
-        var newE1 = new Expense(e1.getId(), "Antihype", 1.0, e1.getPaidById(), e1.getInvitationCode());
-        Involved i5 = new Involved(UUID.randomUUID(), true, newE1.getId(), p2.getId());
+        LocalDate now = LocalDate.now();
+        var newE1 = new Expense(e1.getId(), "Antihype", 1.0, e1.getPaidById(), e1.getInvitationCode(),
+                now, null);
+        Involved i5 = new Involved(UUID.randomUUID(), true, newE1.getId(), p2.getId(), event.getId());
         List<Involved> involveds = new ArrayList<>();
         involveds.add(i5);
         newE1.setInvolveds(involveds);
@@ -206,6 +211,7 @@ class EventDataHandlerTest {
         assertEquals(e1, handler.getExpenses().getFirst());
         assertEquals("Antihype", e1.getTitle());
         assertEquals(p1, e1.getPaidBy());
+        assertEquals(now, e1.getDate());
         assertEquals(p2, e1.getInvolveds().getFirst().getParticipant());
     }
 
@@ -314,21 +320,21 @@ class EventDataHandlerTest {
     @Test
     void getUpdateInvolved() {
         boolean notI1Settled = !i1.getIsSettled();
-        Involved newI1 = new Involved(i1.getId(), notI1Settled, i1.getExpenseId(), i1.getParticipantId());
+        Involved newI1 = new Involved(i1.getId(), notI1Settled, i1.getExpenseId(), i1.getParticipantId(), event.getId());
         handler.getUpdateInvolved(newI1);
         assertEquals(notI1Settled, i1.getIsSettled());
     }
 
     @Test
     void getUpdateInvolvedExpenseNotFound() {
-        Involved newI1 = new Involved(i1.getId(), i1.getIsSettled(), UUID.randomUUID(), i1.getParticipantId());
+        Involved newI1 = new Involved(i1.getId(), i1.getIsSettled(), UUID.randomUUID(), i1.getParticipantId(), event.getId());
         handler.getUpdateInvolved(newI1);
         verify(sessionMock).refreshExpenses();
     }
 
     @Test
     void getUpdateInvolvedNotFound() {
-        Involved newI1 = new Involved(UUID.randomUUID(), i1.getIsSettled(), i1.getExpenseId(), i1.getParticipantId());
+        Involved newI1 = new Involved(UUID.randomUUID(), i1.getIsSettled(), i1.getExpenseId(), i1.getParticipantId(), event.getId());
         handler.getUpdateInvolved(newI1);
         verify(sessionMock).refreshExpenses();
     }

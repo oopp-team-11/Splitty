@@ -26,7 +26,6 @@ public class Participant {
     private UUID id;
     private String firstName;
     private String lastName;
-    private String email;
     private String iban;
     private String bic;
 
@@ -39,8 +38,29 @@ public class Participant {
     @OneToMany(mappedBy = "paidBy", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     List<Expense> madeExpenses;
 
+
+    @JsonManagedReference(value = "ParticipantToInvolved")
+    @OneToMany(mappedBy = "participant", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    List<Involved> involvedIn;
+
     @Transient
     private UUID eventId;
+
+    /**
+     * std getter
+     * @return list of involved
+     */
+    public List<Involved> getInvolvedIn() {
+        return involvedIn;
+    }
+
+    /**
+     * std setter
+     * @param involvedIn
+     */
+    public void setInvolvedIn(List<Involved> involvedIn) {
+        this.involvedIn = involvedIn;
+    }
 
     /**
      * Constructor
@@ -55,17 +75,15 @@ public class Participant {
      * @param id ID of the Participant
      * @param firstName firstName of the Participant
      * @param lastName lastName of the Participant
-     * @param email email of the Participant
      * @param iban iban of the Participant
      * @param bic bic of the Participant
      * @param eventId eventID of the Participant
      */
-    public Participant(UUID id, String firstName, String lastName, String email, String iban, String bic,
+    public Participant(UUID id, String firstName, String lastName, String iban, String bic,
                        UUID eventId) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email;
         this.iban = iban;
         this.bic = bic;
         this.eventId = eventId;
@@ -78,19 +96,18 @@ public class Participant {
      * @param event event the participant is participating in
      * @param firstName first name of the participant
      * @param lastName last name of the participant
-     * @param email email of the participant
      * @param iban iban of the participant
      * @param bic bic of the participant
      */
-    public Participant(Event event, String firstName, String lastName, String email, String iban, String bic) {
+    public Participant(Event event, String firstName, String lastName, String iban, String bic) {
         this.event = event;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email;
         this.iban = iban;
         this.bic = bic;
         this.madeExpenses = new ExpenseList();
         this.eventId = event.getId();
+        this.involvedIn = new InvolvedList();
     }
 
     /**
@@ -150,14 +167,6 @@ public class Participant {
     }
 
     /**
-     * Method that returns the email of the participant
-     * @return email of the participant
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
      * Method that returns the iban of the participant
      * @return iban of the participant
      */
@@ -190,14 +199,6 @@ public class Participant {
     }
 
     /**
-     * Method that sets the email of the participant
-     * @param email email of the participant
-     */
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    /**
      * Method that sets the iban of the participant
      * @param iban iban of the participant
      */
@@ -222,7 +223,7 @@ public class Participant {
         Participant that = (Participant) obj;
 
         return new EqualsBuilder().append(id, that.id).append(firstName, that.firstName)
-                .append(lastName, that.lastName).append(email, that.email).append(iban, that.iban)
+                .append(lastName, that.lastName).append(iban, that.iban)
                 .append(bic, that.bic).append(madeExpenses, that.madeExpenses)
                 .append(eventId, that.eventId).isEquals();
     }
@@ -230,7 +231,7 @@ public class Participant {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(id).append(firstName)
-                .append(lastName).append(email).append(iban).append(bic).append(madeExpenses)
+                .append(lastName).append(iban).append(bic).append(madeExpenses)
                 .append(eventId).toHashCode();
     }
 
@@ -240,7 +241,6 @@ public class Participant {
                 .append("id", id)
                 .append("firstName", firstName)
                 .append("lastName", lastName)
-                .append("email", email)
                 .append("iban", iban)
                 .append("bic", bic)
                 .append("madeExpenses", madeExpenses)

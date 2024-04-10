@@ -5,6 +5,7 @@ import client.scenes.MainCtrl;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
+import commons.Involved;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -125,7 +127,7 @@ class WebsocketSessionHandlerTest {
         ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<StompFrameHandler> stompFrameHandlerCaptor = ArgumentCaptor.forClass(StompFrameHandler.class);
         ArgumentCaptor<UUID> idCaptor = ArgumentCaptor.forClass(UUID.class);
-        verify(session, times(9)).subscribe(destinationCaptor.capture(),
+        verify(session, times(10)).subscribe(destinationCaptor.capture(),
                 stompFrameHandlerCaptor.capture());
         verify(session, times(1)).send(destinationCaptor.capture(), idCaptor.capture());
 
@@ -133,6 +135,7 @@ class WebsocketSessionHandlerTest {
         assertEquals("/topic/" + invitationCode + "/expense:delete", destinations.get(6));
         assertEquals("/topic/" + invitationCode + "/expense:update", destinations.get(7));
         assertEquals("/topic/" + invitationCode + "/expense:create", destinations.get(8));
+        assertEquals("/topic/" + invitationCode + "/involved:update", destinations.get(9));
     }
 
     @Test
@@ -295,7 +298,7 @@ class WebsocketSessionHandlerTest {
     void sendParticipant() {
         handler.afterConnected(session, headers);
         Participant participant = new Participant(new Event("dummyEvent"), "John", "Doe",
-                null, null, null);
+                 null, null);
 
         ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Object> payloadCaptor = ArgumentCaptor.forClass(Object.class);
@@ -313,8 +316,9 @@ class WebsocketSessionHandlerTest {
     void sendExpense() {
         handler.afterConnected(session, headers);
         Participant participant = new Participant(new Event("dummyEvent"), "John", "Doe",
-                null, null, null);
-        Expense expense = new Expense(participant, "sampleExpense", 4.20);
+                 null, null);
+        // TODO: Probably adding some data in the constructor instead of the two nulls
+        Expense expense = new Expense(participant, "sampleExpense", 4.20, null, null);
 
         ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Object> payloadCaptor = ArgumentCaptor.forClass(Object.class);
@@ -326,6 +330,30 @@ class WebsocketSessionHandlerTest {
         assertEquals("/app/expense:create", capturedDestination);
 
         assertEquals(expense, payloadCaptor.getValue());
+    }
+
+    @Test
+    void sendInvolved() {
+        handler.afterConnected(session, headers);
+
+        Event event = new Event("dummyEvent");
+        Participant participant = new Participant(event.getId(), "John", "Doe",
+                null, null, null);
+        Expense expense = new Expense(participant, "sampleExpense", 4.20, LocalDate.now(), null);
+        Involved involved = new Involved(true, expense, participant);
+
+        expense.setInvolveds(List.of(involved));
+
+        ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Object> payloadCaptor = ArgumentCaptor.forClass(Object.class);
+
+        handler.sendInvolved(involved, "update");
+        verify(session).send(destinationCaptor.capture(), payloadCaptor.capture());
+
+        String capturedDestination = destinationCaptor.getValue();
+        assertEquals("/app/involved:update", capturedDestination);
+
+        assertEquals(involved, payloadCaptor.getValue());
     }
 
     @Test

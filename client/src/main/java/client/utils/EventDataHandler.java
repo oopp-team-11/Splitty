@@ -140,7 +140,6 @@ public class EventDataHandler {
     private void updateParticipant(Participant toUpdate, Participant fromUpdate) {
         toUpdate.setFirstName(fromUpdate.getFirstName());
         toUpdate.setLastName(fromUpdate.getLastName());
-        toUpdate.setEmail(fromUpdate.getEmail());
         toUpdate.setIban(fromUpdate.getIban());
         toUpdate.setBic(fromUpdate.getBic());
     }
@@ -405,6 +404,7 @@ public class EventDataHandler {
         toUpdate.setTitle(fromUpdate.getTitle());
         toUpdate.setAmount(fromUpdate.getAmount());
         toUpdate.setPaidById(fromUpdate.getPaidById());
+        toUpdate.setDate(fromUpdate.getDate());
         toUpdate.setInvolveds(fromUpdate.getInvolveds());
     }
 

@@ -78,16 +78,16 @@ public class AdminController {
         Event sentEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(), event.getLastActivity());
         for (Participant participant : event.getParticipants()) {
             Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
-                    participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getIban(),
+                    participant.getLastName(), participant.getIban(), participant.getIban(),
                     participant.getEventId());
             sentEvent.addParticipant(sentParticipant);
             for (Expense expense : participant.getMadeExpenses()) {
                 Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
-                        expense.getPaidById(), expense.getInvitationCode());
+                        expense.getPaidById(), expense.getInvitationCode(), expense.getDate(), new InvolvedList());
                 sentParticipant.addExpense(sentExpense);
                 for (Involved involved : expense.getInvolveds()) {
                     Involved sentInvolved = new Involved(involved.getId(), involved.getIsSettled(),
-                            involved.getExpenseId(), involved.getParticipantId());
+                            involved.getExpenseId(), involved.getParticipantId(), involved.getInvitationCode());
                     sentExpense.getInvolveds().add(sentInvolved);
                 }
             }
@@ -142,11 +142,11 @@ public class AdminController {
             for (Participant receivedParticipant : receivedEvent.getParticipants()) {
                 Participant participant = new Participant(event,
                         receivedParticipant.getFirstName(), receivedParticipant.getLastName(),
-                        receivedParticipant.getEmail(), receivedParticipant.getIban(), receivedParticipant.getBic());
+                        receivedParticipant.getIban(), receivedParticipant.getBic());
                 participant = participantRepo.save(participant);
                 for (Expense receivedExpense : receivedParticipant.getMadeExpenses()) {
                     Expense expense = new Expense(participant, receivedExpense.getTitle(),
-                            receivedExpense.getAmount());
+                            receivedExpense.getAmount(), receivedExpense.getDate(), new InvolvedList());
                     expense = expenseRepo.save(expense);
                     for (Involved receivedInvolved : receivedExpense.getInvolveds()) {
                         var involvedParticipant = participantRepo.getReferenceById(receivedInvolved.getParticipantId());

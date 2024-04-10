@@ -155,7 +155,6 @@ public class CreateParticipantCtrl implements Translatable {
                         new Participant(mainCtrl.getDataHandler().getEvent(),
                                 firstNameString,
                                 lastNameString,
-                                emailString,
                                 ibanString,
                                 bicString
                         ),

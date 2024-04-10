@@ -4,6 +4,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,7 +22,6 @@ class ParticipantTest {
                 event,
                 "John",
                 "Doe",
-                "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123"
         );
@@ -29,7 +29,6 @@ class ParticipantTest {
                 event,
                 "John",
                 "Doe",
-                "j.doe@domain.com",
                 "NL91 ABNA 0417 1643 00",
                 "ABNANL2A123"
         );
@@ -47,14 +46,19 @@ class ParticipantTest {
     }
 
     @Test
+    void getAndSetInvolvedin() {
+        var invs = List.of(new Involved(), new Involved(true, new Expense(), participant));
+        participant.setInvolvedIn(invs);
+        assertEquals(invs, participant.getInvolvedIn());
+    }
+    @Test
     void server2ClientConstructor() {
         Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
-                participant.getLastName(), participant.getEmail(), participant.getIban(), participant.getBic(),
+                participant.getLastName(), participant.getIban(), participant.getBic(),
                 participant.getEventId());
         assertEquals(participant.getId(), sentParticipant.getId());
         assertEquals(participant.getFirstName(), sentParticipant.getFirstName());
         assertEquals(participant.getLastName(), sentParticipant.getLastName());
-        assertEquals(participant.getEmail(), sentParticipant.getEmail());
         assertEquals(participant.getIban(), sentParticipant.getIban());
         assertEquals(participant.getBic(), sentParticipant.getBic());
         assertEquals(participant.getEventId(), sentParticipant.getEventId());
@@ -92,7 +96,6 @@ class ParticipantTest {
         assertTrue(clientToString.contains("id"));
         assertTrue(clientToString.contains("firstName"));
         assertTrue(clientToString.contains("lastName"));
-        assertTrue(clientToString.contains("email"));
         assertTrue(clientToString.contains("iban"));
         assertTrue(clientToString.contains("bic"));
         assertTrue(clientToString.contains("eventId"));
@@ -107,11 +110,6 @@ class ParticipantTest {
     @Test
     void getLastName() {
         assertEquals("Doe", participant.getLastName());
-    }
-
-    @Test
-    void getEmail() {
-        assertEquals("j.doe@domain.com", participant.getEmail());
     }
 
     @Test
@@ -137,12 +135,6 @@ class ParticipantTest {
     }
 
     @Test
-    void setEmail() {
-        participant.setEmail("j.average@gmail.com");
-        assertEquals("j.average@gmail.com", participant.getEmail());
-    }
-
-    @Test
     void setIban() {
         participant.setIban("NL91 ABNA 1234 5678 90");
         assertEquals("NL91 ABNA 1234 5678 90", participant.getIban());
@@ -156,7 +148,8 @@ class ParticipantTest {
 
     @Test
     void addExpense() {
-        Expense expense = new Expense(participant, "Expense", 69.);
+        // TODO: Maybe some smarter initialisation instead of the two nulls
+        Expense expense = new Expense(participant, "Expense", 69., null, null);
         participant.addExpense(expense);
         assertEquals(expense, participant.getMadeExpenses().getLast());
     }
@@ -168,7 +161,8 @@ class ParticipantTest {
 
     @Test
     void getMadeExpenses() {
-        Expense expense = new Expense(participant, "Expense", 69.);
+        // TODO: Maybe some smarter initialisation instead of the two nulls
+        Expense expense = new Expense(participant, "Expense", 69., null, null);
         participant.addExpense(expense);
         assertEquals(expense, participant.getMadeExpenses().getFirst());
     }

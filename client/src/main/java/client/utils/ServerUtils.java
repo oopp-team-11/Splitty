@@ -57,7 +57,6 @@ public class ServerUtils {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
         Event event = mapper.readValue(response.body(), Event.class);
 
         return event;
