@@ -13,8 +13,10 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
+import javafx.util.StringConverter;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -78,8 +80,20 @@ public class AddExpenseCtrl implements Translatable {
         expensePaidBy.setItems(participants);
         expenseTitle.clear();
         expenseAmount.clear();
-        //TODO: Override converter to catch parsing exception
-        // https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/DatePicker.html#setConverter-javafx.util.StringConverter-
+        final StringConverter<LocalDate> defaultConverter = expenseDatePicker.getConverter();
+        expenseDatePicker.setConverter(new StringConverter<LocalDate>() {
+            @Override public String toString(LocalDate value) {
+                return defaultConverter.toString(value);
+            }
+
+            @Override public LocalDate fromString(String text) {
+                try {
+                    return defaultConverter.fromString(text);
+                } catch (DateTimeParseException ex) {
+                    return LocalDate.now();
+                }
+            }
+        });
         expenseDatePicker.setValue(LocalDate.now());
     }
 
