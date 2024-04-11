@@ -8,6 +8,8 @@ import javafx.stage.Modality;
 
 import javax.json.*;
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -378,4 +380,39 @@ public class FileSystemUtils {
             alert.showAndWait();
         }
     }
+
+    /**
+     * Method for replacing server ip in config file
+     * @param path path to client-config.json
+     * @param newServerIP new server ip to set it to
+     * @throws IOException possible error throw
+     * @throws IllegalArgumentException if the new server ip is not a valid URL
+     */
+    public void replaceServerIPInConfigFile(String path, String newServerIP) throws IOException,
+            IllegalArgumentException {
+        try {
+            new URL(newServerIP);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException(newServerIP + " is not a valid URL", e);
+        }
+
+        try {
+            JsonReader reader = Json.createReader(new FileReader(path));
+            JsonObject oldJson = reader.readObject();
+            reader.close();
+
+            JsonObject newJson = Json.createObjectBuilder()
+                    .add("server-ip", newServerIP)
+                    .add("lang", oldJson.getString("lang"))
+                    .build();
+
+            FileWriter file = new FileWriter(path);
+            file.write(newJson.toString());
+            file.flush();
+            file.close();
+        } catch (Exception e) {
+            throw new IOException("Failed to replace server IP in config file", e);
+        }
+    }
+
 }
