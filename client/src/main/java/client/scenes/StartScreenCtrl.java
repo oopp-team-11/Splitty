@@ -262,24 +262,21 @@ public class StartScreenCtrl implements Initializable, Translatable {
         try {
             fileSystemUtils.replaceServerIPInConfigFile("client-config.json", serverUrlBox.getText());
         }
-        catch (Exception e) {
-            if(e instanceof IOException) {
-                var alert = new Alert(Alert.AlertType.ERROR);
-                alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText("Failed to save server URL to disk." +
-                        "\nError: " +
-                        (e.getMessage() != null ? e.getMessage() : "No error message available."));
-                alert.showAndWait();
-            }
-            else if(e instanceof IllegalArgumentException) {
-                var alert = new Alert(Alert.AlertType.ERROR);
-                alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText("Invalid server URL." +
-                        "\nError: " +
-                        (e.getMessage() != null ? e.getMessage() : "No error message available."));
-                alert.showAndWait();
-            }
-
+        catch (IOException e) {
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Failed to save server URL to disk." +
+                    "\nError: " +
+                    (e.getMessage() != null ? e.getMessage() : "No error message available."));
+            alert.showAndWait();
+        }
+        catch (IllegalArgumentException e) {
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Invalid server URL." +
+                    "\nError: " +
+                    (e.getMessage() != null ? e.getMessage() : "No error message available."));
+            alert.showAndWait();
         }
 
     }
