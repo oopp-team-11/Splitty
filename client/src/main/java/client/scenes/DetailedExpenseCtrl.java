@@ -8,7 +8,6 @@ import commons.Involved;
 import commons.Participant;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
@@ -140,28 +139,9 @@ public class DetailedExpenseCtrl implements Translatable {
         involvedTableView.getItems().setAll(expense.getInvolveds());
     }
 
-    private class CheckBoxCell extends TableCell<Involved, Boolean> {
-        final CheckBox checkBox;
-
-        private CheckBoxCell() {
-            this.checkBox = new CheckBox();
-            this.checkBox.setOnAction(actionEvent -> {
-                int row = getTableRow().getIndex();
-                Involved inv = involvedTableView.getItems().get(row);
-                inv.setIsSettled(checkBox.isSelected());
-            });
-        }
-
-        @Override
-        protected void updateItem(Boolean t, boolean empty) {
-            super.updateItem(t, empty);
-            checkBox.setSelected(t);
-            if (!empty) {
-                setGraphic(checkBox);
-            }
-        }
-    }
-
+    /**
+     * onAction of edit button
+     */
     public void editBtn() {
         expense.setInvolveds(involvedTableView.getItems());
     }
@@ -197,5 +177,27 @@ public class DetailedExpenseCtrl implements Translatable {
      */
     public void goToEventOverview() {
         mainCtrl.showEventOverview();
+    }
+
+    private class CheckBoxCell extends TableCell<Involved, Boolean> {
+        final CheckBox checkBox;
+
+        private CheckBoxCell() {
+            this.checkBox = new CheckBox();
+            this.checkBox.setOnAction(actionEvent -> {
+                int row = getTableRow().getIndex();
+                Involved inv = involvedTableView.getItems().get(row);
+                inv.setIsSettled(checkBox.isSelected());
+            });
+        }
+
+        @Override
+        protected void updateItem(Boolean valueInCell, boolean empty) {
+            super.updateItem(valueInCell, empty);
+            checkBox.setSelected(valueInCell);
+            if (!empty) {
+                setGraphic(checkBox);
+            }
+        }
     }
 }
