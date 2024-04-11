@@ -7,7 +7,6 @@ import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
 import commons.Event;
 import commons.Expense;
-import commons.Involved;
 import commons.Participant;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -178,7 +177,8 @@ public class EventOverviewCtrl implements Translatable {
 
         titleColumn.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getTitle()));
         amountColumn.setCellValueFactory(col -> new SimpleStringProperty(String.valueOf(col.getValue().getAmount())));
-        firstNameExpense.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getPaidBy().getFirstName()));
+        firstNameExpense.setCellValueFactory(col ->
+                new SimpleStringProperty(col.getValue().getPaidBy().getFirstName()));
         lastNameExpense.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getPaidBy().getLastName()));
         dateColumn.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getDate()));
 
@@ -233,20 +233,20 @@ public class EventOverviewCtrl implements Translatable {
             }
 
             @Override
-            public Participant fromString(String s) {
-                String[] names = s.split(" ");
+            public Participant fromString(String str) {
+                String[] names = str.split(" ");
 
-                return mainCtrl.getDataHandler().getParticipants().stream().map(participant -> {
-                    if(names[0].equals(participant.getFirstName())
-                            && names[1].equals(participant.getLastName())){
-                        return participant;
-                    }
-                    return null;
-                }).toList().getFirst();
+                return mainCtrl.getDataHandler().getParticipants().stream().filter(participant ->
+                        names[0].equals(participant.getFirstName())
+                        && names[1].equals(participant.getLastName())).toList().getFirst();
             }
         });
         userChoiceBox.setValue(null);
 
+        setTabs();
+    }
+
+    private void setTabs(){
         allExpenses.setOnSelectionChanged(thisEvent -> {
             if (allExpenses.isSelected()){
                 allExpenses.setContent(expensesList);
@@ -258,31 +258,22 @@ public class EventOverviewCtrl implements Translatable {
         myExpensesTab.setOnSelectionChanged(thisEvent -> {
             if (myExpensesTab.isSelected()){
                 myExpensesTab.setContent(expensesList);
-                var myExpenses = mainCtrl.getDataHandler().getExpenses().stream().filter( expense ->
-                        expense.getPaidBy().equals(userChoiceBox.getValue())).toList();
-                expensesList.setItems(FXCollections.observableList(myExpenses));
+                expensesList.setItems(FXCollections.observableList(
+                        mainCtrl.getDataHandler().getExpensesByParticipant(userChoiceBox.getValue())
+                ));
             } else {
                 myExpensesTab.setContent(null);
             }
         });
         involvingMeTab.setOnSelectionChanged(thisEvent -> {
-            if (involvingMeTab.isSelected()){
+            if (involvingMeTab.isSelected()) {
                 involvingMeTab.setContent(expensesList);
-                var involvingMeExpenses = mainCtrl.getDataHandler().getExpenses().stream().filter( expense ->
-                        {
-                            for (Involved involved : expense.getInvolveds()){
-                                if (involved.getParticipant().equals(userChoiceBox.getValue())) return true;
-                            }
-                            return false;
-                        }).toList();
-                expensesList.setItems(FXCollections.observableList(involvingMeExpenses));
+                expensesList.setItems(FXCollections.observableList(
+                        mainCtrl.getDataHandler().getExpensesByInvolvedParticipant(userChoiceBox.getValue())));
             } else {
                 involvingMeTab.setContent(null);
             }
         });
-
-
-
     }
 
     /**
