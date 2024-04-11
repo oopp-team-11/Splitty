@@ -153,11 +153,7 @@ public class EventOverviewCtrl implements Translatable {
         expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));
 
         editTitle.onMouseClickedProperty().set(event1 -> {
-            if (editEventTextField.isVisible()){
-                stopEditingTitle();
-            }else {
-                editingTitle();
-            }
+            editTitleClicked();
         });
         editEventTextField.onKeyPressedProperty().set(keyEvent -> {
             if(keyEvent.getCode().equals(KeyCode.ENTER)){
@@ -170,6 +166,14 @@ public class EventOverviewCtrl implements Translatable {
 
         languageSwitchPlaceHolder.getChildren().clear();
         languageSwitchPlaceHolder.getChildren().add(mainCtrl.getLanguageSwitchButton());
+    }
+
+    public void editTitleClicked() {
+        if (editEventTextField.isVisible()){
+            stopEditingTitle();
+        }else {
+            editingTitle();
+        }
     }
 
     /**
@@ -333,5 +337,21 @@ public class EventOverviewCtrl implements Translatable {
         mainCtrl.getSessionHandler().unsubscribeFromCurrentEvent();
         mainCtrl.getDataHandler().setAllToNull();
         mainCtrl.showStartScreen();
+    }
+
+    public Button getSendInvitesButton() {
+        return sendInvitesButton;
+    }
+
+    public Button getAddParticipantBtn() {
+        return addParticipantBtn;
+    }
+
+    public Button getAddExpenseBtn() {
+        return addExpenseBtn;
+    }
+
+    public Button getEditTitle() {
+        return editTitle;
     }
 }

@@ -25,10 +25,13 @@ import commons.Expense;
 import commons.Participant;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
@@ -130,6 +133,8 @@ public class MainCtrl {
         this.adminDataHandler = new AdminDataHandler();
         this.languageSwitchButton = new MenuButton();
 
+        assignKeyboardShortcuts();
+
         setAvailableLanguagesFromFiles();
 
         // Needs to be before the start websocket method
@@ -144,6 +149,76 @@ public class MainCtrl {
         showStartScreen();
 
         primaryStage.show();
+    }
+
+    private void assignKeyboardShortcuts() {
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.P) {
+                        this.eventOverviewCtrl.getAddParticipantBtn().fire();
+                    }
+                });
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.E) {
+                        this.eventOverviewCtrl.getAddExpenseBtn().fire();
+                    }
+                });
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.I) {
+                        this.eventOverviewCtrl.getSendInvitesButton().fire();
+                    }
+                });
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.T) {
+                        this.eventOverviewCtrl.editTitleClicked();
+                    }
+                });
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        this.eventOverviewCtrl.goToHome();
+                    }
+                });
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    System.out.println(event.getCode().getCode());
+                    if (event.isControlDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
+                        System.out.println("KEY: " + event.getCode().getCode());
+                        this.eventOverviewCtrl.editColumn.getCellObservableValue(event.getCode().getCode() - 48)
+                                .getValue().fire();
+                    }
+                });
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    System.out.println(event.getCode().getCode());
+                    if (event.isAltDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
+                        System.out.println("KEY: " + event.getCode().getCode());
+                        this.eventOverviewCtrl.deleteColumn.getCellObservableValue(event.getCode().getCode() - 48)
+                                .getValue().fire();
+                    }
+                });
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    System.out.println(event.getCode().getCode());
+                    if (event.isShiftDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
+                        System.out.println("KEY: " + event.getCode().getCode());
+                        this.eventOverviewCtrl.editColumn1.getCellObservableValue(event.getCode().getCode() - 48)
+                                .getValue().fire();
+                    }
+                });
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    System.out.println(event.getCode().getCode());
+                    if (event.isShiftDown() && event.isControlDown() && event.getCode().getCode() >= 48
+                            && event.getCode().getCode() <= 57) {
+                        System.out.println("KEY: " + event.getCode().getCode());
+                        this.eventOverviewCtrl.deleteColumn1.getCellObservableValue(event.getCode().getCode() - 48)
+                                .getValue().fire();
+                    }
+                });
     }
 
     /**
