@@ -44,13 +44,13 @@ public class AddExpenseCtrl implements Translatable {
     @FXML
     private Label howMuchLabel;
     @FXML
-    private ScrollPane involvedScrollPane;
-    @FXML
     private Label whoIsInvolvedLabel;
     @FXML
     private Label dateOfExpenseLabel;
     @FXML
     private DatePicker expenseDatePicker;
+    @FXML
+    private ListView<Participant> involvedListView;
     private MainCtrl mainCtrl;
     private FileSystemUtils fileSystemUtils;
     private ServerUtils serverUtils;
@@ -80,6 +80,14 @@ public class AddExpenseCtrl implements Translatable {
         expensePaidBy.setItems(participants);
         expenseTitle.clear();
         expenseAmount.clear();
+        setCustomConverter();
+        expenseDatePicker.setValue(LocalDate.now());
+    }
+
+    /**
+     * Sets custom string converter for datePicker to handle parsing exceptions
+     */
+    private void setCustomConverter() {
         final StringConverter<LocalDate> defaultConverter = expenseDatePicker.getConverter();
         expenseDatePicker.setConverter(new StringConverter<LocalDate>() {
             @Override public String toString(LocalDate value) {
@@ -94,7 +102,6 @@ public class AddExpenseCtrl implements Translatable {
                 }
             }
         });
-        expenseDatePicker.setValue(LocalDate.now());
     }
 
     /**

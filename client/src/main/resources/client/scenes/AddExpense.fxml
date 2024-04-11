@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -53,9 +54,12 @@
             <TextField fx:id="expenseAmount" promptText="Amount of money" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <DatePicker fx:id="expenseDatePicker" prefHeight="26.0" prefWidth="1206.0" promptText="Example: 31/03/2024" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label fx:id="whoIsInvolvedLabel" alignment="CENTER" layoutX="25.0" layoutY="360.0" prefHeight="28.0" prefWidth="410.0" text="Who is involved?" GridPane.rowIndex="5" GridPane.rowSpan="2" />
-            <ScrollPane fx:id="involvedScrollPane" prefHeight="19.0" prefWidth="410.0" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.rowSpan="2">
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="19.0" prefWidth="410.0" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.rowSpan="2">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <ListView fx:id="involvedListView" layoutX="104.0" layoutY="-16.0" prefHeight="167.2" prefWidth="408.8" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children></AnchorPane>
               </content>
             </ScrollPane>
          </children>
