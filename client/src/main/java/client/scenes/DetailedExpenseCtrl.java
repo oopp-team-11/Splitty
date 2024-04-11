@@ -6,7 +6,9 @@ import com.google.inject.Inject;
 import commons.Expense;
 import commons.Involved;
 import commons.Participant;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
@@ -44,7 +46,7 @@ public class DetailedExpenseCtrl implements Translatable {
     private TableColumn<Involved, String> participantNameColumn;
 
     @FXML
-    private TableColumn<Involved, CheckBox> isSettledColumn;
+    private TableColumn<Involved, Boolean> isSettledColumn;
 
 
     // Labels that corresponds to the "namings" of the data
@@ -133,12 +135,37 @@ public class DetailedExpenseCtrl implements Translatable {
         involvedTableView.getItems().clear();
         participantNameColumn.setCellValueFactory(obj
                 -> new SimpleStringProperty(participantToString(obj.getValue().getParticipant())));
-//        participantNameColumn.setCellValueFactory(obj
-//                -> {
-//            var checkBox = new CheckBoxTableCell<>();
-//            checkBox.
-//        });
+        isSettledColumn.setCellValueFactory(obj -> new SimpleBooleanProperty(obj.getValue().getIsSettled()));
+        isSettledColumn.setCellFactory(obj -> new CheckBoxCell());
+        involvedTableView.getItems().setAll(expense.getInvolveds());
     }
+
+    private class CheckBoxCell extends TableCell<Involved, Boolean> {
+        final CheckBox checkBox;
+
+        private CheckBoxCell() {
+            this.checkBox = new CheckBox();
+            this.checkBox.setOnAction(actionEvent -> {
+                int row = getTableRow().getIndex();
+                Involved inv = involvedTableView.getItems().get(row);
+                inv.setIsSettled(checkBox.isSelected());
+            });
+        }
+
+        @Override
+        protected void updateItem(Boolean t, boolean empty) {
+            super.updateItem(t, empty);
+            checkBox.setSelected(t);
+            if (!empty) {
+                setGraphic(checkBox);
+            }
+        }
+    }
+
+    public void editBtn() {
+        expense.setInvolveds(involvedTableView.getItems());
+    }
+
 
     @Override
     public void translate(TranslationSupplier translationSupplier) {

@@ -50,7 +50,7 @@
 
         <Button fx:id="abortBtn" onAction="#goToEventOverview" style="-fx-base: #7f1a1a; -fx-pref-width: 250; -fx-pref-height: 100;" text="Abort" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="7">
         </Button>
-        <Button fx:id="editBtn" style="-fx-base: #49873a; -fx-pref-width: 250; -fx-pref-height: 100;" text="Edit" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7">
+        <Button fx:id="editBtn" onAction="#editBtn" style="-fx-base: #49873a; -fx-pref-width: 250; -fx-pref-height: 100;" text="Edit" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7">
         </Button>
       <rowConstraints>
          <RowConstraints />
