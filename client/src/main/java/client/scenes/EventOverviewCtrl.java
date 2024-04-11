@@ -7,6 +7,7 @@ import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
 import commons.Event;
 import commons.Expense;
+import commons.Involved;
 import commons.Participant;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -21,6 +22,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.util.StringConverter;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,11 +65,27 @@ public class EventOverviewCtrl implements Translatable {
     @FXML
     public Label goToStartScreenLabel;
     @FXML
+    public Label meLabel;
+    @FXML
     public Label editTitleLabel;
     @FXML
     public Label totalSumExpenses;
     @FXML
     public ChoiceBox<Participant> userChoiceBox;
+    @FXML
+    public Tab myExpensesTab;
+    @FXML
+    public Tab involvingMeTab;
+    @FXML
+    public TabPane tabPaneExpenses;
+    @FXML
+    public Tab allExpenses;
+    @FXML
+    public TableColumn<Expense, String> firstNameExpense;
+    @FXML
+    public TableColumn<Expense, String>  lastNameExpense;
+    @FXML
+    public TableColumn<Expense, LocalDate>  dateColumn;
     @FXML
     private Label participantsLabel;
     @FXML
@@ -160,6 +178,10 @@ public class EventOverviewCtrl implements Translatable {
 
         titleColumn.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getTitle()));
         amountColumn.setCellValueFactory(col -> new SimpleStringProperty(String.valueOf(col.getValue().getAmount())));
+        firstNameExpense.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getPaidBy().getFirstName()));
+        lastNameExpense.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getPaidBy().getLastName()));
+        dateColumn.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getDate()));
+
 
         editColumn1.setCellValueFactory(expense -> {
             Button button = new Button("✎");
@@ -199,7 +221,6 @@ public class EventOverviewCtrl implements Translatable {
 
         sendInvitesConfirmation.setText("");
 
-
         languageSwitchPlaceHolder.getChildren().clear();
         languageSwitchPlaceHolder.getChildren().add(mainCtrl.getLanguageSwitchButton());
 
@@ -225,6 +246,43 @@ public class EventOverviewCtrl implements Translatable {
             }
         });
         userChoiceBox.setValue(null);
+
+        allExpenses.setOnSelectionChanged(thisEvent -> {
+            if (allExpenses.isSelected()){
+                allExpenses.setContent(expensesList);
+                expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));
+            } else {
+                allExpenses.setContent(null);
+            }
+        });
+        myExpensesTab.setOnSelectionChanged(thisEvent -> {
+            if (myExpensesTab.isSelected()){
+                myExpensesTab.setContent(expensesList);
+                var myExpenses = mainCtrl.getDataHandler().getExpenses().stream().filter( expense ->
+                        expense.getPaidBy().equals(userChoiceBox.getValue())).toList();
+                expensesList.setItems(FXCollections.observableList(myExpenses));
+            } else {
+                myExpensesTab.setContent(null);
+            }
+        });
+        involvingMeTab.setOnSelectionChanged(thisEvent -> {
+            if (involvingMeTab.isSelected()){
+                involvingMeTab.setContent(expensesList);
+                var involvingMeExpenses = mainCtrl.getDataHandler().getExpenses().stream().filter( expense ->
+                        {
+                            for (Involved involved : expense.getInvolveds()){
+                                if (involved.getParticipant().equals(userChoiceBox.getValue())) return true;
+                            }
+                            return false;
+                        }).toList();
+                expensesList.setItems(FXCollections.observableList(involvingMeExpenses));
+            } else {
+                involvingMeTab.setContent(null);
+            }
+        });
+
+
+
     }
 
     /**
@@ -284,6 +342,9 @@ public class EventOverviewCtrl implements Translatable {
         labels.put(this.changeLanguageLabel, "ChangeLanguageLabel");
         labels.put(this.goToStartScreenLabel, "GoToStartScreenLabel");
         labels.put(this.editTitleLabel, "EditTitleLabel");
+        labels.put(this.meLabel, "Me");
+        labels.put(this.meLabel, "Me");
+        labels.put(this.meLabel, "Me");
         labels.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
@@ -298,6 +359,9 @@ public class EventOverviewCtrl implements Translatable {
         tableColumns.put(this.editColumn, "Edit");
         tableColumns.put(this.deleteColumn, "Delete");
         tableColumns.put(this.titleColumn, "Title");
+        tableColumns.put(this.firstNameExpense, "FirstName");
+        tableColumns.put(this.lastNameExpense, "LastName");
+        tableColumns.put(this.dateColumn, "Date");
         tableColumns.put(this.amountColumn, "Amount");
         tableColumns.put(this.editColumn1, "Edit");
         tableColumns.put(this.deleteColumn1, "Delete");
@@ -315,6 +379,16 @@ public class EventOverviewCtrl implements Translatable {
             if (translation == null) return;
             key.setText(translation.replaceAll("\"", ""));
         });
+
+        allExpenses.setText(translationSupplier.getTranslation("AllExpenses")
+                .replaceAll("\"", ""));
+        myExpensesTab.setText(translationSupplier.getTranslation("MyExpenses")
+                .replaceAll("\"", ""));
+        involvingMeTab.setText(translationSupplier.getTranslation("InvolvingMe")
+                .replaceAll("\"", ""));
+
+        totalSumExpenses.setText(translationSupplier.getTranslation("Total")
+                .replaceAll("\"", "") + mainCtrl.getDataHandler().sumOfAllExpenses());
     }
 
     /**

@@ -166,12 +166,15 @@
                         <Insets right="15.0" />
                      </GridPane.margin>
                      <tabs>
-                        <Tab closable="false" text="All expenses">
+                        <Tab fx:id="allExpenses" closable="false" text="All expenses">
                            <content>
                               <TableView fx:id="expensesList" prefHeight="200.0" prefWidth="200.0">
                                  <columns>
                                     <TableColumn fx:id="titleColumn" text="Title" />
                                     <TableColumn fx:id="amountColumn" text="Amount" />
+                                    <TableColumn fx:id="firstNameExpense" text="First Name" />
+                                    <TableColumn fx:id="lastNameExpense" text="Last Name" />
+                                    <TableColumn fx:id="dateColumn" text="Date" />
                                     <TableColumn fx:id="editColumn1" text="Edit" />
                                     <TableColumn fx:id="deleteColumn1" text="Delete" />
                                  </columns>
@@ -181,11 +184,13 @@
                               </TableView>
                            </content>
                         </Tab>
+                        <Tab fx:id="myExpensesTab" closable="false" text="My expenses" />
+                        <Tab fx:id="involvingMeTab" closable="false" text=" Involving me" />
                      </tabs>
                   </TabPane>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                      <children>
-                        <Label alignment="CENTER" text="Me: " />
+                        <Label fx:id="meLabel" alignment="CENTER" text="Me: " />
                         <ChoiceBox fx:id="userChoiceBox" prefWidth="150.0">
                            <padding>
                               <Insets left="15.0" right="15.0" />
