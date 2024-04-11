@@ -2,6 +2,7 @@ package server.api;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -10,6 +11,9 @@ import server.EventLastActivityService;
 import server.database.EventRepository;
 import commons.Event;
 import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 public class EventLastActivityServiceTest {
@@ -31,14 +35,22 @@ public class EventLastActivityServiceTest {
     @Test
     public void testUpdateLastActivityEventFound() {
         UUID invitationCode = UUID.randomUUID();
-        Event event = new Event();
+        Event event = new Event("Title");
         when(eventRepository.getReferenceById(invitationCode)).thenReturn(event);
 
         eventLastActivityService.updateLastActivity(invitationCode);
 
+        ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
+
         verify(eventRepository, times(1)).getReferenceById(invitationCode);
         verify(eventRepository, times(1)).save(event);
-        verify(template, times(1)).convertAndSend("/topic/admin/event:update", event);
+        verify(template, times(1)).convertAndSend(destinationCaptor.capture(),
+                eventCaptor.capture());
+        assertEquals("/topic/admin/event:update", destinationCaptor.getValue());
+        Event sentEvent = eventCaptor.getValue();
+        assertEquals(event.getTitle(), sentEvent.getTitle());
+        assertNotNull(sentEvent.getLastActivity());
     }
 
     @Test
