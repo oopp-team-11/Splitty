@@ -130,7 +130,6 @@
                         </TableView>
                      </children>
                   </VBox>
-                  <Label text="Label" />
                </children>
             </HBox>
          </center>
