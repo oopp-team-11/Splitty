@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 import commons.Event;
 import commons.Expense;
 import commons.Participant;
+import commons.ParticipantDisplay;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -19,7 +20,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Add expense Controller for adding expenses to events
@@ -30,7 +30,7 @@ public class AddExpenseCtrl implements Translatable {
     @FXML
     public TextField expenseAmount;
     @FXML
-    public ChoiceBox<String> expensePaidBy;
+    public ChoiceBox<ParticipantDisplay> expensePaidBy;
     @FXML
     private Label addExpenseLabel;
     @FXML
@@ -74,9 +74,8 @@ public class AddExpenseCtrl implements Translatable {
         this.event = mainCtrl.getDataHandler().getEvent();
         var participantList = mainCtrl.getDataHandler().getParticipants();
 
-        ObservableList<String> participants = FXCollections.observableArrayList(
-                participantList.stream().map(participant ->
-                        (participant.getFirstName() + " " + participant.getLastName())).toList());
+        ObservableList<ParticipantDisplay> participants = FXCollections.observableArrayList(
+                participantList.stream().map(ParticipantDisplay::new).toList());
         expensePaidBy.setItems(participants);
         expenseTitle.clear();
         expenseAmount.clear();
@@ -145,16 +144,8 @@ public class AddExpenseCtrl implements Translatable {
             alert.setContentText("Are you sure you want to add this expense?");
             var result = alert.showAndWait();
             if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
-                Participant person = null;
-                String[] names = expensePaidBy.getValue().split(" ");
-                for (Participant participant : mainCtrl.getDataHandler().getParticipants()){
-                    if(Objects.equals(participant.getFirstName(), names[0])
-                            && Objects.equals(participant.getLastName(), names[1])){
-                        person = participant;
-                    }
-                }
                 // TODO: add data when you will adjust the scene (see two nulls in the constructor below)
-                Expense newExpense = new Expense(person,
+                Expense newExpense = new Expense(expensePaidBy.getValue().getParticipant(),
                         expenseTitle.getText(),
                         Double.parseDouble(expenseAmount.getText()), null, null);
                 mainCtrl.getSessionHandler().sendExpense(newExpense, "create");
