@@ -14,6 +14,7 @@ import server.database.InvolvedRepository;
 import server.database.ParticipantRepository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Class that represents the participant controller
@@ -218,25 +219,20 @@ public class ExpenseController {
         var oldAmountOwed = expense.getAmount() / expense.getInvolveds().size();
         var newAmountOwed = receivedExpense.getAmount() / receivedExpense.getInvolveds().size();
 
-        var oldInvolveds = expenseRepository.getReferenceById(receivedExpense.getId()).getInvolveds()
-                .stream()
-                .filter(involved -> !receivedExpense.getInvolveds().stream().map(Involved::getParticipantId)
-                        .toList().contains(involved.getParticipant().getId()))
-                .toList();
-//        InvolvedList involvedList = new InvolvedList();
-//        involvedList.addAll(expense.getInvolveds());
-//        involvedList.removeAll(oldInvolveds);
-//        expense.setInvolveds(involvedList);
+        HashSet<UUID> participantIds = expense.getInvolveds().stream()
+                .map(Involved::getParticipant)
+                .map(Participant::getId)
+                .collect(Collectors.toCollection(HashSet::new));
 
-        var newInvolveds = receivedExpense.getInvolveds().stream()
-                .filter(involved -> !expenseRepository.getReferenceById(receivedExpense.getId()).getInvolveds()
-                        .stream().map(Involved::getParticipant).map(Participant::getId).toList()
-                        .contains(involved.getParticipantId())).toList();
-        InvolvedList involvedList = new InvolvedList();
-        involvedList.addAll(expense.getInvolveds());
-        involvedList.removeAll(oldInvolveds);
-        involvedList.addAll(newInvolveds);
-        expense.setInvolveds(involvedList);
+        HashSet<UUID> newParticipantIds = new HashSet<>();
+        for (Involved involved : receivedExpense.getInvolveds()) {
+            newParticipantIds.add(involved.getParticipantId());
+            if (!participantIds.contains(involved.getParticipantId())) {
+                involved.setExpense(expense);
+                expense.getInvolveds().add(involved);
+            }
+        }
+        expense.getInvolveds().removeIf(involved -> !newParticipantIds.contains(involved.getParticipant().getId()));
 
         if(newAmountOwed != oldAmountOwed)
         {
