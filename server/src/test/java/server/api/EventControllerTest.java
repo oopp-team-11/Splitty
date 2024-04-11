@@ -68,7 +68,7 @@ public class EventControllerTest {
         assertEquals(OK, actual.getStatusCode());
         List<UUID> expected = List.of(event1.getId(), event2.getId());
         List<UUID> received = actual.getBody().stream().map(Event::getId).toList();
-        //assertEquals(expected, received);
+        assertEquals(expected, received);
     }
 
     // POST: /events

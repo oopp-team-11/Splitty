@@ -11,7 +11,6 @@ import javafx.stage.Modality;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * Client controller for the EditParticipant.fxml scene
@@ -30,9 +29,6 @@ public class EditParticipantCtrl implements Translatable {
     public Label participantLastNameLabel;
 
     @FXML
-    public Label participantEmailLabel;
-
-    @FXML
     public Label participantIBANLabel;
 
     @FXML
@@ -40,9 +36,6 @@ public class EditParticipantCtrl implements Translatable {
 
     @FXML
     private Label editParticipantLabel;
-
-    @FXML
-    private TextField email;
 
     @FXML
     private TextField firstName;
@@ -92,7 +85,6 @@ public class EditParticipantCtrl implements Translatable {
     public void translate(TranslationSupplier translationSupplier) {
         if (translationSupplier == null) return;
         Map<Control, String> labels = new HashMap<>();
-        labels.put(this.email, "Email");
         labels.put(this.firstName, "FirstName");
         labels.put(this.lastName, "LastName");
         labels.put(this.editParticipantLabel, "EditAParticipant");
@@ -100,7 +92,6 @@ public class EditParticipantCtrl implements Translatable {
         labels.put(this.abortEditButton, "Cancel");
         labels.put(this.participantFirstNameLabel, "ParticipantFirstName");
         labels.put(this.participantLastNameLabel, "ParticipantLastName");
-        labels.put(this.participantEmailLabel, "ParticipantEmail");
         labels.put(this.participantIBANLabel, "ParticipantIBAN");
         labels.put(this.participantBICLabel, "ParticipantBIC");
         labels.forEach((key, val) -> {
