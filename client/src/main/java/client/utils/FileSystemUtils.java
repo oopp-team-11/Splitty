@@ -18,6 +18,10 @@ import java.util.UUID;
  * Client utility class for file handling
  */
 public class FileSystemUtils {
+    /**
+     * Constructor for FileSystemUtils
+     * @param translationSupplier translation supplier
+     */
     public FileSystemUtils(TranslationSupplier translationSupplier) {
         this.translationSupplier = translationSupplier;
     }
