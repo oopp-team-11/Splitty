@@ -197,7 +197,10 @@ public class MainCtrl {
         this.adminDataHandler = adminDataHandler;
     }
 
-
+    /**
+     * switches to detailed expense scene
+     * @param expense
+     */
     public void showDetailedExpense(Expense expense) {
         primaryStage.setTitle("Detailed Expense");
         primaryStage.setScene(detailedExpenseScene);

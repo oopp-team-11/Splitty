@@ -6,12 +6,16 @@ import com.google.inject.Inject;
 import commons.Expense;
 import commons.Involved;
 import commons.Participant;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * detailed expense controller
+ */
 public class DetailedExpenseCtrl implements Translatable {
 
     // Labels that corresponds to the data
@@ -34,7 +38,14 @@ public class DetailedExpenseCtrl implements Translatable {
     private Label bankingDetails;
 
     @FXML
-    private ListView<String> involvedList;
+    private TableView<Involved> involvedTableView;
+
+    @FXML
+    private TableColumn<Involved, String> participantNameColumn;
+
+    @FXML
+    private TableColumn<Involved, CheckBox> isSettledColumn;
+
 
     // Labels that corresponds to the "namings" of the data
 
@@ -97,6 +108,11 @@ public class DetailedExpenseCtrl implements Translatable {
         return participant.getFirstName() + " " + participant.getLastName();
     }
 
+    /**
+     * helps to retrieve banking details
+     * @param participant
+     * @return string
+     */
     public static String participantToBankingDetails(Participant participant) {
         return "IBAN: " + participant.getIban() + "\n" +
                 "BIC: " + participant.getBic();
@@ -114,11 +130,14 @@ public class DetailedExpenseCtrl implements Translatable {
         amountOwed.setText(Double.toString(expense.getAmountOwed()));
         paidBy.setText(participantToString(expense.getPaidBy()));
         bankingDetails.setText(participantToBankingDetails(expense.getPaidBy()));
-        involvedList.getItems().clear();
-        involvedList.getItems().addAll(expense.getInvolveds()
-                .stream()
-                .map(inv -> participantToString(inv.getParticipant()))
-                .toList());
+        involvedTableView.getItems().clear();
+        participantNameColumn.setCellValueFactory(obj
+                -> new SimpleStringProperty(participantToString(obj.getValue().getParticipant())));
+//        participantNameColumn.setCellValueFactory(obj
+//                -> {
+//            var checkBox = new CheckBoxTableCell<>();
+//            checkBox.
+//        });
     }
 
     @Override
