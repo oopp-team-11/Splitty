@@ -1,14 +1,11 @@
 package client.scenes;
 
 import client.interfaces.Translatable;
-import client.utils.FileSystemUtils;
-import client.utils.ServerUtils;
 import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
-import commons.Event;
-import commons.Expense;
-import commons.Participant;
-import commons.ParticipantDisplay;
+import commons.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -18,7 +15,9 @@ import javafx.util.StringConverter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,11 +49,11 @@ public class AddExpenseCtrl implements Translatable {
     @FXML
     private DatePicker expenseDatePicker;
     @FXML
-    private ListView<Participant> involvedListView;
-    private MainCtrl mainCtrl;
-    private FileSystemUtils fileSystemUtils;
-    private ServerUtils serverUtils;
-    private Event event;
+    private ListView<ParticipantDisplay> involvedListView;
+    @FXML
+    ObservableList<BooleanProperty> selectedStates;
+    private ArrayList<ParticipantDisplay> selectedParticipants;
+    private final MainCtrl mainCtrl;
 
     /***
      * constructor with injection
@@ -63,15 +62,12 @@ public class AddExpenseCtrl implements Translatable {
     @Inject
     public AddExpenseCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
-        this.fileSystemUtils = new FileSystemUtils();
-        this.serverUtils = new ServerUtils();
     }
 
     /**
      * Setter for fields
      */
     public void setFields() {
-        this.event = mainCtrl.getDataHandler().getEvent();
         var participantList = mainCtrl.getDataHandler().getParticipants();
 
         ObservableList<ParticipantDisplay> participants = FXCollections.observableArrayList(
@@ -81,6 +77,15 @@ public class AddExpenseCtrl implements Translatable {
         expenseAmount.clear();
         setCustomConverter();
         expenseDatePicker.setValue(LocalDate.now());
+        selectedParticipants = new ArrayList<>();
+        selectedStates = FXCollections.observableArrayList();
+        for (int it = 0; it < participants.size(); it++) {
+            selectedStates.add(new SimpleBooleanProperty(false));
+        }
+        involvedListView.setCellFactory(this::involvedCellFactory);
+        ObservableList<ParticipantDisplay> involvedParticipants = FXCollections.observableArrayList(participants);
+        involvedParticipants.addFirst(new ParticipantDisplay(new Participant()));
+        involvedListView.setItems(involvedParticipants);
     }
 
     /**
@@ -88,7 +93,7 @@ public class AddExpenseCtrl implements Translatable {
      */
     private void setCustomConverter() {
         final StringConverter<LocalDate> defaultConverter = expenseDatePicker.getConverter();
-        expenseDatePicker.setConverter(new StringConverter<LocalDate>() {
+        expenseDatePicker.setConverter(new StringConverter<>() {
             @Override public String toString(LocalDate value) {
                 return defaultConverter.toString(value);
             }
@@ -101,6 +106,64 @@ public class AddExpenseCtrl implements Translatable {
                 }
             }
         });
+    }
+
+    /**
+     * Creates cells for the involvedListView
+     *
+     * @param involvedListView provided listView
+     * @return returns a ListCell
+     */
+    private ListCell<ParticipantDisplay> involvedCellFactory(ListView<ParticipantDisplay> involvedListView) {
+        return new ListCell<>() {
+            @Override
+            protected void updateItem(ParticipantDisplay participant, boolean empty) {
+                super.updateItem(participant, empty);
+                if (empty || participant == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else if (getIndex() == 0) {
+                    setGraphic(selectAllCheckBox());
+                } else {
+                    setGraphic(participantCheckBox(participant, getIndex()));
+                }
+            }
+        };
+    }
+
+    private CheckBox participantCheckBox(ParticipantDisplay participant, int index) {
+        CheckBox checkBox = new CheckBox(participant.toString());
+        checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue && !selectedParticipants.contains(participant))
+                selectedParticipants.add(participant);
+            else if(!newValue)
+                selectedParticipants.remove(participant);
+        });
+        checkBox.selectedProperty().bindBidirectional(selectedStates.get(index - 1));
+        return checkBox;
+    }
+
+    /**
+     * Creates a new selectAll checkBox
+     * @return returns a selectAll checkBox
+     */
+    private CheckBox selectAllCheckBox() {
+        //TODO: Decide what to do with this text in terms of translation
+        CheckBox checkBox = new CheckBox("Select all");
+        checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                for (BooleanProperty selected : selectedStates) {
+                    if (!selected.getValue())
+                        selected.setValue(true);
+                }
+            }
+            else {
+                for (BooleanProperty selected : selectedStates)
+                    if (selected.getValue())
+                        selected.setValue(false);
+            }
+        });
+        return checkBox;
     }
 
     /**
@@ -144,10 +207,14 @@ public class AddExpenseCtrl implements Translatable {
             alert.setContentText("Are you sure you want to add this expense?");
             var result = alert.showAndWait();
             if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
-                // TODO: add data when you will adjust the scene (see two nulls in the constructor below)
+                List<Involved> chosenInvolved = new InvolvedList();
                 Expense newExpense = new Expense(expensePaidBy.getValue().getParticipant(),
                         expenseTitle.getText(),
-                        Double.parseDouble(expenseAmount.getText()), null, null);
+                        Double.parseDouble(expenseAmount.getText()), expenseDatePicker.getValue(), chosenInvolved);
+                for (ParticipantDisplay participant : selectedParticipants) {
+                    chosenInvolved.add(new Involved(false, newExpense, participant.getParticipant()));
+                }
+
                 mainCtrl.getSessionHandler().sendExpense(newExpense, "create");
             }
         }
@@ -172,6 +239,8 @@ public class AddExpenseCtrl implements Translatable {
         labels.put(this.whoPaidLabel, "WhoPaidLabel");
         labels.put(this.whatForLabel, "WhatForLabel");
         labels.put(this.howMuchLabel, "HowMuchLabel");
+        labels.put(this.dateOfExpenseLabel, "DateOfExpenseLabel");
+        labels.put(this.whoIsInvolvedLabel, "WhoIsInvolvedLabel");
         labels.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;

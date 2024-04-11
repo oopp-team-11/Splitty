@@ -127,7 +127,12 @@ public class ExpenseController {
         Participant paidBy = participantRepository.getReferenceById(receivedExpense.getPaidById());
 
         Expense expense = new Expense(paidBy, receivedExpense.getTitle(), receivedExpense.getAmount(),
-                receivedExpense.getDate(), receivedExpense.getInvolveds()); //getInvolveds() might need a check
+                receivedExpense.getDate(), receivedExpense.getInvolveds());
+
+        //hibernate and jackson behave funky when used together
+        for (Involved involved : receivedExpense.getInvolveds()) {
+            involved.setExpense(expense);
+        }
 
         eventLastActivityService.updateLastActivity(receivedExpense.getInvitationCode());
 

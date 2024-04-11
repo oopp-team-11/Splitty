@@ -41,6 +41,7 @@
             <Label fx:id="whatForLabel" alignment="CENTER" prefHeight="28.0" prefWidth="410.0" text="What for?" GridPane.rowIndex="3" />
             <Label fx:id="howMuchLabel" alignment="CENTER" prefHeight="25.0" prefWidth="410.0" text="How Much?" GridPane.rowIndex="4" />
             <Label fx:id="dateOfExpenseLabel" alignment="CENTER" layoutX="25.0" layoutY="360.0" prefHeight="30.0" prefWidth="410.0" text="Date of the expense" GridPane.rowIndex="2" />
+            <Label fx:id="whoIsInvolvedLabel" alignment="CENTER" layoutX="25.0" layoutY="360.0" prefHeight="28.0" prefWidth="410.0" text="Who is involved?" GridPane.rowIndex="5" GridPane.rowSpan="2" />
             <Button fx:id="createBtn" mnemonicParsing="false" onAction="#addExpense" prefHeight="821.0" prefWidth="953.0" style="-fx-base: #49873a;" text="Add" GridPane.columnIndex="1" GridPane.rowIndex="7">
                <GridPane.margin>
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
@@ -50,10 +51,9 @@
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </GridPane.margin></Button>
             <ChoiceBox fx:id="expensePaidBy" prefHeight="26.0" prefWidth="1206.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <DatePicker fx:id="expenseDatePicker" prefHeight="26.0" prefWidth="1206.0" promptText="Example: 31/03/2024" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextField fx:id="expenseTitle" promptText="Example: Groceries" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <TextField fx:id="expenseAmount" promptText="Amount of money" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <DatePicker fx:id="expenseDatePicker" prefHeight="26.0" prefWidth="1206.0" promptText="Example: 31/03/2024" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label fx:id="whoIsInvolvedLabel" alignment="CENTER" layoutX="25.0" layoutY="360.0" prefHeight="28.0" prefWidth="410.0" text="Who is involved?" GridPane.rowIndex="5" GridPane.rowSpan="2" />
             <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="19.0" prefWidth="410.0" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.rowSpan="2">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">

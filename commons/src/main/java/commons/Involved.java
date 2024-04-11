@@ -23,7 +23,6 @@ public class Involved {
     @JoinColumn(name = "EXPENSE_ID")
     private Expense expense;
 
-    @JsonBackReference(value = "ParticipantToInvolved")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PARTICIPANT_ID")
     private Participant participant;
