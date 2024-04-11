@@ -256,7 +256,9 @@ public class ExpenseControllerTest {
         try {
             setId(involved, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        expense.setInvolveds(List.of(involved));
+        List<Involved> involveds = new InvolvedList();
+        involveds.add(involved);
+        expense.setInvolveds(involveds);
         expense = expenseRepository.save(expense);
         expense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(), expense.getPaidById(),
                 expense.getInvitationCode(), expense.getDate(), expense.getInvolveds());
@@ -269,7 +271,10 @@ public class ExpenseControllerTest {
         try {
             setId(involved2, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        expense.setInvolveds(List.of(involved, involved2));
+        List<Involved> involveds2 = new InvolvedList();
+        involveds2.add(involved);
+        involveds2.add(involved2);
+        expense.setInvolveds(involveds2);
 
         assertEquals(StatusEntity.StatusCode.OK, expenseController.updateExpense(expense).getStatusCode());
 
@@ -281,10 +286,10 @@ public class ExpenseControllerTest {
         assertEquals(expense.getAmount(), sentExpense.getAmount());
         assertEquals(expense.getInvitationCode(), sentExpense.getInvitationCode());
         assertEquals(expense.getPaidById(), sentExpense.getPaidById());
-        List<Involved> involveds = expense.getInvolveds();
-        for(Involved thisInvolved : involveds)
+        List<Involved> receivedInvolveds = expense.getInvolveds();
+        for(Involved thisInvolved : receivedInvolveds)
             thisInvolved.setExpenseId(expense.getId());
-        assertEquals(involveds, sentExpense.getInvolveds());
+        assertEquals(receivedInvolveds, sentExpense.getInvolveds());
         assertEquals(expense.getDate(), sentExpense.getDate());
         assertEquals(expense.getAmount()/expense.getInvolveds().size(),sentExpense.getAmountOwed());
         assertFalse(sentExpense.getInvolveds().getFirst().getIsSettled());
@@ -297,10 +302,14 @@ public class ExpenseControllerTest {
                 "surname", null, null, event.getId()));
         Expense expense = new Expense(participant, "expense", 21.37, LocalDate.now(), null);
         Involved involved = new Involved(true, expense, participant);
-        expense.setInvolveds(List.of(involved));
+        List<Involved> involveds = new InvolvedList();
+        involveds.add(involved);
+        expense.setInvolveds(involveds);
         expense = expenseRepository.save(expense);
+        List<Involved> involveds1 = new InvolvedList();
+        involveds1.add(involved);
         expense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(), expense.getPaidById(),
-                expense.getInvitationCode(), expense.getDate(), expense.getInvolveds());
+                expense.getInvitationCode(), expense.getDate(), involveds1);
         expense.setTitle("NewTitle");
         expense.setPaidById(participant.getId());
 
@@ -314,10 +323,10 @@ public class ExpenseControllerTest {
         assertEquals(expense.getAmount(), sentExpense.getAmount());
         assertEquals(expense.getInvitationCode(), sentExpense.getInvitationCode());
         assertEquals(expense.getPaidById(), sentExpense.getPaidById());
-        List<Involved> involveds = expense.getInvolveds();
-        for(Involved thisInvolved : involveds)
+        List<Involved> receivedInvolveds = expense.getInvolveds();
+        for(Involved thisInvolved : receivedInvolveds)
             thisInvolved.setExpenseId(sentExpense.getId());
-        assertEquals(involveds, sentExpense.getInvolveds());
+        assertEquals(receivedInvolveds, sentExpense.getInvolveds());
         assertEquals(expense.getAmount(),sentExpense.getAmountOwed());
         assertEquals(expense.getDate(), sentExpense.getDate());
         assertEquals(expense.getAmount() / expense.getInvolveds().size(),sentExpense.getAmountOwed());
