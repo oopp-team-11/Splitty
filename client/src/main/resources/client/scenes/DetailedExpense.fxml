@@ -22,25 +22,25 @@
             <ColumnConstraints percentWidth="45.0" />
             <ColumnConstraints percentWidth="45.0" />
         </columnConstraints>
-        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Title" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <Label fx:id="titleNaming" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Title" GridPane.columnIndex="0" GridPane.rowIndex="0" />
         <Label fx:id="title" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Amount" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Label fx:id="amountNaming" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Amount" GridPane.columnIndex="0" GridPane.rowIndex="1" />
         <Label fx:id="amount" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Date" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <Label fx:id="dateNaming" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Date" GridPane.columnIndex="0" GridPane.rowIndex="2" />
         <Label fx:id="date" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Share per person" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+        <Label fx:id="amountOwedNaming" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Share per person" GridPane.columnIndex="0" GridPane.rowIndex="3" />
         <Label fx:id="amountOwed" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Paid by" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+        <Label fx:id="paidByNaming" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Paid by" GridPane.columnIndex="0" GridPane.rowIndex="4" />
         <Label fx:id="paidBy" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
-        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Banking Details" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+        <Label fx:id="bankingDetailsNaming" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Banking Details" GridPane.columnIndex="0" GridPane.rowIndex="5" />
         <Label fx:id="bankingDetails" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 
-        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="List of Involved" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+        <Label fx:id="involvedListNaming" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="List of Involved" GridPane.columnIndex="0" GridPane.rowIndex="6" />
         <ListView fx:id="involvedList" prefHeight="400" prefWidth="300" GridPane.columnIndex="1" GridPane.rowIndex="6">
             <GridPane.margin>
                 <Insets bottom="40.0" top="40.0" />

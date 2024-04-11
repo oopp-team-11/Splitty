@@ -202,7 +202,7 @@ public class MainCtrl {
         primaryStage.setTitle("Detailed Expense");
         primaryStage.setScene(detailedExpenseScene);
         primaryStage.setResizable(false);
-        detailedExpenseCtrl.setExpense(expense);
+        detailedExpenseCtrl.setUpOrRefreshData(expense);
         detailedExpenseCtrl.translate(this.translationSupplier);
     }
 
