@@ -94,6 +94,10 @@ public class AddExpenseCtrl implements Translatable {
      * Sets custom string converter for datePicker to handle parsing exceptions
      */
     private void setCustomConverter() {
+        setCustomConverter(expenseDatePicker);
+    }
+
+    static void setCustomConverter(DatePicker expenseDatePicker) {
         final StringConverter<LocalDate> defaultConverter = expenseDatePicker.getConverter();
         expenseDatePicker.setConverter(new StringConverter<>() {
             @Override public String toString(LocalDate value) {
@@ -177,6 +181,11 @@ public class AddExpenseCtrl implements Translatable {
      * @return returns whether addExpense is a bad request
      */
     private boolean checkBadRequest() {
+        return checkBadRequest(expensePaidBy, expenseTitle, expenseAmount, expenseDatePicker);
+    }
+
+    static boolean checkBadRequest(ChoiceBox<ParticipantDisplay> expensePaidBy, TextField expenseTitle,
+                                   TextField expenseAmount, DatePicker expenseDatePicker) {
         if(expensePaidBy.getValue() == null){
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
@@ -236,7 +245,7 @@ public class AddExpenseCtrl implements Translatable {
         if (chosenInvolved.isEmpty()) {
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("You have not selected any involved.");
+            alert.setContentText("You have not selected any involved participants.");
             alert.showAndWait();
             return;
         }
