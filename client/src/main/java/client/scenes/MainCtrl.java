@@ -157,6 +157,7 @@ public class MainCtrl {
         addShortcutsParticipantScenes();
         addShortcutsAdminPanel();
         addShortcutsLanguage();
+        addShortcutsStartScreen();
     }
 
     private void addShortcutsEventOverviewNavigation() {
@@ -328,6 +329,30 @@ public class MainCtrl {
                 KeyEvent.KEY_PRESSED, event -> {
                     if (event.getCode() == KeyCode.L) {
                         this.languageSwitchButton.fire();
+                    }
+                });
+    }
+
+    private void addShortcutsStartScreen()
+    {
+        this.startScreenScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.isControlDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
+                        this.startScreenCtrl.setJoinInvitationCode(this.startScreenCtrl.getEventTable().getItems()
+                                .get(event.getCode().getCode() - 48).getId().toString());
+                        this.startScreenCtrl.onJoin();
+                    }
+                });
+        this.startScreenScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.C) {
+                        this.startScreenCtrl.onCreate();
+                    }
+                });
+        this.startScreenScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.J) {
+                        this.startScreenCtrl.onJoin();
                     }
                 });
     }
