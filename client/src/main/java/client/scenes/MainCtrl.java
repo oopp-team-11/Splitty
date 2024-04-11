@@ -184,18 +184,14 @@ public class MainCtrl {
                 });
         this.eventOverviewScene.addEventHandler(
                 KeyEvent.KEY_PRESSED, event -> {
-                    System.out.println(event.getCode().getCode());
                     if (event.isControlDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
-                        System.out.println("KEY: " + event.getCode().getCode());
                         this.eventOverviewCtrl.editColumn.getCellObservableValue(event.getCode().getCode() - 48)
                                 .getValue().fire();
                     }
                 });
         this.eventOverviewScene.addEventHandler(
                 KeyEvent.KEY_PRESSED, event -> {
-                    System.out.println(event.getCode().getCode());
                     if (event.isAltDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
-                        System.out.println("KEY: " + event.getCode().getCode());
                         this.eventOverviewCtrl.deleteColumn.getCellObservableValue(event.getCode().getCode() - 48)
                                 .getValue().fire();
                     }
@@ -217,6 +213,98 @@ public class MainCtrl {
                         System.out.println("KEY: " + event.getCode().getCode());
                         this.eventOverviewCtrl.deleteColumn1.getCellObservableValue(event.getCode().getCode() - 48)
                                 .getValue().fire();
+                    }
+                });
+        this.addExpenseScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        this.addExpenseCtrl.getCancelBtn().fire();
+                    }
+        });
+        this.addExpenseScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        this.addExpenseCtrl.getCreateBtn().fire();
+                    }
+                });
+        this.editExpenseScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        this.editExpenseCtrl.getCancelBtn().fire();
+                    }
+                });
+        this.editExpenseScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        this.editExpenseCtrl.getCreateBtn().fire();
+                    }
+                });
+        this.editParticipantScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        this.editParticipantCtrl.abortEditButton.fire();
+                    }
+                });
+        this.editParticipantScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        this.editParticipantCtrl.editParticipantButton.fire();
+                    }
+                });
+        this.createParticipantScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        this.createParticipantCtrl.cancelBtn.fire();
+                    }
+                });
+        this.createParticipantScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        this.createParticipantCtrl.createBtn.fire();
+                    }
+                });
+        this.adminPanelScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        this.adminPanelCtrl.goToStartScreen();
+                    }
+                });
+        this.adminPanelScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.isControlDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
+                        this.adminPanelCtrl.getJsonDump().getCellObservableValue(event.getCode().getCode() - 48)
+                                .getValue().fire();
+                    }
+                });
+        this.adminPanelScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.isAltDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
+                        this.adminPanelCtrl.getDeleteEvent().getCellObservableValue(event.getCode().getCode() - 48)
+                                .getValue().fire();
+                    }
+                });
+        this.adminPanelScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.I) {
+                        this.adminPanelCtrl.getJsonImport().fire();
+                    }
+                });
+        this.adminPanelScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.L) {
+                        this.languageSwitchButton.fire();
+                    }
+                });
+        this.startScreenScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.L) {
+                        this.languageSwitchButton.fire();
+                    }
+                });
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.L) {
+                        this.languageSwitchButton.fire();
                     }
                 });
     }

@@ -350,8 +350,4 @@ public class EventOverviewCtrl implements Translatable {
     public Button getAddExpenseBtn() {
         return addExpenseBtn;
     }
-
-    public Button getEditTitle() {
-        return editTitle;
-    }
 }

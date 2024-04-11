@@ -152,4 +152,12 @@ public class AddExpenseCtrl implements Translatable {
                 ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
         });
     }
+
+    public Button getCreateBtn() {
+        return createBtn;
+    }
+
+    public Button getCancelBtn() {
+        return cancelBtn;
+    }
 }

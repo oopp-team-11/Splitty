@@ -211,4 +211,16 @@ public class AdminPanelCtrl implements Translatable {
             key.setText(translation.replaceAll("\"", ""));
         });
     }
+
+    public TableColumn<Event, Button> getDeleteEvent() {
+        return deleteEvent;
+    }
+
+    public TableColumn<Event, Button> getJsonDump() {
+        return jsonDump;
+    }
+
+    public Button getJsonImport() {
+        return jsonImport;
+    }
 }
