@@ -19,6 +19,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
+import javafx.util.StringConverter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,6 +64,10 @@ public class EventOverviewCtrl implements Translatable {
     public Label goToStartScreenLabel;
     @FXML
     public Label editTitleLabel;
+    @FXML
+    public Label totalSumExpenses;
+    @FXML
+    public ChoiceBox<Participant> userChoiceBox;
     @FXML
     private Label participantsLabel;
     @FXML
@@ -124,6 +129,33 @@ public class EventOverviewCtrl implements Translatable {
             });
             return new SimpleObjectProperty<>(button);
         });
+        participantsList.setRowFactory(participant -> {
+            TableRow<Participant> row = new TableRow<>();
+            row.setOnMouseClicked(triggeredEvent -> {
+                if(triggeredEvent.getClickCount() == 2 && !row.isEmpty()){
+                    Participant rowDate = row.getItem();
+                    Dialog<String> popup = new Dialog<>();
+                    popup.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                    popup.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("Participants")
+                            .replaceAll("\"", ""));
+                    popup.setContentText(
+                            mainCtrl.getTranslationSupplier().getTranslation("ParticipantFirstName")
+                                    .replaceAll("\"", "")+
+                                    rowDate.getFirstName() + "\n" +
+                            mainCtrl.getTranslationSupplier().getTranslation("ParticipantLastName")
+                                    .replaceAll("\"", "") +
+                            rowDate.getLastName() + "\n" +
+                            mainCtrl.getTranslationSupplier().getTranslation("ParticipantIBAN")
+                                    .replaceAll("\"", "")+
+                            rowDate.getIban() + "\n" +
+                            mainCtrl.getTranslationSupplier().getTranslation("ParticipantBIC")
+                                    .replaceAll("\"", "")+
+                            rowDate.getBic());
+                    popup.showAndWait();
+                }
+            });
+            return row;
+        });
         participantsList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
 
         titleColumn.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getTitle()));
@@ -170,6 +202,29 @@ public class EventOverviewCtrl implements Translatable {
 
         languageSwitchPlaceHolder.getChildren().clear();
         languageSwitchPlaceHolder.getChildren().add(mainCtrl.getLanguageSwitchButton());
+
+        userChoiceBox.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
+        userChoiceBox.setConverter(new StringConverter<Participant>() {
+            @Override
+            public String toString(Participant participant) {
+                if(participant == null) return null;
+                return participant.getFirstName() + " " + participant.getLastName();
+            }
+
+            @Override
+            public Participant fromString(String s) {
+                String[] names = s.split(" ");
+
+                return mainCtrl.getDataHandler().getParticipants().stream().map(participant -> {
+                    if(names[0].equals(participant.getFirstName())
+                            && names[1].equals(participant.getLastName())){
+                        return participant;
+                    }
+                    return null;
+                }).toList().getFirst();
+            }
+        });
+        userChoiceBox.setValue(null);
     }
 
     /**
