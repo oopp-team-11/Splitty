@@ -25,7 +25,6 @@ import commons.Expense;
 import commons.Participant;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -152,6 +151,15 @@ public class MainCtrl {
     }
 
     private void assignKeyboardShortcuts() {
+        addShortcutsEventOverviewNavigation();
+        addShortcutsEventOverviewColumns();
+        addShortcutsExpenseScenes();
+        addShortcutsParticipantScenes();
+        addShortcutsAdminPanel();
+        addShortcutsLanguage();
+    }
+
+    private void addShortcutsEventOverviewNavigation() {
         this.eventOverviewScene.addEventHandler(
                 KeyEvent.KEY_PRESSED, event -> {
                     if (event.getCode() == KeyCode.P) {
@@ -182,6 +190,9 @@ public class MainCtrl {
                         this.eventOverviewCtrl.goToHome();
                     }
                 });
+    }
+
+    private void addShortcutsEventOverviewColumns() {
         this.eventOverviewScene.addEventHandler(
                 KeyEvent.KEY_PRESSED, event -> {
                     if (event.isControlDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
@@ -215,12 +226,15 @@ public class MainCtrl {
                                 .getValue().fire();
                     }
                 });
+    }
+
+    private void addShortcutsExpenseScenes() {
         this.addExpenseScene.addEventHandler(
                 KeyEvent.KEY_PRESSED, event -> {
                     if (event.getCode() == KeyCode.ESCAPE) {
                         this.addExpenseCtrl.getCancelBtn().fire();
                     }
-        });
+                });
         this.addExpenseScene.addEventHandler(
                 KeyEvent.KEY_PRESSED, event -> {
                     if (event.getCode() == KeyCode.ENTER) {
@@ -239,6 +253,9 @@ public class MainCtrl {
                         this.editExpenseCtrl.getCreateBtn().fire();
                     }
                 });
+    }
+
+    private void addShortcutsParticipantScenes() {
         this.editParticipantScene.addEventHandler(
                 KeyEvent.KEY_PRESSED, event -> {
                     if (event.getCode() == KeyCode.ESCAPE) {
@@ -263,6 +280,9 @@ public class MainCtrl {
                         this.createParticipantCtrl.createBtn.fire();
                     }
                 });
+    }
+
+    private void addShortcutsAdminPanel() {
         this.adminPanelScene.addEventHandler(
                 KeyEvent.KEY_PRESSED, event -> {
                     if (event.getCode() == KeyCode.ESCAPE) {
@@ -289,6 +309,9 @@ public class MainCtrl {
                         this.adminPanelCtrl.getJsonImport().fire();
                     }
                 });
+    }
+
+    private void addShortcutsLanguage() {
         this.adminPanelScene.addEventHandler(
                 KeyEvent.KEY_PRESSED, event -> {
                     if (event.getCode() == KeyCode.L) {

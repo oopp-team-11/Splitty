@@ -153,10 +153,18 @@ public class AddExpenseCtrl implements Translatable {
         });
     }
 
+    /**
+     * Getter for create button
+     * @return create button
+     */
     public Button getCreateBtn() {
         return createBtn;
     }
 
+    /**
+     * Getter for cancel button
+     * @return cancel button
+     */
     public Button getCancelBtn() {
         return cancelBtn;
     }

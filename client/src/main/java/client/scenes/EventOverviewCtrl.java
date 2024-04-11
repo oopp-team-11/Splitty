@@ -168,6 +168,9 @@ public class EventOverviewCtrl implements Translatable {
         languageSwitchPlaceHolder.getChildren().add(mainCtrl.getLanguageSwitchButton());
     }
 
+    /**
+     * Toggles the option of editing the title
+     */
     public void editTitleClicked() {
         if (editEventTextField.isVisible()){
             stopEditingTitle();
@@ -339,14 +342,26 @@ public class EventOverviewCtrl implements Translatable {
         mainCtrl.showStartScreen();
     }
 
+    /**
+     * Getter for send invites button
+     * @return send invites button
+     */
     public Button getSendInvitesButton() {
         return sendInvitesButton;
     }
 
+    /**
+     * Getter for add participant button
+     * @return add participant button
+     */
     public Button getAddParticipantBtn() {
         return addParticipantBtn;
     }
 
+    /**
+     * Getter for add expense button
+     * @return add expense button
+     */
     public Button getAddExpenseBtn() {
         return addExpenseBtn;
     }
