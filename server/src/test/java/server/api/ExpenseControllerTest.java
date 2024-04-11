@@ -199,17 +199,20 @@ public class ExpenseControllerTest {
     }
 
     @Test
-    void ExpenseDuplicateInvolveds() {
+    void ExpenseInvolvedParticipantNotFound() {
         Participant sentParticipant = new Participant(UUID.randomUUID(), "name", "surname",
                 null, null, UUID.randomUUID());
         sentParticipant = participantRepository.save(sentParticipant);
         Expense expense = new Expense(sentParticipant, "expense", 69, LocalDate.now(), null);
         Involved involved = new Involved(false, expense, sentParticipant);
-        expense.setInvolveds(List.of(involved, involved));
+        Participant participant = new Participant(UUID.randomUUID(), "name", "surname",
+                null, null, UUID.randomUUID());
+        Involved involved2 = new Involved(false, expense, participant);
+        expense.setInvolveds(List.of(involved, involved2));
         try {
             setId(expense, UUID.randomUUID());
         } catch (IllegalAccessException ignored) {}
-        assertEquals(StatusEntity.badRequest(true, "Expense cannot involve duplicates of participants"),
+        assertEquals(StatusEntity.notFound(true, "Involved participant not found"),
                 expenseController.isExpenseBadRequest(expense));
     }
 
@@ -339,8 +342,11 @@ public class ExpenseControllerTest {
 
     @Test
     void ExistingExpenseOK() {
+        Participant participant = new Participant(UUID.randomUUID(), "name", "surname",
+                null, null, UUID.randomUUID());
         Expense expense = new Expense();
-        expense.setInvolveds(List.of(new Involved(false, expense, new Participant())));
+        participant = participantRepository.save(participant);
+        expense.setInvolveds(List.of(new Involved(false, expense, participant)));
         expense = expenseRepository.save(expense);
         assertEquals(StatusEntity.ok((ExpenseList) null), expenseController.isExistingExpenseBadRequest(expense));
     }

@@ -82,16 +82,17 @@ public class ExpenseController {
         return isInvolvedBadRequest(receivedExpense);
     }
 
-    private static StatusEntity isInvolvedBadRequest(Expense receivedExpense) {
+    private StatusEntity isInvolvedBadRequest(Expense receivedExpense) {
         if (receivedExpense.getInvolveds() == null || receivedExpense.getInvolveds().isEmpty())
             return StatusEntity.badRequest(true, "Expense should involve a participant");
-        Set<UUID> involvedSet = new HashSet<>(receivedExpense.getInvolveds().stream().map(Involved::getId).toList());
         Set<UUID> participantSet = new HashSet<>(
                 receivedExpense.getInvolveds().stream().map(Involved::getParticipantId).toList()
         );
-        if(involvedSet.size() != receivedExpense.getInvolveds().size() ||
-                participantSet.size() != receivedExpense.getInvolveds().size())
+        if(participantSet.size() != receivedExpense.getInvolveds().size())
             return StatusEntity.badRequest(true, "Expense cannot involve duplicates of participants");
+        var participantsFound = participantSet.stream().filter(participantRepository::existsById).toList();
+        if(participantsFound.size() != participantSet.size())
+            return StatusEntity.notFound(true, "Involved participant not found");
         return StatusEntity.ok((String) null);
     }
 
