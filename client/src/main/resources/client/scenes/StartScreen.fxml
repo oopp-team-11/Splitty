@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.StartScreenCtrl">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.StartScreenCtrl">
    <children>
       <BorderPane prefHeight="700.0" prefWidth="850.0">
          <left>
@@ -70,6 +81,17 @@
                               <Button id="joinBtn" fx:id="joinBtn" mnemonicParsing="false" onAction="#onJoin" prefHeight="26.0" text="Join" />
                            </children>
                         </HBox>
+                        <Label fx:id="newEventLabel1" prefHeight="44.0" style="-fx-padding: 10;" text="Edit Server URL">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                        </Label>
+                        <HBox prefHeight="40.0" spacing="5.0" style="-fx-padding: 10;">
+                           <children>
+                              <TextField id="joinInvitationCode" fx:id="serverUrlBox" prefHeight="26.0" promptText="Server URL" />
+                              <Button id="joinBtn" fx:id="editServerUrlBtn" mnemonicParsing="false" onAction="#onEditURL" prefHeight="26.0" text="Edit" />
+                           </children>
+                        </HBox>
                         <VBox alignment="BOTTOM_LEFT" VBox.vgrow="ALWAYS">
                            <children>
                               <Label fx:id="adminPanelLabel" style="-fx-padding: 10;" text="Show admin panel">
@@ -108,6 +130,7 @@
                         </TableView>
                      </children>
                   </VBox>
+                  <Label text="Label" />
                </children>
             </HBox>
          </center>
