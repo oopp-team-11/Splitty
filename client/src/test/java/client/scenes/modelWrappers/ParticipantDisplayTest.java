@@ -1,5 +1,6 @@
-package commons;
+package client.scenes.modelWrappers;
 
+import commons.Participant;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

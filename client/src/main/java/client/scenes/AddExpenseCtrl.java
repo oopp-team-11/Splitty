@@ -1,21 +1,25 @@
 package client.scenes;
 
 import client.interfaces.Translatable;
+import client.scenes.modelWrappers.ParticipantDisplay;
 import client.utils.TranslationSupplier;
 import com.google.inject.Inject;
 import commons.*;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.util.StringConverter;
 
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,9 +54,9 @@ public class AddExpenseCtrl implements Translatable {
     private DatePicker expenseDatePicker;
     @FXML
     private ListView<ParticipantDisplay> involvedListView;
-    @FXML
-    ObservableList<BooleanProperty> selectedStates;
-    private ArrayList<ParticipantDisplay> selectedParticipants;
+
+    private ObservableList<ParticipantDisplay> involvedParticipants;
+    private Border selectAllBorder;
     private final MainCtrl mainCtrl;
 
     /***
@@ -77,14 +81,12 @@ public class AddExpenseCtrl implements Translatable {
         expenseAmount.clear();
         setCustomConverter();
         expenseDatePicker.setValue(LocalDate.now());
-        selectedParticipants = new ArrayList<>();
-        selectedStates = FXCollections.observableArrayList();
-        for (int it = 0; it < participants.size(); it++) {
-            selectedStates.add(new SimpleBooleanProperty(false));
-        }
         involvedListView.setCellFactory(this::involvedCellFactory);
-        ObservableList<ParticipantDisplay> involvedParticipants = FXCollections.observableArrayList(participants);
-        involvedParticipants.addFirst(new ParticipantDisplay(new Participant()));
+        involvedParticipants = FXCollections.observableArrayList(participants);
+        involvedParticipants.forEach(participantDisplay -> {
+            participantDisplay.setCheckBox(participantCheckBox(participantDisplay));
+        });
+        involvedParticipants.addFirst(selectAllCheckBox());
         involvedListView.setItems(involvedParticipants);
     }
 
@@ -119,104 +121,131 @@ public class AddExpenseCtrl implements Translatable {
             @Override
             protected void updateItem(ParticipantDisplay participant, boolean empty) {
                 super.updateItem(participant, empty);
+                setBorder(null);
+                setText(null);
                 if (empty || participant == null) {
-                    setText(null);
                     setGraphic(null);
-                } else if (getIndex() == 0) {
-                    setGraphic(selectAllCheckBox());
-                } else {
-                    setGraphic(participantCheckBox(participant, getIndex()));
+                } else if (getIndex() == 0){
+                    setGraphic(participant.getCheckBox());
+                    setBorder(selectAllBorder);
                 }
+                else
+                    setGraphic(participant.getCheckBox());
             }
         };
     }
 
-    private CheckBox participantCheckBox(ParticipantDisplay participant, int index) {
+    /**
+     * Factory for standard checkBox
+     *
+     * @param participant participantDisplay
+     * @return checkBox for participant
+     */
+    private CheckBox participantCheckBox(ParticipantDisplay participant) {
         CheckBox checkBox = new CheckBox(participant.toString());
-        checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue && !selectedParticipants.contains(participant))
-                selectedParticipants.add(participant);
-            else if(!newValue)
-                selectedParticipants.remove(participant);
+        checkBox.setOnAction(event -> {
+            involvedParticipants.getFirst().getCheckBox().setSelected(false);
         });
-        checkBox.selectedProperty().bindBidirectional(selectedStates.get(index - 1));
         return checkBox;
     }
 
     /**
      * Creates a new selectAll checkBox
+     *
      * @return returns a selectAll checkBox
      */
-    private CheckBox selectAllCheckBox() {
-        //TODO: Decide what to do with this text in terms of translation
+    private ParticipantDisplay selectAllCheckBox() {
+        selectAllBorder = new Border(new BorderStroke(Color.BLACK,
+                BorderStrokeStyle.DOTTED,
+                CornerRadii.EMPTY,
+                new BorderWidths(0,0,1,0)));
+        ParticipantDisplay dummyParticipant = new ParticipantDisplay(new Participant());
+        //TODO: Decide what to do with this text in terms of this translation
         CheckBox checkBox = new CheckBox("Select all");
-        checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                for (BooleanProperty selected : selectedStates) {
-                    if (!selected.getValue())
-                        selected.setValue(true);
-                }
-            }
-            else {
-                for (BooleanProperty selected : selectedStates)
-                    if (selected.getValue())
-                        selected.setValue(false);
+        checkBox.setOnAction(event -> {
+            for (int index = 1; index < involvedParticipants.size(); index++) {
+                involvedParticipants.get(index).getCheckBox().setSelected(checkBox.isSelected());
             }
         });
-        return checkBox;
+        dummyParticipant.setCheckBox(checkBox);
+        return dummyParticipant;
+    }
+
+    /**
+     * Simple checks for badRequests on the client side
+     *
+     * @return returns whether addExpense is a bad request
+     */
+    private boolean checkBadRequest() {
+        if(expensePaidBy.getValue() == null){
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Paid By field is empty, please choose a participant.");
+            alert.showAndWait();
+            return true;
+        }
+        if (expenseTitle.getText().isEmpty()) {
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Expense title field is empty, please add a title.");
+            alert.showAndWait();
+            return true;
+        }
+        if (expenseAmount.getText().isEmpty()) {
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Expense amount field is empty, please fill in an amount.");
+            alert.showAndWait();
+            return true;
+        }
+        if (expenseDatePicker.getValue() == null) {
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Expense date field is empty, please fill in a date.");
+            alert.showAndWait();
+            return true;
+        }
+        try{
+            var ignored = Double.parseDouble(expenseAmount.getText());
+        }catch (NumberFormatException e){
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Expense amount field is not a number, please fill in a number. " +
+                    "\n(don't use commas, use periods instead)");
+            alert.showAndWait();
+            return true;
+        }
+        return false;
     }
 
     /**
      * Add expense to event and participant
      */
     public void addExpense() {
-        if(expensePaidBy.getValue() == null){
-            var alert = new Alert(Alert.AlertType.WARNING);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Paid By field is empty, please choose a participant.");
-            alert.showAndWait();
-        } else if (expenseTitle.getText().isEmpty()) {
-            var alert = new Alert(Alert.AlertType.WARNING);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Expense title field is empty, please add a title.");
-            alert.showAndWait();
-        } else if (expenseAmount.getText().isEmpty()) {
-            var alert = new Alert(Alert.AlertType.WARNING);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Expense amount field is empty, please fill in an amount.");
-            alert.showAndWait();
-        } else if (expenseDatePicker.getValue() == null) {
-            var alert = new Alert(Alert.AlertType.WARNING);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Expense date field is empty, please fill in a date.");
-            alert.showAndWait();
-        } else{
-            try{
-                var ignored = Double.parseDouble(expenseAmount.getText());
-            }catch (NumberFormatException e){
-                var alert = new Alert(Alert.AlertType.WARNING);
-                alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText("Expense amount field is not a number, please fill in a number. " +
-                        "\n(don't use commas, use periods instead)");
-                alert.showAndWait();
-                return;
+        if (checkBadRequest())
+            return;
+        List<Involved> chosenInvolved = new InvolvedList();
+        Expense newExpense = new Expense(expensePaidBy.getValue().getParticipant(),
+                expenseTitle.getText(),
+                Double.parseDouble(expenseAmount.getText()), expenseDatePicker.getValue(), chosenInvolved);
+        for (ParticipantDisplay participant : involvedParticipants) {
+            if (participant.getCheckBox().isSelected()) {
+                chosenInvolved.add(new Involved(false, newExpense, participant.getParticipant()));
             }
-
-            var alert = new Alert(Alert.AlertType.CONFIRMATION);
+        }
+        if (chosenInvolved.isEmpty()) {
+            var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Are you sure you want to add this expense?");
-            var result = alert.showAndWait();
-            if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
-                List<Involved> chosenInvolved = new InvolvedList();
-                Expense newExpense = new Expense(expensePaidBy.getValue().getParticipant(),
-                        expenseTitle.getText(),
-                        Double.parseDouble(expenseAmount.getText()), expenseDatePicker.getValue(), chosenInvolved);
-                for (ParticipantDisplay participant : selectedParticipants) {
-                    chosenInvolved.add(new Involved(false, newExpense, participant.getParticipant()));
-                }
-
-                mainCtrl.getSessionHandler().sendExpense(newExpense, "create");
-            }
+            alert.setContentText("You have not selected any involved.");
+            alert.showAndWait();
+            return;
+        }
+        var alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setContentText("Are you sure you want to add this expense?");
+        var result = alert.showAndWait();
+        if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
+            mainCtrl.getSessionHandler().sendExpense(newExpense, "create");
         }
     }
 

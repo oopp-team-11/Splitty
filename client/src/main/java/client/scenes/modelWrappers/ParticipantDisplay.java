@@ -1,10 +1,16 @@
-package commons;
+package client.scenes.modelWrappers;
+
+import commons.Participant;
+import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 
 /**
  * Class to overriding participant toString for displaying in the UI.
  */
 public class ParticipantDisplay {
-    Participant participant;
+    private final Participant participant;
+    @FXML
+    private CheckBox checkBox;
 
     /**
      * Constructor for ParticipantDisplay wrapper
@@ -22,6 +28,24 @@ public class ParticipantDisplay {
      */
     public Participant getParticipant() {
         return participant;
+    }
+
+    /**
+     * Getter for CheckBox
+     *
+     * @return checkBox of Participant
+     */
+    public CheckBox getCheckBox() {
+        return checkBox;
+    }
+
+    /**
+     * Setter for CheckBox
+     *
+     * @param checkBox checkbox for wrapper
+     */
+    public void setCheckBox(CheckBox checkBox) {
+        this.checkBox = checkBox;
     }
 
     @Override
