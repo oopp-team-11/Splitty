@@ -213,4 +213,27 @@ public class AdminPanelCtrl implements Translatable {
             key.setText(translation.replaceAll("\"", ""));
         });
     }
+
+    /**
+     * Getter for columns with delete event button
+     * @return columns with delete event button
+     */
+    public TableColumn<Event, Button> getDeleteEvent() {
+        return deleteEvent;
+    }
+    /**
+     * Getter for columns with json dump button
+     * @return columns with json dump button
+     */
+    public TableColumn<Event, Button> getJsonDump() {
+        return jsonDump;
+    }
+
+    /**
+     * Getter for columns with json import button
+     * @return columns with json import button
+     */
+    public Button getJsonImport() {
+        return jsonImport;
+    }
 }

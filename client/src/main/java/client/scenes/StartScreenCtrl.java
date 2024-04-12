@@ -364,4 +364,28 @@ public class StartScreenCtrl implements Initializable, Translatable {
             }
         });
     }
+
+    /**
+     * Getter for event table
+     * @return event table
+     */
+    public TableView<Event> getEventTable() {
+        return eventTable;
+    }
+
+    /**
+     * Sets invitation code in join invitation code
+     * @param joinInvitationCode invitation code for event we are joining
+     */
+    public void setJoinInvitationCode(String joinInvitationCode) {
+        this.joinInvitationCode.setText(joinInvitationCode);
+    }
+
+    /**
+     * Getter for admin password field
+     * @return admin password field
+     */
+    public PasswordField getAdminPassword() {
+        return adminPassword;
+    }
 }

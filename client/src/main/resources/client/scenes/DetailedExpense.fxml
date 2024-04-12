@@ -3,17 +3,18 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Button?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.layout.RowConstraints?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="client.scenes.DetailedExpenseController"
-            prefWidth="800" prefHeight="900">
+            fx:controller="client.scenes.DetailedExpenseCtrl"
+            prefWidth="850" prefHeight="700">
 
-    <VBox alignment="CENTER" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="40">
+    <VBox alignment="CENTER" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="20">
         <children>
             <Label text="Detailed Expense Page" style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-font-family: 'Arial'; -fx-text-fill: #000000;" />
         </children>
@@ -42,15 +43,26 @@
         <Label fx:id="bankingDetails" GridPane.columnIndex="1" GridPane.rowIndex="5" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';"/>
 
         <Label text="List of Involved:" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';"/>
-        <ListView fx:id="involvedList" GridPane.columnIndex="1" GridPane.rowIndex="6" prefWidth="300" prefHeight="400">
-            <GridPane.margin>
-                <Insets top="40.0" bottom="40.0" />
-            </GridPane.margin>
-        </ListView>
+        <TableView fx:id="involvedTableView" prefHeight="400.0" prefWidth="350.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+            <columns>
+                <TableColumn fx:id="participantNameColumn" prefWidth="222.0" text="Participant" />
+                <TableColumn fx:id="isSettledColumn" prefWidth="137.0" text="Debt Settled?" />
+            </columns>
+        </TableView>
 
-        <Button fx:id="abortBtn" text="Abort" style="-fx-base: #7f1a1a; -fx-pref-width: 250; -fx-pref-height: 100;" GridPane.rowIndex="7" GridPane.columnIndex="0" GridPane.halignment="CENTER">
+        <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints minHeight="120.0" prefHeight="120.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+        <Button fx:id="abortBtn" onAction="#goToEventOverview" text="Abort" style="-fx-base: #7f1a1a; -fx-pref-width: 250; -fx-pref-height: 100;" GridPane.rowIndex="7" GridPane.columnIndex="0" GridPane.halignment="CENTER" >
         </Button>
-        <Button fx:id="editBtn" text="Edit" style="-fx-base: #49873a; -fx-pref-width: 250; -fx-pref-height: 100;" GridPane.rowIndex="7" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+        <Button fx:id="editBtn" onAction="#editBtn" text="Edit" style="-fx-base: #49873a; -fx-pref-width: 250; -fx-pref-height: 100;" GridPane.rowIndex="7" GridPane.columnIndex="1" GridPane.halignment="CENTER">
         </Button>
     </GridPane>
 </AnchorPane>
