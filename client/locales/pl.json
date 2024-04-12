@@ -10,6 +10,12 @@
   "InvitationCode":"Kod zaproszenia",
   "FirstName": "Imię",
   "LastName": "Nazwisko",
+  "Date": "Date (to be translated...)",
+  "Total": "Total: (to be translated...)",
+  "Me": "Me: (to be translated...)",
+  "AllExpenses": "All expenses (to be translated...)",
+  "MyExpenses": "My expenses (to be translated...)",
+  "InvolvingMe": "Involving me (to be translated...)",
   "AddAParticipant": "Dodaj uczestnika",
   "EditAParticipant": "Edytuj uczestnika",
   "Edit": "Edytuj",
@@ -47,5 +53,7 @@
   "Share per person": "Please, add translation",
   "Paid by": "Please, add translation",
   "Banking Details": "Please, add translation",
-  "List of Involved": "Please, add translation"
+  "List of Involved": "Please, add translation",
+  "DateOfExpenseLabel": "Data wydatku",
+  "WhoIsInvolvedLabel": "Kto uczestniczył w wydatku?"
 }

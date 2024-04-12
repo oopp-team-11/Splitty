@@ -43,6 +43,8 @@ public class EventLastActivityService {
 
         tempEvent.setLastActivity(LocalDateTime.now());
         eventRepository.save(tempEvent);
-        template.convertAndSend("/topic/admin/event:update", tempEvent);
+        Event sentEvent = new Event(tempEvent.getId(), tempEvent.getTitle(), tempEvent.getCreationDate(),
+                tempEvent.getLastActivity());
+        template.convertAndSend("/topic/admin/event:update", sentEvent);
     }
 }

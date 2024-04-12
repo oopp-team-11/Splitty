@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AddExpenseCtrl">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AddExpenseCtrl">
    <children>
       <GridPane alignment="CENTER" prefHeight="700.0" prefWidth="850.0">
         <columnConstraints>
@@ -18,6 +27,9 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <Label fx:id="addExpenseLabel" alignment="CENTER" prefHeight="437.0" prefWidth="807.0" text="Add Expense" textAlignment="CENTER">
@@ -25,20 +37,31 @@
                   <Font name="System Bold" size="24.0" />
                </font>
             </Label>
-            <Label fx:id="whoPaidLabel" alignment="CENTER" prefHeight="514.0" prefWidth="794.0" text="Who paid?" textAlignment="CENTER" GridPane.rowIndex="1" />
-            <Label fx:id="whatForLabel" alignment="CENTER" prefHeight="577.0" prefWidth="852.0" text="What for?" GridPane.rowIndex="2" />
-            <Label fx:id="howMuchLabel" alignment="CENTER" prefHeight="636.0" prefWidth="857.0" text="How Much?" GridPane.rowIndex="3" />
-            <Button fx:id="createBtn" mnemonicParsing="false" onAction="#addExpense" prefHeight="821.0" prefWidth="953.0" style="-fx-base: #49873a;" text="Add" GridPane.columnIndex="1" GridPane.rowIndex="4">
+            <Label fx:id="whoPaidLabel" alignment="CENTER" prefHeight="30.0" prefWidth="410.0" text="Who paid?" textAlignment="CENTER" GridPane.rowIndex="1" />
+            <Label fx:id="whatForLabel" alignment="CENTER" prefHeight="28.0" prefWidth="410.0" text="What for?" GridPane.rowIndex="3" />
+            <Label fx:id="howMuchLabel" alignment="CENTER" prefHeight="25.0" prefWidth="410.0" text="How Much?" GridPane.rowIndex="4" />
+            <Label fx:id="dateOfExpenseLabel" alignment="CENTER" layoutX="25.0" layoutY="360.0" prefHeight="30.0" prefWidth="410.0" text="Date of the expense" GridPane.rowIndex="2" />
+            <Label fx:id="whoIsInvolvedLabel" alignment="CENTER" layoutX="25.0" layoutY="360.0" prefHeight="28.0" prefWidth="410.0" text="Who is involved?" GridPane.rowIndex="5" GridPane.rowSpan="2" />
+            <Button fx:id="createBtn" mnemonicParsing="false" onAction="#addExpense" prefHeight="821.0" prefWidth="953.0" style="-fx-base: #49873a;" text="Add" GridPane.columnIndex="1" GridPane.rowIndex="7">
                <GridPane.margin>
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </GridPane.margin></Button>
-            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#abort" prefHeight="751.0" prefWidth="1252.0" style="-fx-base: #7f1a1a;" text="Abort" GridPane.rowIndex="4">
+            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#abort" prefHeight="751.0" prefWidth="1252.0" style="-fx-base: #7f1a1a;" text="Abort" GridPane.rowIndex="7">
                <GridPane.margin>
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </GridPane.margin></Button>
-            <TextField fx:id="expenseTitle" promptText="Example: Groceries" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField fx:id="expenseAmount" promptText="Amount of money" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <ChoiceBox fx:id="expensePaidBy" prefHeight="26.0" prefWidth="1206.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <DatePicker fx:id="expenseDatePicker" prefHeight="26.0" prefWidth="1206.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField fx:id="expenseTitle" promptText="Example: Groceries" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="expenseAmount" promptText="Amount of money" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="19.0" prefWidth="410.0" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.rowSpan="2">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <ListView fx:id="involvedListView" layoutX="104.0" layoutY="-16.0" prefHeight="167.2" prefWidth="408.8" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children></AnchorPane>
+              </content>
+            </ScrollPane>
          </children>
          <padding>
             <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />

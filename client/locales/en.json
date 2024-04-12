@@ -10,6 +10,12 @@
   "InvitationCode":"Invitation code",
   "FirstName": "First name",
   "LastName": "Last name",
+  "Date": "Date",
+  "Total": "Total: ",
+  "Me": "Me: ",
+  "AllExpenses": "All expenses",
+  "MyExpenses": "My expenses",
+  "InvolvingMe": "Involving me",
   "AddAParticipant": "Add Participant",
   "EditAParticipant": "Edit a Participant",
   "Edit": "Edit",
@@ -17,8 +23,8 @@
   "SendInvites": "Send Invites",
   "Participants": "Participants",
   "Expenses": "Expenses",
-  "AddAnExpense": "Add expense",
-  "EditAnExpense": "Edit a expense",
+  "AddAnExpense": "Add an expense",
+  "EditAnExpense": "Edit an expense",
   "Cancel": "Abort",
   "ParticipantFirstName": "Participants first name: ",
   "ParticipantLastName": "Participants last name: ",
@@ -47,5 +53,7 @@
   "Share per person": "Share per person",
   "Paid by": "Paid by",
   "Banking Details": "Banking Details",
-  "List of Involved": "List of Involved"
+  "List of Involved": "List of Involved",
+  "DateOfExpenseLabel": "Date of the expense",
+  "WhoIsInvolvedLabel": "Who is involved?"
 }
