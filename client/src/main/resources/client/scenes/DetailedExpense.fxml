@@ -1,56 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Button?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="client.scenes.DetailedExpenseController"
-            prefWidth="800" prefHeight="900">
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="900" prefWidth="800" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.DetailedExpenseCtrl">
 
     <VBox alignment="CENTER" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="40">
         <children>
-            <Label text="Detailed Expense Page" style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-font-family: 'Arial'; -fx-text-fill: #000000;" />
+            <Label style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-font-family: 'Arial'; -fx-text-fill: #000000;" text="Detailed Expense Page" />
         </children>
     </VBox>
-    <GridPane alignment="CENTER" AnchorPane.topAnchor="100" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+    <GridPane alignment="CENTER" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="100">
         <columnConstraints>
             <ColumnConstraints percentWidth="45.0" />
             <ColumnConstraints percentWidth="45.0" />
         </columnConstraints>
-        <Label text="Title:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';"/>
-        <Label fx:id="title" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';"/>
+        <Label fx:id="titleNaming" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Title" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <Label fx:id="title" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-        <Label text="Amount:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';"/>
-        <Label fx:id="amount" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';"/>
+        <Label fx:id="amountNaming" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Amount" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Label fx:id="amount" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-        <Label text="Date:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';"/>
-        <Label fx:id="date" GridPane.columnIndex="1" GridPane.rowIndex="2" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';"/>
+        <Label fx:id="dateNaming" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Date" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <Label fx:id="date" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-        <Label text="Share per person:" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';"/>
-        <Label fx:id="amountOwed" GridPane.columnIndex="1" GridPane.rowIndex="3" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';"/>
+        <Label fx:id="amountOwedNaming" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Share per person" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+        <Label fx:id="amountOwed" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-        <Label text="Paid by:" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';"/>
-        <Label fx:id="paidBy" GridPane.columnIndex="1" GridPane.rowIndex="4" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';"/>
+        <Label fx:id="paidByNaming" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Paid by" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+        <Label fx:id="paidBy" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
-        <Label text="Banking Details:" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';"/>
-        <Label fx:id="bankingDetails" GridPane.columnIndex="1" GridPane.rowIndex="5" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';"/>
+        <Label fx:id="bankingDetailsNaming" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Banking Details" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+        <Label fx:id="bankingDetails" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+      <TableView fx:id="involvedTableView" prefHeight="437.0" prefWidth="360.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+        <columns>
+          <TableColumn fx:id="participantNameColumn" prefWidth="222.0" text="Participant" />
+          <TableColumn fx:id="isSettledColumn" prefWidth="137.0" text="Debt Settled?" />
+        </columns>
+      </TableView>
 
-        <Label text="List of Involved:" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';"/>
-        <ListView fx:id="involvedList" GridPane.columnIndex="1" GridPane.rowIndex="6" prefWidth="300" prefHeight="400">
-            <GridPane.margin>
-                <Insets top="40.0" bottom="40.0" />
-            </GridPane.margin>
-        </ListView>
+        <Label fx:id="involvedListNaming" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="List of Involved" GridPane.columnIndex="0" GridPane.rowIndex="6" />
 
-        <Button fx:id="abortBtn" text="Abort" style="-fx-base: #7f1a1a; -fx-pref-width: 250; -fx-pref-height: 100;" GridPane.rowIndex="7" GridPane.columnIndex="0" GridPane.halignment="CENTER">
+        <Button fx:id="abortBtn" onAction="#goToEventOverview" style="-fx-base: #7f1a1a; -fx-pref-width: 250; -fx-pref-height: 100;" text="Abort" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="7">
         </Button>
-        <Button fx:id="editBtn" text="Edit" style="-fx-base: #49873a; -fx-pref-width: 250; -fx-pref-height: 100;" GridPane.rowIndex="7" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+        <Button fx:id="editBtn" onAction="#editBtn" style="-fx-base: #49873a; -fx-pref-width: 250; -fx-pref-height: 100;" text="Edit" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7">
         </Button>
+      <rowConstraints>
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+      </rowConstraints>
     </GridPane>
 </AnchorPane>

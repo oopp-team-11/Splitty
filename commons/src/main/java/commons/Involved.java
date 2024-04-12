@@ -1,6 +1,7 @@
 package commons;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -23,7 +24,7 @@ public class Involved {
     @JoinColumn(name = "EXPENSE_ID")
     private Expense expense;
 
-    @JsonBackReference(value = "ParticipantToInvolved")
+    @JsonIgnoreProperties(value = {"event", "madeExpenses"})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PARTICIPANT_ID")
     private Participant participant;

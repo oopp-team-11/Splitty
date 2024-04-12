@@ -79,6 +79,8 @@ public class MainCtrl {
     private AdminPanelCtrl adminPanelCtrl;
     private Scene adminPanelScene;
     private AdminDataHandler adminDataHandler;
+    private DetailedExpenseCtrl detailedExpenseCtrl;
+    private Scene detailedExpenseScene;
 
     private TranslationSupplier translationSupplier;
     private LinkedHashMap<String, Locale> availableLanguages;
@@ -95,6 +97,7 @@ public class MainCtrl {
      * @param editExpense a pair of edit expense controller and javafx edit expense scene
      * @param addExpense a pair of add expense controller and javafx add expense scene
      * @param adminPanel a pair of admin panel controller and javafx admin panel scene
+     * @param detailedExpense
      */
 
     public void initialize(Stage primaryStage, Pair<StartScreenCtrl, Parent> startScreen,
@@ -103,7 +106,8 @@ public class MainCtrl {
                            Pair<EventOverviewCtrl, Parent> eventOverview,
                            Pair<EditExpenseCtrl, Parent> editExpense,
                            Pair<AddExpenseCtrl, Parent> addExpense,
-                           Pair<AdminPanelCtrl, Parent> adminPanel) {
+                           Pair<AdminPanelCtrl, Parent> adminPanel,
+                           Pair<DetailedExpenseCtrl, Parent> detailedExpense) {
         this.primaryStage = primaryStage;
 
         this.startScreenCtrl = startScreen.getKey();
@@ -133,6 +137,9 @@ public class MainCtrl {
         this.languageSwitchButton = new MenuButton();
 
         assignKeyboardShortcuts();
+
+        this.detailedExpenseCtrl = detailedExpense.getKey();
+        this.detailedExpenseScene = new Scene(detailedExpense.getValue());
 
         setAvailableLanguagesFromFiles();
 
@@ -431,6 +438,19 @@ public class MainCtrl {
     public void setAdminDataHandler(AdminDataHandler adminDataHandler) {
         this.adminDataHandler = adminDataHandler;
     }
+
+    /**
+     * switches to detailed expense scene
+     * @param expense
+     */
+    public void showDetailedExpense(Expense expense) {
+        primaryStage.setTitle("Detailed Expense");
+        primaryStage.setScene(detailedExpenseScene);
+        primaryStage.setResizable(false);
+        detailedExpenseCtrl.setUpOrRefreshData(expense);
+        detailedExpenseCtrl.translate(this.translationSupplier);
+    }
+
 
     /**
      * Show start screen

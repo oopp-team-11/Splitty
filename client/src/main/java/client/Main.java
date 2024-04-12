@@ -71,10 +71,11 @@ public class Main extends Application {
         var editExpense = FXML.load(EditExpenseCtrl.class, "client", "scenes", "EditExpense.fxml");
         var addExpense = FXML.load(AddExpenseCtrl.class, "client", "scenes", "AddExpense.fxml");
         var adminPanel = FXML.load(AdminPanelCtrl.class, "client", "scenes", "AdminPanel.fxml");
+        var detailedExpense = FXML.load(DetailedExpenseCtrl.class, "client", "scenes", "DetailedExpense.fxml");
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
         mainCtrl.initialize(primaryStage, startScreen,
                 createParticipant, editParticipant,
                 eventOverview,
-                editExpense, addExpense, adminPanel);
+                editExpense, addExpense, adminPanel, detailedExpense);
     }
 }
