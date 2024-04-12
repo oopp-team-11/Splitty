@@ -1,0 +1,12 @@
+- [ ] Brief introduction
+- [ ] Main Block
+  - [ ] StartScreen
+  - [ ] EventOverview
+  - [ ] Add/Edit participant
+  - [ ] Add/Edit expense
+  - [ ] Extended expense
+  - [ ] Admin panel
+  - [ ] Language switch
+- [ ] Brief side note to live updates using websockets (explain as if your explaining it to yourself from 2 years ago)
+- [ ] Ideas for extending product
+- [ ] Wrap-up
