@@ -235,6 +235,56 @@ public class AddExpenseCtrl implements Translatable {
         if (checkBadRequest()) {
             return;
         }
+        if (!checkExpenseFields()) return;
+        List<Involved> chosenInvolved = new InvolvedList();
+        Expense newExpense = new Expense(expensePaidBy.getValue().getParticipant(),
+                expenseTitle.getText(),
+                Double.parseDouble(expenseAmount.getText()), expenseDatePicker.getValue(), chosenInvolved);
+        for (int index = 1; index < involvedParticipants.size(); index++) {
+            ParticipantDisplay participant = involvedParticipants.get(index);
+            if (participant.getCheckBox().isSelected()) {
+                chosenInvolved.add(new Involved(false, newExpense, participant.getParticipant()));
+            }
+        }
+        if (chosenInvolved.isEmpty()) {
+            handleChosenInvolvedEmpty();
+            return;
+        }
+        var alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setContentText("Are you sure you want to add this expense?");
+        var result = alert.showAndWait();
+        if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
+            mainCtrl.getSessionHandler().sendExpense(newExpense, "create");
+        }
+    }
+
+    private void handleChosenInvolvedEmpty() {
+        var alert = new Alert(Alert.AlertType.WARNING);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setContentText(mainCtrl.getTranslationSupplier()
+                .getTranslation("ConfirmationAddingExpense")
+                .replaceAll("\"", ""));
+        var result = alert.showAndWait();
+        if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
+            Participant person = null;
+            String[] names = expensePaidBy.getValue().toString().split(" ");
+            for (Participant participant : mainCtrl.getDataHandler().getParticipants()){
+                if(Objects.equals(participant.getFirstName(), names[0])
+                        && Objects.equals(participant.getLastName(), names[1])){
+                    person = participant;
+                }
+            }
+            // TODO: add data when you will adjust the scene (see two nulls in the constructor below)
+            Expense sentExpense = new Expense(person,
+                    expenseTitle.getText(),
+                    Double.parseDouble(expenseAmount.getText()), null, null);
+            mainCtrl.getSessionHandler().sendExpense(sentExpense, "create");
+        }
+        return;
+    }
+
+    private boolean checkExpenseFields() {
         if(expensePaidBy.getValue() == null){
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
@@ -266,50 +316,10 @@ public class AddExpenseCtrl implements Translatable {
                         .getTranslation("ExpenseAmountWrongFormatEmpty")
                         .replaceAll("\"", ""));
                 alert.showAndWait();
-                return;
+                return false;
             }
         }
-        List<Involved> chosenInvolved = new InvolvedList();
-        Expense newExpense = new Expense(expensePaidBy.getValue().getParticipant(),
-                expenseTitle.getText(),
-                Double.parseDouble(expenseAmount.getText()), expenseDatePicker.getValue(), chosenInvolved);
-        for (int index = 1; index < involvedParticipants.size(); index++) {
-            ParticipantDisplay participant = involvedParticipants.get(index);
-            if (participant.getCheckBox().isSelected()) {
-                chosenInvolved.add(new Involved(false, newExpense, participant.getParticipant()));
-            }
-        }
-        if (chosenInvolved.isEmpty()) {
-            var alert = new Alert(Alert.AlertType.WARNING);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(mainCtrl.getTranslationSupplier()
-                    .getTranslation("ConfirmationAddingExpense")
-                    .replaceAll("\"", ""));
-            var result = alert.showAndWait();
-            if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
-                Participant person = null;
-                String[] names = expensePaidBy.getValue().toString().split(" ");
-                for (Participant participant : mainCtrl.getDataHandler().getParticipants()){
-                    if(Objects.equals(participant.getFirstName(), names[0])
-                            && Objects.equals(participant.getLastName(), names[1])){
-                        person = participant;
-                    }
-                }
-                // TODO: add data when you will adjust the scene (see two nulls in the constructor below)
-                Expense sentExpense = new Expense(person,
-                        expenseTitle.getText(),
-                        Double.parseDouble(expenseAmount.getText()), null, null);
-                mainCtrl.getSessionHandler().sendExpense(sentExpense, "create");
-            }
-            return;
-        }
-        var alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.initModality(Modality.APPLICATION_MODAL);
-        alert.setContentText("Are you sure you want to add this expense?");
-        var result = alert.showAndWait();
-        if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
-            mainCtrl.getSessionHandler().sendExpense(newExpense, "create");
-        }
+        return true;
     }
 
     /**

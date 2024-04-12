@@ -183,6 +183,35 @@ public class EditExpenseCtrl implements Translatable {
         if (checkBadRequest())
             return;
 
+        if (!checkExpenseFields()) return;
+
+        List<Involved> chosenInvolved = new InvolvedList();
+        Expense newExpense = new Expense(expense.getId(), expenseTitle.getText(),
+                Double.parseDouble(expenseAmount.getText()), expensePaidBy.getValue().getParticipant().getId(),
+                expense.getInvitationCode(), expenseDatePicker.getValue(), chosenInvolved);
+        for (int index = 1; index < involvedParticipants.size(); index++) {
+            ParticipantDisplay participant = involvedParticipants.get(index);
+            if (participant.getCheckBox().isSelected()) {
+                chosenInvolved.add(new Involved(false, newExpense, participant.getParticipant()));
+            }
+        }
+        if (chosenInvolved.isEmpty()) {
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("You have not selected any involved participants.");
+            alert.showAndWait();
+            return;
+        }
+        var alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setContentText("Are you sure you want to edit this expense?");
+        var result = alert.showAndWait();
+        if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
+            mainCtrl.getSessionHandler().sendExpense(newExpense, "update");
+        }
+    }
+
+    private boolean checkExpenseFields() {
         if(expensePaidBy.getValue() == null){
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
@@ -214,7 +243,7 @@ public class EditExpenseCtrl implements Translatable {
                         .getTranslation("ExpenseAmountWrongFormatEmpty")
                         .replaceAll("\"", ""));
                 alert.showAndWait();
-                return;
+                return false;
             }
             var alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.initModality(Modality.APPLICATION_MODAL);
@@ -241,31 +270,7 @@ public class EditExpenseCtrl implements Translatable {
 
             mainCtrl.showEventOverview();
         }
-
-        List<Involved> chosenInvolved = new InvolvedList();
-        Expense newExpense = new Expense(expense.getId(), expenseTitle.getText(),
-                Double.parseDouble(expenseAmount.getText()), expensePaidBy.getValue().getParticipant().getId(),
-                expense.getInvitationCode(), expenseDatePicker.getValue(), chosenInvolved);
-        for (int index = 1; index < involvedParticipants.size(); index++) {
-            ParticipantDisplay participant = involvedParticipants.get(index);
-            if (participant.getCheckBox().isSelected()) {
-                chosenInvolved.add(new Involved(false, newExpense, participant.getParticipant()));
-            }
-        }
-        if (chosenInvolved.isEmpty()) {
-            var alert = new Alert(Alert.AlertType.WARNING);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("You have not selected any involved participants.");
-            alert.showAndWait();
-            return;
-        }
-        var alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.initModality(Modality.APPLICATION_MODAL);
-        alert.setContentText("Are you sure you want to edit this expense?");
-        var result = alert.showAndWait();
-        if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
-            mainCtrl.getSessionHandler().sendExpense(newExpense, "update");
-        }
+        return true;
     }
 
     /**
