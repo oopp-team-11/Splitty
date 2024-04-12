@@ -48,5 +48,7 @@
   "CreationDate": "Data utworzenia",
   "LastActivityDate": "Ostatnia aktywność",
   "DeleteEvent": "Usuń wydarzenie",
-  "JSONDump": "Pobierz JSON"
+  "JSONDump": "Pobierz JSON",
+  "DateOfExpenseLabel": "Data wydatku",
+  "WhoIsInvolvedLabel": "Kto uczestniczył w wydatku?"
 }
