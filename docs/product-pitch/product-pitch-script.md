@@ -46,8 +46,12 @@ to expect from your app
 
 ***
 
-## Brief introduction
-TODO: add brief introduction
+## Brief introduction and talk about core of project
+Hello and welcome to our product pitch about Splitty, the expense splitting app for groups. I, _someone_, will give you today's overview and structure of the pitch.
+We'll first give a short introduction to the app and team. Where after we'll talk about the core of the application, 
+followed by a quick peak into the server communication. Then we'll give you an impression of the application in a demo, where we'll also explain a bit about the app.
+After the demo there is a quick summary of the main usage of the app, and we'll also give some ideas on how to extend the product.
+Then at the end, we'll wrap-up this product pitch on Splitty.
 
 ***
 
