@@ -13,6 +13,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
@@ -247,6 +249,29 @@ public class EventOverviewCtrl implements Translatable {
             tabPaneExpenses.getSelectionModel().selectFirst();
             tabPaneExpenses.getSelectionModel().select(tab);
         });
+
+        var plusIconExpense = new ImageView(new Image("icons/plus.png"));
+        plusIconExpense.setPreserveRatio(true);
+        plusIconExpense.setSmooth(true);
+        plusIconExpense.setFitWidth(16);
+        var plusIconParticipant = new ImageView(new Image("icons/plus.png"));
+        plusIconParticipant.setPreserveRatio(true);
+        plusIconParticipant.setSmooth(true);
+        plusIconParticipant.setFitWidth(16);
+        var userIcon = new ImageView(new Image("icons/user.png"));
+        userIcon.setPreserveRatio(true);
+        userIcon.setSmooth(true);
+        userIcon.setFitWidth(16);
+        var addUserIcon = new ImageView(new Image("icons/add-user.png"));
+        addUserIcon.setPreserveRatio(true);
+        addUserIcon.setSmooth(true);
+        addUserIcon.setFitWidth(16);
+
+
+        addExpenseBtn.setGraphic(plusIconExpense);
+        addParticipantBtn.setGraphic(plusIconParticipant);
+        meLabel.setGraphic(userIcon);
+        sendInvitesButton.setGraphic(addUserIcon);
 
         setTabs();
     }
