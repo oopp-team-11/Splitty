@@ -196,35 +196,43 @@ public class MainCtrl {
     private void addShortcutsEventOverviewColumns() {
         this.eventOverviewScene.addEventHandler(
                 KeyEvent.KEY_PRESSED, event -> {
-                    if (event.isControlDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
-                        this.eventOverviewCtrl.editColumn.getCellObservableValue(event.getCode().getCode() - 48)
-                                .getValue().fire();
+                    if (event.isControlDown() && !event.isShiftDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
+                        if(this.eventOverviewCtrl.editColumn
+                                .getCellObservableValue(event.getCode().getCode() - 48) != null) {
+                            this.eventOverviewCtrl.editColumn.getCellObservableValue(event.getCode().getCode() - 48)
+                                    .getValue().fire();
+                        }
                     }
                 });
         this.eventOverviewScene.addEventHandler(
                 KeyEvent.KEY_PRESSED, event -> {
                     if (event.isAltDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
-                        this.eventOverviewCtrl.deleteColumn.getCellObservableValue(event.getCode().getCode() - 48)
-                                .getValue().fire();
+                        if(this.eventOverviewCtrl.deleteColumn
+                                .getCellObservableValue(event.getCode().getCode() - 48) != null) {
+                            this.eventOverviewCtrl.deleteColumn.getCellObservableValue(event.getCode().getCode() - 48)
+                                    .getValue().fire();
+                        }
                     }
                 });
         this.eventOverviewScene.addEventHandler(
                 KeyEvent.KEY_PRESSED, event -> {
-                    System.out.println(event.getCode().getCode());
                     if (event.isShiftDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
-                        System.out.println("KEY: " + event.getCode().getCode());
-                        this.eventOverviewCtrl.editColumn1.getCellObservableValue(event.getCode().getCode() - 48)
-                                .getValue().fire();
+                        if(this.eventOverviewCtrl.editColumn1
+                                .getCellObservableValue(event.getCode().getCode() - 48) != null) {
+                            this.eventOverviewCtrl.editColumn1.getCellObservableValue(event.getCode().getCode() - 48)
+                                    .getValue().fire();
+                        }
                     }
                 });
         this.eventOverviewScene.addEventHandler(
                 KeyEvent.KEY_PRESSED, event -> {
-                    System.out.println(event.getCode().getCode());
                     if (event.isShiftDown() && event.isControlDown() && event.getCode().getCode() >= 48
                             && event.getCode().getCode() <= 57) {
-                        System.out.println("KEY: " + event.getCode().getCode());
-                        this.eventOverviewCtrl.deleteColumn1.getCellObservableValue(event.getCode().getCode() - 48)
-                                .getValue().fire();
+                        if(this.eventOverviewCtrl.deleteColumn1
+                                .getCellObservableValue(event.getCode().getCode() - 48) != null) {
+                            this.eventOverviewCtrl.deleteColumn1.getCellObservableValue(event.getCode().getCode()-48)
+                                    .getValue().fire();
+                        }
                     }
                 });
     }
@@ -293,15 +301,21 @@ public class MainCtrl {
         this.adminPanelScene.addEventHandler(
                 KeyEvent.KEY_PRESSED, event -> {
                     if (event.isControlDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
-                        this.adminPanelCtrl.getJsonDump().getCellObservableValue(event.getCode().getCode() - 48)
-                                .getValue().fire();
+                        if(this.adminPanelCtrl.getJsonDump()
+                                .getCellObservableValue(event.getCode().getCode() - 48) != null) {
+                            this.adminPanelCtrl.getJsonDump().getCellObservableValue(event.getCode().getCode() - 48)
+                                    .getValue().fire();
+                        }
                     }
                 });
         this.adminPanelScene.addEventHandler(
                 KeyEvent.KEY_PRESSED, event -> {
                     if (event.isAltDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
-                        this.adminPanelCtrl.getDeleteEvent().getCellObservableValue(event.getCode().getCode() - 48)
-                                .getValue().fire();
+                        if(this.adminPanelCtrl.getDeleteEvent()
+                                .getCellObservableValue(event.getCode().getCode() - 48) != null) {
+                            this.adminPanelCtrl.getDeleteEvent().getCellObservableValue(event.getCode().getCode()-48)
+                                    .getValue().fire();
+                        }
                     }
                 });
         this.adminPanelScene.addEventHandler(
@@ -338,9 +352,11 @@ public class MainCtrl {
         this.startScreenScene.addEventHandler(
                 KeyEvent.KEY_PRESSED, event -> {
                     if (event.isControlDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
-                        this.startScreenCtrl.setJoinInvitationCode(this.startScreenCtrl.getEventTable().getItems()
-                                .get(event.getCode().getCode() - 48).getId().toString());
-                        this.startScreenCtrl.onJoin();
+                        if(event.getCode().getCode() - 48 < this.startScreenCtrl.getEventTable().getItems().size()) {
+                            this.startScreenCtrl.setJoinInvitationCode(this.startScreenCtrl.getEventTable().getItems()
+                                    .get(event.getCode().getCode() - 48).getId().toString());
+                            this.startScreenCtrl.onJoin();
+                        }
                     }
                 });
         this.startScreenScene.addEventHandler(
