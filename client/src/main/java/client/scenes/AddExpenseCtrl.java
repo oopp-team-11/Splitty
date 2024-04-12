@@ -237,7 +237,8 @@ public class AddExpenseCtrl implements Translatable {
         Expense newExpense = new Expense(expensePaidBy.getValue().getParticipant(),
                 expenseTitle.getText(),
                 Double.parseDouble(expenseAmount.getText()), expenseDatePicker.getValue(), chosenInvolved);
-        for (ParticipantDisplay participant : involvedParticipants) {
+        for (int index = 1; index < involvedParticipants.size(); index++) {
+            ParticipantDisplay participant = involvedParticipants.get(index);
             if (participant.getCheckBox().isSelected()) {
                 chosenInvolved.add(new Involved(false, newExpense, participant.getParticipant()));
             }

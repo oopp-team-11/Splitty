@@ -14,6 +14,9 @@ import server.database.ExpenseRepository;
 import server.database.InvolvedRepository;
 import server.database.ParticipantRepository;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 /**
  * Handles the CRUD operations under all /admin endpoints.
  */
@@ -55,7 +58,7 @@ public class AdminController {
     /**
      * Handles read websocket endpoint for event
      *
-     * @param receivedEvent Event to create a json dump of
+     * @param receivedEvent requested event
      * @param password contains the admin password, sent as a header
      * @return returns a StatusEntity<Event> body contains Event if status code is OK
      * returns null in body otherwise
@@ -75,36 +78,16 @@ public class AdminController {
             return StatusEntity.notFound(true, "Event does not exist in the database.");
 
         Event event = eventRepo.getReferenceById(receivedEvent.getId());
-        Event sentEvent = new Event(event.getId(), event.getTitle(), event.getCreationDate(), event.getLastActivity());
+
         for (Participant participant : event.getParticipants()) {
-            Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
-                    participant.getLastName(), participant.getIban(), participant.getIban(),
-                    participant.getEventId());
-            sentEvent.addParticipant(sentParticipant);
             for (Expense expense : participant.getMadeExpenses()) {
-                Expense sentExpense = new Expense(expense.getId(), expense.getTitle(), expense.getAmount(),
-                        expense.getPaidById(), expense.getInvitationCode(), expense.getDate(), new InvolvedList());
-                sentParticipant.addExpense(sentExpense);
-                for (Involved involved : expense.getInvolveds()) {
-                    Involved sentInvolved = new Involved(involved.getId(), involved.getIsSettled(),
-                            involved.getExpenseId(), involved.getParticipantId(), involved.getInvitationCode());
-                    sentExpense.getInvolveds().add(sentInvolved);
-                }
+                expense.getInvolveds();
+                for (Involved involved : expense.getInvolveds())
+                    involved.getParticipant();
             }
         }
 
-        // for debugging
-//        ObjectMapper ob = new ObjectMapper().findAndRegisterModules();
-//        String eventString = null;
-//        try {
-//            eventString = ob.writeValueAsString(event);
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException(e);
-//        }
-//        System.out.println(eventString);
-
-
-        return StatusEntity.ok(sentEvent);
+        return StatusEntity.ok(event);
     }
 
     /**
@@ -136,6 +119,7 @@ public class AdminController {
         Event event = null;
 
         try {
+            HashMap<UUID, Participant> savedParticipants = new HashMap<>();
             event = new Event(receivedEvent.getId(), receivedEvent.getTitle(), receivedEvent.getCreationDate(),
                     receivedEvent.getLastActivity());
             event = eventRepo.save(event);
@@ -144,12 +128,16 @@ public class AdminController {
                         receivedParticipant.getFirstName(), receivedParticipant.getLastName(),
                         receivedParticipant.getIban(), receivedParticipant.getBic());
                 participant = participantRepo.save(participant);
+                savedParticipants.put(receivedParticipant.getId(), participant);
+            }
+            for (Participant receivedParticipant : receivedEvent.getParticipants()) {
                 for (Expense receivedExpense : receivedParticipant.getMadeExpenses()) {
+                    Participant participant = savedParticipants.get(receivedParticipant.getId());
                     Expense expense = new Expense(participant, receivedExpense.getTitle(),
                             receivedExpense.getAmount(), receivedExpense.getDate(), new InvolvedList());
                     expense = expenseRepo.save(expense);
                     for (Involved receivedInvolved : receivedExpense.getInvolveds()) {
-                        var involvedParticipant = participantRepo.getReferenceById(receivedInvolved.getParticipantId());
+                        Participant involvedParticipant = savedParticipants.get(receivedInvolved.getParticipant().getId());
                         Involved involved = new Involved(receivedInvolved.getIsSettled(), expense, involvedParticipant);
                         involvedRepo.save(involved);
                     }
@@ -164,5 +152,6 @@ public class AdminController {
         else
             template.convertAndSend("/topic/admin/event:update", event);
         return StatusEntity.ok("Event has been imported.");
+
     }
 }
