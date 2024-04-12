@@ -185,6 +185,24 @@ public class EventDataHandler {
     }
 
     /**
+     * method that checks whether expense contains involved participant by id
+     * @param expense
+     * @param participantId
+     * @return whether expense contains involved participant by id
+     */
+    public boolean expenseContainsInvolvedByParticipantId(Expense expense, UUID participantId) {
+        if (expense.getInvolveds() == null) {
+            return false;
+        }
+        for (Involved involved : expense.getInvolveds()) {
+            if (involved.getParticipantId().equals(participantId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Deletes the requested Participant from the list of participants
      *
      * @param receivedParticipant the participant to be deleted
@@ -195,16 +213,42 @@ public class EventDataHandler {
             sessionHandler.refreshParticipants();
             return;
         }
+
+        // Refresh the Detailed Expense UI or go back to eventOverview
+        for (Expense expense : expenses) {
+            if (expenseContainsInvolvedByParticipantId(expense, receivedParticipant.getId())) {
+                Platform.runLater(() -> sessionHandler.getMainCtrl().refreshDetailedExpenseData(expense));
+            }
+        }
+
+        // Client-side data update
         participants.remove(localParticipant);
         expenses.removeIf(expense -> expense.getPaidById().equals(receivedParticipant.getId()));
         for (var expense : expenses) {
-            if (expense.getInvolveds() != null)
+            if (expense.getInvolveds() != null) {
                 expense.getInvolveds()
                         .removeIf(involved -> involved.getParticipantId().equals(receivedParticipant.getId()));
+            }
         }
+
+        // Other scenes updates
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshParticipantsData());
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
-        //TODO: Refresh the Detailed Expense UI or go back to eventOverview
+    }
+
+    /**
+     * get involved by participant id
+     * @param expense
+     * @param participantId
+     * @return involved
+     */
+    public Involved getInvolvedByParticipantId(Expense expense, UUID participantId) {
+        for (Involved involved : expense.getInvolveds()) {
+            if (involved.getParticipantId().equals(participantId)) {
+                return involved;
+            }
+        }
+        return null;
     }
 
     /**
@@ -222,8 +266,18 @@ public class EventDataHandler {
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshParticipantsData());
         //Refresh the list of expense to refresh potential changes of paidBy names in the UI
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
-        //TODO: Refresh the Detailed Expense UI to refresh to refresh potential changes of paidBy and involved
-        // names in the UI
+
+        // Refresh the Detailed Expense UI to refresh to refresh potential changes of paidBy and involved
+        for (Expense expense : expenses) {
+            if (expense.getId().equals(localParticipant.getId())) {
+                expense.setPaidBy(localParticipant);
+            }
+            if (expenseContainsInvolvedByParticipantId(expense, localParticipant.getId())) {
+                updateParticipant(getInvolvedByParticipantId(expense, localParticipant.getId()).getParticipant(),
+                        localParticipant);
+            }
+            Platform.runLater(() -> sessionHandler.getMainCtrl().refreshDetailedExpenseData(expense));
+        }
     }
 
     /**
@@ -314,7 +368,11 @@ public class EventDataHandler {
         updateExpense(localExpense, receivedExpense);
         assignParticipantsInExpense(localExpense);
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
-        //TODO: Refresh the Detailed Expense UI if appropriate
+
+
+        // Refresh the Detailed Expense UI
+        localExpense.setPaidBy(getParticipantById(localExpense.getPaidById()));
+        Platform.runLater(() -> sessionHandler.getMainCtrl().refreshDetailedExpenseData(localExpense));
     }
 
     /**
@@ -330,7 +388,9 @@ public class EventDataHandler {
         }
         expenses.remove(localExpense);
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
-        //TODO: Refresh the Detailed Expense UI or go back to eventOverview
+
+        // Refresh the Detailed Expense UI or go back to eventOverview
+        Platform.runLater(() -> sessionHandler.getMainCtrl().deleteDetailedExpenseData(localExpense));
     }
 
     /***

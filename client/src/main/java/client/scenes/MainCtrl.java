@@ -397,6 +397,28 @@ public class MainCtrl {
     }
 
     /**
+     * method for refreshing data in the detailed expense scene
+     * @param expense
+     */
+    public void refreshDetailedExpenseData(Expense expense) {
+        if (primaryStage.getTitle().equals("Detailed Expense") && detailedExpenseCtrl.getExpense().getId()
+                .equals(expense.getId())) {
+            detailedExpenseCtrl.setUpOrRefreshData(expense);
+        }
+    }
+
+    /**
+     * "aborts" detailed expense scene if expense id deleted
+     * @param expense
+     */
+    public void deleteDetailedExpenseData(Expense expense) {
+        if (primaryStage.getTitle().equals("Detailed Expense") && detailedExpenseCtrl.getExpense().getId()
+                .equals(expense.getId())) {
+            detailedExpenseCtrl.goToEventOverview();
+        }
+    }
+
+    /**
      * Method for updating data in scenes
      */
     public void refreshExpensesData() {

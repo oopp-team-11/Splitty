@@ -132,6 +132,12 @@ public class DetailedExpenseCtrl implements Translatable {
         paidBy.setText(participantToString(expense.getPaidBy()));
         bankingDetails.setText(participantToBankingDetails(expense.getPaidBy()));
         involvedTableView.getItems().clear();
+
+        // if last involved is deleted
+        if (expense.getInvolveds() == null || expense.getInvolveds().isEmpty()) {
+            goToEventOverview();
+        }
+
         participantNameColumn.setCellValueFactory(obj
                 -> new SimpleStringProperty(participantToString(obj.getValue().getParticipant())));
         isSettledColumn.setCellValueFactory(obj -> new SimpleBooleanProperty(obj.getValue().getIsSettled()));
