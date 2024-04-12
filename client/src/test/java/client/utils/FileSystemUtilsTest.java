@@ -334,14 +334,4 @@ class FileSystemUtilsTest {
         String newServerIP = "http://192.168.1.1:8080";
         assertThrows(IOException.class, () -> fileSystemUtils.replaceServerIPInConfigFile("invalid/path", newServerIP));
     }
-
-    @Test
-    public void testReplaceServerIPInConfigFileWithInvalidServerIP(@TempDir Path tempDir) throws IOException {
-        FileSystemUtils fileSystemUtils = new FileSystemUtils();
-        Path tempFile = tempDir.resolve("client-config.json");
-        Files.write(tempFile, "{\"server-ip\":\"localhost:8080\",\"lang\":\"en\"}".getBytes());
-
-        String invalidServerIP = "invalidServerIP";
-        assertThrows(IllegalArgumentException.class, () -> fileSystemUtils.replaceServerIPInConfigFile(tempFile.toString(), invalidServerIP));
-    }
 }

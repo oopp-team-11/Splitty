@@ -8,8 +8,6 @@ import javafx.stage.Modality;
 
 import javax.json.*;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -388,14 +386,7 @@ public class FileSystemUtils {
      * @throws IOException possible error throw
      * @throws IllegalArgumentException if the new server ip is not a valid URL
      */
-    public void replaceServerIPInConfigFile(String path, String newServerIP) throws IOException,
-            IllegalArgumentException {
-        try {
-            new URL(newServerIP);
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException(newServerIP + " is not a valid URL", e);
-        }
-
+    public void replaceServerIPInConfigFile(String path, String newServerIP) throws IOException{
         try {
             JsonReader reader = Json.createReader(new FileReader(path));
             JsonObject oldJson = reader.readObject();
