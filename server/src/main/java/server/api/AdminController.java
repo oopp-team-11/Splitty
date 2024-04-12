@@ -119,30 +119,7 @@ public class AdminController {
         Event event = null;
 
         try {
-            HashMap<UUID, Participant> savedParticipants = new HashMap<>();
-            event = new Event(receivedEvent.getId(), receivedEvent.getTitle(), receivedEvent.getCreationDate(),
-                    receivedEvent.getLastActivity());
-            event = eventRepo.save(event);
-            for (Participant receivedParticipant : receivedEvent.getParticipants()) {
-                Participant participant = new Participant(event,
-                        receivedParticipant.getFirstName(), receivedParticipant.getLastName(),
-                        receivedParticipant.getIban(), receivedParticipant.getBic());
-                participant = participantRepo.save(participant);
-                savedParticipants.put(receivedParticipant.getId(), participant);
-            }
-            for (Participant receivedParticipant : receivedEvent.getParticipants()) {
-                for (Expense receivedExpense : receivedParticipant.getMadeExpenses()) {
-                    Participant participant = savedParticipants.get(receivedParticipant.getId());
-                    Expense expense = new Expense(participant, receivedExpense.getTitle(),
-                            receivedExpense.getAmount(), receivedExpense.getDate(), new InvolvedList());
-                    expense = expenseRepo.save(expense);
-                    for (Involved receivedInvolved : receivedExpense.getInvolveds()) {
-                        Participant involvedParticipant = savedParticipants.get(receivedInvolved.getParticipant().getId());
-                        Involved involved = new Involved(receivedInvolved.getIsSettled(), expense, involvedParticipant);
-                        involvedRepo.save(involved);
-                    }
-                }
-            }
+            event = saveEvent(receivedEvent);
         } catch (IllegalArgumentException e) {
             return StatusEntity.badRequest(true, "Request body contains null entity");
         }
@@ -152,6 +129,40 @@ public class AdminController {
         else
             template.convertAndSend("/topic/admin/event:update", event);
         return StatusEntity.ok("Event has been imported.");
+    }
 
+    /**
+     * Saves provided imported Event to the database
+     *
+     * @param receivedEvent received event to import
+     * @return returns an event to send back to admin
+     */
+    public Event saveEvent(Event receivedEvent) throws IllegalArgumentException {
+        HashMap<UUID, Participant> savedParticipants = new HashMap<>();
+        Event event = new Event(receivedEvent.getId(), receivedEvent.getTitle(), receivedEvent.getCreationDate(),
+                receivedEvent.getLastActivity());
+        event = eventRepo.save(event);
+        for (Participant receivedParticipant : receivedEvent.getParticipants()) {
+            Participant participant = new Participant(event,
+                    receivedParticipant.getFirstName(), receivedParticipant.getLastName(),
+                    receivedParticipant.getIban(), receivedParticipant.getBic());
+            participant = participantRepo.save(participant);
+            savedParticipants.put(receivedParticipant.getId(), participant);
+        }
+        for (Participant receivedParticipant : receivedEvent.getParticipants()) {
+            for (Expense receivedExpense : receivedParticipant.getMadeExpenses()) {
+                Participant participant = savedParticipants.get(receivedParticipant.getId());
+                Expense expense = new Expense(participant, receivedExpense.getTitle(),
+                        receivedExpense.getAmount(), receivedExpense.getDate(), new InvolvedList());
+                expense = expenseRepo.save(expense);
+                for (Involved receivedInvolved : receivedExpense.getInvolveds()) {
+                    Participant involvedParticipant =
+                            savedParticipants.get(receivedInvolved.getParticipant().getId());
+                    Involved involved = new Involved(receivedInvolved.getIsSettled(), expense, involvedParticipant);
+                    involvedRepo.save(involved);
+                }
+            }
+        }
+        return event;
     }
 }
