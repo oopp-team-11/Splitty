@@ -102,6 +102,10 @@ public class CreateParticipantCtrl implements Translatable {
      */
     public void setEvent(Event event) {
         this.event = event;
+        firstName.clear();
+        lastName.clear();
+        iban.clear();
+        bic.clear();
     }
 
     /**

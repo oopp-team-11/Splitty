@@ -13,13 +13,17 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
+import javafx.util.StringConverter;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,7 +66,27 @@ public class EventOverviewCtrl implements Translatable {
     @FXML
     public Label goToStartScreenLabel;
     @FXML
+    public Label meLabel;
+    @FXML
     public Label editTitleLabel;
+    @FXML
+    public Label totalSumExpenses;
+    @FXML
+    public ChoiceBox<Participant> userChoiceBox;
+    @FXML
+    public Tab myExpensesTab;
+    @FXML
+    public Tab involvingMeTab;
+    @FXML
+    public TabPane tabPaneExpenses;
+    @FXML
+    public Tab allExpenses;
+    @FXML
+    public TableColumn<Expense, String> firstNameExpense;
+    @FXML
+    public TableColumn<Expense, String>  lastNameExpense;
+    @FXML
+    public TableColumn<Expense, LocalDate>  dateColumn;
     @FXML
     private Label participantsLabel;
     @FXML
@@ -124,10 +148,42 @@ public class EventOverviewCtrl implements Translatable {
             });
             return new SimpleObjectProperty<>(button);
         });
+        participantsList.setRowFactory(participant -> {
+            TableRow<Participant> row = new TableRow<>();
+            row.setOnMouseClicked(triggeredEvent -> {
+                if(triggeredEvent.getClickCount() == 2 && !row.isEmpty()){
+                    Participant rowDate = row.getItem();
+                    Dialog<String> popup = new Dialog<>();
+                    popup.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                    popup.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("Participants")
+                            .replaceAll("\"", ""));
+                    popup.setContentText(
+                            mainCtrl.getTranslationSupplier().getTranslation("ParticipantFirstName")
+                                    .replaceAll("\"", "")+
+                                    rowDate.getFirstName() + "\n" +
+                            mainCtrl.getTranslationSupplier().getTranslation("ParticipantLastName")
+                                    .replaceAll("\"", "") +
+                            rowDate.getLastName() + "\n" +
+                            mainCtrl.getTranslationSupplier().getTranslation("ParticipantIBAN")
+                                    .replaceAll("\"", "")+
+                            rowDate.getIban() + "\n" +
+                            mainCtrl.getTranslationSupplier().getTranslation("ParticipantBIC")
+                                    .replaceAll("\"", "")+
+                            rowDate.getBic());
+                    popup.showAndWait();
+                }
+            });
+            return row;
+        });
         participantsList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
 
         titleColumn.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getTitle()));
         amountColumn.setCellValueFactory(col -> new SimpleStringProperty(String.valueOf(col.getValue().getAmount())));
+        firstNameExpense.setCellValueFactory(col ->
+                new SimpleStringProperty(col.getValue().getPaidBy().getFirstName()));
+        lastNameExpense.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getPaidBy().getLastName()));
+        dateColumn.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getDate()));
+
 
         editColumn1.setCellValueFactory(expense -> {
             Button button = new Button("✎");
@@ -152,6 +208,17 @@ public class EventOverviewCtrl implements Translatable {
         });
         expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));
 
+        expensesList.setRowFactory(expense -> {
+            TableRow<Expense> row = new TableRow<>();
+            row.setOnMouseClicked(triggeredEvent -> {
+                if(triggeredEvent.getClickCount() == 2 && !row.isEmpty()){
+                    System.out.println("Check");
+//                    mainCtrl.showDetailedExpenseOverview(row.getItem());
+                }
+            });
+            return row;
+        });
+
         editTitle.onMouseClickedProperty().set(event1 -> {
             if (editEventTextField.isVisible()){
                 stopEditingTitle();
@@ -167,9 +234,97 @@ public class EventOverviewCtrl implements Translatable {
 
         sendInvitesConfirmation.setText("");
 
-
         languageSwitchPlaceHolder.getChildren().clear();
         languageSwitchPlaceHolder.getChildren().add(mainCtrl.getLanguageSwitchButton());
+
+        userChoiceBox.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
+        userChoiceBox.setConverter(new StringConverter<Participant>() {
+            @Override
+            public String toString(Participant participant) {
+                if(participant == null) return null;
+                return participant.getFirstName() + " " + participant.getLastName();
+            }
+
+            @Override
+            public Participant fromString(String str) {
+                String[] names = str.split(" ");
+
+                return mainCtrl.getDataHandler().getParticipants().stream().filter(participant ->
+                        names[0].equals(participant.getFirstName())
+                        && names[1].equals(participant.getLastName())).toList().getFirst();
+            }
+        });
+        userChoiceBox.setValue(null);
+        userChoiceBox.setOnAction(ignored -> {
+            var tab = tabPaneExpenses.getSelectionModel().getSelectedItem();
+            tabPaneExpenses.getSelectionModel().selectFirst();
+            tabPaneExpenses.getSelectionModel().select(tab);
+        });
+
+        var plusIconExpense = new ImageView(new Image("icons/plus.png"));
+        plusIconExpense.setPreserveRatio(true);
+        plusIconExpense.setSmooth(true);
+        plusIconExpense.setFitWidth(16);
+        var plusIconParticipant = new ImageView(new Image("icons/plus.png"));
+        plusIconParticipant.setPreserveRatio(true);
+        plusIconParticipant.setSmooth(true);
+        plusIconParticipant.setFitWidth(16);
+        var userIcon = new ImageView(new Image("icons/user.png"));
+        userIcon.setPreserveRatio(true);
+        userIcon.setSmooth(true);
+        userIcon.setFitWidth(16);
+        var addUserIcon = new ImageView(new Image("icons/add-user.png"));
+        addUserIcon.setPreserveRatio(true);
+        addUserIcon.setSmooth(true);
+        addUserIcon.setFitWidth(16);
+
+
+        addExpenseBtn.setGraphic(plusIconExpense);
+        addParticipantBtn.setGraphic(plusIconParticipant);
+        meLabel.setGraphic(userIcon);
+        sendInvitesButton.setGraphic(addUserIcon);
+
+        setTabs();
+    }
+
+    private void setTabs(){
+        allExpenses.setOnSelectionChanged(thisEvent -> {
+            if (allExpenses.isSelected()){
+                allExpenses.setContent(expensesList);
+                expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));
+            } else {
+                allExpenses.setContent(null);
+            }
+        });
+        myExpensesTab.setOnSelectionChanged(thisEvent -> {
+            if (myExpensesTab.isSelected()){
+                if (userChoiceBox.getValue() != null){
+                    myExpensesTab.setContent(expensesList);
+                    expensesList.setItems(FXCollections.observableList(
+                            mainCtrl.getDataHandler().getExpensesByParticipant(userChoiceBox.getValue())
+                    ));
+                }else {
+                    myExpensesTab.setContent(expensesList);
+                    expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));
+                }
+            } else {
+                myExpensesTab.setContent(null);
+            }
+        });
+        involvingMeTab.setOnSelectionChanged(thisEvent -> {
+            if (involvingMeTab.isSelected()) {
+                if (userChoiceBox.getValue() != null) {
+                    involvingMeTab.setContent(expensesList);
+                    expensesList.setItems(FXCollections.observableList(
+                            mainCtrl.getDataHandler().getExpensesByInvolvedParticipant(userChoiceBox.getValue())));
+                }else {
+                    involvingMeTab.setContent(expensesList);
+                    expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));
+                }
+            } else {
+                involvingMeTab.setContent(null);
+            }
+        });
     }
 
     /**
@@ -229,6 +384,9 @@ public class EventOverviewCtrl implements Translatable {
         labels.put(this.changeLanguageLabel, "ChangeLanguageLabel");
         labels.put(this.goToStartScreenLabel, "GoToStartScreenLabel");
         labels.put(this.editTitleLabel, "EditTitleLabel");
+        labels.put(this.meLabel, "Me");
+        labels.put(this.meLabel, "Me");
+        labels.put(this.meLabel, "Me");
         labels.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
@@ -243,6 +401,9 @@ public class EventOverviewCtrl implements Translatable {
         tableColumns.put(this.editColumn, "Edit");
         tableColumns.put(this.deleteColumn, "Delete");
         tableColumns.put(this.titleColumn, "Title");
+        tableColumns.put(this.firstNameExpense, "FirstName");
+        tableColumns.put(this.lastNameExpense, "LastName");
+        tableColumns.put(this.dateColumn, "Date");
         tableColumns.put(this.amountColumn, "Amount");
         tableColumns.put(this.editColumn1, "Edit");
         tableColumns.put(this.deleteColumn1, "Delete");
@@ -260,6 +421,16 @@ public class EventOverviewCtrl implements Translatable {
             if (translation == null) return;
             key.setText(translation.replaceAll("\"", ""));
         });
+
+        allExpenses.setText(translationSupplier.getTranslation("AllExpenses")
+                .replaceAll("\"", ""));
+        myExpensesTab.setText(translationSupplier.getTranslation("MyExpenses")
+                .replaceAll("\"", ""));
+        involvingMeTab.setText(translationSupplier.getTranslation("InvolvingMe")
+                .replaceAll("\"", ""));
+
+        totalSumExpenses.setText(translationSupplier.getTranslation("Total")
+                .replaceAll("\"", "") + mainCtrl.getDataHandler().sumOfAllExpenses());
     }
 
     /**
