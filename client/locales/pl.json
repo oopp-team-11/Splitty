@@ -49,6 +49,11 @@
   "LastActivityDate": "Ostatnia aktywność",
   "DeleteEvent": "Usuń wydarzenie",
   "JSONDump": "Pobierz JSON",
+  "Date": "Please, add translation",
+  "Share per person": "Please, add translation",
+  "Paid by": "Please, add translation",
+  "Banking Details": "Please, add translation",
+  "List of Involved": "Please, add translation",
   "DateOfExpenseLabel": "Data wydatku",
   "WhoIsInvolvedLabel": "Kto uczestniczył w wydatku?"
 }

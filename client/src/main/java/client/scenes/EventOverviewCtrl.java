@@ -213,7 +213,7 @@ public class EventOverviewCtrl implements Translatable {
             row.setOnMouseClicked(triggeredEvent -> {
                 if(triggeredEvent.getClickCount() == 2 && !row.isEmpty()){
                     System.out.println("Check");
-//                    mainCtrl.showDetailedExpenseOverview(row.getItem());
+                    mainCtrl.showDetailedExpense(row.getItem());
                 }
             });
             return row;
