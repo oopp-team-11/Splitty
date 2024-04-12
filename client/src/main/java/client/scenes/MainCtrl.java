@@ -371,6 +371,12 @@ public class MainCtrl {
                         this.startScreenCtrl.onJoin();
                     }
                 });
+        this.startScreenScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if(event.getCode() == KeyCode.ENTER && this.startScreenCtrl.getAdminPassword().isFocused())
+                        this.startScreenCtrl.onAdmin();
+                }
+        );
     }
 
     /**

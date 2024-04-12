@@ -372,4 +372,12 @@ public class StartScreenCtrl implements Initializable, Translatable {
     public void setJoinInvitationCode(String joinInvitationCode) {
         this.joinInvitationCode.setText(joinInvitationCode);
     }
+
+    /**
+     * Getter for admin password field
+     * @return admin password field
+     */
+    public PasswordField getAdminPassword() {
+        return adminPassword;
+    }
 }
