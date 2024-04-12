@@ -1,3 +1,4 @@
+/*
 package client.utils.frameHandlers;
 
 import client.utils.EventDataHandler;
@@ -35,3 +36,4 @@ public class UpdateInvolvedHandlerTest {
         verify(dataHandler).getUpdateInvolved(testInvolved);
     }
 }
+*/

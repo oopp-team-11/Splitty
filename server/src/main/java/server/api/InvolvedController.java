@@ -64,7 +64,7 @@ public class InvolvedController {
                 return StatusEntity.notFound(true, "One of the involved object not found in database");
             }
         }
-
+        InvolvedList toSend = new InvolvedList();
         for (var inv : receivedInvolveds) {
             Involved involved = involvedRepository.getReferenceById(inv.getId());
             involved.setIsSettled(inv.getIsSettled());
@@ -73,8 +73,9 @@ public class InvolvedController {
             Involved sentInvolved = new Involved(involved.getId(),
                     involved.getIsSettled(), involved.getExpense().getId(),
                     involved.getParticipant().getId(), inv.getInvitationCode());
-            template.convertAndSend("/topic/" + sentInvolved.getInvitationCode()+ "/involved:update", sentInvolved);
+            toSend.add(sentInvolved);
         }
+        template.convertAndSend("/topic/" + toSend.getFirst().getInvitationCode()+ "/involved:update", toSend);
 
 
 

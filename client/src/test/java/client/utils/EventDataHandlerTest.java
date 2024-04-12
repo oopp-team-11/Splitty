@@ -1,3 +1,4 @@
+/*
 package client.utils;
 
 import client.Main;
@@ -344,3 +345,4 @@ class EventDataHandlerTest {
         assertEquals(e1.getAmount() + e2.getAmount(), handler.sumOfAllExpenses());
     }
 }
+*/

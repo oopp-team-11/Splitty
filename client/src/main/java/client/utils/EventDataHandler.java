@@ -1,9 +1,6 @@
 package client.utils;
 
-import commons.Event;
-import commons.Expense;
-import commons.Involved;
-import commons.Participant;
+import commons.*;
 import javafx.application.Platform;
 
 import java.util.ArrayList;
@@ -425,23 +422,31 @@ public class EventDataHandler {
     /**
      * Handle updates of Involved object
      *
-     * @param receivedInvolved received involved object with updated data
+     * @param receivedInvolveds received involved object with updated data
      */
-    public void getUpdateInvolved(Involved receivedInvolved) {
-        Expense localExpense = getExpenseById(receivedInvolved.getExpenseId());
-        if (localExpense == null) {
+    public void getUpdateInvolved(InvolvedList receivedInvolveds) {
+        // Error checking from the server
+        if (receivedInvolveds == null || receivedInvolveds.isEmpty()) {
             sessionHandler.refreshExpenses();
             return;
         }
-        Involved localInvolved = getInvolvedById(localExpense, receivedInvolved.getId());
-        if (localInvolved == null) {
-            sessionHandler.refreshExpenses();
-            return;
-        }
-        updateInvolved(localInvolved, receivedInvolved);
-    }
 
-    private void updateInvolved(Involved toUpdate, Involved fromUpdate) {
-        toUpdate.setIsSettled(fromUpdate.getIsSettled());
+        Expense localExpense = getExpenseById(receivedInvolveds.getFirst().getExpenseId());
+        if (localExpense == null || localExpense.getInvolveds().size() != receivedInvolveds.size()) {
+            sessionHandler.refreshExpenses();
+            return;
+        }
+
+        for (Involved inv : receivedInvolveds) {
+            if (!localExpense.getInvolveds().contains(inv)) {
+                sessionHandler.refreshExpenses();
+                return;
+            }
+        }
+
+        // Updating of involved list (sorry for this loop, seems like java doesn't have zip function (method...)...)
+        for (int cnt = 0; cnt < receivedInvolveds.size(); ++cnt) {
+            localExpense.getInvolveds().get(cnt).setIsSettled(receivedInvolveds.get(cnt).getIsSettled());
+        }
     }
 }
