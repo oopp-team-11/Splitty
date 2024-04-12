@@ -19,7 +19,6 @@ import javafx.stage.Modality;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Add expense Controller for adding expenses to events
@@ -182,9 +181,6 @@ public class EditExpenseCtrl implements Translatable {
     public void editExpense() {
         if (checkBadRequest())
             return;
-
-        if (!checkExpenseFields()) return;
-
         List<Involved> chosenInvolved = new InvolvedList();
         Expense newExpense = new Expense(expense.getId(), expenseTitle.getText(),
                 Double.parseDouble(expenseAmount.getText()), expensePaidBy.getValue().getParticipant().getId(),
@@ -209,68 +205,6 @@ public class EditExpenseCtrl implements Translatable {
         if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
             mainCtrl.getSessionHandler().sendExpense(newExpense, "update");
         }
-    }
-
-    private boolean checkExpenseFields() {
-        if(expensePaidBy.getValue() == null){
-            var alert = new Alert(Alert.AlertType.WARNING);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ExpensePaidByEmpty")
-                    .replaceAll("\"", ""));
-            alert.showAndWait();
-        } else if (expenseTitle.getText().isEmpty()) {
-            var alert = new Alert(Alert.AlertType.WARNING);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ExpenseTitleEmpty")
-                    .replaceAll("\"", ""));
-            alert.showAndWait();
-        } else if (expenseAmount.getText().isEmpty()) {
-            var alert = new Alert(Alert.AlertType.WARNING);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ExpenseAmountEmpty")
-                    .replaceAll("\"", ""));
-            alert.showAndWait();
-        } else {
-            try {
-                var ignored = Double.parseDouble(expenseAmount.getText());
-                if (ignored <= 0) {
-                    throw new NumberFormatException("Amount is negative.");
-                }
-            } catch (NumberFormatException e) {
-                var alert = new Alert(Alert.AlertType.WARNING);
-                alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText(mainCtrl.getTranslationSupplier()
-                        .getTranslation("ExpenseAmountWrongFormatEmpty")
-                        .replaceAll("\"", ""));
-                alert.showAndWait();
-                return false;
-            }
-            var alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(mainCtrl.getTranslationSupplier()
-                    .getTranslation("ConfirmationEditExpense")
-                    .replaceAll("\"", ""));
-            var result = alert.showAndWait();
-            if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)) {
-                Participant person = null;
-                String[] fullName = expensePaidBy.getValue().toString().split(" ");
-                for (Participant participant : mainCtrl.getDataHandler().getParticipants()) {
-                    if (Objects.equals(participant.getFirstName(), fullName[0])
-                            && Objects.equals(participant.getLastName(), fullName[1])) {
-                        person = participant;
-                    }
-                }
-                // TODO: Add data when you will adjust the scene (see two nulls in the constructor below)
-                expense = new Expense(expense.getId(), expenseTitle.getText(),
-                        Double.parseDouble(expenseAmount.getText()),
-                        person.getId(), expense.getInvitationCode(), null, null);
-                mainCtrl.getSessionHandler().sendExpense(expense, "update");
-            }
-
-
-            mainCtrl.showEventOverview();
-        }
-        return true;
     }
 
     /**

@@ -17,13 +17,11 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.util.StringConverter;
 
-import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Add expense Controller for adding expenses to events
@@ -232,10 +230,8 @@ public class AddExpenseCtrl implements Translatable {
      * Add expense to event and participant
      */
     public void addExpense() {
-        if (checkBadRequest()) {
+        if (checkBadRequest())
             return;
-        }
-        if (!checkExpenseFields()) return;
         List<Involved> chosenInvolved = new InvolvedList();
         Expense newExpense = new Expense(expensePaidBy.getValue().getParticipant(),
                 expenseTitle.getText(),
@@ -247,7 +243,10 @@ public class AddExpenseCtrl implements Translatable {
             }
         }
         if (chosenInvolved.isEmpty()) {
-            handleChosenInvolvedEmpty();
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("You have not selected any involved participants.");
+            alert.showAndWait();
             return;
         }
         var alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -257,69 +256,6 @@ public class AddExpenseCtrl implements Translatable {
         if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
             mainCtrl.getSessionHandler().sendExpense(newExpense, "create");
         }
-    }
-
-    private void handleChosenInvolvedEmpty() {
-        var alert = new Alert(Alert.AlertType.WARNING);
-        alert.initModality(Modality.APPLICATION_MODAL);
-        alert.setContentText(mainCtrl.getTranslationSupplier()
-                .getTranslation("ConfirmationAddingExpense")
-                .replaceAll("\"", ""));
-        var result = alert.showAndWait();
-        if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
-            Participant person = null;
-            String[] names = expensePaidBy.getValue().toString().split(" ");
-            for (Participant participant : mainCtrl.getDataHandler().getParticipants()){
-                if(Objects.equals(participant.getFirstName(), names[0])
-                        && Objects.equals(participant.getLastName(), names[1])){
-                    person = participant;
-                }
-            }
-            // TODO: add data when you will adjust the scene (see two nulls in the constructor below)
-            Expense sentExpense = new Expense(person,
-                    expenseTitle.getText(),
-                    Double.parseDouble(expenseAmount.getText()), null, null);
-            mainCtrl.getSessionHandler().sendExpense(sentExpense, "create");
-        }
-        return;
-    }
-
-    private boolean checkExpenseFields() {
-        if(expensePaidBy.getValue() == null){
-            var alert = new Alert(Alert.AlertType.WARNING);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ExpensePaidByEmpty")
-                    .replaceAll("\"", ""));
-            alert.showAndWait();
-        } else if (expenseTitle.getText().isEmpty()) {
-            var alert = new Alert(Alert.AlertType.WARNING);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ExpenseTitleEmpty")
-                    .replaceAll("\"", ""));
-            alert.showAndWait();
-        } else if (expenseAmount.getText().isEmpty()) {
-            var alert = new Alert(Alert.AlertType.WARNING);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ExpenseAmountEmpty")
-                    .replaceAll("\"", ""));
-            alert.showAndWait();
-        } else {
-            try {
-                var ignored = Double.parseDouble(expenseAmount.getText());
-                if (ignored <= 0) {
-                    throw new NumberFormatException("Amount is negative.");
-                }
-            } catch (NumberFormatException e) {
-                var alert = new Alert(Alert.AlertType.WARNING);
-                alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText(mainCtrl.getTranslationSupplier()
-                        .getTranslation("ExpenseAmountWrongFormatEmpty")
-                        .replaceAll("\"", ""));
-                alert.showAndWait();
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
