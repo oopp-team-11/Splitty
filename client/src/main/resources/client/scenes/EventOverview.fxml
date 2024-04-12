@@ -97,10 +97,10 @@
                <children>
                   <TableView fx:id="participantsList" prefHeight="150.0" GridPane.rowIndex="2">
                      <columns>
-                        <TableColumn fx:id="firstNameColumn" minWidth="-1.0" text="First Name" />
-                        <TableColumn fx:id="lastNameColumn" minWidth="-1.0" text="Last Name" />
-                        <TableColumn fx:id="editColumn" text="Edit" />
-                        <TableColumn fx:id="deleteColumn" text="Delete" />
+                        <TableColumn fx:id="firstNameColumn" editable="false" minWidth="-1.0" text="First Name" />
+                        <TableColumn fx:id="lastNameColumn" editable="false" minWidth="-1.0" text="Last Name" />
+                        <TableColumn fx:id="editColumn" editable="false" sortable="false" text="Edit" />
+                        <TableColumn fx:id="deleteColumn" editable="false" sortable="false" text="Delete" />
                      </columns>
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -170,13 +170,13 @@
                            <content>
                               <TableView fx:id="expensesList" prefHeight="200.0" prefWidth="200.0">
                                  <columns>
-                                    <TableColumn fx:id="titleColumn" text="Title" />
-                                    <TableColumn fx:id="amountColumn" text="Amount" />
-                                    <TableColumn fx:id="firstNameExpense" text="First Name" />
-                                    <TableColumn fx:id="lastNameExpense" text="Last Name" />
-                                    <TableColumn fx:id="dateColumn" text="Date" />
-                                    <TableColumn fx:id="editColumn1" text="Edit" />
-                                    <TableColumn fx:id="deleteColumn1" text="Delete" />
+                                    <TableColumn fx:id="titleColumn" editable="false" text="Title" />
+                                    <TableColumn fx:id="amountColumn" editable="false" text="Amount" />
+                                    <TableColumn fx:id="firstNameExpense" editable="false" text="First Name" />
+                                    <TableColumn fx:id="lastNameExpense" editable="false" text="Last Name" />
+                                    <TableColumn fx:id="dateColumn" editable="false" text="Date" />
+                                    <TableColumn fx:id="editColumn1" editable="false" sortable="false" text="Edit" />
+                                    <TableColumn fx:id="deleteColumn1" editable="false" sortable="false" text="Delete" />
                                  </columns>
                                  <columnResizePolicy>
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
