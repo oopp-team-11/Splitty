@@ -1,5 +1,56 @@
 # Product Pitch Script
 
+***
+
+## Requirements from brightspace
+
+### Audience and Goal
+The presentation should showcase the final product and highlight features that make the
+application unique. The technical level is less relevant, but highlight when you have found great solutions for a
+problem. As a metaphor, imagine you would create a product video for an app store that tells potential users what
+to expect from your app
+
+### Recommended outline
+* Brief introduction (ca. 30s)
+* Main Block: What is the state of your application? (ca. 8min)
+  * Focus on the user perspective. Do not show code, but implemented features in action. Also, a working application is more interesting than just slides
+  * Which features are realized in the UI? How is the interaction flow?
+  * Review the grading schema to understand which categories will be assessed. Show features that make the application unique (or go beyond the requirements)
+  * If you have cool, but non-visible features, please include them in the presentation as well.
+* How would you extend the application, technically or content-wise (ca. 1min)
+* Wrap-up (ca. 30s)
+
+### Formal requirements
+* The presentations must be 9-10 minutes long, this is a strict requirement.
+* There is no required layout/style for the slides content
+* The entire team must present (roughly) an equal amount of time, we won't stop the time though.
+* The presentation covers all aspects of the recommended outline
+
+***
+
+## Feedback from TA of the pitch draft
+
+### Clarity
+* The chosen template of demo slides and script is good, we should keep it
+* We need to structure ourselves to have good pacing (e.g., we need to spend more time on complex/interesting features and less time on less interesting/simple features)
+* Also in the demo we need to show the application in a day-to-day usage state.
+  * Use actual names foe events, like vacation or a party
+  * Same holds for participant names and expense titles
+
+### Features
+* We should also showcase features in multiple use cases, for example edge cases like invalid data input.
+  * And show our unique features that not everyone has.
+
+### Interactions
+* The scenes had a nice flow, for the actual presentation emphasize creating a 'storyline' for the app. Walk them through the individual features, in a way that draws the audience in.
+
+***
+
+## Brief introduction
+TODO: add brief introduction
+
+***
+
 ## Main block: The current state of the application
 
 ### Step 0
@@ -72,7 +123,7 @@
 
 ### Step IDK YET - Admin panel
 
-## Present short slides about server-client communication
+***
 
 ## Ideas for extending our project
 
@@ -88,3 +139,8 @@ to settle or when they get money from someone.
 - Expand the debt settling mechanism by taking someone straight to a payment provider
 where the details of the transaction are automatically filled in. The data for that
 could be stored in the config files on the client side.
+
+***
+
+## Wrap-up
+TODO: Add wrap-up
