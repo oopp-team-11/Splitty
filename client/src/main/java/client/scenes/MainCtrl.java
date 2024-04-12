@@ -208,7 +208,8 @@ public class MainCtrl {
     private void addShortcutsEventOverviewExpense() {
         this.eventOverviewScene.addEventHandler(
                 KeyEvent.KEY_PRESSED, event -> {
-                    if (event.isShiftDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
+                    if (event.isShiftDown() && !event.isControlDown() && event.getCode().getCode() >= 48
+                            && event.getCode().getCode() <= 57) {
                         if(this.eventOverviewCtrl.editColumn1
                                 .getCellObservableValue(event.getCode().getCode() - 48) != null) {
                             this.eventOverviewCtrl.editColumn1.getCellObservableValue(event.getCode().getCode() - 48)
