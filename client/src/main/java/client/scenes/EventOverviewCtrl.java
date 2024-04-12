@@ -220,11 +220,7 @@ public class EventOverviewCtrl implements Translatable {
         });
 
         editTitle.onMouseClickedProperty().set(event1 -> {
-            if (editEventTextField.isVisible()){
-                stopEditingTitle();
-            }else {
-                editingTitle();
-            }
+            editTitleClicked();
         });
         editEventTextField.onKeyPressedProperty().set(keyEvent -> {
             if(keyEvent.getCode().equals(KeyCode.ENTER)){
@@ -325,6 +321,17 @@ public class EventOverviewCtrl implements Translatable {
                 involvingMeTab.setContent(null);
             }
         });
+    }
+
+    /**
+     * Toggles the option of editing the title
+     */
+    public void editTitleClicked() {
+        if (editEventTextField.isVisible()){
+            stopEditingTitle();
+        }else {
+            editingTitle();
+        }
     }
 
     /**
@@ -504,5 +511,29 @@ public class EventOverviewCtrl implements Translatable {
         mainCtrl.getSessionHandler().unsubscribeFromCurrentEvent();
         mainCtrl.getDataHandler().setAllToNull();
         mainCtrl.showStartScreen();
+    }
+
+    /**
+     * Getter for send invites button
+     * @return send invites button
+     */
+    public Button getSendInvitesButton() {
+        return sendInvitesButton;
+    }
+
+    /**
+     * Getter for add participant button
+     * @return add participant button
+     */
+    public Button getAddParticipantBtn() {
+        return addParticipantBtn;
+    }
+
+    /**
+     * Getter for add expense button
+     * @return add expense button
+     */
+    public Button getAddExpenseBtn() {
+        return addExpenseBtn;
     }
 }

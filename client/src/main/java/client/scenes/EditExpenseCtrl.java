@@ -239,4 +239,20 @@ public class EditExpenseCtrl implements Translatable {
                 ((Button) key).setText(translation.replaceAll("\"", ""));
         });
     }
+
+    /**
+     * Getter for create button
+     * @return create button
+     */
+    public Button getCreateBtn() {
+        return createBtn;
+    }
+
+    /**
+     * Getter for cancel button
+     * @return cancel button
+     */
+    public Button getCancelBtn() {
+        return cancelBtn;
+    }
 }
