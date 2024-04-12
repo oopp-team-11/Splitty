@@ -55,6 +55,13 @@ Then at the end, we'll wrap-up this product pitch on Splitty.
 
 ***
 
+## Brief side note to live updates using websockets (explain as if your explaining it to yourself from 2 years ago)
+The important trait of our project is that it is live. We have achieved that by using mostly websockets in our project.
+Most of the event endpoints, and all of participant and expense endpoints are implemented via websockets.
+That ensures bidirectional communication between the server and the client.
+
+***
+
 ## Main block: The current state of the application
 
 ### Step 0
