@@ -80,6 +80,6 @@ public class InvolvedController {
 
 
 
-        return StatusEntity.ok("involved:update " + receivedInvolveds.getFirst().getExpenseId());
+        return StatusEntity.ok("Successfully updated settling of debts");
     }
 }

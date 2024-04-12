@@ -149,8 +149,7 @@ public class DetailedExpenseCtrl implements Translatable {
      * onAction of edit button
      */
     public void editBtn() {
-        involvedTableView.getItems().forEach(involved ->
-                mainCtrl.getSessionHandler().sendInvolved(involved, "update"));
+        mainCtrl.getSessionHandler().sendInvolveds(expense.getInvolveds(), "update");
         goToEventOverview();
     }
 
