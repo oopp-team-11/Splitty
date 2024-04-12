@@ -194,26 +194,11 @@ public class MainCtrl {
     }
 
     private void addShortcutsEventOverviewColumns() {
-        this.eventOverviewScene.addEventHandler(
-                KeyEvent.KEY_PRESSED, event -> {
-                    if (event.isControlDown() && !event.isShiftDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
-                        if(this.eventOverviewCtrl.editColumn
-                                .getCellObservableValue(event.getCode().getCode() - 48) != null) {
-                            this.eventOverviewCtrl.editColumn.getCellObservableValue(event.getCode().getCode() - 48)
-                                    .getValue().fire();
-                        }
-                    }
-                });
-        this.eventOverviewScene.addEventHandler(
-                KeyEvent.KEY_PRESSED, event -> {
-                    if (event.isAltDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
-                        if(this.eventOverviewCtrl.deleteColumn
-                                .getCellObservableValue(event.getCode().getCode() - 48) != null) {
-                            this.eventOverviewCtrl.deleteColumn.getCellObservableValue(event.getCode().getCode() - 48)
-                                    .getValue().fire();
-                        }
-                    }
-                });
+        addShortcutsEventOverviewParticipant();
+        addShortcutsEventOverviewExpense();
+    }
+
+    private void addShortcutsEventOverviewExpense() {
         this.eventOverviewScene.addEventHandler(
                 KeyEvent.KEY_PRESSED, event -> {
                     if (event.isShiftDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
@@ -231,6 +216,30 @@ public class MainCtrl {
                         if(this.eventOverviewCtrl.deleteColumn1
                                 .getCellObservableValue(event.getCode().getCode() - 48) != null) {
                             this.eventOverviewCtrl.deleteColumn1.getCellObservableValue(event.getCode().getCode()-48)
+                                    .getValue().fire();
+                        }
+                    }
+                });
+    }
+
+    private void addShortcutsEventOverviewParticipant() {
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.isControlDown() && !event.isShiftDown() && event.getCode().getCode() >= 48
+                            && event.getCode().getCode() <= 57) {
+                        if(this.eventOverviewCtrl.editColumn
+                                .getCellObservableValue(event.getCode().getCode() - 48) != null) {
+                            this.eventOverviewCtrl.editColumn.getCellObservableValue(event.getCode().getCode() - 48)
+                                    .getValue().fire();
+                        }
+                    }
+                });
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.isAltDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
+                        if(this.eventOverviewCtrl.deleteColumn
+                                .getCellObservableValue(event.getCode().getCode() - 48) != null) {
+                            this.eventOverviewCtrl.deleteColumn.getCellObservableValue(event.getCode().getCode() - 48)
                                     .getValue().fire();
                         }
                     }
