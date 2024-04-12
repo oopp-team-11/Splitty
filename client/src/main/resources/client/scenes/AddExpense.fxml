@@ -51,7 +51,7 @@
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </GridPane.margin></Button>
             <ChoiceBox fx:id="expensePaidBy" prefHeight="26.0" prefWidth="1206.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <DatePicker fx:id="expenseDatePicker" prefHeight="26.0" prefWidth="1206.0" promptText="Example: 31/03/2024" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <DatePicker fx:id="expenseDatePicker" prefHeight="26.0" prefWidth="1206.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextField fx:id="expenseTitle" promptText="Example: Groceries" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <TextField fx:id="expenseAmount" promptText="Amount of money" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="19.0" prefWidth="410.0" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.rowSpan="2">

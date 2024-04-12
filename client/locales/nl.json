@@ -42,5 +42,7 @@
   "CreationDate": "Aanmaakdatum",
   "LastActivityDate": "Laatste activiteitsdatum",
   "DeleteEvent": "Evenement verwijderen",
-  "JSONDump": "JSON Dump"
+  "JSONDump": "JSON Dump",
+  "DateOfExpenseLabel": "Date of the expense",
+  "WhoIsInvolvedLabel": "Who is involved?"
 }

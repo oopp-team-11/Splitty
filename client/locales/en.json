@@ -17,8 +17,8 @@
   "SendInvites": "Send Invites",
   "Participants": "Participants",
   "Expenses": "Expenses",
-  "AddAnExpense": "Add expense",
-  "EditAnExpense": "Edit a expense",
+  "AddAnExpense": "Add an expense",
+  "EditAnExpense": "Edit an expense",
   "Cancel": "Abort",
   "ParticipantFirstName": "Participants first name: ",
   "ParticipantLastName": "Participants last name: ",
@@ -42,5 +42,7 @@
   "CreationDate": "Creation date",
   "LastActivityDate": "Last Activity Date",
   "DeleteEvent": "Delete Event",
-  "JSONDump": "JSON Dump"
+  "JSONDump": "JSON Dump",
+  "DateOfExpenseLabel": "Date of the expense",
+  "WhoIsInvolvedLabel": "Who is involved?"
 }
