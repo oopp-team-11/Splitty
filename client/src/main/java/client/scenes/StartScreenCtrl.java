@@ -87,6 +87,9 @@ public class StartScreenCtrl implements Initializable, Translatable {
     @FXML
     private Button editServerUrlBtn;
 
+    @FXML
+    private Label editServerUrlLabel;
+
     private final FileSystemUtils fileSystemUtils;
     private final ServerUtils serverUtils;
     private Thread pollingThread;
@@ -190,6 +193,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
         } catch (JSONException e) {
             System.out.println("Failed to parse server response: " + e.getMessage());
         }
+
+        serverUrlBox.setText(mainCtrl.getServerIp());
     }
 
     /**
@@ -259,26 +264,19 @@ public class StartScreenCtrl implements Initializable, Translatable {
      * Method that is called when the client wants to edit the server URL
      */
     public void onEditURL() {
-        try {
+        try{
             fileSystemUtils.replaceServerIPInConfigFile("client-config.json", serverUrlBox.getText());
         }
-        catch (IOException e) {
+        catch (IOException e){
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Failed to save server URL to disk." +
-                    "\nError: " +
-                    (e.getMessage() != null ? e.getMessage() : "No error message available."));
-            alert.showAndWait();
-        }
-        catch (IllegalArgumentException e) {
-            var alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Invalid server URL." +
-                    "\nError: " +
-                    (e.getMessage() != null ? e.getMessage() : "No error message available."));
+            alert.setContentText("Failed to save server IP to config file.");
             alert.showAndWait();
         }
 
+        mainCtrl.setServerIp();
+        mainCtrl.startWebSocket();
+        refresh();
     }
 
     /**
@@ -381,7 +379,6 @@ public class StartScreenCtrl implements Initializable, Translatable {
                             event.setTitle(updatedTitle);
                             eventTable.refresh();
                         }
-
                         break;
                     }
                 }

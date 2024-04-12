@@ -325,7 +325,10 @@ public class MainCtrl {
         this.dataHandler = dataHandler;
     }
 
-    private void setServerIp(){
+    /**
+     * Method for setting the correct server ip
+     */
+    void setServerIp(){
         FileSystemUtils utils = new FileSystemUtils();
         try {
             this.serverIp = utils.getServerIP("client-config.json");
