@@ -208,6 +208,17 @@ public class EventOverviewCtrl implements Translatable {
         });
         expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));
 
+        expensesList.setRowFactory(expense -> {
+            TableRow<Expense> row = new TableRow<>();
+            row.setOnMouseClicked(triggeredEvent -> {
+                if(triggeredEvent.getClickCount() == 2 && !row.isEmpty()){
+                    System.out.println("Check");
+//                    mainCtrl.showDetailedExpenseOverview(row.getItem());
+                }
+            });
+            return row;
+        });
+
         editTitle.onMouseClickedProperty().set(event1 -> {
             if (editEventTextField.isVisible()){
                 stopEditingTitle();
