@@ -81,19 +81,19 @@
                               <Button id="joinBtn" fx:id="joinBtn" mnemonicParsing="false" onAction="#onJoin" prefHeight="26.0" text="Join" />
                            </children>
                         </HBox>
-                        <Label fx:id="newEventLabel1" prefHeight="44.0" style="-fx-padding: 10;" text="Edit Server URL">
-                           <font>
-                              <Font size="17.0" />
-                           </font>
-                        </Label>
-                        <HBox prefHeight="40.0" spacing="5.0" style="-fx-padding: 10;">
-                           <children>
-                              <TextField id="joinInvitationCode" fx:id="serverUrlBox" prefHeight="26.0" promptText="Server URL" />
-                              <Button id="joinBtn" fx:id="editServerUrlBtn" mnemonicParsing="false" onAction="#onEditURL" prefHeight="26.0" text="Edit" />
-                           </children>
-                        </HBox>
                         <VBox alignment="BOTTOM_LEFT" VBox.vgrow="ALWAYS">
                            <children>
+                              <Label fx:id="editServerUrlLabel" prefHeight="44.0" style="-fx-padding: 10;" text="Edit Server URL">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                              </Label>
+                              <HBox prefHeight="40.0" spacing="5.0" style="-fx-padding: 10;">
+                                 <children>
+                                    <TextField id="joinInvitationCode" fx:id="serverUrlBox" prefHeight="26.0" promptText="Server URL" />
+                                    <Button id="joinBtn" fx:id="editServerUrlBtn" mnemonicParsing="false" onAction="#onEditURL" prefHeight="26.0" text="Edit" />
+                                 </children>
+                              </HBox>
                               <Label fx:id="adminPanelLabel" style="-fx-padding: 10;" text="Show admin panel">
                                  <font>
                                     <Font size="17.0" />
