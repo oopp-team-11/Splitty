@@ -242,6 +242,11 @@ public class EventOverviewCtrl implements Translatable {
             }
         });
         userChoiceBox.setValue(null);
+        userChoiceBox.setOnAction(ignored -> {
+            var tab = tabPaneExpenses.getSelectionModel().getSelectedItem();
+            tabPaneExpenses.getSelectionModel().selectFirst();
+            tabPaneExpenses.getSelectionModel().select(tab);
+        });
 
         setTabs();
     }
@@ -257,19 +262,29 @@ public class EventOverviewCtrl implements Translatable {
         });
         myExpensesTab.setOnSelectionChanged(thisEvent -> {
             if (myExpensesTab.isSelected()){
-                myExpensesTab.setContent(expensesList);
-                expensesList.setItems(FXCollections.observableList(
-                        mainCtrl.getDataHandler().getExpensesByParticipant(userChoiceBox.getValue())
-                ));
+                if (userChoiceBox.getValue() != null){
+                    myExpensesTab.setContent(expensesList);
+                    expensesList.setItems(FXCollections.observableList(
+                            mainCtrl.getDataHandler().getExpensesByParticipant(userChoiceBox.getValue())
+                    ));
+                }else {
+                    myExpensesTab.setContent(expensesList);
+                    expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));
+                }
             } else {
                 myExpensesTab.setContent(null);
             }
         });
         involvingMeTab.setOnSelectionChanged(thisEvent -> {
             if (involvingMeTab.isSelected()) {
-                involvingMeTab.setContent(expensesList);
-                expensesList.setItems(FXCollections.observableList(
-                        mainCtrl.getDataHandler().getExpensesByInvolvedParticipant(userChoiceBox.getValue())));
+                if (userChoiceBox.getValue() != null) {
+                    involvingMeTab.setContent(expensesList);
+                    expensesList.setItems(FXCollections.observableList(
+                            mainCtrl.getDataHandler().getExpensesByInvolvedParticipant(userChoiceBox.getValue())));
+                }else {
+                    involvingMeTab.setContent(expensesList);
+                    expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));
+                }
             } else {
                 involvingMeTab.setContent(null);
             }
