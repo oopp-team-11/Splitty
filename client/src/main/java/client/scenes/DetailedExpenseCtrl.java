@@ -10,6 +10,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -143,7 +144,9 @@ public class DetailedExpenseCtrl implements Translatable {
      * onAction of edit button
      */
     public void editBtn() {
-        expense.setInvolveds(involvedTableView.getItems());
+        involvedTableView.getItems().forEach(involved ->
+                mainCtrl.getSessionHandler().sendInvolved(involved, "update"));
+        goToEventOverview();
     }
 
 
@@ -192,10 +195,13 @@ public class DetailedExpenseCtrl implements Translatable {
         }
 
         @Override
-        protected void updateItem(Boolean valueInCell, boolean empty) {
-            super.updateItem(valueInCell, empty);
-            checkBox.setSelected(valueInCell);
-            if (!empty) {
+        protected void updateItem(Boolean item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) {
+                setText(null);
+                setGraphic(null);
+            } else {
+                checkBox.setSelected(item);
                 setGraphic(checkBox);
             }
         }
