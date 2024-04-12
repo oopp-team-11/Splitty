@@ -2,6 +2,7 @@ package client.utils.frameHandlers;
 
 import client.utils.EventDataHandler;
 import commons.Involved;
+import commons.InvolvedList;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
@@ -24,7 +25,7 @@ public class UpdateInvolvedHandler implements StompFrameHandler {
 
     @Override
     public Type getPayloadType(StompHeaders headers) {
-        return Involved.class;
+        return Involvedq.class;
     }
 
     @Override

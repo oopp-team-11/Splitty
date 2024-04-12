@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import server.EventLastActivityService;
 import server.database.InvolvedRepository;
 
+import java.util.List;
+
 
 /**
  * Class that represents the involved controller
@@ -39,34 +41,44 @@ public class InvolvedController {
 
     /**
      * Handles update websocket endpoint for involved entity
-     * @param receivedInvolved Involved object received from client
+     * @param receivedInvolveds Involved object received from client
      * @return StatusEntity with the result of the operation
      */
     @MessageMapping("/involved:update")
     @SendToUser(value = "/queue/reply", broadcast = false)
-    public StatusEntity updateInvolved(Involved receivedInvolved) {
+    public StatusEntity updateInvolved(List<Involved> receivedInvolveds) {
 
-        if(receivedInvolved == null) {
-            return StatusEntity.badRequest(true, "Involved object not found in request body");
+        if(receivedInvolveds == null) {
+            return StatusEntity.badRequest(true, "List of involved is null");
         }
 
-        if(!involvedRepository.existsById(receivedInvolved.getId())) {
-            return StatusEntity.notFound(true, "Involved object not found in database");
+        if (receivedInvolveds.isEmpty()) {
+            return StatusEntity.badRequest(true, "List of involved is empty");
         }
 
-        Involved involved = involvedRepository.getReferenceById(receivedInvolved.getId());
-        involved.setIsSettled(receivedInvolved.getIsSettled());
+        for (Involved inv : receivedInvolveds) {
+            if (inv == null) {
+                return StatusEntity.badRequest(true, "Involved object is null in the request body");
+            }
+            if (!involvedRepository.existsById(inv.getId())) {
+                return StatusEntity.notFound(true, "One of the involved object not found in database");
+            }
+        }
 
-        involved = involvedRepository.save(involved);
+        for (var inv : receivedInvolveds) {
+            Involved involved = involvedRepository.getReferenceById(inv.getId());
+            involved.setIsSettled(inv.getIsSettled());
+            involved = involvedRepository.save(involved);
+            eventLastActivityService.updateLastActivity(inv.getInvitationCode());
+            Involved sentInvolved = new Involved(involved.getId(),
+                    involved.getIsSettled(), involved.getExpense().getId(),
+                    involved.getParticipant().getId(), inv.getInvitationCode());
+            template.convertAndSend("/topic/" + sentInvolved.getInvitationCode()+ "/involved:update", sentInvolved);
+        }
 
-        eventLastActivityService.updateLastActivity(receivedInvolved.getInvitationCode());
-
-        Involved sentInvolved = new Involved(involved.getId(),
-                involved.getIsSettled(), involved.getExpense().getId(),
-                involved.getParticipant().getId(), receivedInvolved.getInvitationCode());
 
 
-        template.convertAndSend("/topic/" + sentInvolved.getInvitationCode()+ "/involved:update", sentInvolved);
-        return StatusEntity.ok("involved:update " + sentInvolved.getId());
+
+        return StatusEntity.ok("involved:update " + receivedInvolveds.getFirst().getExpenseId());
     }
 }

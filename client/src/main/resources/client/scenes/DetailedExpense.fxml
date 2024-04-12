@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="900" prefWidth="800" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.DetailedExpenseCtrl">
+<AnchorPane prefHeight="728.0" prefWidth="800" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.DetailedExpenseCtrl">
 
     <VBox alignment="CENTER" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="40">
         <children>
@@ -39,7 +39,7 @@
 
         <Label fx:id="bankingDetailsNaming" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="Banking Details" GridPane.columnIndex="0" GridPane.rowIndex="5" />
         <Label fx:id="bankingDetails" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-      <TableView fx:id="involvedTableView" prefHeight="437.0" prefWidth="360.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+      <TableView fx:id="involvedTableView" prefHeight="425.0" prefWidth="360.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
         <columns>
           <TableColumn fx:id="participantNameColumn" prefWidth="222.0" text="Participant" />
           <TableColumn fx:id="isSettledColumn" prefWidth="137.0" text="Debt Settled?" />
@@ -48,9 +48,9 @@
 
         <Label fx:id="involvedListNaming" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Arial';" text="List of Involved" GridPane.columnIndex="0" GridPane.rowIndex="6" />
 
-        <Button fx:id="abortBtn" onAction="#goToEventOverview" style="-fx-base: #7f1a1a; -fx-pref-width: 250; -fx-pref-height: 100;" text="Abort" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="7">
+        <Button fx:id="abortBtn" onAction="#goToEventOverview" style="-fx-base: #7f1a1a; -fx-pref-width: 200; -fx-pref-height: 75;" text="Abort" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="7">
         </Button>
-        <Button fx:id="editBtn" onAction="#editBtn" style="-fx-base: #49873a; -fx-pref-width: 250; -fx-pref-height: 100;" text="Edit" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7">
+        <Button fx:id="editBtn" onAction="#editBtn" prefHeight="59.0" style="-fx-base: #49873a; -fx-pref-width: 200; -fx-pref-height: 75;" text="Edit" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7">
         </Button>
       <rowConstraints>
          <RowConstraints />
