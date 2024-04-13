@@ -214,13 +214,6 @@ public class EventDataHandler {
             return;
         }
 
-        // Refresh the Detailed Expense UI or go back to eventOverview
-        for (Expense expense : expenses) {
-            if (expenseContainsInvolvedByParticipantId(expense, receivedParticipant.getId())) {
-                Platform.runLater(() -> sessionHandler.getMainCtrl().refreshDetailedExpenseData(expense));
-            }
-        }
-
         // Client-side data update
         participants.remove(localParticipant);
         expenses.removeIf(expense -> expense.getPaidById().equals(receivedParticipant.getId()));
@@ -228,9 +221,22 @@ public class EventDataHandler {
             if (expense.getInvolveds() != null) {
                 expense.getInvolveds()
                         .removeIf(involved -> involved.getParticipantId().equals(receivedParticipant.getId()));
+                if (!expense.getInvolveds().isEmpty())
+                    expense.setAmountOwed(
+                            (double) Math.round(expense.getAmount() / expense.getInvolveds().size() * 100) /100);
             }
         }
-        expenses.removeIf(expense -> expense.getInvolveds().isEmpty());
+
+        List<Expense> expensesToRemove = new ArrayList<>();
+        for (Expense expense : expenses) {
+            if (expense.getInvolveds().isEmpty()) {
+                expensesToRemove.add(expense);
+                Platform.runLater(() -> sessionHandler.getMainCtrl().deleteDetailedExpenseData(expense));
+            }
+            else if (expenseContainsInvolvedByParticipantId(expense, receivedParticipant.getId()))
+                Platform.runLater(() -> sessionHandler.getMainCtrl().refreshDetailedExpenseData(expense));
+        }
+        expenses.removeAll(expensesToRemove);
 
         // Other scenes updates
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshParticipantsData());
@@ -449,6 +455,7 @@ public class EventDataHandler {
         for (var expense : expenses) {
             sumOfExpenses += expense.getAmount();
         }
+        sumOfExpenses = (double) Math.round(sumOfExpenses * 100)/100;
         return sumOfExpenses;
     }
 
