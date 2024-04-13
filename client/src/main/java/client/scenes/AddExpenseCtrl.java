@@ -17,7 +17,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.util.StringConverter;
 
-import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
@@ -57,6 +56,7 @@ public class AddExpenseCtrl implements Translatable {
 
     private ObservableList<ParticipantDisplay> involvedParticipants;
     private Border selectAllBorder;
+    private CheckBox selectAllCheckBox;
     private final MainCtrl mainCtrl;
 
     /***
@@ -86,7 +86,7 @@ public class AddExpenseCtrl implements Translatable {
         involvedParticipants.forEach(participantDisplay -> {
             participantDisplay.setCheckBox(participantCheckBox(participantDisplay));
         });
-        involvedParticipants.addFirst(selectAllCheckBox());
+        involvedParticipants.addFirst(newSelectAllCheckBox());
         involvedListView.setItems(involvedParticipants);
     }
 
@@ -158,20 +158,19 @@ public class AddExpenseCtrl implements Translatable {
      *
      * @return returns a selectAll checkBox
      */
-    private ParticipantDisplay selectAllCheckBox() {
+    private ParticipantDisplay newSelectAllCheckBox() {
         selectAllBorder = new Border(new BorderStroke(Color.BLACK,
                 BorderStrokeStyle.DOTTED,
                 CornerRadii.EMPTY,
                 new BorderWidths(0,0,1,0)));
         ParticipantDisplay dummyParticipant = new ParticipantDisplay(new Participant());
-        //TODO: Decide what to do with this text in terms of this translation
-        CheckBox checkBox = new CheckBox("Select all");
-        checkBox.setOnAction(event -> {
+        selectAllCheckBox = new CheckBox("Select All");
+        selectAllCheckBox.setOnAction(event -> {
             for (int index = 1; index < involvedParticipants.size(); index++) {
-                involvedParticipants.get(index).getCheckBox().setSelected(checkBox.isSelected());
+                involvedParticipants.get(index).getCheckBox().setSelected(selectAllCheckBox.isSelected());
             }
         });
-        dummyParticipant.setCheckBox(checkBox);
+        dummyParticipant.setCheckBox(selectAllCheckBox);
         return dummyParticipant;
     }
 
@@ -288,6 +287,9 @@ public class AddExpenseCtrl implements Translatable {
             if (key instanceof TextField)
                 ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
         });
+        if (selectAllCheckBox != null)
+            selectAllCheckBox.setText(translationSupplier.getTranslation("Select All")
+                    .replaceAll("\"", ""));
     }
 
     /**

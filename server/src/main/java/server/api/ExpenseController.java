@@ -128,7 +128,8 @@ public class ExpenseController {
 
         Participant paidBy = participantRepository.getReferenceById(receivedExpense.getPaidById());
 
-        Expense expense = new Expense(paidBy, receivedExpense.getTitle(), receivedExpense.getAmount(),
+        Expense expense = new Expense(paidBy, receivedExpense.getTitle(),
+                (double) Math.round(receivedExpense.getAmount() * 100) /100,
                 receivedExpense.getDate(), receivedExpense.getInvolveds());
 
         //hibernate and jackson behave funky when used together
@@ -216,8 +217,12 @@ public class ExpenseController {
 
         Expense expense = expenseRepository.getReferenceById(receivedExpense.getId());
 
+        Involved testInvolved = expense.getInvolveds().getFirst();
+
         var oldAmountOwed = expense.getAmount() / expense.getInvolveds().size();
+        oldAmountOwed = (double) Math.round(oldAmountOwed * 100) /100;
         var newAmountOwed = receivedExpense.getAmount() / receivedExpense.getInvolveds().size();
+        newAmountOwed = (double) Math.round(newAmountOwed * 100) /100;
 
         HashSet<UUID> participantIds = expense.getInvolveds().stream()
                 .map(Involved::getParticipant)
@@ -243,8 +248,9 @@ public class ExpenseController {
 
         Participant newPaidBy = participantRepository.getReferenceById(receivedExpense.getPaidById());
         expense.setPaidBy(newPaidBy);
-        expense.setAmount(receivedExpense.getAmount());
+        expense.setAmount((double) Math.round(receivedExpense.getAmount() * 100) /100);
         expense.setTitle(receivedExpense.getTitle());
+        expense.setDate(receivedExpense.getDate());
 
         expense = expenseRepository.save(expense);
 
