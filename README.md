@@ -33,3 +33,5 @@
     * Click for those participants whose debts are already settled
     * Press the "Save partial debts" (green button) to save changes for the partial debts of the specific expense
     * Press the "Go to Event Overview" (red button) to exit the page without saving the partial debts for specific expense
+- Admin password is printed out on the server console on start up
+- The server URI can contain both ip and a port number
