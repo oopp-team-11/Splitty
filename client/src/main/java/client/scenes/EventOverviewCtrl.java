@@ -24,6 +24,7 @@ import javafx.stage.Modality;
 import javafx.util.StringConverter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,7 +71,9 @@ public class EventOverviewCtrl implements Translatable {
     @FXML
     public Label editTitleLabel;
     @FXML
-    public Label totalSumExpenses;
+    public Label totalLabel;
+    @FXML
+    public Label expenseSum;
     @FXML
     public ChoiceBox<Participant> userChoiceBox;
     @FXML
@@ -185,6 +188,7 @@ public class EventOverviewCtrl implements Translatable {
         lastNameExpense.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getPaidBy().getLastName()));
         dateColumn.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getDate()));
 
+        expenseSum.setText(String.valueOf(mainCtrl.getDataHandler().sumOfAllExpenses()));
 
         editColumn1.setCellValueFactory(expense -> {
             Button button = new Button("✎");
@@ -350,6 +354,9 @@ public class EventOverviewCtrl implements Translatable {
         participantsList.getColumns().getFirst().setVisible(false);
         participantsList.getColumns().getFirst().setVisible(true);
         participantsList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
+        userChoiceBox.setItems(FXCollections.observableList(new ArrayList<>()));
+        userChoiceBox.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
+        tabPaneExpenses.getSelectionModel().select(allExpenses);
     }
     /**
      * Method for updating data in scene
@@ -358,6 +365,8 @@ public class EventOverviewCtrl implements Translatable {
         expensesList.getColumns().getFirst().setVisible(false);
         expensesList.getColumns().getFirst().setVisible(true);
         expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));
+        tabPaneExpenses.getSelectionModel().select(allExpenses);
+        expenseSum.setText(String.valueOf(mainCtrl.getDataHandler().sumOfAllExpenses()));
     }
 
     private void editingTitle(){
@@ -394,8 +403,7 @@ public class EventOverviewCtrl implements Translatable {
         labels.put(this.goToStartScreenLabel, "GoToStartScreenLabel");
         labels.put(this.editTitleLabel, "EditTitleLabel");
         labels.put(this.meLabel, "Me");
-        labels.put(this.meLabel, "Me");
-        labels.put(this.meLabel, "Me");
+        labels.put(this.totalLabel, "Total");
         labels.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
@@ -437,9 +445,6 @@ public class EventOverviewCtrl implements Translatable {
                 .replaceAll("\"", ""));
         involvingMeTab.setText(translationSupplier.getTranslation("InvolvingMe")
                 .replaceAll("\"", ""));
-
-        totalSumExpenses.setText(translationSupplier.getTranslation("Total")
-                .replaceAll("\"", "") + mainCtrl.getDataHandler().sumOfAllExpenses());
     }
 
     /**

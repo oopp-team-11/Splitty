@@ -81,9 +81,19 @@ public class StartScreenCtrl implements Initializable, Translatable {
     @FXML
     private TableColumn<Event, String> invitationCodeColumn;
 
+    @FXML
+    private TextField serverUrlBox;
+
+    @FXML
+    private Button editServerUrlBtn;
+
+    @FXML
+    private Label editServerUrlLabel;
+
     private final FileSystemUtils fileSystemUtils;
     private final ServerUtils serverUtils;
     private Thread pollingThread;
+    boolean serverReachable;
 
     /**
      * @param mainCtrl main Controller, for displaying this scene.
@@ -117,6 +127,9 @@ public class StartScreenCtrl implements Initializable, Translatable {
         joinInvitationCode.onKeyPressedProperty().set(keyEvent -> {
             if (keyEvent.getCode().equals(KeyCode.ENTER)) onJoin();
         });
+        serverUrlBox.onKeyPressedProperty().set(keyEvent -> {
+            if (keyEvent.getCode().equals(KeyCode.ENTER)) onEditURL();
+        });
     }
 
     /**
@@ -138,6 +151,9 @@ public class StartScreenCtrl implements Initializable, Translatable {
         labels.put(this.joinInvitationCode, "InvitationCode");
         labels.put(this.adminPassword, "AdminPassword");
         labels.put(this.changeLanguageLabel, "ChangeLanguageLabel");
+        labels.put(this.editServerUrlLabel, "EditServerUrlLabel");
+        labels.put(this.editServerUrlBtn, "Edit");
+        labels.put(this.serverUrlBox, "ServerUrlBox");
         labels.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
@@ -162,6 +178,7 @@ public class StartScreenCtrl implements Initializable, Translatable {
      */
     public void refresh() {
         System.out.println("REFRESH");
+        serverReachable = true;
         try {
             var events = serverUtils.getRecentEvents("http://" + mainCtrl.getServerIp(), "config.json");
             ObservableList<Event> data = FXCollections.observableList(events);
@@ -182,15 +199,31 @@ public class StartScreenCtrl implements Initializable, Translatable {
             alert.setContentText(mainCtrl.getTranslationSupplier()
                     .getTranslation("ServerConnectionError").replaceAll("\"", ""));
             alert.showAndWait();
+            serverReachable = false;
         } catch (JSONException e) {
             System.out.println("Failed to parse server response: " + e.getMessage());
         }
+
+        if(serverReachable && (mainCtrl.getSessionHandler() == null || mainCtrl.getSessionHandler().isSessionNull())) {
+            if (mainCtrl.getSessionHandler() != null) {
+                var alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText("Successfully connected to the server.");
+                alert.showAndWait();
+            }
+            mainCtrl.startWebSocket();
+        }
+
+
+        serverUrlBox.setText(mainCtrl.getServerIp());
     }
 
     /**
      * Method that is called when the create button is clicked
      */
     public void onCreate() {
+        if (!serverReachable)
+            return;
         System.out.println("ONCREATE");
         String eventName = newEventName.getText();
 
@@ -225,6 +258,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
      * Method that is called when the join button is clicked
      */
     public void onJoin() {
+        if (!serverReachable)
+            return;
         System.out.println("ONJOIN: " + joinInvitationCode.getText());
         UUID invitationCode;
         try {
@@ -255,9 +290,31 @@ public class StartScreenCtrl implements Initializable, Translatable {
     }
 
     /**
+     * Method that is called when the client wants to edit the server URL
+     */
+    public void onEditURL() {
+        try{
+            fileSystemUtils.replaceServerIPInConfigFile("client-config.json", serverUrlBox.getText());
+        }
+        catch (IOException e){
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Failed to save server IP to config file.");
+            alert.showAndWait();
+        }
+
+        mainCtrl.setServerIp();
+        if (mainCtrl.getSessionHandler() != null)
+            mainCtrl.getSessionHandler().disconnectFromServer();
+        refresh();
+    }
+
+    /**
      * Method that is called when the user tries to log in to admin panel
      */
     public void onAdmin() {
+        if (!serverReachable)
+            return;
         System.out.println("ONADMIN");
         String password = adminPassword.getText();
         mainCtrl.getAdminDataHandler().setPasscode(password);
@@ -333,7 +390,6 @@ public class StartScreenCtrl implements Initializable, Translatable {
                         mainCtrl.showStartScreen();
                     });
                     System.out.println("Failed to get updated events: " + e.getMessage());
-                    e.printStackTrace();
                     break;
                 }
             }
@@ -357,7 +413,6 @@ public class StartScreenCtrl implements Initializable, Translatable {
                             event.setTitle(updatedTitle);
                             eventTable.refresh();
                         }
-
                         break;
                     }
                 }

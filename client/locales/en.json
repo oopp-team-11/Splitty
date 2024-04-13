@@ -83,11 +83,18 @@
   "ServerIPWrongFormat": " is the wrong format. Created new default file, please put the server url if it isn't localhost:8080 in client-config.json. You need to delete localhost:8080 and put it there.",
   "LanguageEmpty": " doesn't exist. Created new default file, please put the language if it isn't en(english) in client-config.json. You need to delete en and put it there.",
   "LanguageWrongFormat": " is the wrong format. Created new default file, please put the language if it isn't en(english) in client-config.json. You need to delete en and put it there.",
-  "Date": "Date",
   "Share per person": "Share per person",
-  "Paid by": "Paid by",
-  "Banking Details": "Banking Details",
+  "IBAN": "IBAN",
+  "BIC": "BIC",
   "List of Involved": "List of Involved",
   "DateOfExpenseLabel": "Date of the expense",
-  "WhoIsInvolvedLabel": "Who is involved?"
+  "EditServerUrlLabel": "Edit Server URL",
+  "ServerUrlBox": "Server URL",
+  "WhoIsInvolvedLabel": "Who is involved?",
+  "Partial Debt": "Partial Debt Settling",
+  "Save Partial Debts": "Save Partial Debts",
+  "Go To Event Overview": "Go To Event Overview",
+  "Select All": "Select All",
+  "Participant": "Participant",
+  "IsSettled": "Debt settled?"
 }

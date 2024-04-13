@@ -8,6 +8,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.EventLastActivityService;
 import server.database.EventRepository;
+import server.database.ExpenseRepository;
 import server.database.ParticipantRepository;
 
 import java.util.UUID;
@@ -22,6 +23,7 @@ public class ParticipantControllerTest {
     private ParticipantRepository participantRepository;
     private EventRepository eventRepository;
     private ParticipantController participantController;
+    private TestExpenseRepository expenseRepository;
     private SimpMessagingTemplate messagingTemplate;
     private EventLastActivityService eventLastActivityService;
 
@@ -29,9 +31,11 @@ public class ParticipantControllerTest {
     public void setup() {
         participantRepository = new TestParticipantRepository();
         eventRepository = new TestEventRepository();
+        expenseRepository = new TestExpenseRepository();
         messagingTemplate = mock(SimpMessagingTemplate.class);
         eventLastActivityService = new EventLastActivityService(eventRepository, messagingTemplate);
-        participantController = new ParticipantController(participantRepository, eventRepository, messagingTemplate, eventLastActivityService);
+        participantController = new ParticipantController(participantRepository, eventRepository, messagingTemplate,
+                expenseRepository, eventLastActivityService);
     }
 
     @Test

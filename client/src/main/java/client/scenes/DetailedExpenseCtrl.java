@@ -36,7 +36,10 @@ public class DetailedExpenseCtrl implements Translatable {
     private Label paidBy;
 
     @FXML
-    private Label bankingDetails;
+    private Label iban;
+
+    @FXML
+    private Label bic;
 
     @FXML
     private TableView<Involved> involvedTableView;
@@ -49,6 +52,9 @@ public class DetailedExpenseCtrl implements Translatable {
 
 
     // Labels that corresponds to the "namings" of the data
+
+    @FXML
+    private Label partialDebtNaming;
 
     @FXML
     private Label titleNaming;
@@ -66,7 +72,10 @@ public class DetailedExpenseCtrl implements Translatable {
     private Label paidByNaming;
 
     @FXML
-    private Label bankingDetailsNaming;
+    private Label ibanNaming;
+
+    @FXML
+    private Label bicNaming;
 
     @FXML
     private Label involvedListNaming;
@@ -110,16 +119,6 @@ public class DetailedExpenseCtrl implements Translatable {
     }
 
     /**
-     * helps to retrieve banking details
-     * @param participant
-     * @return string
-     */
-    public static String participantToBankingDetails(Participant participant) {
-        return "IBAN: " + participant.getIban() + "\n" +
-                "BIC: " + participant.getBic();
-    }
-
-    /**
      * sets up the scene with provided expense or refreshes data on the scene
      * @param expense
      */
@@ -130,12 +129,22 @@ public class DetailedExpenseCtrl implements Translatable {
         date.setText(expense.getDate().toString());
         amountOwed.setText(Double.toString(expense.getAmountOwed()));
         paidBy.setText(participantToString(expense.getPaidBy()));
-        bankingDetails.setText(participantToBankingDetails(expense.getPaidBy()));
+        iban.setText(expense.getPaidBy().getIban());
+        bic.setText(expense.getPaidBy().getBic());
         involvedTableView.getItems().clear();
+
+        // if last involved is deleted
+        if (expense.getInvolveds() == null || expense.getInvolveds().isEmpty()) {
+            goToEventOverview();
+        }
+
+
         participantNameColumn.setCellValueFactory(obj
                 -> new SimpleStringProperty(participantToString(obj.getValue().getParticipant())));
         isSettledColumn.setCellValueFactory(obj -> new SimpleBooleanProperty(obj.getValue().getIsSettled()));
         isSettledColumn.setCellFactory(obj -> new CheckBoxCell());
+        involvedTableView.getColumns().getFirst().setVisible(false);
+        involvedTableView.getColumns().getFirst().setVisible(true);
         involvedTableView.getItems().setAll(expense.getInvolveds());
     }
 
@@ -143,8 +152,7 @@ public class DetailedExpenseCtrl implements Translatable {
      * onAction of edit button
      */
     public void editBtn() {
-        involvedTableView.getItems().forEach(involved ->
-                mainCtrl.getSessionHandler().sendInvolved(involved, "update"));
+        mainCtrl.getSessionHandler().sendInvolveds(expense.getInvolveds(), "update");
         goToEventOverview();
     }
 
@@ -157,11 +165,13 @@ public class DetailedExpenseCtrl implements Translatable {
         labels.put(this.amountNaming, "Amount");
         labels.put(this.dateNaming, "Date");
         labels.put(this.amountOwedNaming, "Share per person");
-        labels.put(this.paidByNaming, "Paid by");
-        labels.put(this.bankingDetailsNaming, "Banking Details");
+        labels.put(this.paidByNaming, "WhoPaidLabel");
+        labels.put(this.ibanNaming, "IBAN");
+        labels.put(this.bicNaming, "BIC");
         labels.put(this.involvedListNaming, "List of Involved");
-        labels.put(this.abortBtn, "Cancel");
-        labels.put(this.editBtn, "Edit");
+        labels.put(this.abortBtn, "Go To Event Overview");
+        labels.put(this.editBtn, "Save Partial Debts");
+        labels.put(this.partialDebtNaming, "Partial Debt");
         labels.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
@@ -171,6 +181,15 @@ public class DetailedExpenseCtrl implements Translatable {
             if (key instanceof Button) {
                 ((Button) key).setText(translation.replaceAll("\"", ""));
             }
+        });
+
+        Map<TableColumn, String> tableColumns = new HashMap<>();
+        tableColumns.put(this.participantNameColumn, "Participant");
+        tableColumns.put(this.isSettledColumn, "IsSettled");
+        tableColumns.forEach((key, val) -> {
+            var translation = translationSupplier.getTranslation(val);
+            if (translation == null) return;
+            key.setText(translation.replaceAll("\"", ""));
         });
     }
 

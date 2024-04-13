@@ -83,11 +83,18 @@
   "ServerIPWrongFormat": " heeft een foute vorm. Nieuw standaard bestand aangemaakt, vul alsjeblieft de server-URL in als hij niet gelijk is aan localhost:8080 in client-config.json. Je moet localhost:8080 verwijderen en de nieuwe URL daar invullen.",
   "LanguageEmpty": " bestaat niet. Nieuw standaard bestand aangemaakt, vul alsjeblieft de taalcode in als hij niet gelijk is aan en(engels) in client-config.json if it isn't en(english) in client-config.json. Je moet 'en' verwijderen en de nieuwe taalcode invullen",
   "LanguageWrongFormat": " heeft een foute vorm. Nieuw standaard bestand aangemaakt, vul alsjeblieft de taalcode in als hij niet gelijk is aan en(engels) in client-config.json if it isn't en(english) in client-config.json. Je moet 'en' verwijderen en de nieuwe taalcode invullen",
-  "Date": "Please, add translation",
   "Share per person": "Please, add translation",
-  "Paid by": "Please, add translation",
-  "Banking Details": "Please, add translation",
+  "IBAN": "IBAN",
+  "BIC": "BIC",
   "List of Involved": "Please, add translation",
-  "DateOfExpenseLabel": "Date of the expense",
-  "WhoIsInvolvedLabel": "Who is involved?"
+  "DateOfExpenseLabel": "Please, add translation",
+  "WhoIsInvolvedLabel": "Please, add translation",
+  "Partial Debt": "Please, add translation",
+  "Save Partial Debts": "Please, add translation",
+  "Go To Event Overview": "Please, add translation",
+  "Select All": "Please, add translation",
+  "Participant": "Please, add translation",
+  "IsSettled": "Please, add translation",
+  "EditServerUrlLabel": "Please add translation",
+  "ServerUrlBox": "Please add translation"
 }

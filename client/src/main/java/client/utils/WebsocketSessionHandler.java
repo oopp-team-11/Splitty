@@ -77,6 +77,25 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
     }
 
     /**
+     * Whether session was established
+     *
+     * @return boolean
+     */
+    public boolean isSessionNull() {
+        return session == null;
+    }
+
+    /**
+     * Disconnects from the server
+     */
+    public void disconnectFromServer() {
+        if (session != null && session.isConnected()) {
+            session.disconnect();
+        }
+        session = null;
+    }
+
+    /**
      * Subscribe to event specific endpoints
      *
      * @param invitationCode invitationCode of the event to subscribe to
@@ -212,13 +231,13 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
     }
 
     /**
-     * Sends a message to the server with an Involved update
+     * Sends a message to the server with an Involved list update
      *
-     * @param involved an updated Involved object
+     * @param involveds an updated Involveds list
      * @param methodType supports {"update"}
      */
-    public void sendInvolved(Involved involved, String methodType) {
-        session.send("/app/involved:" + methodType, involved);
+    public void sendInvolveds(List<Involved> involveds, String methodType) {
+        session.send("/app/involved:" + methodType, involveds);
     }
 
     /**

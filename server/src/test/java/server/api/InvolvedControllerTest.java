@@ -1,3 +1,4 @@
+
 package server.api;
 
 import commons.*;
@@ -13,6 +14,7 @@ import server.database.InvolvedRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -76,26 +78,43 @@ public class InvolvedControllerTest {
         when(participantRepository.findById(participantId)).thenReturn(Optional.of(participant));
         when(expenseRepository.findById(expenseId)).thenReturn(Optional.of(expense));
 
-        StatusEntity result = involvedController.updateInvolved(involved);
-        StatusEntity expected = StatusEntity.ok("involved:update " + involved.getId());
-        ArgumentCaptor<Involved> captor = ArgumentCaptor.forClass(Involved.class);
+        StatusEntity result = involvedController.updateInvolved(involvedList);
+        StatusEntity expected = StatusEntity.ok("Successfully updated settling of debts");
+        ArgumentCaptor<InvolvedList> captor = ArgumentCaptor.forClass(InvolvedList.class);
 
 
         verify(involvedRepository, times(1)).getReferenceById(involved.getId());
         verify(involvedRepository, times(1)).save(involved);
         verify(eventLastActivityService, times(1)).updateLastActivity(participant.getEventId());
-        verify(template, times(1)).convertAndSend("/topic/" + involved.getInvitationCode() + "/involved:update", involved);
+        verify(template, times(1)).convertAndSend("/topic/" + involved.getInvitationCode() + "/involved:update", involvedList);
         verify(template, times(1)).convertAndSend(eq("/topic/" + involved.getInvitationCode() + "/involved:update"), captor.capture());
 
 
-        assertEquals(involved, captor.getValue());
+        assertEquals(involvedList, captor.getValue());
         assertEquals(expected, result);
     }
-
     @Test
     public void testUpdateInvolved_EmptyRequestBody() {
         StatusEntity result = involvedController.updateInvolved(null);
-        StatusEntity expected = StatusEntity.badRequest(true, "Involved object not found in request body");
+        StatusEntity expected = StatusEntity.badRequest(true, "List of involved is null");
+        verify(involvedRepository, times(0)).getReferenceById(any(UUID.class));
+        verify(involvedRepository, times(0)).save(any(Involved.class));
+        verify(eventLastActivityService, times(0)).updateLastActivity(any(UUID.class));
+
+        assertEquals(expected, result);
+
+        result = involvedController.updateInvolved(new ArrayList<>());
+        expected = StatusEntity.badRequest(true, "List of involved is empty");
+        verify(involvedRepository, times(0)).getReferenceById(any(UUID.class));
+        verify(involvedRepository, times(0)).save(any(Involved.class));
+        verify(eventLastActivityService, times(0)).updateLastActivity(any(UUID.class));
+
+        assertEquals(expected, result);
+
+        var listWithNull = new ArrayList<Involved>();
+        listWithNull.add(null);
+        result = involvedController.updateInvolved(listWithNull);
+        expected = StatusEntity.badRequest(true, "Involved object is null in the request body");
         verify(involvedRepository, times(0)).getReferenceById(any(UUID.class));
         verify(involvedRepository, times(0)).save(any(Involved.class));
         verify(eventLastActivityService, times(0)).updateLastActivity(any(UUID.class));
@@ -109,8 +128,9 @@ public class InvolvedControllerTest {
         Involved involved = new Involved(id, true, UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
         when(involvedRepository.existsById(involved.getId())).thenReturn(false);
 
-        StatusEntity result = involvedController.updateInvolved(involved);
-        StatusEntity expected = StatusEntity.notFound(true, "Involved object not found in database");
+        StatusEntity result = involvedController.updateInvolved(List.of(involved));
+        StatusEntity expected = StatusEntity.notFound(true,
+                "One of the involved object not found in database");
 
         verify(involvedRepository, times(0)).getReferenceById(involved.getId());
         verify(involvedRepository, times(0)).save(any(Involved.class));

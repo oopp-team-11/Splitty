@@ -1,8 +1,10 @@
+
 package client.utils.frameHandlers;
 
 import client.utils.EventDataHandler;
 import commons.Expense;
 import commons.Involved;
+import commons.InvolvedList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,12 +27,12 @@ public class UpdateInvolvedHandlerTest {
 
     @Test
     void getPayloadType() {
-        assertEquals(Involved.class, handler.getPayloadType(headers));
+        assertEquals(InvolvedList.class, handler.getPayloadType(headers));
     }
 
     @Test
     void handleFrame() {
-        Involved testInvolved = new Involved();
+        var testInvolved = new InvolvedList();
         handler.handleFrame(headers, testInvolved);
         verify(dataHandler).getUpdateInvolved(testInvolved);
     }

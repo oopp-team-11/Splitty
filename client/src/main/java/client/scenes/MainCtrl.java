@@ -74,6 +74,7 @@ public class MainCtrl {
     private Scene eventOverviewScene;
 
     private WebsocketSessionHandler sessionHandler;
+    private WebSocketStompClient stompClient;
     private EventDataHandler dataHandler;
     private String serverIp;
     private AdminPanelCtrl adminPanelCtrl;
@@ -149,8 +150,6 @@ public class MainCtrl {
         setTranslationSupplier();
 
         setLanguageSwitchButton();
-
-        startWebSocket();
 
         showStartScreen();
 
@@ -547,10 +546,11 @@ public class MainCtrl {
     public void startWebSocket(){
         WebSocketClient client = new StandardWebSocketClient();
 
-        WebSocketStompClient stompClient = new WebSocketStompClient(client);
+        stompClient = new WebSocketStompClient(client);
         MappingJackson2MessageConverter jackson2MessageConverter = new MappingJackson2MessageConverter();
         jackson2MessageConverter.getObjectMapper().findAndRegisterModules();
         stompClient.setMessageConverter(jackson2MessageConverter);
+
 
         sessionHandler = new WebsocketSessionHandler(dataHandler, adminDataHandler, this);
         stompClient.connectAsync("ws://" + this.serverIp + "/v1", sessionHandler);
@@ -588,7 +588,10 @@ public class MainCtrl {
         this.dataHandler = dataHandler;
     }
 
-    private void setServerIp(){
+    /**
+     * Method for setting the correct server ip
+     */
+    void setServerIp(){
         FileSystemUtils utils = new FileSystemUtils(getTranslationSupplier());
         try {
             this.serverIp = utils.getServerIP("client-config.json");
@@ -636,6 +639,28 @@ public class MainCtrl {
     public void refreshParticipantsData() {
         if(primaryStage.getTitle().equals("Event overview")){
             eventOverviewCtrl.refreshParticipantsData();
+        }
+    }
+
+    /**
+     * method for refreshing data in the detailed expense scene
+     * @param expense
+     */
+    public void refreshDetailedExpenseData(Expense expense) {
+        if (primaryStage.getTitle().equals("Detailed Expense") && detailedExpenseCtrl.getExpense().getId()
+                .equals(expense.getId())) {
+            detailedExpenseCtrl.setUpOrRefreshData(expense);
+        }
+    }
+
+    /**
+     * "aborts" detailed expense scene if expense id deleted
+     * @param expense
+     */
+    public void deleteDetailedExpenseData(Expense expense) {
+        if (primaryStage.getTitle().equals("Detailed Expense") && detailedExpenseCtrl.getExpense().getId()
+                .equals(expense.getId())) {
+            detailedExpenseCtrl.goToEventOverview();
         }
     }
 
