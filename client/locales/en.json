@@ -54,6 +54,8 @@
   "BIC": "BIC",
   "List of Involved": "List of Involved",
   "DateOfExpenseLabel": "Date of the expense",
+  "EditServerUrlLabel": "Edit Server URL",
+  "ServerUrlBox": "Server URL",
   "WhoIsInvolvedLabel": "Who is involved?",
   "Partial Debt": "Partial Debt Settling",
   "Save Partial Debts": "Save Partial Debts",

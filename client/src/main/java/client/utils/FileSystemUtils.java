@@ -378,4 +378,35 @@ public class FileSystemUtils {
             alert.showAndWait();
         }
     }
+
+    /**
+     * Method for replacing server ip in config file
+     * @param path path to client-config.json
+     * @param newServerIP new server ip to set it to
+     * @throws IOException possible error throw
+     * @throws IllegalArgumentException if the new server ip is not a valid URL
+     */
+    public void replaceServerIPInConfigFile(String path, String newServerIP) throws IOException{
+        try {
+            JsonReader reader = Json.createReader(new FileReader(path));
+            JsonObject oldJson = reader.readObject();
+            reader.close();
+
+            JsonObject newJson = Json.createObjectBuilder()
+                    .add("server-ip", newServerIP)
+                    .add("lang", oldJson.getString("lang"))
+                    .build();
+
+            FileWriter file = new FileWriter(path);
+            file.write(newJson.toString());
+            file.flush();
+            file.close();
+        } catch (Exception e) {
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Failed to replace server IP in config file");
+            alert.showAndWait();
+        }
+    }
+
 }

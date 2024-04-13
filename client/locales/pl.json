@@ -49,6 +49,8 @@
   "LastActivityDate": "Ostatnia aktywność",
   "DeleteEvent": "Usuń wydarzenie",
   "JSONDump": "Pobierz JSON",
+  "EditServerUrlLabel": "Edytuj ścieżkę serwera",
+  "ServerUrlBox": "Ścieżka serwera",
   "Share per person": "Działka na osobę",
   "IBAN": "IBAN",
   "BIC": "BIC",
