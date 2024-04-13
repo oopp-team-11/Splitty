@@ -34,6 +34,7 @@ public class ParticipantController {
      * @param participantRepository participant repository
      * @param eventRepository event repository
      * @param template SimpMessagingTemplate
+     * @param expenseRepository expenseRepository
      * @param eventLastActivityService EventLastActivityService
      */
     @Autowired
