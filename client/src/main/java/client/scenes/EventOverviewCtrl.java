@@ -351,6 +351,7 @@ public class EventOverviewCtrl implements Translatable {
         participantsList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
         userChoiceBox.setItems(FXCollections.observableList(new ArrayList<>()));
         userChoiceBox.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
+        tabPaneExpenses.getSelectionModel().select(allExpenses);
     }
     /**
      * Method for updating data in scene
@@ -359,6 +360,7 @@ public class EventOverviewCtrl implements Translatable {
         expensesList.getColumns().getFirst().setVisible(false);
         expensesList.getColumns().getFirst().setVisible(true);
         expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));
+        tabPaneExpenses.getSelectionModel().select(allExpenses);
     }
 
     private void editingTitle(){
