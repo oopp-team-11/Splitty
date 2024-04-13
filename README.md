@@ -29,3 +29,7 @@
 
 ## Explanation of unintuitive features
 - Double-click on an expense to access a partial debt settling page (detailed expense overview)
+- Partial debt settling page functionality (detailed expense overview)
+    * Click for those participants whose debts are already settled
+    * Press the "Save partial debts" (green button) to save changes for the partial debts of the specific expense
+    * Press the "Go to Event Overview" (red button) to exit the page without saving the partial debts for specific expense
