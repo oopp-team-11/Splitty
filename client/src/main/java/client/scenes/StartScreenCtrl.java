@@ -278,6 +278,7 @@ public class StartScreenCtrl implements Initializable, Translatable {
         }
 
         mainCtrl.setServerIp();
+        mainCtrl.getSessionHandler().disconnectFromServer();
         mainCtrl.startWebSocket();
         refresh();
     }
