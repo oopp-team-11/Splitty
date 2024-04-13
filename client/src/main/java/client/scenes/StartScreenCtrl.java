@@ -127,6 +127,9 @@ public class StartScreenCtrl implements Initializable, Translatable {
         joinInvitationCode.onKeyPressedProperty().set(keyEvent -> {
             if (keyEvent.getCode().equals(KeyCode.ENTER)) onJoin();
         });
+        serverUrlBox.onKeyPressedProperty().set(keyEvent -> {
+            if (keyEvent.getCode().equals(KeyCode.ENTER)) onEditURL();
+        });
     }
 
     /**
