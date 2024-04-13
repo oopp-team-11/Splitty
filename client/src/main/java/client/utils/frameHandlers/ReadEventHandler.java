@@ -50,13 +50,12 @@ public class ReadEventHandler implements StompFrameHandler {
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(mainCtrl.getTranslationSupplier()
-                                .getTranslation("InvalidInvitationCode").replaceAll("\"", "")
+                                .getTranslation("InvalidInvitationCode")
                                 + "\n" + mainCtrl.getTranslationSupplier().getTranslation("Error")
-                                .replaceAll("\"", "")
                                 + mainCtrl.getTranslationSupplier()
-                                .getTranslation("ReadEventBadRequest").replaceAll("\"", "")
+                                .getTranslation("ReadEventBadRequest")
                                 + mainCtrl.getTranslationSupplier()
-                                .getTranslation("InvitationCodeForm").replaceAll("\"", ""));
+                                .getTranslation("InvitationCodeForm"));
                         alert.showAndWait();
                         mainCtrl.showStartScreen();
                     });
@@ -65,13 +64,12 @@ public class ReadEventHandler implements StompFrameHandler {
                         var alert = new Alert(Alert.AlertType.WARNING);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(mainCtrl.getTranslationSupplier()
-                                .getTranslation("InvalidInvitationCode").replaceAll("\"", "")
+                                .getTranslation("InvalidInvitationCode")
                                 + "\n" + mainCtrl.getTranslationSupplier().getTranslation("Warning")
-                                .replaceAll("\"", "")
                                 + mainCtrl.getTranslationSupplier()
-                                .getTranslation("ReadEventBadRequest").replaceAll("\"", "")
+                                .getTranslation("ReadEventBadRequest")
                                 + mainCtrl.getTranslationSupplier()
-                                .getTranslation("InvitationCodeForm").replaceAll("\"", ""));
+                                .getTranslation("InvitationCodeForm"));
                         alert.showAndWait();
                         mainCtrl.showStartScreen();
                     });
@@ -83,13 +81,12 @@ public class ReadEventHandler implements StompFrameHandler {
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(mainCtrl.getTranslationSupplier()
-                                .getTranslation("InvalidInvitationCode").replaceAll("\"", "")
+                                .getTranslation("InvalidInvitationCode")
                                 + "\n" + mainCtrl.getTranslationSupplier().getTranslation("Error")
-                                .replaceAll("\"", "")
                                 + mainCtrl.getTranslationSupplier()
-                                .getTranslation("ReadEventNotFound").replaceAll("\"", "")
+                                .getTranslation("ReadEventNotFound")
                                 + mainCtrl.getTranslationSupplier()
-                                .getTranslation("InvitationCodeForm").replaceAll("\"", ""));
+                                .getTranslation("InvitationCodeForm"));
                         alert.showAndWait();
                         mainCtrl.showStartScreen();
                     });
@@ -98,13 +95,12 @@ public class ReadEventHandler implements StompFrameHandler {
                         var alert = new Alert(Alert.AlertType.WARNING);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setContentText(mainCtrl.getTranslationSupplier()
-                                .getTranslation("InvalidInvitationCode").replaceAll("\"", "")
+                                .getTranslation("InvalidInvitationCode")
                                 + "\n" + mainCtrl.getTranslationSupplier().getTranslation("Warning")
-                                .replaceAll("\"", "")
                                 + mainCtrl.getTranslationSupplier()
-                                .getTranslation("ReadEventNotFound").replaceAll("\"", "")
+                                .getTranslation("ReadEventNotFound")
                                 + mainCtrl.getTranslationSupplier()
-                                .getTranslation("InvitationCodeForm").replaceAll("\"", ""));
+                                .getTranslation("InvitationCodeForm"));
                         alert.showAndWait();
                         mainCtrl.showStartScreen();
                     });
