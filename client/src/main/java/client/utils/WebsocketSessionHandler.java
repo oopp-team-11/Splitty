@@ -77,6 +77,25 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
     }
 
     /**
+     * Whether session was established
+     *
+     * @return boolean
+     */
+    public boolean isSessionNull() {
+        return session == null;
+    }
+
+    /**
+     * Disconnects from the server
+     */
+    public void disconnectFromServer() {
+        if (session != null && session.isConnected()) {
+            session.disconnect();
+        }
+        session = null;
+    }
+
+    /**
      * Subscribe to event specific endpoints
      *
      * @param invitationCode invitationCode of the event to subscribe to
