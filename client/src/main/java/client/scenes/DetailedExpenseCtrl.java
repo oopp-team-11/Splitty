@@ -182,6 +182,15 @@ public class DetailedExpenseCtrl implements Translatable {
                 ((Button) key).setText(translation.replaceAll("\"", ""));
             }
         });
+
+        Map<TableColumn, String> tableColumns = new HashMap<>();
+        tableColumns.put(this.participantNameColumn, "Participant");
+        tableColumns.put(this.isSettledColumn, "IsSettled");
+        tableColumns.forEach((key, val) -> {
+            var translation = translationSupplier.getTranslation(val);
+            if (translation == null) return;
+            key.setText(translation.replaceAll("\"", ""));
+        });
     }
 
     /**

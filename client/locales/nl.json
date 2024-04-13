@@ -53,9 +53,12 @@
   "IBAN": "IBAN",
   "BIC": "BIC",
   "List of Involved": "Please, add translation",
-  "DateOfExpenseLabel": "Date of the expense",
+  "DateOfExpenseLabel": "Please, add translation",
   "WhoIsInvolvedLabel": "Please, add translation",
   "Partial Debt": "Please, add translation",
   "Save Partial Debts": "Please, add translation",
-  "Go To Event Overview": "Please, add translation"
+  "Go To Event Overview": "Please, add translation",
+  "Select All": "Please, add translation",
+  "Participant": "Please, add translation",
+  "IsSettled": "Please, add translation"
 }

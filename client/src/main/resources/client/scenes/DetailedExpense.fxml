@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700" prefWidth="850" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.DetailedExpenseCtrl">
 
@@ -22,27 +23,72 @@
             <ColumnConstraints percentWidth="45.0" />
             <ColumnConstraints percentWidth="45.0" />
         </columnConstraints>
-        <Label fx:id="titleNaming" alignment="CENTER" prefHeight="29.0" prefWidth="387.0" text="Title:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-        <Label fx:id="title" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <Label fx:id="titleNaming" alignment="CENTER" prefHeight="29.0" prefWidth="387.0" text="Title:" GridPane.columnIndex="0" GridPane.rowIndex="0">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
+        <Label fx:id="title" GridPane.columnIndex="1" GridPane.rowIndex="0">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
 
-        <Label fx:id="amountNaming" alignment="CENTER" prefHeight="34.0" prefWidth="440.0" text="Amount:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-        <Label fx:id="amount" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <Label fx:id="amountNaming" alignment="CENTER" prefHeight="34.0" prefWidth="440.0" text="Amount:" GridPane.columnIndex="0" GridPane.rowIndex="1">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
+        <Label fx:id="amount" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
 
-        <Label fx:id="dateNaming" alignment="CENTER" prefHeight="74.0" prefWidth="506.0" text="Date:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-        <Label fx:id="date" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <Label fx:id="dateNaming" alignment="CENTER" prefHeight="74.0" prefWidth="506.0" text="Date:" GridPane.columnIndex="0" GridPane.rowIndex="2">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
+        <Label fx:id="date" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
 
-        <Label fx:id="amountOwedNaming" alignment="CENTER" prefHeight="34.0" prefWidth="410.0" text="Share per person:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-        <Label fx:id="amountOwed" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <Label fx:id="amountOwedNaming" alignment="CENTER" prefHeight="34.0" prefWidth="410.0" text="Share per person:" GridPane.columnIndex="0" GridPane.rowIndex="3">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
+        <Label fx:id="amountOwed" GridPane.columnIndex="1" GridPane.rowIndex="3">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
 
-        <Label fx:id="paidByNaming" alignment="CENTER" prefHeight="32.0" prefWidth="383.0" text="Paid by:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-        <Label fx:id="paidBy" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <Label fx:id="paidByNaming" alignment="CENTER" prefHeight="32.0" prefWidth="383.0" text="Paid by:" GridPane.columnIndex="0" GridPane.rowIndex="4">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
+        <Label fx:id="paidBy" GridPane.columnIndex="1" GridPane.rowIndex="4">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
 
-        <Label fx:id="ibanNaming" alignment="CENTER" prefHeight="39.0" prefWidth="383.0" text="IBAN:" GridPane.rowIndex="5" />
-        <Label fx:id="iban" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-      <Label fx:id="bicNaming" alignment="CENTER" layoutX="52.0" layoutY="153.0" prefHeight="39.0" prefWidth="383.0" text="BIC:" GridPane.rowIndex="6" />
-      <Label fx:id="bic" layoutX="436.0" layoutY="154.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+        <Label fx:id="ibanNaming" alignment="CENTER" prefHeight="39.0" prefWidth="383.0" text="IBAN:" GridPane.rowIndex="5">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
+        <Label fx:id="iban" GridPane.columnIndex="1" GridPane.rowIndex="5">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
+      <Label fx:id="bicNaming" alignment="CENTER" layoutX="52.0" layoutY="153.0" prefHeight="39.0" prefWidth="383.0" text="BIC:" GridPane.rowIndex="6">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
+      <Label fx:id="bic" layoutX="436.0" layoutY="154.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
 
-        <Label fx:id="involvedListNaming" alignment="CENTER" prefHeight="458.0" prefWidth="383.0" text="List of Involved:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+        <Label fx:id="involvedListNaming" alignment="CENTER" prefHeight="458.0" prefWidth="383.0" text="List of Involved:" GridPane.columnIndex="0" GridPane.rowIndex="7">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
         <TableView fx:id="involvedTableView" prefHeight="400.0" prefWidth="350.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
             <columns>
                 <TableColumn fx:id="participantNameColumn" prefWidth="257.60000002384186" text="Participant" />

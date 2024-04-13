@@ -57,5 +57,8 @@
   "WhoIsInvolvedLabel": "Kto uczestniczył w wydatku?",
   "Partial Debt": "Cząstkowe uiszczenie długu",
   "Save Partial Debts": "Zapisz cząstkowe długi",
-  "Go To Event Overview": "Wróć do widoku wydarzenia"
+  "Go To Event Overview": "Wróć do widoku wydarzenia",
+  "Select All": "Wybierz wszystko",
+  "Participant": "Uczestnik",
+  "IsSettled": "Dług spłacony?"
 }
