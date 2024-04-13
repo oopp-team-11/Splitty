@@ -43,5 +43,9 @@ public class TranslationSupplier {
      * @param key the key for the translation
      * @return Either the correct translation or null
      */
-    public String getTranslation(String key) { return translationMap.get(key); }
+    public String getTranslation(String key) {
+        var translation = translationMap.get(key);
+        if (translation == null) return null;
+        return translation.replaceAll("\"", "");
+    }
 }
