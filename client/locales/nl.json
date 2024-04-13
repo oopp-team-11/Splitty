@@ -49,11 +49,13 @@
   "LastActivityDate": "Laatste activiteitsdatum",
   "DeleteEvent": "Evenement verwijderen",
   "JSONDump": "JSON Dump",
-  "Date": "Please, add translation",
   "Share per person": "Please, add translation",
-  "Paid by": "Please, add translation",
-  "Banking Details": "Please, add translation",
+  "IBAN": "IBAN",
+  "BIC": "BIC",
   "List of Involved": "Please, add translation",
   "DateOfExpenseLabel": "Date of the expense",
-  "WhoIsInvolvedLabel": "Who is involved?"
+  "WhoIsInvolvedLabel": "Please, add translation",
+  "Partial Debt": "Please, add translation",
+  "Save Partial Debts": "Please, add translation",
+  "Go To Event Overview": "Please, add translation"
 }

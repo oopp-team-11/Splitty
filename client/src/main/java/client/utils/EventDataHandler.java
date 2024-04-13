@@ -368,10 +368,7 @@ public class EventDataHandler {
         updateExpense(localExpense, receivedExpense);
         assignParticipantsInExpense(localExpense);
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshExpensesData());
-
-
         // Refresh the Detailed Expense UI
-        localExpense.setPaidBy(getParticipantById(localExpense.getPaidById()));
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshDetailedExpenseData(localExpense));
     }
 
@@ -462,6 +459,7 @@ public class EventDataHandler {
         toUpdate.setAmount(fromUpdate.getAmount());
         toUpdate.setPaidById(fromUpdate.getPaidById());
         toUpdate.setDate(fromUpdate.getDate());
+        toUpdate.setAmountOwed(fromUpdate.getAmountOwed());
         toUpdate.setInvolveds(fromUpdate.getInvolveds());
     }
 

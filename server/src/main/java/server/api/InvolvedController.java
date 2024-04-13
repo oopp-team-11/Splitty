@@ -77,9 +77,6 @@ public class InvolvedController {
         }
         template.convertAndSend("/topic/" + toSend.getFirst().getInvitationCode()+ "/involved:update", toSend);
 
-
-
-
         return StatusEntity.ok("Successfully updated settling of debts");
     }
 }

@@ -49,11 +49,13 @@
   "LastActivityDate": "Last Activity Date",
   "DeleteEvent": "Delete Event",
   "JSONDump": "JSON Dump",
-  "Date": "Date",
   "Share per person": "Share per person",
-  "Paid by": "Paid by",
-  "Banking Details": "Banking Details",
+  "IBAN": "IBAN",
+  "BIC": "BIC",
   "List of Involved": "List of Involved",
   "DateOfExpenseLabel": "Date of the expense",
-  "WhoIsInvolvedLabel": "Who is involved?"
+  "WhoIsInvolvedLabel": "Who is involved?",
+  "Partial Debt": "Partial Debt Settling",
+  "Save Partial Debts": "Save Partial Debts",
+  "Go To Event Overview": "Go To Event Overview"
 }
