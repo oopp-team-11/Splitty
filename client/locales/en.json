@@ -68,6 +68,7 @@
   "ExpensePaidByEmpty": "Paid By field is empty, please choose a participant.",
   "ExpenseTitleEmpty": "Expense title field is empty, please add a title.",
   "ExpenseAmountEmpty": "Expense amount field is empty, please fill in an amount.",
+  "ExpenseDateEmpty": "Expense date field is empty, please fill in a date.",
   "ExpenseAmountWrongFormatEmpty": "Expense amount field is not a number or is negative or equal to zero, please fill in a positive number. (don't use commas, use periods instead)",
   "ParticipantFirstNameEmpty": "First name field is empty, please fill in a first name.",
   "ParticipantLastNameEmpty": "Last name field is empty, please fill in a last name.",
@@ -78,9 +79,13 @@
   "ConfirmationEditParticipant": "Are you sure you want to edit this participant?",
   "ConfirmationDeleteParticipant": "Are you sure you want to delete this participant?",
   "ConfirmationDeleteEvent": "Are you sure you want to delete this event?",
+  "NoInvolvedsWarning": "You have not selected any involved participants.",
   "SuccessfullyJsonDump": "Successfully saved JSON file to chosen backup directory.",
   "ServerIPEmpty": " doesn't exist. Created new default file, please put the server url if it isn't localhost:8080 in client-config.json. You need to delete localhost:8080 and put it there.",
   "ServerIPWrongFormat": " is the wrong format. Created new default file, please put the server url if it isn't localhost:8080 in client-config.json. You need to delete localhost:8080 and put it there.",
+  "ServerIPFailedToReplace": "Failed to replace server IP in config file",
+  "ServerIPFailedToSave": "Failed to save server IP to config file.",
+  "ServerConnectSuccess": "Successfully connected to the server.",
   "LanguageEmpty": " doesn't exist. Created new default file, please put the language if it isn't en(english) in client-config.json. You need to delete en and put it there.",
   "LanguageWrongFormat": " is the wrong format. Created new default file, please put the language if it isn't en(english) in client-config.json. You need to delete en and put it there.",
   "Share per person": "Share per person",
@@ -96,5 +101,6 @@
   "Go To Event Overview": "Go To Event Overview",
   "Select All": "Select All",
   "Participant": "Participant",
-  "IsSettled": "Debt settled?"
+  "IsSettled": "Debt settled?",
+  "Incorrect Password!": "Incorrect Password!"
 }

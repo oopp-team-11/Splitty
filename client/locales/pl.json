@@ -68,6 +68,7 @@
   "ExpensePaidByEmpty": "Pole płatnika jest puste, proszę wybrać uczestnika.",
   "ExpenseTitleEmpty": "Pole tytułu wydatku jest puste, proszę dodać tytuł.",
   "ExpenseAmountEmpty": "Pole kwoty wydatku jest puste, proszę podać kwotę.",
+  "ExpenseDateEmpty": "Please, add translation",
   "ExpenseAmountWrongFormatEmpty": "Kwota nie jest liczbą lub jest niedodatnia, proszę podać dodatnią liczbę. (nie używaj przecinków, tylko kropki)",
   "ParticipantFirstNameEmpty": "Pole imienia jest puste, proszę podać imię",
   "ParticipantLastNameEmpty": "Pole nazwiska jest puste, proszę podać imię",
@@ -78,9 +79,13 @@
   "ConfirmationEditParticipant": "Jesteś pewien, że chcesz edytować tego uczestnika?",
   "ConfirmationDeleteParticipant": "Jesteś pewien, że chcesz usunąć tego uczestnika?",
   "ConfirmationDeleteEvent": "Jesteś pewien, że chcesz usunąć to wydarzenie?",
+  "NoInvolvedsWarning": "Please, add translation",
   "SuccessfullyJsonDump": "Prawidłowo zapisano plik JSON do wybranej lokalizacji",
   "ServerIPEmpty": " nie istnieje. Stworzono nowy domyślny plik, proszę podać url serwera w client-config.json. Jeżeli nie jest to localhost:8080 - trzeba usunąć localhost:8080 i zapisać w tym miejscu właściwy adres.",
   "ServerIPWrongFormat": " jest złym formatem. Stworzono nowy domyślny plik, proszę podać url serwera w client-config.json. Jeżeli nie jest to localhost:8080 - trzeba usunąć localhost:8080 i zapisać w tym miejscu właściwy adres.",
+  "ServerIPFailedToReplace": "Please, add translation",
+  "ServerIPFailedToSave": "Please, add translation.",
+  "ServerConnectSuccess": "Please, add translation.",
   "LanguageEmpty": " nie istnieje. Stworzono nowy domyślny plik, proszę podać język w client-config.json. Jeżeli nie jest to en(angielski) - trzeba usunaąć en i zapisać w tym miejscu właściwy język.",
   "LanguageWrongFormat": " jest złym formatem. Stworzono nowy domyślny plik, proszę podać język w client-config.json. Jeżeli nie jest to en(angielski) - trzeba usunaąć en i zapisać w tym miejscu właściwy język.",
   "Paid by": "Please, add translation",
@@ -98,5 +103,6 @@
   "Go To Event Overview": "Wróć do widoku wydarzenia",
   "Select All": "Wybierz wszystko",
   "Participant": "Uczestnik",
-  "IsSettled": "Dług spłacony?"
+  "IsSettled": "Dług spłacony?",
+  "Incorrect Password!": "Please, add translation"
 }

@@ -68,6 +68,7 @@
   "ExpensePaidByEmpty": "Wie betaald vak is leeg, kies alsjeblieft een deelnemer.",
   "ExpenseTitleEmpty": "Uitgave titel vak is leeg, voeg alsjeblieft een titel toe.",
   "ExpenseAmountEmpty": "Uigave kosten vak is leeg, vul alsjeblieft een hoeveelheid in",
+  "ExpenseDateEmpty": "Het veld voor de uitgavedatum is leeg. Vul een datum in.",
   "ExpenseAmountWrongFormatEmpty": "Uigave kosten vak is geen getal of is negatief of is nul, vul alsjeblieft een positief getal in. (gebruik geen komma's, maar gebruik punten)",
   "ParticipantFirstNameEmpty": "Voornaam veld is leeg, vul alsjeblieft een voornaam in",
   "ParticipantLastNameEmpty": "Achternaam veld is leeg, vul alsjeblieft een achternaam in",
@@ -78,9 +79,13 @@
   "ConfirmationEditParticipant": "Weet je zeker dat je deze deelnemer wilt aanpassen?",
   "ConfirmationDeleteParticipant": "Weet je zeker dat je deze deelnemer wilt verwijderen?",
   "ConfirmationDeleteEvent": "Weet je zeker dat je deze evenement wilt verwijderen?",
+  "NoInvolvedsWarning": "U heeft geen betrokken deelnemers geselecteerd.",
   "SuccessfullyJsonDump": "Succesvol JSON bestand opgeslagen op de gekozen back-up locatie.",
   "ServerIPEmpty": " bestaat niet. Nieuw standaard bestand aangemaakt, vul alsjeblieft de server-URL in als hij niet gelijk is aan localhost:8080 in client-config.json. Je moet localhost:8080 verwijderen en de nieuwe URL daar invullen.",
   "ServerIPWrongFormat": " heeft een foute vorm. Nieuw standaard bestand aangemaakt, vul alsjeblieft de server-URL in als hij niet gelijk is aan localhost:8080 in client-config.json. Je moet localhost:8080 verwijderen en de nieuwe URL daar invullen.",
+  "ServerIPFailedToReplace": "Please, add translation",
+  "ServerIPFailedToSave": "Please, add translation.",
+  "ServerConnectSuccess": "Please, add translation.",
   "LanguageEmpty": " bestaat niet. Nieuw standaard bestand aangemaakt, vul alsjeblieft de taalcode in als hij niet gelijk is aan en(engels) in client-config.json if it isn't en(english) in client-config.json. Je moet 'en' verwijderen en de nieuwe taalcode invullen",
   "LanguageWrongFormat": " heeft een foute vorm. Nieuw standaard bestand aangemaakt, vul alsjeblieft de taalcode in als hij niet gelijk is aan en(engels) in client-config.json if it isn't en(english) in client-config.json. Je moet 'en' verwijderen en de nieuwe taalcode invullen",
   "Share per person": "Please, add translation",
@@ -96,5 +101,6 @@
   "Participant": "Please, add translation",
   "IsSettled": "Please, add translation",
   "EditServerUrlLabel": "Please add translation",
-  "ServerUrlBox": "Please add translation"
+  "ServerUrlBox": "Please add translation",
+  "Incorrect Password!": "Incorrect Wachtwoord!"
 }
