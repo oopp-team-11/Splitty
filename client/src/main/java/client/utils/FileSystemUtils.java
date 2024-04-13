@@ -386,7 +386,7 @@ public class FileSystemUtils {
      * @throws IOException possible error throw
      * @throws IllegalArgumentException if the new server ip is not a valid URL
      */
-    public void replaceServerIPInConfigFile(String path, String newServerIP) throws IOException{
+    public void replaceServerIPInConfigFile(String path, String newServerIP, TranslationSupplier tl) throws IOException{
         try {
             JsonReader reader = Json.createReader(new FileReader(path));
             JsonObject oldJson = reader.readObject();
@@ -404,7 +404,7 @@ public class FileSystemUtils {
         } catch (Exception e) {
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Failed to replace server IP in config file");
+            alert.setContentText(tl.getTranslation("ServerIPFailedToReplace"));
             alert.showAndWait();
         }
     }

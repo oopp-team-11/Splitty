@@ -324,7 +324,7 @@ class FileSystemUtilsTest {
         Files.write(tempFile, "{\"server-ip\":\"localhost:8080\",\"lang\":\"en\"}".getBytes());
 
         String newServerIP = "http://192.168.1.1:8080";
-        fileSystemUtils.replaceServerIPInConfigFile(tempFile.toString(), newServerIP);
+        fileSystemUtils.replaceServerIPInConfigFile(tempFile.toString(), newServerIP, null);
         String content = new String(Files.readAllBytes(tempFile));
         assertEquals("{\"server-ip\":\"" + newServerIP + "\",\"lang\":\"en\"}", content);
     }
