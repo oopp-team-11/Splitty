@@ -55,7 +55,7 @@ Then at the end, we'll wrap-up this product pitch on Splitty.
 
 ***
 
-## Brief side note to live updates using websockets (explain as if your explaining it to yourself from 2 years ago)
+## Brief side note to live updates using websockets
 The important trait of our project is that it is live. We have achieved that by using mostly websockets in our project.
 Most of the event endpoints, and all of participant and expense endpoints are implemented via websockets.
 That ensures bidirectional communication between the server and the client.
@@ -77,6 +77,8 @@ That ensures bidirectional communication between the server and the client.
     - The client is able to create a new event by providing a title for the event on the corresponding input box and clicking on the ```Create``` button.
     - The client is able to join to an existing event by providing the invitation code of the event on the corresponding input box and clicking on the ```Join``` button.
     - Alternatively, The client is able to (re)join an event by double clicking on the event they want to join from their list of events and they will be redirected do the specified event's overview page.
+    - The client can switch server with a provided uri on the bottom left
+    - An admin can type in admin password unique for the server and log in to the admin panel in the bottom left.
 
 ### Step 2 - Event overview
 
@@ -99,7 +101,6 @@ That ensures bidirectional communication between the server and the client.
 - Once the client clicks on the ```Add Participant``` button, teh client will be redirected to the add participant page. The client is able to add a new participant to the event by providing the following fields:
     - First Name
     - Last Name
-    - Email
     - IBAN
     - BIC
     - The client is able to add the participant to the event by clicking the ```Add``` button. If the client clicks the ```Add``` button, then the participant will be added to the event and the client will be redirected back to the event's overview page. If the client clicks the ```Abort``` button, then the client will be redirected back to the event's overview page without adding the participant to the event.
@@ -110,7 +111,6 @@ That ensures bidirectional communication between the server and the client.
 - Once the client clicks on the ```Edit``` button next to a participant, the client will be redirected to the edit participant page. The client is able to edit the participant's information by providing the following fields:
     - First Name
     - Last Name
-    - Email
     - IBAN
     - BIC
     - The client is able to save the changes by clicking the ```Edit``` button. If the client clicks the ```Edit``` button, then the participant's information will be updated and the client will be redirected back to the event's overview page. If the client clicks the ```Abort``` button, then the client will be redirected back to the event's overview page without updating the participant's information.
@@ -131,8 +131,15 @@ That ensures bidirectional communication between the server and the client.
     - Who paid? (Select a participant from the list of participants)
     - The client is able to save the changes by clicking the ```Edit``` button. If the client clicks the ```Edit``` button, then the expense's information will be updated and the client will be redirected back to the event's overview page. If the client clicks the ```Abort``` button, then the client will be redirected back to the event's overview page without updating the expense's information.
 
+### Step 7 - Admin panel
+- Once the admin provides password and clicks the ```Log in``` button, he will be redirected to the admin panel. The admin can see all the events and he can:
+    - Delete them,
+    - Dump a json of them,
+    - Import an event from json
+- That way, admin can delete an event, if he pleases to, and can create backups and restore them if necessary.
 
-### Step IDK YET - Admin panel
+### Step 8 - Language switch
+...
 
 ***
 
@@ -154,4 +161,4 @@ could be stored in the config files on the client side.
 ***
 
 ## Wrap-up
-TODO: Add wrap-up
+Thank you for attending our product pitch. We are very content about the project and proud about the ending result. We are especially satisfied that our app is fully live. Thank you.
