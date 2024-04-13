@@ -347,13 +347,13 @@ class WebsocketSessionHandlerTest {
         ArgumentCaptor<String> destinationCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Object> payloadCaptor = ArgumentCaptor.forClass(Object.class);
 
-        handler.sendInvolved(involved, "update");
+        handler.sendInvolveds(expense.getInvolveds(), "update");
         verify(session).send(destinationCaptor.capture(), payloadCaptor.capture());
 
         String capturedDestination = destinationCaptor.getValue();
         assertEquals("/app/involved:update", capturedDestination);
 
-        assertEquals(involved, payloadCaptor.getValue());
+        assertEquals(expense.getInvolveds(), payloadCaptor.getValue());
     }
 
     @Test
@@ -445,5 +445,19 @@ class WebsocketSessionHandlerTest {
         assertEquals(expectedHeaders, capturedHeaders);
 
         assertEquals(event, payloadCaptor.getValue());
+    }
+
+    @Test
+    void isSessionNull() {
+        assertTrue(handler.isSessionNull());
+    }
+
+    @Test
+    void disconnectFromServer() {
+        handler.afterConnected(session, headers);
+        when(session.isConnected()).thenReturn(true);
+        handler.disconnectFromServer();
+        verify(session, times(1)).disconnect();
+        assertTrue(handler.isSessionNull());
     }
 }

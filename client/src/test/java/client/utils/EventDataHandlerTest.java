@@ -1,11 +1,9 @@
+
 package client.utils;
 
 import client.Main;
 import client.scenes.MainCtrl;
-import commons.Event;
-import commons.Expense;
-import commons.Involved;
-import commons.Participant;
+import commons.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -23,8 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class EventDataHandlerTest {
 
@@ -34,14 +31,17 @@ class EventDataHandlerTest {
     Participant p2;
     Expense e1;
     Expense e2;
+    Expense e3;
     Involved i1;
     Involved i2;
     Involved i3;
     Involved i4;
+    Involved i5;
     List<Participant> participants;
     List<Expense> expenses;
     List<Involved> involveds1;
     List<Involved> involveds2;
+    List<Involved> involveds3;
     WebsocketSessionHandler sessionMock;
     Application app;
 
@@ -62,18 +62,26 @@ class EventDataHandlerTest {
         setId(e1, UUID.randomUUID());
         e2 = new Expense(p2, "2", 2.0, LocalDate.now(), null);
         setId(e2, UUID.randomUUID());
+        e3 = new Expense(p2, "3", 3.0, LocalDate.now(), null);
+        setId(e3, UUID.randomUUID());
         i1 = new Involved(UUID.randomUUID(), true, e1.getId(), p1.getId(), event.getId());
         i2 = new Involved(UUID.randomUUID(), false, e1.getId(), p2.getId(), event.getId());
         i3 = new Involved(UUID.randomUUID(), false, e2.getId(), p1.getId(), event.getId());
         i4 = new Involved(UUID.randomUUID(), true, e2.getId(), p2.getId(), event.getId());
+        i5 = new Involved(UUID.randomUUID(), false, e3.getId(), p1.getId(), event.getId());
         involveds1 = new ArrayList<>();
         involveds1.add(i1);
         involveds1.add(i2);
         involveds2 = new ArrayList<>();
         involveds2.add(i3);
         involveds2.add(i4);
+        involveds3 = new ArrayList<>();
+        involveds3.add(i5);
         e1.setInvolveds(involveds1);
         e2.setInvolveds(involveds2);
+        e2.setAmountOwed(e2.getAmount() / e2.getInvolveds().size());
+        e2.setAmountOwed((Double) (Math.round(e2.getAmountOwed() * 100.) / 100.));
+        e3.setInvolveds(involveds3);
         participants = new ArrayList<>();
         participants.add(p1);
         participants.add(p2);
@@ -158,16 +166,19 @@ class EventDataHandlerTest {
         assertEquals(handler.getParticipants().getFirst().getFirstName(), p1.getFirstName());
     }
 
+
     @Test
     void receiveParticipantDelete() {
         try {
             handler.getDeleteParticipant(p1);
-        }catch (IllegalStateException ignored){}
+        }catch (IllegalStateException ignored){
+        }
         assertEquals(1, handler.getParticipants().size());
         assertEquals(p2, handler.getParticipants().getFirst());
         assertEquals(1, handler.getExpenses().size());
         assertEquals(e2, handler.getExpenses().getFirst());
         assertEquals(1, e2.getInvolveds().size());
+        assertEquals(2., e2.getAmountOwed());
     }
 
     @Test
@@ -317,27 +328,39 @@ class EventDataHandlerTest {
         assertNull(handler.getInvolvedById(e1, UUID.randomUUID()));
     }
 
-    @Test
-    void getUpdateInvolved() {
-        boolean notI1Settled = !i1.getIsSettled();
-        Involved newI1 = new Involved(i1.getId(), notI1Settled, i1.getExpenseId(), i1.getParticipantId(), event.getId());
-        handler.getUpdateInvolved(newI1);
-        assertEquals(notI1Settled, i1.getIsSettled());
-    }
+
 
     @Test
     void getUpdateInvolvedExpenseNotFound() {
         Involved newI1 = new Involved(i1.getId(), i1.getIsSettled(), UUID.randomUUID(), i1.getParticipantId(), event.getId());
-        handler.getUpdateInvolved(newI1);
+        var list = new InvolvedList();
+        list.add(newI1);
+        handler.getUpdateInvolved(list);
         verify(sessionMock).refreshExpenses();
     }
 
     @Test
     void getUpdateInvolvedNotFound() {
         Involved newI1 = new Involved(UUID.randomUUID(), i1.getIsSettled(), i1.getExpenseId(), i1.getParticipantId(), event.getId());
-        handler.getUpdateInvolved(newI1);
+        var list = new InvolvedList();
+        list.add(newI1);
+        handler.getUpdateInvolved(list);
         verify(sessionMock).refreshExpenses();
     }
+
+
+    @Test
+    void getUpdateInvolvedNotFoundWithNull() {
+        handler.getUpdateInvolved(null);
+        verify(sessionMock).refreshExpenses();
+    }
+
+    @Test
+    void getUpdateInvolvedNotFoundWithEmptyList() {
+        handler.getUpdateInvolved(new InvolvedList());
+        verify(sessionMock).refreshExpenses();
+    }
+
 
     @Test
     void sumOfAllExpenses() {

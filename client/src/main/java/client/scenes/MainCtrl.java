@@ -29,6 +29,8 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
@@ -72,11 +74,14 @@ public class MainCtrl {
     private Scene eventOverviewScene;
 
     private WebsocketSessionHandler sessionHandler;
+    private WebSocketStompClient stompClient;
     private EventDataHandler dataHandler;
     private String serverIp;
     private AdminPanelCtrl adminPanelCtrl;
     private Scene adminPanelScene;
     private AdminDataHandler adminDataHandler;
+    private DetailedExpenseCtrl detailedExpenseCtrl;
+    private Scene detailedExpenseScene;
 
     private TranslationSupplier translationSupplier;
     private LinkedHashMap<String, Locale> availableLanguages;
@@ -93,6 +98,7 @@ public class MainCtrl {
      * @param editExpense a pair of edit expense controller and javafx edit expense scene
      * @param addExpense a pair of add expense controller and javafx add expense scene
      * @param adminPanel a pair of admin panel controller and javafx admin panel scene
+     * @param detailedExpense
      */
 
     public void initialize(Stage primaryStage, Pair<StartScreenCtrl, Parent> startScreen,
@@ -101,7 +107,8 @@ public class MainCtrl {
                            Pair<EventOverviewCtrl, Parent> eventOverview,
                            Pair<EditExpenseCtrl, Parent> editExpense,
                            Pair<AddExpenseCtrl, Parent> addExpense,
-                           Pair<AdminPanelCtrl, Parent> adminPanel) {
+                           Pair<AdminPanelCtrl, Parent> adminPanel,
+                           Pair<DetailedExpenseCtrl, Parent> detailedExpense) {
         this.primaryStage = primaryStage;
 
         this.startScreenCtrl = startScreen.getKey();
@@ -130,6 +137,11 @@ public class MainCtrl {
         this.adminDataHandler = new AdminDataHandler();
         this.languageSwitchButton = new MenuButton();
 
+        assignKeyboardShortcuts();
+
+        this.detailedExpenseCtrl = detailedExpense.getKey();
+        this.detailedExpenseScene = new Scene(detailedExpense.getValue());
+
         setAvailableLanguagesFromFiles();
 
         // Needs to be before the start websocket method
@@ -139,11 +151,248 @@ public class MainCtrl {
 
         setLanguageSwitchButton();
 
-        startWebSocket();
-
         showStartScreen();
 
         primaryStage.show();
+    }
+
+    private void assignKeyboardShortcuts() {
+        addShortcutsEventOverviewNavigation();
+        addShortcutsEventOverviewColumns();
+        addShortcutsExpenseScenes();
+        addShortcutsParticipantScenes();
+        addShortcutsAdminPanel();
+        addShortcutsLanguage();
+        addShortcutsStartScreen();
+    }
+
+    private void addShortcutsEventOverviewNavigation() {
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.P) {
+                        this.eventOverviewCtrl.getAddParticipantBtn().fire();
+                    }
+                });
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.E) {
+                        this.eventOverviewCtrl.getAddExpenseBtn().fire();
+                    }
+                });
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.I) {
+                        this.eventOverviewCtrl.getSendInvitesButton().fire();
+                    }
+                });
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.T) {
+                        this.eventOverviewCtrl.editTitleClicked();
+                    }
+                });
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        this.eventOverviewCtrl.goToHome();
+                    }
+                });
+    }
+
+    private void addShortcutsEventOverviewColumns() {
+        addShortcutsEventOverviewParticipant();
+        addShortcutsEventOverviewExpense();
+    }
+
+    private void addShortcutsEventOverviewExpense() {
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.isShiftDown() && !event.isControlDown() && event.getCode().getCode() >= 48
+                            && event.getCode().getCode() <= 57) {
+                        if(this.eventOverviewCtrl.editColumn1
+                                .getCellObservableValue(event.getCode().getCode() - 48) != null) {
+                            this.eventOverviewCtrl.editColumn1.getCellObservableValue(event.getCode().getCode() - 48)
+                                    .getValue().fire();
+                        }
+                    }
+                });
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.isShiftDown() && event.isControlDown() && event.getCode().getCode() >= 48
+                            && event.getCode().getCode() <= 57) {
+                        if(this.eventOverviewCtrl.deleteColumn1
+                                .getCellObservableValue(event.getCode().getCode() - 48) != null) {
+                            this.eventOverviewCtrl.deleteColumn1.getCellObservableValue(event.getCode().getCode()-48)
+                                    .getValue().fire();
+                        }
+                    }
+                });
+    }
+
+    private void addShortcutsEventOverviewParticipant() {
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.isControlDown() && !event.isShiftDown() && event.getCode().getCode() >= 48
+                            && event.getCode().getCode() <= 57) {
+                        if(this.eventOverviewCtrl.editColumn
+                                .getCellObservableValue(event.getCode().getCode() - 48) != null) {
+                            this.eventOverviewCtrl.editColumn.getCellObservableValue(event.getCode().getCode() - 48)
+                                    .getValue().fire();
+                        }
+                    }
+                });
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.isAltDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
+                        if(this.eventOverviewCtrl.deleteColumn
+                                .getCellObservableValue(event.getCode().getCode() - 48) != null) {
+                            this.eventOverviewCtrl.deleteColumn.getCellObservableValue(event.getCode().getCode() - 48)
+                                    .getValue().fire();
+                        }
+                    }
+                });
+    }
+
+    private void addShortcutsExpenseScenes() {
+        this.addExpenseScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        this.addExpenseCtrl.getCancelBtn().fire();
+                    }
+                });
+        this.addExpenseScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        this.addExpenseCtrl.getCreateBtn().fire();
+                    }
+                });
+        this.editExpenseScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        this.editExpenseCtrl.getCancelBtn().fire();
+                    }
+                });
+        this.editExpenseScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        this.editExpenseCtrl.getCreateBtn().fire();
+                    }
+                });
+    }
+
+    private void addShortcutsParticipantScenes() {
+        this.editParticipantScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        this.editParticipantCtrl.abortEditButton.fire();
+                    }
+                });
+        this.editParticipantScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        this.editParticipantCtrl.editParticipantButton.fire();
+                    }
+                });
+        this.createParticipantScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        this.createParticipantCtrl.cancelBtn.fire();
+                    }
+                });
+        this.createParticipantScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        this.createParticipantCtrl.createBtn.fire();
+                    }
+                });
+    }
+
+    private void addShortcutsAdminPanel() {
+        this.adminPanelScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        this.adminPanelCtrl.goToStartScreen();
+                    }
+                });
+        this.adminPanelScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.isControlDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
+                        if(this.adminPanelCtrl.getJsonDump()
+                                .getCellObservableValue(event.getCode().getCode() - 48) != null) {
+                            this.adminPanelCtrl.getJsonDump().getCellObservableValue(event.getCode().getCode() - 48)
+                                    .getValue().fire();
+                        }
+                    }
+                });
+        this.adminPanelScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.isAltDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
+                        if(this.adminPanelCtrl.getDeleteEvent()
+                                .getCellObservableValue(event.getCode().getCode() - 48) != null) {
+                            this.adminPanelCtrl.getDeleteEvent().getCellObservableValue(event.getCode().getCode()-48)
+                                    .getValue().fire();
+                        }
+                    }
+                });
+        this.adminPanelScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.I) {
+                        this.adminPanelCtrl.getJsonImport().fire();
+                    }
+                });
+    }
+
+    private void addShortcutsLanguage() {
+        this.adminPanelScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.L) {
+                        this.languageSwitchButton.fire();
+                    }
+                });
+        this.startScreenScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.L) {
+                        this.languageSwitchButton.fire();
+                    }
+                });
+        this.eventOverviewScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.L) {
+                        this.languageSwitchButton.fire();
+                    }
+                });
+    }
+
+    private void addShortcutsStartScreen()
+    {
+        this.startScreenScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.isControlDown() && event.getCode().getCode() >= 48 && event.getCode().getCode() <= 57) {
+                        if(event.getCode().getCode() - 48 < this.startScreenCtrl.getEventTable().getItems().size()) {
+                            this.startScreenCtrl.setJoinInvitationCode(this.startScreenCtrl.getEventTable().getItems()
+                                    .get(event.getCode().getCode() - 48).getId().toString());
+                            this.startScreenCtrl.onJoin();
+                        }
+                    }
+                });
+        this.startScreenScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.C) {
+                        this.startScreenCtrl.onCreate();
+                    }
+                });
+        this.startScreenScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.J) {
+                        this.startScreenCtrl.onJoin();
+                    }
+                });
+        this.startScreenScene.addEventHandler(
+                KeyEvent.KEY_PRESSED, event -> {
+                    if(event.getCode() == KeyCode.ENTER && this.startScreenCtrl.getAdminPassword().isFocused())
+                        this.startScreenCtrl.onAdmin();
+                }
+        );
     }
 
     /**
@@ -189,6 +438,19 @@ public class MainCtrl {
     public void setAdminDataHandler(AdminDataHandler adminDataHandler) {
         this.adminDataHandler = adminDataHandler;
     }
+
+    /**
+     * switches to detailed expense scene
+     * @param expense
+     */
+    public void showDetailedExpense(Expense expense) {
+        primaryStage.setTitle("Detailed Expense");
+        primaryStage.setScene(detailedExpenseScene);
+        primaryStage.setResizable(false);
+        detailedExpenseCtrl.setUpOrRefreshData(expense);
+        detailedExpenseCtrl.translate(this.translationSupplier);
+    }
+
 
     /**
      * Show start screen
@@ -284,10 +546,11 @@ public class MainCtrl {
     public void startWebSocket(){
         WebSocketClient client = new StandardWebSocketClient();
 
-        WebSocketStompClient stompClient = new WebSocketStompClient(client);
+        stompClient = new WebSocketStompClient(client);
         MappingJackson2MessageConverter jackson2MessageConverter = new MappingJackson2MessageConverter();
         jackson2MessageConverter.getObjectMapper().findAndRegisterModules();
         stompClient.setMessageConverter(jackson2MessageConverter);
+
 
         sessionHandler = new WebsocketSessionHandler(dataHandler, adminDataHandler, this);
         stompClient.connectAsync("ws://" + this.serverIp + "/v1", sessionHandler);
@@ -325,7 +588,10 @@ public class MainCtrl {
         this.dataHandler = dataHandler;
     }
 
-    private void setServerIp(){
+    /**
+     * Method for setting the correct server ip
+     */
+    void setServerIp(){
         FileSystemUtils utils = new FileSystemUtils();
         try {
             this.serverIp = utils.getServerIP("client-config.json");
@@ -373,6 +639,28 @@ public class MainCtrl {
     public void refreshParticipantsData() {
         if(primaryStage.getTitle().equals("Event overview")){
             eventOverviewCtrl.refreshParticipantsData();
+        }
+    }
+
+    /**
+     * method for refreshing data in the detailed expense scene
+     * @param expense
+     */
+    public void refreshDetailedExpenseData(Expense expense) {
+        if (primaryStage.getTitle().equals("Detailed Expense") && detailedExpenseCtrl.getExpense().getId()
+                .equals(expense.getId())) {
+            detailedExpenseCtrl.setUpOrRefreshData(expense);
+        }
+    }
+
+    /**
+     * "aborts" detailed expense scene if expense id deleted
+     * @param expense
+     */
+    public void deleteDetailedExpenseData(Expense expense) {
+        if (primaryStage.getTitle().equals("Detailed Expense") && detailedExpenseCtrl.getExpense().getId()
+                .equals(expense.getId())) {
+            detailedExpenseCtrl.goToEventOverview();
         }
     }
 

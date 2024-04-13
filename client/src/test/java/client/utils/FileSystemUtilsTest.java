@@ -4,6 +4,7 @@ import commons.Event;
 import commons.Participant;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -11,6 +12,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +21,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FileSystemUtilsTest {
+
 
     @AfterAll
     static void removeUsedFiles(){
@@ -312,4 +316,23 @@ class FileSystemUtilsTest {
         }
     }
 
+    @Test
+    public void testReplaceServerIPInConfigFile(@TempDir Path tempDir) throws IOException {
+        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        Path tempFile = tempDir.resolve("client-config.json");
+        Files.write(tempFile, "{\"server-ip\":\"localhost:8080\",\"lang\":\"en\"}".getBytes());
+
+        String newServerIP = "http://192.168.1.1:8080";
+        fileSystemUtils.replaceServerIPInConfigFile(tempFile.toString(), newServerIP);
+        String content = new String(Files.readAllBytes(tempFile));
+        assertEquals("{\"server-ip\":\"" + newServerIP + "\",\"lang\":\"en\"}", content);
+    }
+
+    //Method doesn't throw exception anymore
+//    @Test
+//    public void testReplaceServerIPInConfigFileWithInvalidPath() {
+//        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+//        String newServerIP = "http://192.168.1.1:8080";
+//        assertThrows(IOException.class, () -> fileSystemUtils.replaceServerIPInConfigFile("invalid/path", newServerIP));
+//    }
 }

@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="700.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventOverviewCtrl">
+<AnchorPane prefHeight="700.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventOverviewCtrl">
    <children>
       <BorderPane prefHeight="700.0" prefWidth="850.0">
          <left>
@@ -87,8 +103,8 @@
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="336.0" minWidth="10.0" prefWidth="296.0" />
                </columnConstraints>
                <rowConstraints>
-                  <RowConstraints maxHeight="245.0" minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="200.0" minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="245.0" minHeight="10.0" prefHeight="104.80000305175781" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="200.0" minHeight="10.0" prefHeight="51.19999694824219" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="200.0" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="50.0" minHeight="10.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
@@ -128,7 +144,7 @@
                      <padding>
                         <Insets bottom="15.0" left="30.0" right="30.0" top="15.0" />
                      </padding></Button>
-                  <VBox prefHeight="75.0" GridPane.columnIndex="1">
+                  <VBox prefHeight="117.0" prefWidth="296.0" GridPane.columnIndex="1">
                      <children>
                         <Button fx:id="sendInvitesButton" alignment="CENTER" mnemonicParsing="false" onAction="#sendInvites" prefHeight="402.0" prefWidth="301.0" text="Send Invites">
                            <font>
@@ -141,7 +157,7 @@
                               <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                            </padding>
                         </Button>
-                        <Label fx:id="sendInvitesConfirmation" alignment="CENTER" prefHeight="396.0" prefWidth="301.0" textAlignment="CENTER">
+                        <Label fx:id="sendInvitesConfirmation" alignment="CENTER" prefHeight="396.0" prefWidth="266.0" textAlignment="CENTER">
                            <VBox.margin>
                               <Insets left="15.0" right="15.0" />
                            </VBox.margin></Label>
@@ -205,14 +221,29 @@
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </padding>
                   </Label>
-                  <Label fx:id="totalSumExpenses" alignment="CENTER" text="Total: " textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                     <padding>
-                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                     </padding>
-                  </Label>
+                  <GridPane GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="200.6" minWidth="10.0" prefWidth="180.8" />
+                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="187.40002441406247" minWidth="10.0" prefWidth="115.19999999999999" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label fx:id="totalLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Total: " textAlignment="RIGHT">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                           </padding>
+                        </Label>
+                        <Label fx:id="expenseSum" prefHeight="51.0" prefWidth="106.0" text="0.00" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="16.0" />
+                           </font></Label>
+                     </children>
+                  </GridPane>
                </children>
             </GridPane>
          </center>

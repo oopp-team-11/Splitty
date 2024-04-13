@@ -55,6 +55,7 @@ public class EditExpenseCtrl implements Translatable {
     private Border selectAllBorder;
     private final MainCtrl mainCtrl;
     private Expense expense;
+    private CheckBox selectAllCheckBox;
 
     /***
      * constructor with injection
@@ -90,7 +91,7 @@ public class EditExpenseCtrl implements Translatable {
         involvedParticipants.forEach(participantDisplay -> {
             participantDisplay.setCheckBox(participantCheckBox(participantDisplay));
         });
-        involvedParticipants.addFirst(selectAllCheckBox());
+        involvedParticipants.addFirst(newSelectAllCheckBox());
         involvedListView.setItems(involvedParticipants);
     }
 
@@ -149,20 +150,19 @@ public class EditExpenseCtrl implements Translatable {
      *
      * @return returns a selectAll checkBox
      */
-    private ParticipantDisplay selectAllCheckBox() {
+    private ParticipantDisplay newSelectAllCheckBox() {
         selectAllBorder = new Border(new BorderStroke(Color.BLACK,
                 BorderStrokeStyle.DOTTED,
                 CornerRadii.EMPTY,
                 new BorderWidths(0,0,1,0)));
         ParticipantDisplay dummyParticipant = new ParticipantDisplay(new Participant());
-        //TODO: Decide what to do with this text in terms of this translation
-        CheckBox checkBox = new CheckBox("Select all");
-        checkBox.setOnAction(event -> {
+        selectAllCheckBox = new CheckBox("Select All");
+        selectAllCheckBox.setOnAction(event -> {
             for (int index = 1; index < involvedParticipants.size(); index++) {
-                involvedParticipants.get(index).getCheckBox().setSelected(checkBox.isSelected());
+                involvedParticipants.get(index).getCheckBox().setSelected(selectAllCheckBox.isSelected());
             }
         });
-        dummyParticipant.setCheckBox(checkBox);
+        dummyParticipant.setCheckBox(selectAllCheckBox);
         return dummyParticipant;
     }
 
@@ -238,5 +238,24 @@ public class EditExpenseCtrl implements Translatable {
             if (key instanceof Button)
                 ((Button) key).setText(translation.replaceAll("\"", ""));
         });
+        if (selectAllCheckBox != null)
+            selectAllCheckBox.setText(translationSupplier.getTranslation("Select All")
+                    .replaceAll("\"", ""));
+    }
+
+    /**
+     * Getter for create button
+     * @return create button
+     */
+    public Button getCreateBtn() {
+        return createBtn;
+    }
+
+    /**
+     * Getter for cancel button
+     * @return cancel button
+     */
+    public Button getCancelBtn() {
+        return cancelBtn;
     }
 }

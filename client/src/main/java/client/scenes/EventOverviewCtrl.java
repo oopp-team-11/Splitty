@@ -24,6 +24,7 @@ import javafx.stage.Modality;
 import javafx.util.StringConverter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,7 +71,9 @@ public class EventOverviewCtrl implements Translatable {
     @FXML
     public Label editTitleLabel;
     @FXML
-    public Label totalSumExpenses;
+    public Label totalLabel;
+    @FXML
+    public Label expenseSum;
     @FXML
     public ChoiceBox<Participant> userChoiceBox;
     @FXML
@@ -184,6 +187,7 @@ public class EventOverviewCtrl implements Translatable {
         lastNameExpense.setCellValueFactory(col -> new SimpleStringProperty(col.getValue().getPaidBy().getLastName()));
         dateColumn.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getDate()));
 
+        expenseSum.setText(String.valueOf(mainCtrl.getDataHandler().sumOfAllExpenses()));
 
         editColumn1.setCellValueFactory(expense -> {
             Button button = new Button("✎");
@@ -213,18 +217,14 @@ public class EventOverviewCtrl implements Translatable {
             row.setOnMouseClicked(triggeredEvent -> {
                 if(triggeredEvent.getClickCount() == 2 && !row.isEmpty()){
                     System.out.println("Check");
-//                    mainCtrl.showDetailedExpenseOverview(row.getItem());
+                    mainCtrl.showDetailedExpense(row.getItem());
                 }
             });
             return row;
         });
 
         editTitle.onMouseClickedProperty().set(event1 -> {
-            if (editEventTextField.isVisible()){
-                stopEditingTitle();
-            }else {
-                editingTitle();
-            }
+            editTitleClicked();
         });
         editEventTextField.onKeyPressedProperty().set(keyEvent -> {
             if(keyEvent.getCode().equals(KeyCode.ENTER)){
@@ -328,6 +328,17 @@ public class EventOverviewCtrl implements Translatable {
     }
 
     /**
+     * Toggles the option of editing the title
+     */
+    public void editTitleClicked() {
+        if (editEventTextField.isVisible()){
+            stopEditingTitle();
+        }else {
+            editingTitle();
+        }
+    }
+
+    /**
      * Method for updating data in scene
      */
     public void refreshEventData(){
@@ -341,6 +352,9 @@ public class EventOverviewCtrl implements Translatable {
         participantsList.getColumns().getFirst().setVisible(false);
         participantsList.getColumns().getFirst().setVisible(true);
         participantsList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
+        userChoiceBox.setItems(FXCollections.observableList(new ArrayList<>()));
+        userChoiceBox.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
+        tabPaneExpenses.getSelectionModel().select(allExpenses);
     }
     /**
      * Method for updating data in scene
@@ -349,6 +363,8 @@ public class EventOverviewCtrl implements Translatable {
         expensesList.getColumns().getFirst().setVisible(false);
         expensesList.getColumns().getFirst().setVisible(true);
         expensesList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getExpenses()));
+        tabPaneExpenses.getSelectionModel().select(allExpenses);
+        expenseSum.setText(String.valueOf(mainCtrl.getDataHandler().sumOfAllExpenses()));
     }
 
     private void editingTitle(){
@@ -385,8 +401,7 @@ public class EventOverviewCtrl implements Translatable {
         labels.put(this.goToStartScreenLabel, "GoToStartScreenLabel");
         labels.put(this.editTitleLabel, "EditTitleLabel");
         labels.put(this.meLabel, "Me");
-        labels.put(this.meLabel, "Me");
-        labels.put(this.meLabel, "Me");
+        labels.put(this.totalLabel, "Total");
         labels.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
@@ -428,9 +443,6 @@ public class EventOverviewCtrl implements Translatable {
                 .replaceAll("\"", ""));
         involvingMeTab.setText(translationSupplier.getTranslation("InvolvingMe")
                 .replaceAll("\"", ""));
-
-        totalSumExpenses.setText(translationSupplier.getTranslation("Total")
-                .replaceAll("\"", "") + mainCtrl.getDataHandler().sumOfAllExpenses());
     }
 
     /**
@@ -504,5 +516,29 @@ public class EventOverviewCtrl implements Translatable {
         mainCtrl.getSessionHandler().unsubscribeFromCurrentEvent();
         mainCtrl.getDataHandler().setAllToNull();
         mainCtrl.showStartScreen();
+    }
+
+    /**
+     * Getter for send invites button
+     * @return send invites button
+     */
+    public Button getSendInvitesButton() {
+        return sendInvitesButton;
+    }
+
+    /**
+     * Getter for add participant button
+     * @return add participant button
+     */
+    public Button getAddParticipantBtn() {
+        return addParticipantBtn;
+    }
+
+    /**
+     * Getter for add expense button
+     * @return add expense button
+     */
+    public Button getAddExpenseBtn() {
+        return addExpenseBtn;
     }
 }
