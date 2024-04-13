@@ -50,7 +50,7 @@ public class Main extends Application {
         var pollingThread = threads.stream()
                 .filter(thread -> thread.getName().equals("Polling thread"))
                 .toList();
-        if (!pollingThread.isEmpty()){
+        if (!pollingThread.isEmpty()) {
             pollingThread.forEach(Thread::interrupt);
         }
     }

@@ -72,6 +72,7 @@ public class MainCtrl {
     private Scene eventOverviewScene;
 
     private WebsocketSessionHandler sessionHandler;
+    private WebSocketStompClient stompClient;
     private EventDataHandler dataHandler;
     private String serverIp;
     private AdminPanelCtrl adminPanelCtrl;
@@ -138,8 +139,6 @@ public class MainCtrl {
         setTranslationSupplier();
 
         setLanguageSwitchButton();
-
-        startWebSocket();
 
         showStartScreen();
 
@@ -284,10 +283,11 @@ public class MainCtrl {
     public void startWebSocket(){
         WebSocketClient client = new StandardWebSocketClient();
 
-        WebSocketStompClient stompClient = new WebSocketStompClient(client);
+        stompClient = new WebSocketStompClient(client);
         MappingJackson2MessageConverter jackson2MessageConverter = new MappingJackson2MessageConverter();
         jackson2MessageConverter.getObjectMapper().findAndRegisterModules();
         stompClient.setMessageConverter(jackson2MessageConverter);
+
 
         sessionHandler = new WebsocketSessionHandler(dataHandler, adminDataHandler, this);
         stompClient.connectAsync("ws://" + this.serverIp + "/v1", sessionHandler);

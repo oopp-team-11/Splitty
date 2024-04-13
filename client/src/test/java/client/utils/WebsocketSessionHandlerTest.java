@@ -448,9 +448,16 @@ class WebsocketSessionHandlerTest {
     }
 
     @Test
+    void isSessionNull() {
+        assertTrue(handler.isSessionNull());
+    }
+
+    @Test
     void disconnectFromServer() {
         handler.afterConnected(session, headers);
+        when(session.isConnected()).thenReturn(true);
         handler.disconnectFromServer();
         verify(session, times(1)).disconnect();
+        assertTrue(handler.isSessionNull());
     }
 }

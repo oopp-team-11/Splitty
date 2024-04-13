@@ -93,6 +93,7 @@ public class StartScreenCtrl implements Initializable, Translatable {
     private final FileSystemUtils fileSystemUtils;
     private final ServerUtils serverUtils;
     private Thread pollingThread;
+    boolean serverReachable;
 
     /**
      * @param mainCtrl main Controller, for displaying this scene.
@@ -174,6 +175,7 @@ public class StartScreenCtrl implements Initializable, Translatable {
      */
     public void refresh() {
         System.out.println("REFRESH");
+        serverReachable = true;
         try {
             var events = serverUtils.getRecentEvents("http://" + mainCtrl.getServerIp(), "config.json");
             ObservableList<Event> data = FXCollections.observableList(events);
@@ -187,6 +189,7 @@ public class StartScreenCtrl implements Initializable, Translatable {
             languageSwitchPlaceHolder.getChildren().add(mainCtrl.getLanguageSwitchButton());
 
         } catch (IOException | InterruptedException e) {
+            serverReachable = false;
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setContentText("""
@@ -197,6 +200,17 @@ public class StartScreenCtrl implements Initializable, Translatable {
             System.out.println("Failed to parse server response: " + e.getMessage());
         }
 
+        if(serverReachable && (mainCtrl.getSessionHandler() == null || mainCtrl.getSessionHandler().isSessionNull())) {
+            mainCtrl.startWebSocket();
+            if (mainCtrl.getSessionHandler() != null) {
+                var alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText("Successfully connected to the server.");
+                alert.showAndWait();
+            }
+        }
+
+
         serverUrlBox.setText(mainCtrl.getServerIp());
     }
 
@@ -204,6 +218,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
      * Method that is called when the create button is clicked
      */
     public void onCreate() {
+        if (!serverReachable)
+            return;
         System.out.println("ONCREATE");
         String eventName = newEventName.getText();
 
@@ -237,6 +253,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
      * Method that is called when the join button is clicked
      */
     public void onJoin() {
+        if (!serverReachable)
+            return;
         System.out.println("ONJOIN: " + joinInvitationCode.getText());
         UUID invitationCode;
         try {
@@ -278,8 +296,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
         }
 
         mainCtrl.setServerIp();
-        mainCtrl.getSessionHandler().disconnectFromServer();
-        mainCtrl.startWebSocket();
+        if (mainCtrl.getSessionHandler() != null)
+            mainCtrl.getSessionHandler().disconnectFromServer();
         refresh();
     }
 
@@ -287,6 +305,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
      * Method that is called when the user tries to log in to admin panel
      */
     public void onAdmin() {
+        if (!serverReachable)
+            return;
         System.out.println("ONADMIN");
         String password = adminPassword.getText();
         mainCtrl.getAdminDataHandler().setPasscode(password);
@@ -359,7 +379,6 @@ public class StartScreenCtrl implements Initializable, Translatable {
                         mainCtrl.showStartScreen();
                     });
                     System.out.println("Failed to get updated events: " + e.getMessage());
-                    e.printStackTrace();
                     break;
                 }
             }
