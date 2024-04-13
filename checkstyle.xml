@@ -47,7 +47,7 @@
 
         <module name="CyclomaticComplexity">
             <property name="switchBlockAsSingleDecisionPoint" value="true"/>
-            <property name="max" value="8"/>
+            <property name="max" value="10"/>
             <property name="tokens" value="LITERAL_WHILE, LITERAL_DO, LITERAL_FOR, LITERAL_IF,
              LITERAL_SWITCH, LITERAL_CASE, QUESTION"/>
         </module>

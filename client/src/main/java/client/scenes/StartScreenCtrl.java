@@ -322,9 +322,9 @@ public class StartScreenCtrl implements Initializable, Translatable {
         mainCtrl.getSessionHandler().sendReadEvents(password);
     }
 
-    private void serverErrorAlert(Exception e) {
-        var exceptionMessage = mainCtrl.getTranslationSupplier().getTranslation(e.getMessage());
-        if (exceptionMessage == null) exceptionMessage = e.getMessage();
+    private void serverErrorAlert(Exception exception) {
+        var exceptionMessage = mainCtrl.getTranslationSupplier().getTranslation(exception.getMessage());
+        if (exceptionMessage == null) exceptionMessage = exception.getMessage();
         if (exceptionMessage == null) exceptionMessage = "No error message available.";
         var alert = new Alert(Alert.AlertType.ERROR);
         alert.initModality(Modality.APPLICATION_MODAL);
@@ -334,9 +334,9 @@ public class StartScreenCtrl implements Initializable, Translatable {
         alert.showAndWait();
     }
 
-    private void fileSaveErrorAlert(Exception e) {
-        var exceptionMessage = mainCtrl.getTranslationSupplier().getTranslation(e.getMessage());
-        if (exceptionMessage == null) exceptionMessage = e.getMessage();
+    private void fileSaveErrorAlert(Exception exception) {
+        var exceptionMessage = mainCtrl.getTranslationSupplier().getTranslation(exception.getMessage());
+        if (exceptionMessage == null) exceptionMessage = exception.getMessage();
         if (exceptionMessage == null) exceptionMessage = "No error message available.";
         var alert = new Alert(Alert.AlertType.ERROR);
         alert.initModality(Modality.APPLICATION_MODAL);

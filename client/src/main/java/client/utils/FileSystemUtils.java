@@ -383,6 +383,7 @@ public class FileSystemUtils {
      * Method for replacing server ip in config file
      * @param path path to client-config.json
      * @param newServerIP new server ip to set it to
+     * @param tl Translationsupplier to be used when translating error messages.
      * @throws IOException possible error throw
      * @throws IllegalArgumentException if the new server ip is not a valid URL
      */
