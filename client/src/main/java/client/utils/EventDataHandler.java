@@ -230,6 +230,7 @@ public class EventDataHandler {
                         .removeIf(involved -> involved.getParticipantId().equals(receivedParticipant.getId()));
             }
         }
+        expenses.removeIf(expense -> expense.getInvolveds().isEmpty());
 
         // Other scenes updates
         Platform.runLater(() -> sessionHandler.getMainCtrl().refreshParticipantsData());
