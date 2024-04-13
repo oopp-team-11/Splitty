@@ -7,12 +7,10 @@ import client.utils.FileSystemUtils;
 import client.utils.WebsocketSessionHandler;
 import commons.Event;
 import commons.EventList;
-import commons.Expense;
 import commons.StatusEntity;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
 import java.io.File;
@@ -39,7 +37,7 @@ class AdminDumpEventHandlerTest {
         eventDataHandler = mock(EventDataHandler.class);
         dataHandler = new AdminDataHandler(new EventList(), sessionHandler, "", file);
         sessionHandler = new WebsocketSessionHandler(eventDataHandler, dataHandler, mainCtrl);
-        handler = new AdminDumpEventHandler(dataHandler);
+        handler = new AdminDumpEventHandler(dataHandler, mainCtrl);
         headers = new StompHeaders();
         utils = mock(FileSystemUtils.class);
     }
