@@ -1,9 +1,6 @@
 package server.api;
 
-import commons.Event;
-import commons.Participant;
-import commons.ParticipantList;
-import commons.StatusEntity;
+import commons.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -12,8 +9,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import server.EventLastActivityService;
 import server.database.EventRepository;
+import server.database.ExpenseRepository;
 import server.database.ParticipantRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +23,7 @@ import java.util.UUID;
 @Controller
 public class ParticipantController {
     private final ParticipantRepository participantRepository;
+    private final ExpenseRepository expenseRepository;
     private final EventRepository eventRepository;
     private final SimpMessagingTemplate template;
 
@@ -38,10 +38,11 @@ public class ParticipantController {
      */
     @Autowired
     public ParticipantController(ParticipantRepository participantRepository, EventRepository eventRepository,
-                                 SimpMessagingTemplate template,
+                                 SimpMessagingTemplate template, ExpenseRepository expenseRepository,
                                  EventLastActivityService eventLastActivityService) {
         this.participantRepository = participantRepository;
         this.eventRepository = eventRepository;
+        this.expenseRepository = expenseRepository;
         this.template = template;
         this.eventLastActivityService = eventLastActivityService;
     }
@@ -203,10 +204,16 @@ public class ParticipantController {
 
         Participant participant = participantRepository.getReferenceById(receivedParticipant.getId());
 
+        List<Expense> expenses = new ArrayList<>();
+        for (Involved involved : participant.getInvolvedIn()) {
+            Expense expense = involved.getExpense();
+            if (expense.getInvolveds().size() == 1)
+                expenses.add(expense);
+        }
+
         eventLastActivityService.updateLastActivity(receivedParticipant.getEventId());
         participantRepository.delete(participant);
-
-
+        expenseRepository.deleteAll(expenses);
 
         Participant sentParticipant = new Participant(participant.getId(), participant.getFirstName(),
                 participant.getLastName(), participant.getIban(), participant.getBic(),
