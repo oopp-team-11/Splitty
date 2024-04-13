@@ -190,24 +190,18 @@ public class StartScreenCtrl implements Initializable, Translatable {
 
         } catch (IOException | InterruptedException e) {
             serverReachable = false;
-            var alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("""
-                            Server connection error,
-                            Server is unavailable, please try again.""");
-            alert.showAndWait();
         } catch (JSONException e) {
             System.out.println("Failed to parse server response: " + e.getMessage());
         }
 
         if(serverReachable && (mainCtrl.getSessionHandler() == null || mainCtrl.getSessionHandler().isSessionNull())) {
-            mainCtrl.startWebSocket();
             if (mainCtrl.getSessionHandler() != null) {
                 var alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.initModality(Modality.APPLICATION_MODAL);
                 alert.setContentText("Successfully connected to the server.");
                 alert.showAndWait();
             }
+            mainCtrl.startWebSocket();
         }
 
 
