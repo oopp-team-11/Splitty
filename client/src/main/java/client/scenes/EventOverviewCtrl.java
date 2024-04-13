@@ -24,6 +24,7 @@ import javafx.stage.Modality;
 import javafx.util.StringConverter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -348,6 +349,8 @@ public class EventOverviewCtrl implements Translatable {
         participantsList.getColumns().getFirst().setVisible(false);
         participantsList.getColumns().getFirst().setVisible(true);
         participantsList.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
+        userChoiceBox.setItems(FXCollections.observableList(new ArrayList<>()));
+        userChoiceBox.setItems(FXCollections.observableList(mainCtrl.getDataHandler().getParticipants()));
     }
     /**
      * Method for updating data in scene
@@ -391,8 +394,6 @@ public class EventOverviewCtrl implements Translatable {
         labels.put(this.changeLanguageLabel, "ChangeLanguageLabel");
         labels.put(this.goToStartScreenLabel, "GoToStartScreenLabel");
         labels.put(this.editTitleLabel, "EditTitleLabel");
-        labels.put(this.meLabel, "Me");
-        labels.put(this.meLabel, "Me");
         labels.put(this.meLabel, "Me");
         labels.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);

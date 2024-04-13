@@ -247,6 +247,7 @@ public class ExpenseController {
         expense.setPaidBy(newPaidBy);
         expense.setAmount(receivedExpense.getAmount());
         expense.setTitle(receivedExpense.getTitle());
+        expense.setDate(receivedExpense.getDate());
 
         expense = expenseRepository.save(expense);
 
