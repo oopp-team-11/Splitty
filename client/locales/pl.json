@@ -42,5 +42,7 @@
   "CreationDate": "Data utworzenia",
   "LastActivityDate": "Ostatnia aktywność",
   "DeleteEvent": "Usuń wydarzenie",
-  "JSONDump": "Pobierz JSON"
+  "JSONDump": "Pobierz JSON",
+  "EditServerUrlLabel": "Edytuj ścieżkę serwera",
+  "ServerUrlBox": "Ścieżka serwera"
 }

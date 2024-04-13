@@ -147,6 +147,9 @@ public class StartScreenCtrl implements Initializable, Translatable {
         labels.put(this.joinInvitationCode, "InvitationCode");
         labels.put(this.adminPassword, "AdminPassword");
         labels.put(this.changeLanguageLabel, "ChangeLanguageLabel");
+        labels.put(this.editServerUrlLabel, "EditServerUrlLabel");
+        labels.put(this.editServerUrlBtn, "Edit");
+        labels.put(this.serverUrlBox, "ServerUrlBox");
         labels.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;

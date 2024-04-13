@@ -42,5 +42,7 @@
   "CreationDate": "Aanmaakdatum",
   "LastActivityDate": "Laatste activiteitsdatum",
   "DeleteEvent": "Evenement verwijderen",
-  "JSONDump": "JSON Dump"
+  "JSONDump": "JSON Dump",
+  "EditServerUrlLabel": "Please add translation",
+  "ServerUrlBox": "Please add translation"
 }
