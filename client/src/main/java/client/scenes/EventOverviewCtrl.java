@@ -159,20 +159,15 @@ public class EventOverviewCtrl implements Translatable {
                     Participant rowDate = row.getItem();
                     Dialog<String> popup = new Dialog<>();
                     popup.getDialogPane().getButtonTypes().add(ButtonType.OK);
-                    popup.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("Participants")
-                            .replaceAll("\"", ""));
+                    popup.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("Participants"));
                     popup.setContentText(
-                            mainCtrl.getTranslationSupplier().getTranslation("ParticipantFirstName")
-                                    .replaceAll("\"", "")+
+                            mainCtrl.getTranslationSupplier().getTranslation("ParticipantFirstName") +
                                     rowDate.getFirstName() + "\n" +
-                            mainCtrl.getTranslationSupplier().getTranslation("ParticipantLastName")
-                                    .replaceAll("\"", "") +
+                            mainCtrl.getTranslationSupplier().getTranslation("ParticipantLastName") +
                             rowDate.getLastName() + "\n" +
-                            mainCtrl.getTranslationSupplier().getTranslation("ParticipantIBAN")
-                                    .replaceAll("\"", "")+
+                            mainCtrl.getTranslationSupplier().getTranslation("ParticipantIBAN") +
                             rowDate.getIban() + "\n" +
-                            mainCtrl.getTranslationSupplier().getTranslation("ParticipantBIC")
-                                    .replaceAll("\"", "")+
+                            mainCtrl.getTranslationSupplier().getTranslation("ParticipantBIC") +
                             rowDate.getBic());
                     popup.showAndWait();
                 }
@@ -408,9 +403,9 @@ public class EventOverviewCtrl implements Translatable {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
             if (key instanceof Labeled)
-                ((Labeled) key).setText(translation.replaceAll("\"", ""));
+                ((Labeled) key).setText(translation);
             if (key instanceof TextField)
-                ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
+                ((TextField) key).setPromptText(translation);
         });
         Map<TableColumn, String> tableColumns = new HashMap<>();
         tableColumns.put(this.firstNameColumn, "FirstName");
@@ -427,7 +422,7 @@ public class EventOverviewCtrl implements Translatable {
         tableColumns.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
-            key.setText(translation.replaceAll("\"", ""));
+            key.setText(translation);
         });
 
         Map<Text, String> texts = new HashMap<>();
@@ -436,15 +431,12 @@ public class EventOverviewCtrl implements Translatable {
         texts.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
-            key.setText(translation.replaceAll("\"", ""));
+            key.setText(translation);
         });
 
-        allExpenses.setText(translationSupplier.getTranslation("AllExpenses")
-                .replaceAll("\"", ""));
-        myExpensesTab.setText(translationSupplier.getTranslation("MyExpenses")
-                .replaceAll("\"", ""));
-        involvingMeTab.setText(translationSupplier.getTranslation("InvolvingMe")
-                .replaceAll("\"", ""));
+        allExpenses.setText(translationSupplier.getTranslation("AllExpenses"));
+        myExpensesTab.setText(translationSupplier.getTranslation("MyExpenses"));
+        involvingMeTab.setText(translationSupplier.getTranslation("InvolvingMe"));
     }
 
     /**

@@ -84,8 +84,7 @@ public class AdminPanelCtrl implements Translatable {
                 var alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.initModality(Modality.APPLICATION_MODAL);
                 alert.setContentText(mainCtrl.getTranslationSupplier()
-                        .getTranslation("ConfirmationDeleteEvent")
-                        .replaceAll("\"", ""));
+                        .getTranslation("ConfirmationDeleteEvent"));
                 var result = alert.showAndWait();
                 if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
                     deleteEvent(event.getValue());
@@ -194,9 +193,9 @@ public class AdminPanelCtrl implements Translatable {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
             if (key instanceof Labeled)
-                ((Labeled) key).setText(translation.replaceAll("\"", ""));
+                ((Labeled) key).setText(translation);
             if (key instanceof TextField)
-                ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
+                ((TextField) key).setPromptText(translation);
         });
         Map<TableColumn, String> tableColumns = new HashMap<>();
 
@@ -210,7 +209,7 @@ public class AdminPanelCtrl implements Translatable {
         tableColumns.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
-            key.setText(translation.replaceAll("\"", ""));
+            key.setText(translation);
         });
     }
 

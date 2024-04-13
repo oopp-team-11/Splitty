@@ -180,36 +180,36 @@ public class AddExpenseCtrl implements Translatable {
      * @return returns whether addExpense is a bad request
      */
     private boolean checkBadRequest() {
-        return checkBadRequest(expensePaidBy, expenseTitle, expenseAmount, expenseDatePicker);
+        return checkBadRequest(expensePaidBy, expenseTitle, expenseAmount, expenseDatePicker, mainCtrl);
     }
 
     static boolean checkBadRequest(ChoiceBox<ParticipantDisplay> expensePaidBy, TextField expenseTitle,
-                                   TextField expenseAmount, DatePicker expenseDatePicker) {
+                                   TextField expenseAmount, DatePicker expenseDatePicker, MainCtrl mainCtrl) {
         if(expensePaidBy.getValue() == null){
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Paid By field is empty, please choose a participant.");
+            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ExpensePaidByEmpty"));
             alert.showAndWait();
             return true;
         }
         if (expenseTitle.getText().isEmpty()) {
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Expense title field is empty, please add a title.");
+            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ExpenseTitleEmpty"));
             alert.showAndWait();
             return true;
         }
         if (expenseAmount.getText().isEmpty()) {
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Expense amount field is empty, please fill in an amount.");
+            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ExpenseAmountEmpty"));
             alert.showAndWait();
             return true;
         }
         if (expenseDatePicker.getValue() == null) {
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Expense date field is empty, please fill in a date.");
+            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ExpenseDateEmpty"));
             alert.showAndWait();
             return true;
         }
@@ -218,8 +218,7 @@ public class AddExpenseCtrl implements Translatable {
         }catch (NumberFormatException e){
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Expense amount field is not a number, please fill in a number. " +
-                    "\n(don't use commas, use periods instead)");
+            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ExpenseAmountWrongFormatEmpty"));
             alert.showAndWait();
             return true;
         }
@@ -245,13 +244,13 @@ public class AddExpenseCtrl implements Translatable {
         if (chosenInvolved.isEmpty()) {
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("You have not selected any involved participants.");
+            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("NoInvolvedsWarning"));
             alert.showAndWait();
             return;
         }
         var alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.initModality(Modality.APPLICATION_MODAL);
-        alert.setContentText("Are you sure you want to add this expense?");
+        alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ConfirmationAddingExpense"));
         var result = alert.showAndWait();
         if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
             mainCtrl.getSessionHandler().sendExpense(newExpense, "create");
@@ -283,13 +282,12 @@ public class AddExpenseCtrl implements Translatable {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
             if (key instanceof Labeled)
-                ((Labeled) key).setText(translation.replaceAll("\"", ""));
+                ((Labeled) key).setText(translation);
             if (key instanceof TextField)
-                ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
+                ((TextField) key).setPromptText(translation);
         });
         if (selectAllCheckBox != null)
-            selectAllCheckBox.setText(translationSupplier.getTranslation("Select All")
-                    .replaceAll("\"", ""));
+            selectAllCheckBox.setText(translationSupplier.getTranslation("Select All"));
     }
 
     /**

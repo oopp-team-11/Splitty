@@ -172,7 +172,7 @@ public class EditExpenseCtrl implements Translatable {
      * @return returns whether addExpense is a bad request
      */
     private boolean checkBadRequest() {
-        return AddExpenseCtrl.checkBadRequest(expensePaidBy, expenseTitle, expenseAmount, expenseDatePicker);
+        return AddExpenseCtrl.checkBadRequest(expensePaidBy, expenseTitle, expenseAmount, expenseDatePicker, mainCtrl);
     }
 
     /**
@@ -194,13 +194,13 @@ public class EditExpenseCtrl implements Translatable {
         if (chosenInvolved.isEmpty()) {
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("You have not selected any involved participants.");
+            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("NoInvolvedsWarning"));
             alert.showAndWait();
             return;
         }
         var alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.initModality(Modality.APPLICATION_MODAL);
-        alert.setContentText("Are you sure you want to edit this expense?");
+        alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ConfirmationEditExpense"));
         var result = alert.showAndWait();
         if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
             mainCtrl.getSessionHandler().sendExpense(newExpense, "update");
@@ -232,15 +232,14 @@ public class EditExpenseCtrl implements Translatable {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
             if (key instanceof Labeled)
-                ((Labeled) key).setText(translation.replaceAll("\"", ""));
+                ((Labeled) key).setText(translation);
             if (key instanceof TextField)
-                ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
+                ((TextField) key).setPromptText(translation);
             if (key instanceof Button)
-                ((Button) key).setText(translation.replaceAll("\"", ""));
+                ((Button) key).setText(translation);
         });
         if (selectAllCheckBox != null)
-            selectAllCheckBox.setText(translationSupplier.getTranslation("Select All")
-                    .replaceAll("\"", ""));
+            selectAllCheckBox.setText(translationSupplier.getTranslation("Select All"));
     }
 
     /**

@@ -98,9 +98,9 @@ public class EditParticipantCtrl implements Translatable {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
             if (key instanceof Labeled)
-                ((Labeled) key).setText(translation.replaceAll("\"", ""));
+                ((Labeled) key).setText(translation);
             if (key instanceof TextField)
-                ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
+                ((TextField) key).setPromptText(translation);
         });
     }
 
@@ -115,23 +115,20 @@ public class EditParticipantCtrl implements Translatable {
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setContentText(mainCtrl.getTranslationSupplier()
-                    .getTranslation("ParticipantFirstNameEmpty")
-                    .replaceAll("\"", ""));
+                    .getTranslation("ParticipantFirstNameEmpty"));
             alert.showAndWait();
         } else if (lastNameString.isEmpty()) {
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setContentText(mainCtrl.getTranslationSupplier()
-                    .getTranslation("ParticipantLastNameEmpty")
-                    .replaceAll("\"", ""));
+                    .getTranslation("ParticipantLastNameEmpty"));
             alert.showAndWait();
         } else {
 
             var alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setContentText(mainCtrl.getTranslationSupplier()
-                    .getTranslation("ConfirmationEditParticipant")
-                    .replaceAll("\"", ""));
+                    .getTranslation("ConfirmationEditParticipant"));
             var result = alert.showAndWait();
             if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
                 participant.setFirstName(firstName.getText());

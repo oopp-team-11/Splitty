@@ -752,8 +752,7 @@ public class MainCtrl {
                                 .filter(item -> (item.getUserData() != null
                                         && item.getUserData().equals("template download")))
                                 .toList().getFirst().setText(
-                                        translationSupplier.getTranslation("DownloadTemplate")
-                                                .replaceAll("\"", ""));
+                                        translationSupplier.getTranslation("DownloadTemplate"));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -762,8 +761,7 @@ public class MainCtrl {
             languageSwitchButton.getItems().addLast(newOption);
         });
 
-        MenuItem item = new MenuItem(translationSupplier.getTranslation("DownloadTemplate")
-                .replaceAll("\"", ""));
+        MenuItem item = new MenuItem(translationSupplier.getTranslation("DownloadTemplate"));
         item.setUserData("template download");
         item.setOnAction(event -> {
                 DirectoryChooser chooser = new DirectoryChooser();
@@ -794,7 +792,6 @@ public class MainCtrl {
                 new Image("/flags/" +
                         getTranslationSupplier()
                                 .getTranslation("Country Code in ISO 3166-1-alpha-3 code")
-                                .replaceAll("\"", "")
                         + ".png"));
         imageView.setPreserveRatio(true);
         imageView.setSmooth(true);
