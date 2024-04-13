@@ -319,7 +319,7 @@ class FileSystemUtilsTest {
 
     @Test
     public void testReplaceServerIPInConfigFile(@TempDir Path tempDir) throws IOException {
-        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        FileSystemUtils fileSystemUtils = new FileSystemUtils(null);
         Path tempFile = tempDir.resolve("client-config.json");
         Files.write(tempFile, "{\"server-ip\":\"localhost:8080\",\"lang\":\"en\"}".getBytes());
 
