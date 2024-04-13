@@ -446,4 +446,11 @@ class WebsocketSessionHandlerTest {
 
         assertEquals(event, payloadCaptor.getValue());
     }
+
+    @Test
+    void disconnectFromServer() {
+        handler.afterConnected(session, headers);
+        handler.disconnectFromServer();
+        verify(session, times(1)).disconnect();
+    }
 }

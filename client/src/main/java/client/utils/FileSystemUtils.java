@@ -402,7 +402,10 @@ public class FileSystemUtils {
             file.flush();
             file.close();
         } catch (Exception e) {
-            throw new IOException("Failed to replace server IP in config file", e);
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Failed to replace server IP in config file");
+            alert.showAndWait();
         }
     }
 

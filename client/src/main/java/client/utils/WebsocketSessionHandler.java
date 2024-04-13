@@ -77,6 +77,13 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
     }
 
     /**
+     * Disconnects from the server
+     */
+    public void disconnectFromServer() {
+        session.disconnect();
+    }
+
+    /**
      * Subscribe to event specific endpoints
      *
      * @param invitationCode invitationCode of the event to subscribe to
