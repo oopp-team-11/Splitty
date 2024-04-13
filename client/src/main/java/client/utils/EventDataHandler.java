@@ -389,6 +389,8 @@ public class EventDataHandler {
      */
     public double sumOfAllExpenses() {
         double sumOfExpenses = 0;
+        if(expenses == null)
+            return 0;
         for (var expense : expenses) {
             sumOfExpenses += expense.getAmount();
         }
