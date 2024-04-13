@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Transactional
 @Controller
-public class InvolvedController {
+public class  InvolvedController {
     private final InvolvedRepository involvedRepository;
     private final SimpMessagingTemplate template;
 
