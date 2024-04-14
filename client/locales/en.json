@@ -102,5 +102,8 @@
   "Select All": "Select All",
   "Participant": "Participant",
   "IsSettled": "Debt settled?",
-  "Incorrect Password!": "Incorrect Password!"
+  "Incorrect Password!": "Incorrect Password!",
+  "ConfigReadWriteFail": "An error occurred when trying to read from or write to config",
+  "ServerIPReadWriteError": "An error occurred when trying to read or write server ip",
+  "LanguageReadWriteFail": "An error occurred when trying to read from or write to language file"
 }

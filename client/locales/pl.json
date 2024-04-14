@@ -104,5 +104,8 @@
   "Select All": "Wybierz wszystko",
   "Participant": "Uczestnik",
   "IsSettled": "Dług spłacony?",
-  "Incorrect Password!": "Nieprawidłowe hasło!"
+  "Incorrect Password!": "Nieprawidłowe hasło!",
+  "ConfigReadWriteFail": "Nastąpił błąd podczas czytania lub zapisywania do pliku config",
+  "ServerIPReadWriteError": "Nastąpił błąd podczas czytania lub zapisywania ip serwera",
+  "LanguageReadWriteFail": "Nastąpił błąd podczas czytania lub zapisywania do pliku językowego"
 }
