@@ -105,5 +105,6 @@
   "Incorrect Password!": "Incorrect Password!",
   "ConfigReadWriteFail": "An error occurred when trying to read from or write to config",
   "ServerIPReadWriteError": "An error occurred when trying to read or write server ip",
-  "LanguageReadWriteFail": "An error occurred when trying to read from or write to language file"
+  "LanguageReadWriteFail": "An error occurred when trying to read from or write to language file",
+  "ServerURLEmpty": "Server URL is empty"
 }

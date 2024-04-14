@@ -107,5 +107,6 @@
   "Incorrect Password!": "Nieprawidłowe hasło!",
   "ConfigReadWriteFail": "Nastąpił błąd podczas czytania lub zapisywania do pliku config",
   "ServerIPReadWriteError": "Nastąpił błąd podczas czytania lub zapisywania ip serwera",
-  "LanguageReadWriteFail": "Nastąpił błąd podczas czytania lub zapisywania do pliku językowego"
+  "LanguageReadWriteFail": "Nastąpił błąd podczas czytania lub zapisywania do pliku językowego",
+  "ServerURLEmpty": "Adres URL serwera jest pusty"
 }
