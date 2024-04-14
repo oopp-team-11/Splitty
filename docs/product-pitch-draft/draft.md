@@ -70,7 +70,21 @@
     - The client is able to save the changes by clicking the ```Edit``` button. If the client clicks the ```Edit``` button, then the expense's information will be updated and the client will be redirected back to the event's overview page. If the client clicks the ```Abort``` button, then the client will be redirected back to the event's overview page without updating the expense's information.
 
 
-### Step IDK YET - Admin panel
+### Step 7 - Admin panel
+
+- After the client has created an event, the client can download the JSON representation of the created event as a backup.
+To do this, the client needs to open the Admin panel.
+  - Navigate to the Start Screen by pressing `Escape` on the Event Overview.
+  - On the Start Screen, the client can enter the Admin panel by entering the Admin password and pressing the Log in button.
+  The admin password can be found in the standard output of the server process. The generated password should look like a UUID of type 4.
+  - Once in the Admin panel, the client can JSON dump an event by pressing the blue button with an error pointing downwards next to the corresponding event.
+  This will prompt the client with a file dialog to select a destination for the backup.
+  - The client can also choose to delete the event by the red button with an 'X' character next to the event the client wishes to delete.
+  This action will prompt the client with a confirmation dialog, the event will only be deleted if the client presses the 'OK' button or the `Enter` key.
+  - The client can import a saved event by pressing the 'Json Import' button at the bottom. 
+  This action will prompt the client with a file selector, the client must then select a valid JSON file containing an event. 
+  If the selected JSON file contained a valid event, the admin panel will show the imported event in the list of events.
+  - Once the client exits from the Admin panel by pressing the home button or the `Escape` key, the client will be logged out of the Admin panel.
 
 ## Present short slides about server-client communication
 
