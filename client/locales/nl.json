@@ -103,10 +103,10 @@
   "EditServerUrlLabel": "Server-URL bewerken",
   "ServerUrlBox": "Server-URL",
   "Incorrect Password!": "Incorrect Wachtwoord!",
-  "ConfigReadWriteFail": "An error occurred when trying to read from or write to config",
-  "ServerIPReadWriteError": "An error occurred when trying to read or write server ip",
-  "LanguageReadWriteFail": "An error occurred when trying to read from or write to language file",
-  "ServerURLEmpty": "Server URL is empty",
+  "ConfigReadWriteFail": "Er is een fout opgetreden bij het lezen van of schrijven naar het configuratiebestand",
+  "ServerIPReadWriteError": "Er is een fout opgetreden bij het lezen of schrijven van het server-IP-adres",
+  "LanguageReadWriteFail": "Er is een fout opgetreden bij het lezen van of schrijven naar het taalbestand",
+  "ServerURLEmpty": "Server-URL is leeg",
   "NoErrorMessageAvailable": "No error message available",
   "Event is null.": "Event is null.",
   "Event does not exist in the database.": "Event does not exist in the database.",
@@ -145,5 +145,5 @@
   "Provided participant has an invalid invitation code": "Provided participant has an invalid invitation code",
   "Participant was successfully created": "Participant was successfully created",
   "Participant was successfully updated": "Participant was successfully updated",
-  "Participant was successfully deleted": "Participant was successfully deleted"
+  "Participant was successfully deleted": "Participant was successfully deleted",
 }
