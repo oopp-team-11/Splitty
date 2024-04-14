@@ -301,6 +301,10 @@ public class StartScreenCtrl implements Initializable, Translatable {
         try{
             fileSystemUtils.replaceServerIPInConfigFile("client-config.json",
                     serverUrlBox.getText(), mainCtrl.getTranslationSupplier());
+            mainCtrl.setServerIp();
+            if (mainCtrl.getSessionHandler() != null)
+                mainCtrl.getSessionHandler().disconnectFromServer();
+            refresh();
         }
         catch (IOException e){
             var alert = new Alert(Alert.AlertType.ERROR);
@@ -308,11 +312,6 @@ public class StartScreenCtrl implements Initializable, Translatable {
             alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ServerIPFailedToSave"));
             alert.showAndWait();
         }
-
-        mainCtrl.setServerIp();
-        if (mainCtrl.getSessionHandler() != null)
-            mainCtrl.getSessionHandler().disconnectFromServer();
-        refresh();
     }
 
     /**
