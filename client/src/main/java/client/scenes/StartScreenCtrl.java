@@ -93,7 +93,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
     private final FileSystemUtils fileSystemUtils;
     private final ServerUtils serverUtils;
     private Thread pollingThread;
-    boolean serverReachable;
+    private boolean serverReachable;
+    private boolean firstConnection;
 
     /**
      * @param mainCtrl main Controller, for displaying this scene.
@@ -194,18 +195,21 @@ public class StartScreenCtrl implements Initializable, Translatable {
             languageSwitchPlaceHolder.getChildren().add(mainCtrl.getLanguageSwitchButton());
 
         } catch (IOException | InterruptedException e) {
-            var alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(mainCtrl.getTranslationSupplier()
-                    .getTranslation("ServerConnectionError"));
-            alert.showAndWait();
+            if (mainCtrl.getSessionHandler() == null) {
+                firstConnection = true;
+                var alert = new Alert(Alert.AlertType.ERROR);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText(mainCtrl.getTranslationSupplier()
+                        .getTranslation("ServerConnectionError"));
+                alert.showAndWait();
+            }
             serverReachable = false;
         } catch (JSONException e) {
             System.out.println("Failed to parse server response: " + e.getMessage());
         }
 
         if(serverReachable && (mainCtrl.getSessionHandler() == null || mainCtrl.getSessionHandler().isSessionNull())) {
-            if (mainCtrl.getSessionHandler() != null) {
+            if (firstConnection || mainCtrl.getSessionHandler() != null) {
                 var alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.initModality(Modality.APPLICATION_MODAL);
                 alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ServerConnectSuccess"));
