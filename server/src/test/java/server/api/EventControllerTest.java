@@ -41,8 +41,6 @@ public class EventControllerTest {
         sut = new EventController(messagingTemplate, eventRepo, passwordService, eventLastActivityService);
     }
 
-    // GET: ?query=title&invitationCodes={}
-
     @Test
     public void checkCodesNull() {
         var actual = sut.updateRecentlyAccessedEvents("titles", null);
