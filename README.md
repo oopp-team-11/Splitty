@@ -1,7 +1,10 @@
-# OOPP Template Project
-
 ## Setup
-
+- When setting up server and client run configurations in IntelliJ or any other IDE, it is advised
+to set the working directories to client and server directories accordingly 
+to comply with the working directories from ./gradlew bootRun and ./gradlew run.
+- If you have cloned this repository and launched the application before the code freeze (14.04), 
+please ensure that there are no old h2-database files in server or project directories.
+These files are ignored by git and only saved locally.
 ## Keyboard shortcuts
 ### General
 - esc for going to start screen and aborting changes
@@ -27,11 +30,11 @@
 - alt + 0-9 to delete 1.-10. event
 - I to import json
 
-## Explanation of unintuitive features
+## Explanation of potentially unintuitive features
 - Double-click on an expense to access a partial debt settling page (detailed expense overview)
 - Partial debt settling page functionality (detailed expense overview)
     * Click for those participants whose debts are already settled
     * Press the "Save partial debts" (green button) to save changes for the partial debts of the specific expense
     * Press the "Go to Event Overview" (red button) to exit the page without saving the partial debts for specific expense
 - Admin password is printed out on the server console on start up
-- The server URI can contain both ip and a port number
+- The server URL can contain both ip and a port number
