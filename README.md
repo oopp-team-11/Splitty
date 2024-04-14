@@ -3,8 +3,10 @@
 to set the working directories to client and server directories accordingly 
 to comply with the working directories from ./gradlew bootRun and ./gradlew run.
 - If you have cloned this repository and launched the application before the code freeze (14.04), 
-please ensure that there are no old h2-database files in server or project directories.
-These files are ignored by git and only saved locally.
+please ensure that there are no old h2-database files in server or project directories and no 
+old config.json and client-config.json in client or project directories.
+These files are ignored by git and only saved locally. They are generated automatically, if they
+do not exist.
 ## Keyboard shortcuts
 ### General
 - esc for going to start screen and aborting changes
