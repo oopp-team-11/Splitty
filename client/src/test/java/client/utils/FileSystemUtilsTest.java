@@ -51,17 +51,18 @@ class FileSystemUtilsTest {
         new File(randomFileName).delete();
     }
 
-    @Test
-    void readInvitationCodesFileMotFound() {
-        FileSystemUtils fileSystemUtils = new FileSystemUtils(null);
-        String randomFileName = UUID.randomUUID() + ".txt";
-
-        if (new File(randomFileName).exists()) {
-            new File(randomFileName).delete();
-        }
-
-        assertThrows(FileNotFoundException.class, () -> fileSystemUtils.readInvitationCodes(randomFileName));
-    }
+    //This method does not throw an exception anymore
+//    @Test
+//    void readInvitationCodesFileMotFound() {
+//        FileSystemUtils fileSystemUtils = new FileSystemUtils(null);
+//        String randomFileName = UUID.randomUUID() + ".txt";
+//
+//        if (new File(randomFileName).exists()) {
+//            new File(randomFileName).delete();
+//        }
+//
+//        assertThrows(FileNotFoundException.class, () -> fileSystemUtils.readInvitationCodes(randomFileName));
+//    }
 
     @Test
     void readInvitationCodesFileFound() throws IOException {
@@ -90,7 +91,7 @@ class FileSystemUtilsTest {
     }
 
     @Test
-    void saveInvitationCodesToConfigFileFileNotFound() throws IOException {
+    void saveInvitationCodesToConfigFileFileNotFound() {
         FileSystemUtils fileSystemUtils = new FileSystemUtils(null);
         String randomFileName = UUID.randomUUID() + ".json";
 
@@ -326,7 +327,7 @@ class FileSystemUtilsTest {
         String newServerIP = "http://192.168.1.1:8080";
         fileSystemUtils.replaceServerIPInConfigFile(tempFile.toString(), newServerIP, null);
         String content = new String(Files.readAllBytes(tempFile));
-        assertEquals("{\"server-ip\":\"" + newServerIP + "\",\"lang\":\"en\"}", content);
+        assertEquals("{\"server-ip\":\"" + "192.168.1.1:8080" + "\",\"lang\":\"en\"}", content);
     }
 
     //Method doesn't throw exception anymore

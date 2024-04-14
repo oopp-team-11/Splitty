@@ -1,5 +1,8 @@
 package client.utils;
 
+import javafx.scene.control.Alert;
+import javafx.stage.Modality;
+
 import javax.json.Json;
 import javax.json.JsonObject;
 
@@ -21,20 +24,27 @@ public class TranslationSupplier {
      * Constructor for the translation supplier
      *
      * @param lang This language string should correspond to a json file stored in localesPath under the same name.
-     * @throws FileNotFoundException in case there is no corresponding json file found.
      */
-    public TranslationSupplier(String lang) throws FileNotFoundException {
+    public TranslationSupplier(String lang) {
         currentLanguage = lang;
         var path = localesPath + lang + ".json";
         if(!FileSystemUtils.checkIfFileExists(localesPath + lang + ".json")) {
-            throw new FileNotFoundException(path + " could not be located");
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Could not find locale file: " + lang + ".json");
+            alert.showAndWait();
+            currentLanguage = "en";
         }
-        var reader = Json.createReader(new FileReader(path));
-        JsonObject json = reader.readObject();
-        reader.close();
+        try {
+            var reader = Json.createReader(new FileReader(path));
+            JsonObject json = reader.readObject();
+            reader.close();
 
-        translationMap = new HashMap<>();
-        json.forEach((key, val) -> translationMap.put(key,val.toString()));
+            translationMap = new HashMap<>();
+            json.forEach((key, val) -> translationMap.put(key,val.toString()));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Could not find english locale file");
+        }
     }
 
     /**

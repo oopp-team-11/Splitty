@@ -249,13 +249,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
             return;
         }
 
-        try {
-            fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
-                    "config.json");
-        } catch (IOException e) {
-            fileSaveErrorAlert(e);
-            return;
-        }
+        fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
+                "config.json");
         mainCtrl.getSessionHandler().subscribeToEvent(invitationCode);
     }
 
@@ -283,13 +278,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
             return;
         }
 
-        try {
-            fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
-                    "config.json");
-        } catch (IOException e) {
-            fileSaveErrorAlert(e);
-            return;
-        }
+        fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
+                "config.json");
 
         mainCtrl.getSessionHandler().subscribeToEvent(invitationCode);
     }
@@ -298,20 +288,19 @@ public class StartScreenCtrl implements Initializable, Translatable {
      * Method that is called when the client wants to edit the server URL
      */
     public void onEditURL() {
-        try{
-            fileSystemUtils.replaceServerIPInConfigFile("client-config.json",
-                    serverUrlBox.getText(), mainCtrl.getTranslationSupplier());
-            mainCtrl.setServerIp();
-            if (mainCtrl.getSessionHandler() != null)
-                mainCtrl.getSessionHandler().disconnectFromServer();
-            refresh();
-        }
-        catch (IOException e){
-            var alert = new Alert(Alert.AlertType.ERROR);
+        if (serverUrlBox.getText().isBlank()) {
+            var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ServerIPFailedToSave"));
+            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ServerURLEmpty"));
             alert.showAndWait();
+            return;
         }
+        fileSystemUtils.replaceServerIPInConfigFile("client-config.json",
+                serverUrlBox.getText(), mainCtrl.getTranslationSupplier());
+        mainCtrl.setServerIp();
+        if (mainCtrl.getSessionHandler() != null)
+            mainCtrl.getSessionHandler().disconnectFromServer();
+        refresh();
     }
 
     /**
