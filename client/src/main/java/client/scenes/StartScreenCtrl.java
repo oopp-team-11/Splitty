@@ -267,7 +267,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
         } catch (IllegalArgumentException e) {
             var exceptionMessage = mainCtrl.getTranslationSupplier().getTranslation(e.getMessage());
             if (exceptionMessage == null) exceptionMessage = e.getMessage();
-            if (exceptionMessage == null) exceptionMessage = "No error message available.";
+            if (exceptionMessage == null) exceptionMessage = mainCtrl.getTranslationSupplier()
+                    .getTranslation("NoErrorMessageAvailable");
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("InvalidInvitationCode") +
@@ -318,7 +319,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
     private void serverErrorAlert(Exception exception) {
         var exceptionMessage = mainCtrl.getTranslationSupplier().getTranslation(exception.getMessage());
         if (exceptionMessage == null) exceptionMessage = exception.getMessage();
-        if (exceptionMessage == null) exceptionMessage = "No error message available.";
+        if (exceptionMessage == null) exceptionMessage = mainCtrl.getTranslationSupplier()
+                .getTranslation("NoErrorMessageAvailable");
         var alert = new Alert(Alert.AlertType.ERROR);
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ServerErrorAlert") +
@@ -330,7 +332,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
     private void fileSaveErrorAlert(Exception exception) {
         var exceptionMessage = mainCtrl.getTranslationSupplier().getTranslation(exception.getMessage());
         if (exceptionMessage == null) exceptionMessage = exception.getMessage();
-        if (exceptionMessage == null) exceptionMessage = "No error message available.";
+        if (exceptionMessage == null) exceptionMessage = mainCtrl.getTranslationSupplier()
+                .getTranslation("NoErrorMessageAvailable");
         var alert = new Alert(Alert.AlertType.ERROR);
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("FileSaveErrorAlert") +

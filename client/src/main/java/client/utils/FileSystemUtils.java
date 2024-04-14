@@ -75,8 +75,11 @@ public class FileSystemUtils {
             Platform.runLater(() -> {
                 var alert = new Alert(Alert.AlertType.ERROR);
                 alert.initModality(Modality.APPLICATION_MODAL);
+                var message = translationSupplier.getTranslation(e.getMessage()) != null ?
+                        translationSupplier.getTranslation(e.getMessage()).replaceAll("\"","") :
+                        e.getMessage();
                 alert.setContentText(translationSupplier.getTranslation("Error")
-                        .replaceAll("\"", "") + e.getMessage());
+                        .replaceAll("\"", "") + message);
                 alert.showAndWait();
             });
         }
