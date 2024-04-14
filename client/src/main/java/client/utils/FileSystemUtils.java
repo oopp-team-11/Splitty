@@ -18,6 +18,15 @@ import java.util.UUID;
  * Client utility class for file handling
  */
 public class FileSystemUtils {
+    /**
+     * Constructor for FileSystemUtils
+     * @param translationSupplier translation supplier
+     */
+    public FileSystemUtils(TranslationSupplier translationSupplier) {
+        this.translationSupplier = translationSupplier;
+    }
+
+    private TranslationSupplier translationSupplier;
     //private static final String CLIENT_JSON_PATH = "client.json";
 
     /**
@@ -56,15 +65,21 @@ public class FileSystemUtils {
             Platform.runLater(() -> {
                 var alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText("Successfully saved JSON file to chosen backup directory.");
-                alert.setHeaderText("Success");
+                alert.setContentText(translationSupplier.getTranslation("SuccessfullyJsonDump")
+                        .replaceAll("\"", ""));
+                alert.setHeaderText(translationSupplier.getTranslation("Success")
+                        .replaceAll("\"", ""));
                 alert.showAndWait();
             });
         } catch (IOException e) {
             Platform.runLater(() -> {
                 var alert = new Alert(Alert.AlertType.ERROR);
                 alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText("Error: " + e.getMessage());
+                var message = translationSupplier.getTranslation(e.getMessage()) != null ?
+                        translationSupplier.getTranslation(e.getMessage()).replaceAll("\"","") :
+                        e.getMessage();
+                alert.setContentText(translationSupplier.getTranslation("Error")
+                        .replaceAll("\"", "") + message);
                 alert.showAndWait();
             });
         }
@@ -74,24 +89,48 @@ public class FileSystemUtils {
      * Method that reads the invitation codes from the config file
      *
      * @param path path of the file
-     * @return lust of invitation codes
-     * @throws FileNotFoundException if the file is not found
+     * @return list of invitation codes
      */
-    public List<UUID> readInvitationCodes(String path) throws FileNotFoundException {
+    public List<UUID> readInvitationCodes(String path) {
         if (!checkIfFileExists(path)) {
-            throw new FileNotFoundException("File not found");
+            List<UUID> codes = new ArrayList<>();
+            try {
+                JsonObject json = Json.createObjectBuilder()
+                        .add("invitationCodes", Json.createArrayBuilder(codes))
+                        .build();
+                FileWriter file = new FileWriter(path);
+                file.write(json.toString());
+                file.flush();
+                file.close();
+            } catch (IOException e) {
+                var alert = new Alert(Alert.AlertType.ERROR);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText(path + translationSupplier.getTranslation("ConfigReadWriteFail")
+                        .replaceAll("\"", ""));
+                alert.showAndWait();
+            }
+            return codes;
         }
 
-        JsonReader reader = Json.createReader(new FileReader(path));
-        JsonObject json = reader.readObject();
-        reader.close();
+        try {
+            JsonReader reader = Json.createReader(new FileReader(path));
+            JsonObject json = reader.readObject();
+            reader.close();
 
-        List<UUID> codes = new ArrayList<>();
-        json.getJsonArray("invitationCodes").forEach(code -> {
-            codes.add(UUID.fromString(code.toString().replaceAll("^\"|\"$", "")));
-        });
+            List<UUID> codes = new ArrayList<>();
+            json.getJsonArray("invitationCodes").forEach(code -> {
+                codes.add(UUID.fromString(code.toString().replaceAll("^\"|\"$", "")));
+            });
 
-        return codes;
+            return codes;
+        } catch (FileNotFoundException e) {
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText(path + translationSupplier.getTranslation("ConfigReadWriteFail")
+                    .replaceAll("\"", ""));
+            alert.showAndWait();
+            return new ArrayList<>();
+        }
 
     }
 
@@ -102,8 +141,7 @@ public class FileSystemUtils {
      * @param path           path of the file
      * @throws IOException if something goes wrong
      */
-    public void saveInvitationCodesToConfigFile(UUID invitationCode, String path)
-            throws IOException {
+    public void saveInvitationCodesToConfigFile(UUID invitationCode, String path) {
         if (!checkIfFileExists(path)) {
             List<UUID> codes = new ArrayList<>();
             codes.add(invitationCode);
@@ -112,10 +150,18 @@ public class FileSystemUtils {
                     .add("invitationCodes", Json.createArrayBuilder(codeStrings))
                     .build();
 
-            FileWriter file = new FileWriter(path);
-            file.write(json.toString());
-            file.flush();
-            file.close();
+            try {
+                FileWriter file = new FileWriter(path);
+                file.write(json.toString());
+                file.flush();
+                file.close();
+            } catch (IOException e) {
+                var alert = new Alert(Alert.AlertType.ERROR);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText(path + translationSupplier.getTranslation("ConfigReadWriteFail")
+                        .replaceAll("\"", ""));
+                alert.showAndWait();
+            }
             return;
         }
 
@@ -132,10 +178,18 @@ public class FileSystemUtils {
                 .add("invitationCodes", Json.createArrayBuilder(codeStrings))
                 .build();
 
-        FileWriter file = new FileWriter(path);
-        file.write(json.toString());
-        file.flush();
-        file.close();
+        try {
+            FileWriter file = new FileWriter(path);
+            file.write(json.toString());
+            file.flush();
+            file.close();
+        } catch (IOException e) {
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText(path + translationSupplier.getTranslation("ConfigReadWriteFail")
+                    .replaceAll("\"", ""));
+            alert.showAndWait();
+        }
     }
 
     /**
@@ -166,16 +220,24 @@ public class FileSystemUtils {
      * @param codes list of codes
      * @throws IOException if something goes wrong
      */
-    public void updateConfigFile(String path, List<UUID> codes) throws IOException {
+    public void updateConfigFile(String path, List<UUID> codes) {
         List<String> codeStrings = codes.stream().map(UUID::toString).toList();
         JsonObject json = Json.createObjectBuilder()
                 .add("invitationCodes", Json.createArrayBuilder(codeStrings))
                 .build();
 
-        FileWriter file = new FileWriter(path);
-        file.write(json.toString());
-        file.flush();
-        file.close();
+        try {
+            FileWriter file = new FileWriter(path);
+            file.write(json.toString());
+            file.flush();
+            file.close();
+        } catch (IOException e) {
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText(path + translationSupplier.getTranslation("ConfigReadWriteFail")
+                    .replaceAll("\"", ""));
+            alert.showAndWait();
+        }
     }
 
     /**
@@ -193,32 +255,52 @@ public class FileSystemUtils {
     }
 
     /**
+     * Cleans up the server IP
+     *
+     * @param serverIp serverIP
+     * @return cleaned up serverIP
+     */
+    private String cleanUpServerIP(String serverIp) {
+        if (serverIp.contains("http://") || serverIp.contains("ws://") ||
+                serverIp.contains("https://") || serverIp.contains("wss://")) {
+            serverIp = serverIp.replace("https://", "");
+            serverIp = serverIp.replace("http://", "");
+            serverIp = serverIp.replace("wss://", "");
+            serverIp = serverIp.replace("ws://", "");
+        } else if (!serverIp.contains(":")) {
+            serverIp = serverIp + ":8080";
+        }
+        return serverIp;
+    }
+
+    /**
      * Gets the server ip from the client-config.json
      *
      * @param path path to client config file
      * @return String of server ip address
      */
-    public String getServerIP(String path) throws IOException {
+    public String getServerIP(String path) {
         if (!checkIfFileExists(path)) {
-            JsonObject json = Json.createObjectBuilder()
-                    .add("server-ip", "localhost:8080")
-                    .add("lang", "en")
-                    .build();
+            try {
+                JsonObject json = Json.createObjectBuilder()
+                        .add("server-ip", "localhost:8080")
+                        .add("lang", "en")
+                        .build();
 
-            FileWriter file = new FileWriter(path);
-            file.write(json.toString());
-            file.flush();
-            file.close();
-
-            var alert = new Alert(Alert.AlertType.WARNING);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(path + " doesn't exist. \n" +
-                    "Created new default file, please put the server url if it isn't localhost:8080 " +
-                    "in client-config.json.\n" +
-                    "You need to delete localhost:8080 and put it there.");
-            alert.showAndWait();
-
-            return getServerIP(path);
+                FileWriter file = new FileWriter(path);
+                file.write(json.toString());
+                file.flush();
+                file.close();
+                return "localhost:8080";
+            }
+            catch (Exception e) {
+                var alert = new Alert(Alert.AlertType.ERROR);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText(path + translationSupplier.getTranslation("ServerIPReadWriteError")
+                        .replaceAll("\"", ""));
+                alert.showAndWait();
+                return "localhost:8080";
+            }
         }
 
         try{
@@ -240,42 +322,21 @@ public class FileSystemUtils {
 
                 var alert = new Alert(Alert.AlertType.WARNING);
                 alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText(path + " is the wrong format. \n" +
-                        "Created new default file, please put the server url if it isn't localhost:8080 " +
-                        "in client-config.json.\n" +
-                        "You need to delete localhost:8080 and put it there.");
+                alert.setContentText(path + translationSupplier.getTranslation("ServerIPWrongFormat")
+                        .replaceAll("\"", ""));
                 alert.showAndWait();
-                return getServerIP(path);
-            } else if (serverIp.contains("http://") || serverIp.contains("ws://") ||
-                    serverIp.contains("https://") || serverIp.contains("wss://")) {
-                serverIp = serverIp.replace("https://", "");
-                serverIp = serverIp.replace("http://", "");
-                serverIp = serverIp.replace("wss://", "");
-                serverIp = serverIp.replace("ws://", "");
-            } else if (!serverIp.contains(":")) {
-                serverIp = serverIp + ":8080";
+                return "localhost:8080";
             }
+            serverIp = cleanUpServerIP(serverIp);
             return serverIp;
         }
         catch (Exception e){
-            JsonObject json = Json.createObjectBuilder()
-                    .add("server-ip", "localhost:8080")
-                    .add("lang", "en")
-                    .build();
-
-            FileWriter file = new FileWriter(path);
-            file.write(json.toString());
-            file.flush();
-            file.close();
-
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(path + " is the wrong format. \n" +
-                    "Created new default file, please put the server url if it isn't localhost:8080 " +
-                    "in client-config.json.\n" +
-                    "You need to delete localhost:8080 and put it there.");
+            alert.setContentText(path + translationSupplier.getTranslation("ServerIPReadWriteError")
+                    .replaceAll("\"", ""));
             alert.showAndWait();
-            return getServerIP(path);
+            return "localhost:8080";
         }
     }
 
@@ -283,9 +344,8 @@ public class FileSystemUtils {
      * Returns a translation supplier from a config.
      * @param path the path of the config file to read.
      * @return the associated translationsupplier, null otherwise.
-     * @throws IOException If an error occurs during config file reading.
      */
-    public TranslationSupplier getTranslationSupplier(String path) throws IOException {
+    public TranslationSupplier getTranslationSupplier(String path) {
         try{
             JsonReader reader = Json.createReader(new FileReader(path));
             JsonObject object = reader.readObject();
@@ -294,7 +354,7 @@ public class FileSystemUtils {
 
             if (lang == null || lang.isEmpty()) {
                 JsonObject json = Json.createObjectBuilder()
-                        .add("server-ip", "localhost:8080")
+                        .add("server-ip", object.getString("server-ip"))
                         .add("lang", "en")
                         .build();
 
@@ -302,37 +362,17 @@ public class FileSystemUtils {
                 file.write(json.toString());
                 file.flush();
                 file.close();
-
-                var alert = new Alert(Alert.AlertType.WARNING);
-                alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText(path + " is the wrong format. \n" +
-                        "Created new default file, please put the language if it isn't en(english) " +
-                        "in client-config.json.\n" +
-                        "You need to delete en and put it there.");
-                alert.showAndWait();
-                return getTranslationSupplier(path);
+                return new TranslationSupplier("en");
             }
             return new TranslationSupplier(lang);
         }
         catch (Exception e) {
-            JsonObject json = Json.createObjectBuilder()
-                    .add("server-ip", "localhost:8080")
-                    .add("lang", "en")
-                    .build();
-
-            FileWriter file = new FileWriter(path);
-            file.write(json.toString());
-            file.flush();
-            file.close();
-
-            var alert = new Alert(Alert.AlertType.WARNING);
+            var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(path + " is the wrong format. \n" +
-                    "Created new default file, please put the language if it isn't en(english) " +
-                    "in client-config.json.\n" +
-                    "You need to delete en and put it there.");
+            alert.setContentText(path + translationSupplier.getTranslation("LanguageReadWriteFail")
+                    .replaceAll("\"", ""));
             alert.showAndWait();
-            return getTranslationSupplier(path);
+            return new TranslationSupplier("en");
         }
     }
 
@@ -340,9 +380,8 @@ public class FileSystemUtils {
      * Method for changing language in config file
      * @param path path to client-config.json
      * @param language language to set it to
-     * @throws IOException possible error throw
      */
-    public void changeLanguageInFile(String path, String language) throws IOException {
+    public void changeLanguageInFile(String path, String language) {
         try{
             JsonReader reader = Json.createReader(new FileReader(path));
             JsonObject oldJson = reader.readObject();
@@ -359,22 +398,10 @@ public class FileSystemUtils {
             file.close();
         }
         catch (Exception e) {
-            JsonObject json = Json.createObjectBuilder()
-                    .add("server-ip", "localhost:8080")
-                    .add("lang", "en")
-                    .build();
-
-            FileWriter file = new FileWriter(path);
-            file.write(json.toString());
-            file.flush();
-            file.close();
-
-            var alert = new Alert(Alert.AlertType.WARNING);
+            var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(path + " is the wrong format. \n" +
-                    "Created new default file, please put the language if it isn't en(english) " +
-                    "in client-config.json.\n" +
-                    "You need to delete en and put it there.");
+            alert.setContentText(path + translationSupplier.getTranslation("LanguageReadWriteFail")
+                    .replaceAll("\"", ""));
             alert.showAndWait();
         }
     }
@@ -383,11 +410,12 @@ public class FileSystemUtils {
      * Method for replacing server ip in config file
      * @param path path to client-config.json
      * @param newServerIP new server ip to set it to
-     * @throws IOException possible error throw
+     * @param tl Translationsupplier to be used when translating error messages.
      * @throws IllegalArgumentException if the new server ip is not a valid URL
      */
-    public void replaceServerIPInConfigFile(String path, String newServerIP) throws IOException{
+    public void replaceServerIPInConfigFile(String path, String newServerIP, TranslationSupplier tl) {
         try {
+            newServerIP = cleanUpServerIP(newServerIP);
             JsonReader reader = Json.createReader(new FileReader(path));
             JsonObject oldJson = reader.readObject();
             reader.close();
@@ -402,11 +430,10 @@ public class FileSystemUtils {
             file.flush();
             file.close();
         } catch (Exception e) {
-            var alert = new Alert(Alert.AlertType.WARNING);
+            var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Failed to replace server IP in config file");
+            alert.setContentText(tl.getTranslation("ServerIPFailedToReplace"));
             alert.showAndWait();
         }
     }
-
 }

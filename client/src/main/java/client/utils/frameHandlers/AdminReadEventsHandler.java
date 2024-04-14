@@ -1,5 +1,6 @@
 package client.utils.frameHandlers;
 
+import client.scenes.MainCtrl;
 import client.utils.AdminDataHandler;
 import commons.StatusEntity;
 import javafx.application.Platform;
@@ -15,14 +16,17 @@ import java.lang.reflect.Type;
  */
 public class AdminReadEventsHandler implements StompFrameHandler {
     private final AdminDataHandler dataHandler;
+    private final MainCtrl mainCtrl;
 
     /**
      * Constructor for the AdminReadEventsHandler
      *
      * @param dataHandler reference to the dataHandler
+     * @param mainCtrl reference to mainCtrl for getting translationSupplier
      */
-    public AdminReadEventsHandler(AdminDataHandler dataHandler) {
+    public AdminReadEventsHandler(AdminDataHandler dataHandler, MainCtrl mainCtrl) {
         this.dataHandler = dataHandler;
+        this.mainCtrl = mainCtrl;
     }
 
     @Override
@@ -41,16 +45,22 @@ public class AdminReadEventsHandler implements StompFrameHandler {
                 if(status.isUnsolvable()){
                     Platform.runLater(() ->{
                         var alert = new Alert(Alert.AlertType.ERROR);
+                        var translatedMessage = mainCtrl.getTranslationSupplier().getTranslation(status.getMessage());
                         alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText("Error: " + status.getMessage());
+                        alert.setContentText(dataHandler.getSessionHandler().getMainCtrl()
+                                .getTranslationSupplier().getTranslation("Error")
+                                + (translatedMessage != null ? translatedMessage : status.getMessage()));
                         alert.showAndWait();
                         dataHandler.getSessionHandler().getMainCtrl().showStartScreen();
                     });
                 } else {
                     Platform.runLater(() ->{
                         var alert = new Alert(Alert.AlertType.WARNING);
+                        var translatedMessage = mainCtrl.getTranslationSupplier().getTranslation(status.getMessage());
                         alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText("Warning: " + status.getMessage());
+                        alert.setContentText(dataHandler.getSessionHandler().getMainCtrl()
+                                .getTranslationSupplier().getTranslation("Warning")
+                                + (translatedMessage != null ? translatedMessage : status.getMessage()));
                         alert.showAndWait();
                         dataHandler.getSessionHandler().getMainCtrl().showStartScreen();
                     });

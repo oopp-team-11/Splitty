@@ -65,7 +65,7 @@ public class CreateParticipantCtrl implements Translatable {
     @Inject
     public CreateParticipantCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
-        this.fileSystemUtils = new FileSystemUtils();
+        this.fileSystemUtils = new FileSystemUtils(mainCtrl.getTranslationSupplier());
         this.serverUtils = new ServerUtils();
     }
 
@@ -90,9 +90,9 @@ public class CreateParticipantCtrl implements Translatable {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
             if (key instanceof Labeled)
-                ((Labeled) key).setText(translation.replaceAll("\"", ""));
+                ((Labeled) key).setText(translation);
             if (key instanceof TextField)
-                ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
+                ((TextField) key).setPromptText(translation);
         });
     }
 
@@ -121,18 +121,21 @@ public class CreateParticipantCtrl implements Translatable {
         if(firstNameString.isEmpty()){
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("First name field is empty, please fill in a first name.");
+            alert.setContentText(mainCtrl.getTranslationSupplier()
+                    .getTranslation("ParticipantFirstNameEmpty"));
             alert.showAndWait();
         } else if (lastNameString.isEmpty()) {
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Last name field is empty, please fill in a last name.");
+            alert.setContentText(mainCtrl.getTranslationSupplier()
+                    .getTranslation("ParticipantLastNameEmpty"));
             alert.showAndWait();
         } else {
 
             var alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Are you sure you want to add this participant?");
+            alert.setContentText(mainCtrl.getTranslationSupplier()
+                    .getTranslation("ConfirmationCreateParticipant"));
             var result = alert.showAndWait();
             if (result.isPresent() && !result.get().equals(ButtonType.CANCEL)){
                 mainCtrl.getSessionHandler().sendParticipant(

@@ -50,7 +50,10 @@ public class ReadParticipantsHandler implements StompFrameHandler {
                         Platform.runLater(() ->{
                             var alert = new Alert(Alert.AlertType.ERROR);
                             alert.initModality(Modality.APPLICATION_MODAL);
-                            alert.setContentText("Error: Bad request, reloading event.");
+                            alert.setContentText(mainCtrl.getTranslationSupplier()
+                                    .getTranslation("Error").replaceAll("\"", "")
+                                    + mainCtrl.getTranslationSupplier()
+                                    .getTranslation("EventBadRequest").replaceAll("\"", ""));
                             alert.showAndWait();
                             mainCtrl.showEventOverview();
                         });
@@ -60,7 +63,10 @@ public class ReadParticipantsHandler implements StompFrameHandler {
                         Platform.runLater(() ->{
                             var alert = new Alert(Alert.AlertType.WARNING);
                             alert.initModality(Modality.APPLICATION_MODAL);
-                            alert.setContentText("Warning: Bad request, reloading event.");
+                            alert.setContentText(mainCtrl.getTranslationSupplier()
+                                    .getTranslation("Warning").replaceAll("\"", "")
+                                    + mainCtrl.getTranslationSupplier()
+                                    .getTranslation("EventBadRequest").replaceAll("\"", ""));
                             alert.showAndWait();
                             mainCtrl.showEventOverview();
                         });
@@ -72,7 +78,10 @@ public class ReadParticipantsHandler implements StompFrameHandler {
                     Platform.runLater(() ->{
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText("Error: Participant not found, reloading event.");
+                        alert.setContentText(mainCtrl.getTranslationSupplier()
+                                .getTranslation("Error").replaceAll("\"", "")
+                                + mainCtrl.getTranslationSupplier()
+                                .getTranslation("ParticipantNotFound").replaceAll("\"", ""));
                         alert.showAndWait();
                         mainCtrl.showEventOverview();
                     });
@@ -80,7 +89,10 @@ public class ReadParticipantsHandler implements StompFrameHandler {
                     Platform.runLater(() ->{
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText("Warning: Participant not found, reloading event.");
+                        alert.setContentText(mainCtrl.getTranslationSupplier()
+                                .getTranslation("Warning").replaceAll("\"", "")
+                                + mainCtrl.getTranslationSupplier()
+                                .getTranslation("ParticipantNotFound").replaceAll("\"", ""));
                         alert.showAndWait();
                         mainCtrl.showEventOverview();
                     });

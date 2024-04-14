@@ -1,14 +1,16 @@
 package client.utils.frameHandlers;
 
+import client.scenes.MainCtrl;
 import client.utils.AdminDataHandler;
+import client.utils.EventDataHandler;
 import client.utils.FileSystemUtils;
+import client.utils.WebsocketSessionHandler;
 import commons.Event;
-import commons.Expense;
+import commons.EventList;
 import commons.StatusEntity;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 
 import java.io.File;
@@ -22,11 +24,20 @@ class AdminDumpEventHandlerTest {
     private AdminDumpEventHandler handler;
     private StompHeaders headers;
     private FileSystemUtils utils;
+    private EventDataHandler eventDataHandler;
+    private WebsocketSessionHandler sessionHandler;
+    private MainCtrl mainCtrl;
+    private File file;
 
     @BeforeEach
     void setUp() {
-        dataHandler = mock(AdminDataHandler.class);
-        handler = new AdminDumpEventHandler(dataHandler);
+//        dataHandler = mock(AdminDataHandler.class);
+        file = new File("/tmp/test.txt");
+        mainCtrl = new MainCtrl();
+        eventDataHandler = mock(EventDataHandler.class);
+        dataHandler = new AdminDataHandler(new EventList(), sessionHandler, "", file);
+        sessionHandler = new WebsocketSessionHandler(eventDataHandler, dataHandler, mainCtrl);
+        handler = new AdminDumpEventHandler(dataHandler, mainCtrl);
         headers = new StompHeaders();
         utils = mock(FileSystemUtils.class);
     }
@@ -54,10 +65,17 @@ class AdminDumpEventHandlerTest {
         try {
             setFileUtils(handler, utils);
         } catch (IllegalAccessException ignored) {}
-        File file = new File("/tmp/test.txt");
-        when(dataHandler.getJsonDumpDir()).thenReturn(file);
+        assertEquals(file, dataHandler.getJsonDumpDir());
         StatusEntity status = StatusEntity.ok(event);
-        handler.handleFrame(headers, status);
+        try {
+            handler.handleFrame(headers, status);
+        } catch (Exception e)
+        {
+            assertEquals("Toolkit not initialized", e.getMessage());
+            // this catch block is because of JavaFX usage in the tested method chain
+            // however, this actually tests what should be tested (I think)
+
+        }
         verify(utils).jsonDump(file, event);
     }
 }
