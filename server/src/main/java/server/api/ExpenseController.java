@@ -217,8 +217,6 @@ public class ExpenseController {
 
         Expense expense = expenseRepository.getReferenceById(receivedExpense.getId());
 
-        Involved testInvolved = expense.getInvolveds().getFirst();
-
         var oldAmountOwed = expense.getAmount() / expense.getInvolveds().size();
         oldAmountOwed = (double) Math.round(oldAmountOwed * 100) /100;
         var newAmountOwed = receivedExpense.getAmount() / receivedExpense.getInvolveds().size();
