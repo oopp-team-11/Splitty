@@ -26,8 +26,6 @@ public class PasswordService {
      * @return returns the admin password as string
      */
     public String getAdminPassword() {
-        //TODO: Replace that with a random password generation on runtime (can be a random UUID I guess)
-        //return "secretPasscode";
         return adminPassword;
     }
 
