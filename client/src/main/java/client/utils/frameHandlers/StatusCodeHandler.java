@@ -36,9 +36,10 @@ public class StatusCodeHandler implements StompFrameHandler {
         switch (status.getStatusCode()){
             case OK -> Platform.runLater(() -> {
                 var alert = new Alert(Alert.AlertType.INFORMATION);
+                var translatedMessage = mainCtrl.getTranslationSupplier().getTranslation(status.getMessage());
                 alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText(status.getMessage());
-                alert.setHeaderText("Success");
+                alert.setContentText(translatedMessage != null ? translatedMessage : status.getMessage());
+                alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("Success"));
                 alert.showAndWait();
                 if (!mainCtrl.getPrimaryStageTitle().equals("Admin Panel"))
                     mainCtrl.showEventOverview();
@@ -47,17 +48,19 @@ public class StatusCodeHandler implements StompFrameHandler {
                 if(status.isUnsolvable()) {
                     Platform.runLater(() -> {
                         var alert = new Alert(Alert.AlertType.ERROR);
+                        var translatedMessage = mainCtrl.getTranslationSupplier().getTranslation(status.getMessage());
                         alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText(status.getMessage());
-                        alert.setHeaderText("Not Found");
+                        alert.setContentText(translatedMessage != null ? translatedMessage : status.getMessage());
+                        alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("NotFound"));
                         alert.showAndWait();
                     });
                 }else {
                     Platform.runLater(() -> {
                         var alert = new Alert(Alert.AlertType.WARNING);
+                        var translatedMessage = mainCtrl.getTranslationSupplier().getTranslation(status.getMessage());
                         alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText(status.getMessage());
-                        alert.setHeaderText("Not Found");
+                        alert.setContentText(translatedMessage != null ? translatedMessage : status.getMessage());
+                        alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("NotFound"));
                         alert.showAndWait();
                     });
                 }
@@ -66,17 +69,20 @@ public class StatusCodeHandler implements StompFrameHandler {
                 if(status.isUnsolvable()) {
                     Platform.runLater(() -> {
                         var alert = new Alert(Alert.AlertType.ERROR);
+                        var translatedMessage = mainCtrl.getTranslationSupplier().getTranslation(status.getMessage());
                         alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText(status.getMessage());
-                        alert.setHeaderText("Bad Request");
+                        alert.setContentText(translatedMessage != null ? translatedMessage : status.getMessage());
+                        alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("BadRequest"));
                         alert.showAndWait();
                     });
                 }else {
                     Platform.runLater(() -> {
                         var alert = new Alert(Alert.AlertType.WARNING);
+                        var translatedMessage = mainCtrl.getTranslationSupplier().getTranslation(status.getMessage());
                         alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText(status.getMessage());
-                        alert.setHeaderText("Bad Request");
+                        alert.setContentText(translatedMessage != null ? translatedMessage : status.getMessage());
+                        alert.setHeaderText(mainCtrl.getTranslationSupplier().getTranslation("BadRequest")
+                                .replaceAll("\"", ""));
                         alert.showAndWait();
                     });
                 }

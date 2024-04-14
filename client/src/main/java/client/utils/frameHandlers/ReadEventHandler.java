@@ -49,11 +49,13 @@ public class ReadEventHandler implements StompFrameHandler {
                     Platform.runLater(() -> {
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText("""
-                                Invalid invitation code, try again.
-                                Error: Server did not find invitation code.
-                                The invitation code should be in the form of:
-                                XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX (in UUID format)""");
+                        alert.setContentText(mainCtrl.getTranslationSupplier()
+                                .getTranslation("InvalidInvitationCode")
+                                + "\n" + mainCtrl.getTranslationSupplier().getTranslation("Error")
+                                + mainCtrl.getTranslationSupplier()
+                                .getTranslation("ReadEventBadRequest")
+                                + mainCtrl.getTranslationSupplier()
+                                .getTranslation("InvitationCodeForm"));
                         alert.showAndWait();
                         mainCtrl.showStartScreen();
                     });
@@ -61,11 +63,13 @@ public class ReadEventHandler implements StompFrameHandler {
                     Platform.runLater(() -> {
                         var alert = new Alert(Alert.AlertType.WARNING);
                         alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText("""
-                                Invalid invitation code, try again.
-                                Warning: Server did not find invitation code.
-                                The invitation code should be in the form of:
-                                XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX (in UUID format)""");
+                        alert.setContentText(mainCtrl.getTranslationSupplier()
+                                .getTranslation("InvalidInvitationCode")
+                                + "\n" + mainCtrl.getTranslationSupplier().getTranslation("Warning")
+                                + mainCtrl.getTranslationSupplier()
+                                .getTranslation("ReadEventBadRequest")
+                                + mainCtrl.getTranslationSupplier()
+                                .getTranslation("InvitationCodeForm"));
                         alert.showAndWait();
                         mainCtrl.showStartScreen();
                     });
@@ -76,11 +80,13 @@ public class ReadEventHandler implements StompFrameHandler {
                     Platform.runLater(() -> {
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText("""
-                                Invalid invitation code, try again.
-                                Error: Event not found, make sure it is correct.
-                                The invitation code should be in the form of:
-                                XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX (in UUID format)""");
+                        alert.setContentText(mainCtrl.getTranslationSupplier()
+                                .getTranslation("InvalidInvitationCode")
+                                + "\n" + mainCtrl.getTranslationSupplier().getTranslation("Error")
+                                + mainCtrl.getTranslationSupplier()
+                                .getTranslation("ReadEventNotFound")
+                                + mainCtrl.getTranslationSupplier()
+                                .getTranslation("InvitationCodeForm"));
                         alert.showAndWait();
                         mainCtrl.showStartScreen();
                     });
@@ -88,11 +94,13 @@ public class ReadEventHandler implements StompFrameHandler {
                     Platform.runLater(() -> {
                         var alert = new Alert(Alert.AlertType.WARNING);
                         alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText("""
-                                Invalid invitation code, try again.
-                                Warning: Event not found, make sure it is correct.
-                                The invitation code should be in the form of:
-                                XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX (in UUID format)""");
+                        alert.setContentText(mainCtrl.getTranslationSupplier()
+                                .getTranslation("InvalidInvitationCode")
+                                + "\n" + mainCtrl.getTranslationSupplier().getTranslation("Warning")
+                                + mainCtrl.getTranslationSupplier()
+                                .getTranslation("ReadEventNotFound")
+                                + mainCtrl.getTranslationSupplier()
+                                .getTranslation("InvitationCodeForm"));
                         alert.showAndWait();
                         mainCtrl.showStartScreen();
                     });

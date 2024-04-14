@@ -15,13 +15,15 @@ import static org.mockito.Mockito.verify;
 
 class AdminReadEventsHandlerTest {
     private AdminDataHandler dataHandler;
+    private MainCtrl mainCtrl;
     private AdminReadEventsHandler handler;
     private StompHeaders headers;
 
     @BeforeEach
     void setUp() {
         dataHandler = Mockito.mock(AdminDataHandler.class);
-        handler = new AdminReadEventsHandler(dataHandler);
+        mainCtrl = Mockito.mock(MainCtrl.class);
+        handler = new AdminReadEventsHandler(dataHandler, mainCtrl);
         headers = new StompHeaders();
     }
 

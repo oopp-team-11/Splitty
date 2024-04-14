@@ -93,7 +93,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
     private final FileSystemUtils fileSystemUtils;
     private final ServerUtils serverUtils;
     private Thread pollingThread;
-    boolean serverReachable;
+    private boolean serverReachable;
+    private boolean firstConnection;
 
     /**
      * @param mainCtrl main Controller, for displaying this scene.
@@ -101,7 +102,7 @@ public class StartScreenCtrl implements Initializable, Translatable {
     @Inject
     public StartScreenCtrl(MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
-        fileSystemUtils = new FileSystemUtils();
+        fileSystemUtils = new FileSystemUtils(mainCtrl.getTranslationSupplier());
         serverUtils = new ServerUtils();
         pollingThread = null;
     }
@@ -158,9 +159,9 @@ public class StartScreenCtrl implements Initializable, Translatable {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
             if (key instanceof Labeled)
-                ((Labeled) key).setText(translation.replaceAll("\"", ""));
+                ((Labeled) key).setText(translation);
             if (key instanceof TextField)
-                ((TextField) key).setPromptText(translation.replaceAll("\"", ""));
+                ((TextField) key).setPromptText(translation);
         });
 
         Map<TableColumn<Event, String>, String> tableColumns = new HashMap<>();
@@ -169,7 +170,7 @@ public class StartScreenCtrl implements Initializable, Translatable {
         tableColumns.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
-            key.setText(translation.replaceAll("\"", ""));
+            key.setText(translation);
         });
     }
 
@@ -188,21 +189,32 @@ public class StartScreenCtrl implements Initializable, Translatable {
             List<UUID> eventIds = data.stream().map(Event::getId).collect(Collectors.toList());
             startLongPolling(eventIds);
 
+            adminPassword.clear();
+
             languageSwitchPlaceHolder.getChildren().clear();
             languageSwitchPlaceHolder.getChildren().add(mainCtrl.getLanguageSwitchButton());
 
         } catch (IOException | InterruptedException e) {
+            if (mainCtrl.getSessionHandler() == null) {
+                firstConnection = true;
+                var alert = new Alert(Alert.AlertType.ERROR);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText(mainCtrl.getTranslationSupplier()
+                        .getTranslation("ServerConnectionError"));
+                alert.showAndWait();
+            }
             serverReachable = false;
         } catch (JSONException e) {
             System.out.println("Failed to parse server response: " + e.getMessage());
         }
 
         if(serverReachable && (mainCtrl.getSessionHandler() == null || mainCtrl.getSessionHandler().isSessionNull())) {
-            if (mainCtrl.getSessionHandler() != null) {
+            if (firstConnection || mainCtrl.getSessionHandler() != null) {
                 var alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText("Successfully connected to the server.");
+                alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ServerConnectSuccess"));
                 alert.showAndWait();
+                firstConnection = false;
             }
             mainCtrl.startWebSocket();
         }
@@ -223,7 +235,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
         if(eventName.isEmpty()){
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Event name is empty, please add a name");
+            alert.setContentText(mainCtrl.getTranslationSupplier()
+                    .getTranslation("EventNameEmpty"));
             alert.showAndWait();
             return;
         }
@@ -236,13 +249,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
             return;
         }
 
-        try {
-            fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
-                    "config.json");
-        } catch (IOException e) {
-            fileSaveErrorAlert(e);
-            return;
-        }
+        fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
+                "config.json");
         mainCtrl.getSessionHandler().subscribeToEvent(invitationCode);
     }
 
@@ -257,23 +265,22 @@ public class StartScreenCtrl implements Initializable, Translatable {
         try {
             invitationCode = UUID.fromString(joinInvitationCode.getText());
         } catch (IllegalArgumentException e) {
+            var exceptionMessage = mainCtrl.getTranslationSupplier().getTranslation(e.getMessage());
+            if (exceptionMessage == null) exceptionMessage = e.getMessage();
+            if (exceptionMessage == null) exceptionMessage = mainCtrl.getTranslationSupplier()
+                    .getTranslation("NoErrorMessageAvailable");
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Invalid invitation code, try again." +
-                    "\nError: " + (e.getMessage() != null ? e.getMessage() : "No error message available.") +
-                    "\n\nThe invitation code should be in the form of:\nXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX " +
-                    "(in UUID format)");
+            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("InvalidInvitationCode") +
+                    "\n" + mainCtrl.getTranslationSupplier().getTranslation("Error")
+                    + exceptionMessage +
+                    "\n" + mainCtrl.getTranslationSupplier().getTranslation("InvitationCodeForm"));
             alert.showAndWait();
             return;
         }
 
-        try {
-            fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
-                    "config.json");
-        } catch (IOException e) {
-            fileSaveErrorAlert(e);
-            return;
-        }
+        fileSystemUtils.saveInvitationCodesToConfigFile(invitationCode,
+                "config.json");
 
         mainCtrl.getSessionHandler().subscribeToEvent(invitationCode);
     }
@@ -282,16 +289,15 @@ public class StartScreenCtrl implements Initializable, Translatable {
      * Method that is called when the client wants to edit the server URL
      */
     public void onEditURL() {
-        try{
-            fileSystemUtils.replaceServerIPInConfigFile("client-config.json", serverUrlBox.getText());
-        }
-        catch (IOException e){
-            var alert = new Alert(Alert.AlertType.ERROR);
+        if (serverUrlBox.getText().isBlank()) {
+            var alert = new Alert(Alert.AlertType.WARNING);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Failed to save server IP to config file.");
+            alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ServerURLEmpty"));
             alert.showAndWait();
+            return;
         }
-
+        fileSystemUtils.replaceServerIPInConfigFile("client-config.json",
+                serverUrlBox.getText(), mainCtrl.getTranslationSupplier());
         mainCtrl.setServerIp();
         if (mainCtrl.getSessionHandler() != null)
             mainCtrl.getSessionHandler().disconnectFromServer();
@@ -310,21 +316,29 @@ public class StartScreenCtrl implements Initializable, Translatable {
         mainCtrl.getSessionHandler().sendReadEvents(password);
     }
 
-    private static void serverErrorAlert(Exception exception) {
+    private void serverErrorAlert(Exception exception) {
+        var exceptionMessage = mainCtrl.getTranslationSupplier().getTranslation(exception.getMessage());
+        if (exceptionMessage == null) exceptionMessage = exception.getMessage();
+        if (exceptionMessage == null) exceptionMessage = mainCtrl.getTranslationSupplier()
+                .getTranslation("NoErrorMessageAvailable");
         var alert = new Alert(Alert.AlertType.ERROR);
         alert.initModality(Modality.APPLICATION_MODAL);
-        alert.setContentText("Something went wrong while trying to connect to server." +
-                "\nError: " +
-                (exception.getMessage() != null ? exception.getMessage() : "No error message available."));
+        alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ServerErrorAlert") +
+                "\n" + mainCtrl.getTranslationSupplier().getTranslation("Error") +
+                exceptionMessage);
         alert.showAndWait();
     }
 
-    private static void fileSaveErrorAlert(Exception exception) {
+    private void fileSaveErrorAlert(Exception exception) {
+        var exceptionMessage = mainCtrl.getTranslationSupplier().getTranslation(exception.getMessage());
+        if (exceptionMessage == null) exceptionMessage = exception.getMessage();
+        if (exceptionMessage == null) exceptionMessage = mainCtrl.getTranslationSupplier()
+                .getTranslation("NoErrorMessageAvailable");
         var alert = new Alert(Alert.AlertType.ERROR);
         alert.initModality(Modality.APPLICATION_MODAL);
-        alert.setContentText("Something went wrong while saving invitation code to disk." +
-                "\nError: " +
-                (exception.getMessage() != null ? exception.getMessage() : "No error message available."));
+        alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("FileSaveErrorAlert") +
+                "\n" + mainCtrl.getTranslationSupplier().getTranslation("Error") +
+                exceptionMessage);
         alert.showAndWait();
     }
 
@@ -369,9 +383,8 @@ public class StartScreenCtrl implements Initializable, Translatable {
                     Platform.runLater(() -> {
                         var alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText("""
-                            Server connection error,
-                            Server is unavailable, please try again.""");
+                        alert.setContentText(mainCtrl.getTranslationSupplier()
+                                .getTranslation("ServerConnectionError"));
                         alert.showAndWait();
                         mainCtrl.showStartScreen();
                     });

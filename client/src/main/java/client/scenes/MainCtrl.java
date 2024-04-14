@@ -592,28 +592,16 @@ public class MainCtrl {
      * Method for setting the correct server ip
      */
     void setServerIp(){
-        FileSystemUtils utils = new FileSystemUtils();
-        try {
-            this.serverIp = utils.getServerIP("client-config.json");
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Did not find client config file." + e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        FileSystemUtils utils = new FileSystemUtils(getTranslationSupplier());
+        this.serverIp = utils.getServerIP("client-config.json");
     }
 
     /**
      * Method for setting the correct language in all scenes
      */
     public void setTranslationSupplier(){
-        FileSystemUtils utils = new FileSystemUtils();
-        try {
-            this.translationSupplier = utils.getTranslationSupplier("client-config.json");
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Did not find client config file." + e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        FileSystemUtils utils = new FileSystemUtils(getTranslationSupplier());
+        this.translationSupplier = utils.getTranslationSupplier("client-config.json");
     }
 
     /**
@@ -735,35 +723,29 @@ public class MainCtrl {
 
             newOption.setGraphic(imageView);
             newOption.setOnAction(actionEvent -> {
-                    try {
-                        FileSystemUtils fileSystemUtils = new FileSystemUtils();
-                        fileSystemUtils.changeLanguageInFile("client-config.json",
-                                getAvailableLanguages().values().stream().filter(
-                                        locale1 -> locale1.getDisplayLanguage().equals(
-                                                ((MenuItem) actionEvent.getSource()).getText().split(" - ")[0])
-                                ).toList().getFirst().getLanguage());
-                        setTranslationSupplier();
-                        ((ImageView) languageSwitchButton.getGraphic()).setImage(
-                                ((ImageView)((MenuItem) actionEvent.getSource()).getGraphic()).getImage());
-                        startScreenCtrl.translate(translationSupplier);
-                        eventOverviewCtrl.translate(translationSupplier);
-                        adminPanelCtrl.translate(translationSupplier);
-                        languageSwitchButton.getItems().stream()
-                                .filter(item -> (item.getUserData() != null
-                                        && item.getUserData().equals("template download")))
-                                .toList().getFirst().setText(
-                                        translationSupplier.getTranslation("DownloadTemplate")
-                                                .replaceAll("\"", ""));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    FileSystemUtils fileSystemUtils = new FileSystemUtils(getTranslationSupplier());
+                    fileSystemUtils.changeLanguageInFile("client-config.json",
+                            getAvailableLanguages().values().stream().filter(
+                                    locale1 -> locale1.getDisplayLanguage().equals(
+                                            ((MenuItem) actionEvent.getSource()).getText().split(" - ")[0])
+                            ).toList().getFirst().getLanguage());
+                    setTranslationSupplier();
+                    ((ImageView) languageSwitchButton.getGraphic()).setImage(
+                            ((ImageView)((MenuItem) actionEvent.getSource()).getGraphic()).getImage());
+                    startScreenCtrl.translate(translationSupplier);
+                    eventOverviewCtrl.translate(translationSupplier);
+                    adminPanelCtrl.translate(translationSupplier);
+                    languageSwitchButton.getItems().stream()
+                            .filter(item -> (item.getUserData() != null
+                                    && item.getUserData().equals("template download")))
+                            .toList().getFirst().setText(
+                                    translationSupplier.getTranslation("DownloadTemplate"));
                 }
             );
             languageSwitchButton.getItems().addLast(newOption);
         });
 
-        MenuItem item = new MenuItem(translationSupplier.getTranslation("DownloadTemplate")
-                .replaceAll("\"", ""));
+        MenuItem item = new MenuItem(translationSupplier.getTranslation("DownloadTemplate"));
         item.setUserData("template download");
         item.setOnAction(event -> {
                 DirectoryChooser chooser = new DirectoryChooser();
@@ -794,7 +776,6 @@ public class MainCtrl {
                 new Image("/flags/" +
                         getTranslationSupplier()
                                 .getTranslation("Country Code in ISO 3166-1-alpha-3 code")
-                                .replaceAll("\"", "")
                         + ".png"));
         imageView.setPreserveRatio(true);
         imageView.setSmooth(true);

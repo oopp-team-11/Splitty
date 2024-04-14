@@ -176,10 +176,10 @@ public class DetailedExpenseCtrl implements Translatable {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
             if (key instanceof Labeled) {
-                ((Labeled) key).setText(translation.replaceAll("\"", ""));
+                ((Labeled) key).setText(translation);
             }
             if (key instanceof Button) {
-                ((Button) key).setText(translation.replaceAll("\"", ""));
+                ((Button) key).setText(translation);
             }
         });
 
@@ -189,7 +189,7 @@ public class DetailedExpenseCtrl implements Translatable {
         tableColumns.forEach((key, val) -> {
             var translation = translationSupplier.getTranslation(val);
             if (translation == null) return;
-            key.setText(translation.replaceAll("\"", ""));
+            key.setText(translation);
         });
     }
 

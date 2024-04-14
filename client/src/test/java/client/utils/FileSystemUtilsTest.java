@@ -3,6 +3,7 @@ package client.utils;
 import commons.Event;
 import commons.Participant;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -32,14 +33,14 @@ class FileSystemUtilsTest {
 
     @Test
     void checkIfFileExistsFalse() {
-        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        FileSystemUtils fileSystemUtils = new FileSystemUtils(null);
         String randomFileName = UUID.randomUUID() + ".txt";
         assertFalse(fileSystemUtils.checkIfFileExists(randomFileName));
     }
 
     @Test
     void checkIfFileExistsTrue() {
-        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        FileSystemUtils fileSystemUtils = new FileSystemUtils(null);
         String randomFileName = UUID.randomUUID() + ".txt";
         try {
             new File(randomFileName).createNewFile();
@@ -50,21 +51,22 @@ class FileSystemUtilsTest {
         new File(randomFileName).delete();
     }
 
-    @Test
-    void readInvitationCodesFileMotFound() {
-        FileSystemUtils fileSystemUtils = new FileSystemUtils();
-        String randomFileName = UUID.randomUUID() + ".txt";
-
-        if (new File(randomFileName).exists()) {
-            new File(randomFileName).delete();
-        }
-
-        assertThrows(FileNotFoundException.class, () -> fileSystemUtils.readInvitationCodes(randomFileName));
-    }
+    //This method does not throw an exception anymore
+//    @Test
+//    void readInvitationCodesFileMotFound() {
+//        FileSystemUtils fileSystemUtils = new FileSystemUtils(null);
+//        String randomFileName = UUID.randomUUID() + ".txt";
+//
+//        if (new File(randomFileName).exists()) {
+//            new File(randomFileName).delete();
+//        }
+//
+//        assertThrows(FileNotFoundException.class, () -> fileSystemUtils.readInvitationCodes(randomFileName));
+//    }
 
     @Test
     void readInvitationCodesFileFound() throws IOException {
-        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        FileSystemUtils fileSystemUtils = new FileSystemUtils(null);
         String randomFileName = UUID.randomUUID() + ".json";
 
         if (new File(randomFileName).exists()) {
@@ -89,8 +91,8 @@ class FileSystemUtilsTest {
     }
 
     @Test
-    void saveInvitationCodesToConfigFileFileNotFound() throws IOException {
-        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+    void saveInvitationCodesToConfigFileFileNotFound() {
+        FileSystemUtils fileSystemUtils = new FileSystemUtils(null);
         String randomFileName = UUID.randomUUID() + ".json";
 
         if (new File(randomFileName).exists()) {
@@ -106,7 +108,7 @@ class FileSystemUtilsTest {
 
     @Test
     void saveInvitationCodesToConfigFileFileFound() throws IOException {
-        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        FileSystemUtils fileSystemUtils = new FileSystemUtils(null);
         String randomFileName = UUID.randomUUID() + ".json";
 
         if (new File(randomFileName).exists()) {
@@ -136,7 +138,7 @@ class FileSystemUtilsTest {
 
     @Test
     void checkIfCodeExistsTrue() {
-        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        FileSystemUtils fileSystemUtils = new FileSystemUtils(null);
         List<UUID> codes = new ArrayList<>();
         UUID randomCode = UUID.randomUUID();
         codes.add(randomCode);
@@ -145,7 +147,7 @@ class FileSystemUtilsTest {
 
     @Test
     void checkIfCodeExistsFalse() {
-        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        FileSystemUtils fileSystemUtils = new FileSystemUtils(null);
         List<UUID> codes = new ArrayList<>();
         UUID randomCode = UUID.randomUUID();
         assertFalse(fileSystemUtils.checkIfCodeExists(randomCode, codes));
@@ -153,7 +155,7 @@ class FileSystemUtilsTest {
 
     @Test
     void checkIfCodeExistsEmptyList() {
-        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        FileSystemUtils fileSystemUtils = new FileSystemUtils(null);
         List<UUID> codes = new ArrayList<>();
         UUID randomCode = UUID.randomUUID();
         assertFalse(fileSystemUtils.checkIfCodeExists(randomCode, codes));
@@ -161,7 +163,7 @@ class FileSystemUtilsTest {
 
     @Test
     void updateConfigFileTest() throws IOException {
-        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        FileSystemUtils fileSystemUtils = new FileSystemUtils(null);
         String randomFileName = UUID.randomUUID() + ".json";
 
         if (new File(randomFileName).exists()) {
@@ -191,7 +193,7 @@ class FileSystemUtilsTest {
 
     @Test
     void extractInvitationCodesFromEventListTest() {
-        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        FileSystemUtils fileSystemUtils = new FileSystemUtils(null);
         List<Event> events = new ArrayList<>();
         List<UUID> codes = new ArrayList<>();
 
@@ -239,7 +241,7 @@ class FileSystemUtilsTest {
 
 //    @Test
 //    void checkClientConfigCreationErrorEmptyFile() throws IOException {
-//        FileSystemUtils utils = new FileSystemUtils();
+//        FileSystemUtils utils = new FileSystemUtils(null);
 //
 //        assertEquals("localhost:8080", utils.getServerIP("test-client-config.json"));
 //        if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
@@ -249,7 +251,7 @@ class FileSystemUtilsTest {
 
 //    @Test
 //    void checkClientConfigCreationErrorEmptyIP() throws IOException {
-//        FileSystemUtils utils = new FileSystemUtils();
+//        FileSystemUtils utils = new FileSystemUtils(null);
 //
 //        if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
 //            new File("test-client-config.json").delete();
@@ -272,7 +274,7 @@ class FileSystemUtilsTest {
 
     @Test
     void checkClientConfigCreationCorrect() throws IOException {
-        FileSystemUtils utils = new FileSystemUtils();
+        FileSystemUtils utils = new FileSystemUtils(null);
 
         if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
             new File("test-client-config.json").delete();
@@ -295,7 +297,7 @@ class FileSystemUtilsTest {
 
     @Test
     void checkClientConfigCreationWrongFormat() throws IOException {
-        FileSystemUtils utils = new FileSystemUtils();
+        FileSystemUtils utils = new FileSystemUtils(null);
 
         if(FileSystemUtils.checkIfFileExists("test-client-config.json")){
             new File("test-client-config.json").delete();
@@ -318,14 +320,14 @@ class FileSystemUtilsTest {
 
     @Test
     public void testReplaceServerIPInConfigFile(@TempDir Path tempDir) throws IOException {
-        FileSystemUtils fileSystemUtils = new FileSystemUtils();
+        FileSystemUtils fileSystemUtils = new FileSystemUtils(null);
         Path tempFile = tempDir.resolve("client-config.json");
         Files.write(tempFile, "{\"server-ip\":\"localhost:8080\",\"lang\":\"en\"}".getBytes());
 
         String newServerIP = "http://192.168.1.1:8080";
-        fileSystemUtils.replaceServerIPInConfigFile(tempFile.toString(), newServerIP);
+        fileSystemUtils.replaceServerIPInConfigFile(tempFile.toString(), newServerIP, null);
         String content = new String(Files.readAllBytes(tempFile));
-        assertEquals("{\"server-ip\":\"" + newServerIP + "\",\"lang\":\"en\"}", content);
+        assertEquals("{\"server-ip\":\"" + "192.168.1.1:8080" + "\",\"lang\":\"en\"}", content);
     }
 
     //Method doesn't throw exception anymore
