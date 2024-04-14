@@ -37,4 +37,4 @@ These files are ignored by git and only saved locally.
     * Press the "Save partial debts" (green button) to save changes for the partial debts of the specific expense
     * Press the "Go to Event Overview" (red button) to exit the page without saving the partial debts for specific expense
 - Admin password is printed out on the server console on start up
-- The server URL can contain both ip and a port number
+- When using UI for changing the server URL, the server URL should contain both (and only) ip and a port number
