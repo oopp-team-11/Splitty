@@ -214,6 +214,7 @@ public class StartScreenCtrl implements Initializable, Translatable {
                 alert.initModality(Modality.APPLICATION_MODAL);
                 alert.setContentText(mainCtrl.getTranslationSupplier().getTranslation("ServerConnectSuccess"));
                 alert.showAndWait();
+                firstConnection = false;
             }
             mainCtrl.startWebSocket();
         }
